@@ -8,6 +8,7 @@ Portal displaying our projects that are documented with OpenAPI.
 
 Create a file named `.env.local` in the root of the project with the following contents. Make sure to replace any placeholders and generate a random secret using OpenSSL.
 
+```
 AUTH0_SECRET='use [openssl rand -hex 32] to generate a 32 bytes value'
 AUTH0_BASE_URL='http://dev.local:3000'
 AUTH0_ISSUER_BASE_URL='https://shape-docs-dev.eu.auth0.com'
@@ -16,11 +17,14 @@ AUTH0_CLIENT_SECRET='Your client secret'
 AUTH0_MANAGEMENT_DOMAIN='shape-docs-dev.eu.auth0.com'
 AUTH0_MANAGEMENT_CLIENT_ID='Your client ID'
 AUTH0_MANAGEMENT_CLIENT_SECRET='Your client secret'
+```
 
-Note that you need to Auth0 apps:
+Note that you need the following two Auth0 apps.
 
-- **Regular Web Application**: This is used to authenticate the user.
-- **Machine to Machine Application**: This is used for making requests to [Auth0's Management API](https://auth0.com/docs/api/management/v2) to retrieve the access token for the identity provider that the user authorized with.
+| |Type|Description|
+|-|-|-|
+|Default|Generic|Used to authenticate the user when they log in.|
+|Management|Machine to Machine|Used for making requests to [Auth0's Management API](https://auth0.com/docs/api/management/v2) to retrieve the access token for the identity provider that the user authorized with.|
 
 Modify your `/etc/hosts` file to add the following entry:
 
@@ -35,3 +39,5 @@ Run the app using the following command:
 ```
 npm run dev
 ```
+
+Finally, open the application on https://dev.local:3000.
