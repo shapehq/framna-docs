@@ -1,16 +1,25 @@
-import { withPageAuthRequired, getSession } from '@auth0/nextjs-auth0'
+import { Auth0UserProvider } from '@/lib/auth/Auth0UserProvider'
+import { Auth0UserDetailsProvider } from '@/lib/auth/Auth0UserDetailsProvider'
+import { GitHubProjectRepository } from '@/lib/projects/GitHubProjectRepository'
+import { IdentityAccessTokenProvider } from '@/lib/auth/IdentityAccessTokenProvider'
+import Frontpage from '@/lib/pages/Frontpage'
 
-export default withPageAuthRequired(async function Home() {
-  const session = await getSession()
-  const user = session?.user
-  if (!user) {
-    return <div></div>
-  }
+export default async function Page() {
   return (
-    <div>
-      <img src={user.picture} alt={user.name} width={50} />
-      <h2>Hi {user.name} 👋</h2>
-      <p><a href="/api/auth/logout">Log out</a></p>
-    </div>
+    <Frontpage
+      userProvider={new Auth0UserProvider()}
+      projectRepository={
+        new GitHubProjectRepository(
+          new IdentityAccessTokenProvider(
+            new Auth0UserDetailsProvider(new Auth0UserProvider(), {
+              domain: process.env.AUTH0_MANAGEMENT_DOMAIN,
+              clientId: process.env.AUTH0_MANAGEMENT_CLIENT_ID,
+              clientSecret: process.env.AUTH0_MANAGEMENT_CLIENT_SECRET
+            }),
+            "github"
+          )
+        )
+      }
+    />
   )
-}, { returnTo: '/' })
+}
