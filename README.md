@@ -1,36 +1,37 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# shape-docs
 
-## Getting Started
+Portal displaying our projects that are documented with OpenAPI.
 
-First, run the development server:
+[![Test](https://github.com/shapehq/shape-docs/actions/workflows/test.yml/badge.svg)](https://github.com/shapehq/shape-docs/actions/workflows/test.yml)
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+## Running the App Locally
+
+Create a file named `.env.local` in the root of the project with the following contents. Make sure to replace any placeholders and generate a random secret using OpenSSL.
+
+AUTH0_SECRET='use [openssl rand -hex 32] to generate a 32 bytes value'
+AUTH0_BASE_URL='http://dev.local:3000'
+AUTH0_ISSUER_BASE_URL='https://shape-docs-dev.eu.auth0.com'
+AUTH0_CLIENT_ID='Your client ID'
+AUTH0_CLIENT_SECRET='Your client secret'
+AUTH0_MANAGEMENT_DOMAIN='shape-docs-dev.eu.auth0.com'
+AUTH0_MANAGEMENT_CLIENT_ID='Your client ID'
+AUTH0_MANAGEMENT_CLIENT_SECRET='Your client secret'
+
+Note that you need to Auth0 apps:
+
+- **Regular Web Application**: This is used to authenticate the user.
+- **Machine to Machine Application**: This is used for making requests to [Auth0's Management API](https://auth0.com/docs/api/management/v2) to retrieve the access token for the identity provider that the user authorized with.
+
+Modify your `/etc/hosts` file to add the following entry:
+
+```
+127.0.0.1 dev.local
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+We visit our local website by opening https://dev.local:3000 instead of https://localhost:3000 as this ensures that Auth0's flow will work correctly. Auth0 does some extra checks when localhost is included in the URL and we are generally not interested in those as they give a false impression of the flow the user will see.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Run the app using the following command:
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+```
+npm run dev
+```
