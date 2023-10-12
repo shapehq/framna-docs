@@ -16,8 +16,8 @@ export default async function Frontpage(props: FrontpageProps) {
       <p><a href="/api/auth/logout">Log out</a></p>
       <p><strong>Projects:</strong></p>
       <ul>
-        {projects.map(e => (
-         <li>{e.name}</li> 
+        {projects.map((e, index) => (
+         <li key={index}>{e.name}</li> 
         ))}
       </ul>
     </div>
