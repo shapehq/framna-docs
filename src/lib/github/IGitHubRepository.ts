@@ -1,4 +1,4 @@
 export interface IGitHubRepository {
-  name: string
-  owner: string
+  readonly name: string
+  readonly owner: string
 }
