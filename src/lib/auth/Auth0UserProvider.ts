@@ -9,10 +9,11 @@ export class Auth0UserProvider implements UserProviding {
     if (!user) {
       throw new Error("User is not authenticated")
     }
+    console.log(user.name === '' ? user.nickname : user.name)
     return {
       id: user.sub,
-      name: user.name,
-      avatarURL: user.picture 
+      name: user.name === '' ? user.nickname : user.name,
+      avatarURL: user.picture
     }
   }
 }
