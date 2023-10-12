@@ -14,6 +14,7 @@ interface AppProps {
   projectListComponent: ReactNode;
   userComponent: ReactNode;
   versionSelectorComponent?: ReactNode;
+  openApiSpecificationsComponent?: ReactNode;
   children: ReactNode;
 }
 
@@ -21,6 +22,7 @@ const App: React.FC<AppProps> = ({
   userComponent,
   projectListComponent,
   versionSelectorComponent,
+  openApiSpecificationsComponent,
   children,
 }) => {
   const drawerWidth = 240;
@@ -37,6 +39,7 @@ const App: React.FC<AppProps> = ({
         handleDrawerToggle={handleDrawerToggle}
         title="Docs"
         versionSelectorComponent={versionSelectorComponent}
+        openApiSpecificationsComponent={openApiSpecificationsComponent}
       />
       <SidebarComponent
         userComponent={userComponent}

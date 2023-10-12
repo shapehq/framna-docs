@@ -9,10 +9,10 @@ export class Auth0UserProvider implements IUserProvider {
     if (!user) {
       throw new Error("User is not authenticated")
     }
-    console.log(user.name === '' ? user.nickname : user.name)
     return {
       id: user.sub,
-      name: user.name === '' ? user.nickname : user.name,
+      name: user.name,
+      userName: user.nickname,
       avatarURL: user.picture
     }
   }

@@ -13,19 +13,20 @@ import { OctokitGitHubClient } from "@/lib/github/OctokitGitHubClient";
 import VersionSelectorComponent from "@/lib/components/VersionSelectorComponent";
 import { GitHubVersionRepository } from "@/lib/projects/GitHubVersionRepository";
 import WelcomePage from "@/lib/pages/WelcomePage";
+import VersionsComponent from "@/lib/components/VersionsComponent";
+import OpenApiSpecificationsComponent from "@/lib/components/OpenApiSpecificationsComponent";
+import { GitHubOpenApiSpecificationRepository } from "@/lib/projects/GitHubOpenAPISpecificationRepository";
 
 export default async function Page() {
   const organizationNameProvider = new HardcodedGitHubOrganizationNameProvider(
     "shapehq"
   );
-  const userDetailsProvider = new Auth0UserDetailsProvider(
-    new Auth0UserProvider(),
-    {
-      domain: process.env.AUTH0_MANAGEMENT_DOMAIN,
-      clientId: process.env.AUTH0_MANAGEMENT_CLIENT_ID,
-      clientSecret: process.env.AUTH0_MANAGEMENT_CLIENT_SECRET,
-    }
-  );
+  const userProvider = new Auth0UserProvider();
+  const userDetailsProvider = new Auth0UserDetailsProvider(userProvider, {
+    domain: process.env.AUTH0_MANAGEMENT_DOMAIN,
+    clientId: process.env.AUTH0_MANAGEMENT_CLIENT_ID,
+    clientSecret: process.env.AUTH0_MANAGEMENT_CLIENT_SECRET,
+  });
   const accessTokenProvider = new IdentityAccessTokenProvider(
     userDetailsProvider,
     "github"
@@ -42,23 +43,44 @@ export default async function Page() {
     gitHubClientFactory
   );
   const projectRepository = new GitHubProjectRepository(gitHubClient);
-  const userProvider = new Auth0UserProvider();
+  const user = await userProvider.getUser();
 
+  const project = {
+    name: "test-openapi",
+  };
   return (
     <App
-      userComponent={<UserComponent userProvider={userProvider} />}
+      userComponent={<UserComponent user={user} />}
       projectListComponent={
         <ProjectListComponent projectRepository={projectRepository} />
       }
-      // versionSelectorComponent={
-      //   <VersionSelectorComponent
-      //     versionRepository={new GitHubVersionRepository(gitHubClient)}
-      //     project={undefined}
-      //   />
-      // }
+      versionSelectorComponent={
+        <VersionsComponent
+          versionRepository={new GitHubVersionRepository(gitHubClient)}
+          project={project}
+          user={user}
+        />
+      }
+      openApiSpecificationsComponent={
+        <OpenApiSpecificationsComponent
+          openApiSpecificationRepository={
+            new GitHubOpenApiSpecificationRepository(gitHubClient)
+          }
+          project={project}
+          version={{
+            name: "main",
+          }}
+          user={user}
+        />
+      }
     >
       {/* <WelcomePage /> */}
-      <DocumentationViewerPage url="https://raw.githubusercontent.com/OAI/OpenAPI-Specification/main/examples/v3.0/api-with-examples.yaml" />
+      <DocumentationViewerPage
+        openApiSpecification={{
+          name: "main",
+          url: "https://raw.githubusercontent.com/shapehq/test-openapi/main/test.yaml?token=BBUWR3NJGFPDMHZYF5QQZFDFFBQAS",
+        }}
+      />
     </App>
   );
 }

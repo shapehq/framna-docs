@@ -1,5 +1,5 @@
 import { SelectChangeEvent, Select, MenuItem } from "@mui/material";
-import { useContext, useState } from "react";
+import { useState } from "react";
 import { DocumentationVisualizer } from "../DocumentationViewerComponent";
 import { getSettings, setSettings } from "@/lib/utils/SettingsUtils";
 
@@ -7,6 +7,7 @@ const DocumentationViewerSelectorComponent: React.FC = () => {
   const [visualizer, setVisualizer] = useState(
     getSettings().documentationVisualizer
   );
+
   const handleChange = (event: SelectChangeEvent) => {
     const documentationVisualizer = parseInt(
       event.target.value

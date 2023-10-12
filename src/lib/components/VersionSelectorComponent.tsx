@@ -1,17 +1,16 @@
+"use client";
+
 import { MenuItem, Select, SelectChangeEvent } from "@mui/material";
-import { IVersionRepository } from "../projects/IVersionRepository";
-import { IProject } from "../projects/IProject";
+import { IVersion } from "../projects/IVersion";
 import { useState } from "react";
 
 interface VersionSelectorComponentProps {
-  versionRepository: IVersionRepository;
-  project: IProject;
+  versions: IVersion[];
 }
 
-const VersionSelectorComponent: React.FC<
-  VersionSelectorComponentProps
-> = async ({ versionRepository, project }) => {
-  const versions = await versionRepository.getVersions(project);
+const VersionSelectorComponent: React.FC<VersionSelectorComponentProps> = ({
+  versions,
+}) => {
   const [version, setVersion] = useState(versions[0].name);
 
   const handleVersionChange = (event: SelectChangeEvent) => {
@@ -20,14 +19,16 @@ const VersionSelectorComponent: React.FC<
 
   return (
     <Select
-      labelId="demo-simple-select-label"
-      id="demo-simple-select"
       value={version}
-      label="Age"
+      label="Version"
       onChange={handleVersionChange}
     >
       {versions.map((version, index) => {
-        return <MenuItem key={index} value={version.name}>{version.name}</MenuItem>;
+        return (
+          <MenuItem key={`Version-${index}`} value={version.name}>
+            {version.name}
+          </MenuItem>
+        );
       })}
     </Select>
   );

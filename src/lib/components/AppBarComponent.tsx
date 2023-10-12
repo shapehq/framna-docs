@@ -7,6 +7,7 @@ interface AppBarComponentProps {
   handleDrawerToggle: () => void;
   title: string;
   versionSelectorComponent?: ReactNode;
+  openApiSpecificationsComponent?: ReactNode;
 }
 
 const AppBarComponent: React.FC<AppBarComponentProps> = ({
@@ -14,6 +15,7 @@ const AppBarComponent: React.FC<AppBarComponentProps> = ({
   handleDrawerToggle,
   title,
   versionSelectorComponent,
+  openApiSpecificationsComponent,
 }) => {
   return (
     <AppBar
@@ -40,7 +42,8 @@ const AppBarComponent: React.FC<AppBarComponentProps> = ({
         <Typography variant="h6" noWrap component="div">
           {title}
         </Typography>
-        {versionSelectorComponent ? versionSelectorComponent : <></>}
+        {versionSelectorComponent ?? <></>}
+        {openApiSpecificationsComponent ?? <></>}
       </Toolbar>
     </AppBar>
   );

@@ -1,16 +1,12 @@
 import { Avatar, Box, Button } from "@mui/material";
-import { IUserProvider } from "../auth/IUserProvider";
 import { SIDEBAR_SPACING } from "../style/dimensions";
+import { IUser } from "../auth/IUser";
 
 interface UserComponentProps {
-  userProvider: IUserProvider;
+  user: IUser;
 }
 
-const UserComponent: React.FC<UserComponentProps> = async ({
-  userProvider,
-}) => {
-  const user = await userProvider.getUser();
-
+const UserComponent: React.FC<UserComponentProps> = async ({ user }) => {
   return (
     <Box
       component="div"
@@ -32,14 +28,14 @@ const UserComponent: React.FC<UserComponentProps> = async ({
         }}
       >
         <Avatar src={user.avatarURL} alt={user.name} />
-        <h2>Hi {user.name} 👋</h2>
+        <h2>Hi {user.name !== "" ? user.name : user.userName} 👋</h2>
       </Box>
       <p>
         <Button
           variant="contained"
           href="/api/auth/logout"
           sx={{
-            width: "100%"
+            width: "100%",
           }}
         >
           Log out

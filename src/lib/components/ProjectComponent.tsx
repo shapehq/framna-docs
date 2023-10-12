@@ -22,7 +22,7 @@ const ProjectComponent: React.FC<ProjectComponentProps> = ({
 }) => {
   return (
     <ListItem disablePadding>
-      <ListItemButton href="{`/${project.name}`}">
+      <ListItemButton href={`/${project.name}`}>
         <ListItemIcon>
           {selectedProject ? <FolderOpen /> : <Folder />}
         </ListItemIcon>
