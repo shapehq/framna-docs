@@ -12,7 +12,7 @@ export default async function Frontpage(props: FrontpageProps) {
   return (
     <div>
       <img src={user.avatarURL} alt={user.name} width={50} />
-      <h2>Hi {user.name} 👋</h2>
+      <h2>Hi {user.name} 👋👋</h2>
       <p><a href="/api/auth/logout">Log out</a></p>
       <p><strong>Projects:</strong></p>
       <ul>
