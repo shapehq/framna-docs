@@ -1,8 +1,8 @@
 import { ProjectRepository } from '@/lib/projects/ProjectRepository'
-import { UserProvider } from '@/lib/auth/UserProvider'
+import { UserProviding } from '@/lib/auth/UserProviding'
 
 interface FrontpageProps {
-  userProvider: UserProvider
+  userProvider: UserProviding
   projectRepository: ProjectRepository
 }
 
