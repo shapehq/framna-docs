@@ -1,5 +1,5 @@
-import { DateProviding } from "@/lib/date/DateProviding"
+import { IDateProvider } from "@/lib/date/IDateProvider"
 
-export class MockDateProvider implements DateProviding {
+export class MockDateProvider implements IDateProvider {
   now = new Date()
 }
