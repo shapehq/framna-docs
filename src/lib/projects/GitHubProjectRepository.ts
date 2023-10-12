@@ -1,28 +1,15 @@
-import { AccessTokenProviding } from "@/lib/auth/AccessTokenProviding" 
-import { Project } from "./Project"
-import { ProjectRepository } from "./ProjectRepository"
-import { Octokit } from "octokit"
+import { IGitHubProject } from "./IGitHubProject"
+import { IProjectRepository } from "./IProjectRepository"
+import { IGitHubClient } from "@/lib/github/IGitHubClient"
 
-export class GitHubProjectRepository implements ProjectRepository {
-  private accessTokenStore: AccessTokenProviding
+export class GitHubProjectRepository implements IProjectRepository {
+  private gitHubClient: IGitHubClient
   
-  constructor(accessTokenStore: AccessTokenProviding) {
-    this.accessTokenStore = accessTokenStore
+  constructor(gitHubClient: IGitHubClient) {
+    this.gitHubClient = gitHubClient
   }
   
-  async getProjects(): Promise<Project[]> {
-    const accessToken = await this.accessTokenStore.getAccessToken()
-    const octokit = new Octokit({ auth: accessToken })
-    let projects: Project[] = []
-    for await (const response of octokit.paginate.iterator(
-      octokit.rest.repos.listForAuthenticatedUser
-    )) {
-      projects = projects.concat(response.data.map(e => {
-        return {
-          name: e.name
-        } 
-      }))
-    }
-    return projects
+  async getProjects(): Promise<IGitHubProject[]> {
+    return await this.gitHubClient.getRepositories("-openapi")
   }
 }
