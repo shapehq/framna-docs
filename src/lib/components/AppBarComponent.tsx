@@ -1,16 +1,19 @@
 import { Menu } from "@mui/icons-material";
 import { AppBar, Toolbar, IconButton, Typography } from "@mui/material";
+import { ReactNode } from "react";
 
 interface AppBarComponentProps {
   drawerWidth: number;
   handleDrawerToggle: () => void;
   title: string;
+  versionSelectorComponent?: ReactNode;
 }
 
 const AppBarComponent: React.FC<AppBarComponentProps> = ({
   drawerWidth,
   handleDrawerToggle,
   title,
+  versionSelectorComponent,
 }) => {
   return (
     <AppBar
@@ -37,6 +40,7 @@ const AppBarComponent: React.FC<AppBarComponentProps> = ({
         <Typography variant="h6" noWrap component="div">
           {title}
         </Typography>
+        {versionSelectorComponent ? versionSelectorComponent : <></>}
       </Toolbar>
     </AppBar>
   );

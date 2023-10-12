@@ -32,7 +32,7 @@ const SettingsComponent: React.FC = () => {
   };
 
   return (
-    <>
+    <List>
       <ListItemButton onClick={toggleOpen}>
         <ListItemIcon>
           <Settings />
@@ -57,7 +57,7 @@ const SettingsComponent: React.FC = () => {
           </ListItemButton>
         </List>
       </Collapse>
-    </>
+    </List>
   );
 };
 

@@ -1,5 +1,8 @@
+"use client";
+
 import SwaggerComponent from "./SwaggerComponent";
 import RedoclyComponent from "./RedoclyComponent";
+import { getSettings } from "../utils/SettingsUtils";
 
 export enum DocumentationVisualizer {
   SWAGGER,
@@ -8,12 +11,12 @@ export enum DocumentationVisualizer {
 
 export interface DocumentationViewerComponentProps {
   url: string;
-  visualizer: DocumentationVisualizer;
 }
 
 const DocumentationViewerComponent: React.FC<
   DocumentationViewerComponentProps
-> = ({ url, visualizer }) => {
+> = ({ url }) => {
+  const visualizer = getSettings().documentationVisualizer;
 
   switch (visualizer) {
     case DocumentationVisualizer.SWAGGER:

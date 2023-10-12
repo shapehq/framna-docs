@@ -1,9 +1,9 @@
 import { Avatar, Box, Button } from "@mui/material";
-import { UserProviding } from "../auth/UserProviding";
+import { IUserProvider } from "../auth/IUserProvider";
 import { SIDEBAR_SPACING } from "../style/dimensions";
 
 interface UserComponentProps {
-  userProvider: UserProviding;
+  userProvider: IUserProvider;
 }
 
 const UserComponent: React.FC<UserComponentProps> = async ({

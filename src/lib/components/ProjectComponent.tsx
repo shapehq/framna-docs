@@ -1,14 +1,18 @@
+"use client";
+
 import {
+  Link,
   ListItem,
   ListItemButton,
   ListItemIcon,
   ListItemText,
 } from "@mui/material";
-import { Project } from "../projects/Project";
+import { IProject } from "../projects/IProject";
 import { Folder, FolderOpen } from "@mui/icons-material";
+import { useContext } from "react";
 
 interface ProjectComponentProps {
-  project: Project;
+  project: IProject;
   selectedProject?: boolean;
 }
 
@@ -18,7 +22,7 @@ const ProjectComponent: React.FC<ProjectComponentProps> = ({
 }) => {
   return (
     <ListItem disablePadding>
-      <ListItemButton>
+      <ListItemButton href="{`/${project.name}`}">
         <ListItemIcon>
           {selectedProject ? <FolderOpen /> : <Folder />}
         </ListItemIcon>
