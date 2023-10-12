@@ -39,9 +39,9 @@ export class DeferredGitHubClient implements IGitHubClient {
     return await gitHubClient.getTags(owner, repository)
   }
   
-  async getContent(owner: string, repository: string, path: string): Promise<IGitHubContentItem[]> {
+  async getContent(owner: string, repository: string): Promise<IGitHubContentItem[]> {
     const gitHubClient = await this.getGitHubClient()
-    return await gitHubClient.getContent(owner, repository, path)
+    return await gitHubClient.getContent(owner, repository)
   }
   
   private async getGitHubClient(): Promise<IGitHubClient> {
