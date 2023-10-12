@@ -1,4 +1,4 @@
-import { AccessTokenProviding } from "@/lib/auth/AccessTokenProviding" 
+import { IAccessTokenProvider } from "@/lib/auth/IAccessTokenProvider" 
 import { IGitHubOrganizationNameProvider } from "./IGitHubOrganizationNameProvider"
 import { IGitHubClient } from "./IGitHubClient"
 import { IGitHubBranch } from "./IGitHubBranch"
@@ -9,13 +9,13 @@ type GitHubClientFactory = (organizationName: string, accessToken: string) => IG
 
 export class DeferredGitHubClient implements IGitHubClient {
   private organizationNameProvider: IGitHubOrganizationNameProvider
-  private accessTokenProvider: AccessTokenProviding
+  private accessTokenProvider: IAccessTokenProvider
   private gitHubClientFactory: GitHubClientFactory
   private gitHubClient?: IGitHubClient
   
   constructor(
     organizationNameProvider: IGitHubOrganizationNameProvider,
-    accessTokenProvider: AccessTokenProviding,
+    accessTokenProvider: IAccessTokenProvider,
     gitHubClientFactory: GitHubClientFactory
   ) {
     this.organizationNameProvider = organizationNameProvider

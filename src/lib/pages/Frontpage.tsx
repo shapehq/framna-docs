@@ -1,9 +1,9 @@
-import { ProjectRepository } from '@/lib/projects/ProjectRepository'
-import { UserProviding } from '@/lib/auth/UserProviding'
+import { IProjectRepository } from '@/lib/projects/IProjectRepository'
+import { IUserProvider } from '@/lib/auth/IUserProvider'
 
 interface FrontpageProps {
-  userProvider: UserProviding
-  projectRepository: ProjectRepository
+  userProvider: IUserProvider
+  projectRepository: IProjectRepository
 }
 
 export default async function Frontpage(props: FrontpageProps) {

@@ -1,12 +1,12 @@
-import { AccessTokenProviding } from "./AccessTokenProviding"
-import { UserDetailsProviding } from "./UserDetailsProviding"
+import { IAccessTokenProvider } from "./IAccessTokenProvider"
+import { IUserDetailsProvider } from "./IUserDetailsProvider"
 
-export class IdentityAccessTokenProvider implements AccessTokenProviding {
-  private userDetailsProvider: UserDetailsProviding
+export class IdentityAccessTokenProvider implements IAccessTokenProvider {
+  private userDetailsProvider: IUserDetailsProvider
   private identityProvider: string
   
   constructor(
-    userDetailsProvider: UserDetailsProviding, 
+    userDetailsProvider: IUserDetailsProvider, 
     identityProvider: string
   ) {
     this.userDetailsProvider = userDetailsProvider

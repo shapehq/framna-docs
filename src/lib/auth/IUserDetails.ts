@@ -1,3 +1,3 @@
-export interface UserDetails {
+export interface IUserDetails {
   identities: {provider: string, accessToken: string}[]
 }

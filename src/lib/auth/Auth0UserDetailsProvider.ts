@@ -1,6 +1,6 @@
-import { UserProviding } from './UserProviding'
-import { UserDetails } from './UserDetails'
-import { UserDetailsProviding } from './UserDetailsProviding'
+import { IUserProvider } from './IUserProvider'
+import { IUserDetails } from './IUserDetails'
+import { IUserDetailsProvider } from './IUserDetailsProvider'
 import { ManagementClient } from 'auth0'
 
 interface Auth0UserDetailsProviderConfig {
@@ -9,16 +9,16 @@ interface Auth0UserDetailsProviderConfig {
   clientSecret: string
 }
 
-export class Auth0UserDetailsProvider implements UserDetailsProviding {
-  private userProvider: UserProviding
+export class Auth0UserDetailsProvider implements IUserDetailsProvider {
+  private userProvider: IUserProvider
   private config: Auth0UserDetailsProviderConfig
   
-  constructor(userProvider: UserProviding, config: Auth0UserDetailsProviderConfig) {
+  constructor(userProvider: IUserProvider, config: Auth0UserDetailsProviderConfig) {
     this.userProvider = userProvider
     this.config = config
   }
   
-  async getUserDetails(): Promise<UserDetails> {
+  async getUserDetails(): Promise<IUserDetails> {
     const user = await this.userProvider.getUser()
     const managementClient = new ManagementClient({
       domain: this.config.domain,

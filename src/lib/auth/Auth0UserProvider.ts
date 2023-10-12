@@ -1,9 +1,9 @@
-import { User } from './User'
-import { UserProviding } from './UserProviding'
+import { IUser } from './IUser'
+import { IUserProvider } from './IUserProvider'
 import { getSession } from '@auth0/nextjs-auth0'
 
-export class Auth0UserProvider implements UserProviding {
-  async getUser(): Promise<User> {
+export class Auth0UserProvider implements IUserProvider {
+  async getUser(): Promise<IUser> {
     const session = await getSession()
     const user = session?.user
     if (!user) {
