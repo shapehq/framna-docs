@@ -1,3 +1,3 @@
 export interface IUserDetails {
-  identities: {provider: string, accessToken: string}[]
+  readonly identities: {provider: string, accessToken: string}[]
 }

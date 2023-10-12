@@ -1,8 +1,11 @@
 import { IGitHubBranch } from "./IGitHubBranch"
 import { IGitHubClient } from "./IGitHubClient"
+import { IGitHubContentItem } from "./IGitHubContentItem"
 import { IGitHubRepository } from "./IGitHubRepository"
 import { IGitHubTag } from "./IGitHubTag"
 import { Octokit } from "octokit"
+
+type GitHubItem = {name: string, download_url: string}
 
 export class OctokitGitHubClient implements IGitHubClient {
   private organizationName: string
@@ -67,5 +70,23 @@ export class OctokitGitHubClient implements IGitHubClient {
       }))
     }
     return tags
+  }
+  
+  async getContent(owner: string, repository: string): Promise<IGitHubContentItem[]> {
+    const response = await this.octokit.rest.repos.getContent({
+      owner: owner,
+      repo: repository,
+      path: ''
+    })
+    if (!Array.isArray(response.data)) {
+      return []
+    }
+    return (response.data as GitHubItem[])
+      .map(e => {
+        return {
+          name: e.name,
+          url: e.download_url
+        }
+      })
   }
 }

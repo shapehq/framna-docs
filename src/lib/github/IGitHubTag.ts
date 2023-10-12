@@ -1,3 +1,3 @@
 export interface IGitHubTag {
-  name: string
+  readonly name: string
 }

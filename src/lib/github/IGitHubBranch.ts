@@ -1,3 +1,3 @@
 export interface IGitHubBranch {
-  name: string
+  readonly name: string
 }
