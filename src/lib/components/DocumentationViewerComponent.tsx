@@ -5,7 +5,7 @@ import RedoclyComponent from "./RedoclyComponent";
 import { getSettings } from "../utils/SettingsUtils";
 import { subscribe, unsubscribe } from "../utils/EventsUtils";
 import { Events } from "../events/BaseEvent";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useForceUpdate } from "../utils/Hooks";
 
 export enum DocumentationVisualizer {
