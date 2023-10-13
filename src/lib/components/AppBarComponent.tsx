@@ -1,23 +1,24 @@
 import { Menu } from "@mui/icons-material";
-import { AppBar, Toolbar, IconButton, Typography } from "@mui/material";
+import { AppBar, Toolbar, IconButton, Box, Divider } from "@mui/material";
 import { ReactNode } from "react";
+import Image from 'next/image';
+import ShapeLogo from "../../../public/shape2023.svg";
 
 interface AppBarComponentProps {
   drawerWidth: number;
   handleDrawerToggle: () => void;
-  title: string;
   versionSelectorComponent?: ReactNode;
 }
 
 const AppBarComponent: React.FC<AppBarComponentProps> = ({
   drawerWidth,
   handleDrawerToggle,
-  title,
   versionSelectorComponent,
 }) => {
   return (
     <AppBar
       position="fixed"
+      elevation={0}
       sx={{
         width: { sm: `calc(100% - ${drawerWidth}px)` },
         ml: { sm: `${drawerWidth}px` },
@@ -37,11 +38,19 @@ const AppBarComponent: React.FC<AppBarComponentProps> = ({
         >
           <Menu />
         </IconButton>
-        <Typography variant="h6" noWrap component="div">
-          {title}
-        </Typography>
         {versionSelectorComponent ? versionSelectorComponent : <></>}
       </Toolbar>
+      <Box style={{
+        position: "absolute",
+        width: "100%",
+        height: "100%",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center"
+      }}>
+        <Image src={ShapeLogo} alt="Shape logo" />
+      </Box>
+      <Divider/>
     </AppBar>
   );
 };
