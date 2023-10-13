@@ -1,6 +1,6 @@
 "use client";
 
-import { SelectChangeEvent, Select, MenuItem } from "@mui/material";
+import { SelectChangeEvent, Select, MenuItem, Divider } from "@mui/material";
 import { useState } from "react";
 import { IOpenApiSpecification } from "../projects/IOpenAPISpecification";
 import OpenApiSpecificationChangedEvent from "../events/OpenApiSpecificationChangedEvent";
@@ -37,12 +37,15 @@ const OpenApiSpecificationSelectorComponent: React.FC<
     >
       {openApiSpecifications.map((openApiSpecification, index) => {
         return (
-          <MenuItem
-            key={`OpenApiSpecification-${index}`}
-            value={openApiSpecification.name}
-          >
-            {openApiSpecification.name}
-          </MenuItem>
+          <>
+            <MenuItem
+              key={`OpenApiSpecification-${index}`}
+              value={openApiSpecification.name}
+            >
+              {openApiSpecification.name}
+            </MenuItem>
+            { index < openApiSpecifications.length - 1 && <Divider/> }
+          </>
         );
       })}
     </Select>
