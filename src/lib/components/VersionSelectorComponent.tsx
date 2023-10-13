@@ -35,12 +35,9 @@ const VersionSelectorComponent: React.FC<VersionSelectorComponentProps> = ({
     >
       {versions.map((version, index) => {
         return (
-          <>
-            <MenuItem key={`Version-${index}`} value={version.name}>
-              {version.name}
-            </MenuItem>
-            { index < versions.length - 1 && <Divider/> }
-          </>
+          <MenuItem key={`Version-${index}`} value={version.name}>
+            {version.name}
+          </MenuItem>
         );
       })}
     </Select>

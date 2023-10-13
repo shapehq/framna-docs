@@ -37,15 +37,12 @@ const OpenApiSpecificationSelectorComponent: React.FC<
     >
       {openApiSpecifications.map((openApiSpecification, index) => {
         return (
-          <>
-            <MenuItem
-              key={`OpenApiSpecification-${index}`}
-              value={openApiSpecification.name}
-            >
-              {openApiSpecification.name}
-            </MenuItem>
-            { index < openApiSpecifications.length - 1 && <Divider/> }
-          </>
+          <MenuItem
+            key={`OpenApiSpecification-${index}`}
+            value={openApiSpecification.name}
+          >
+            {openApiSpecification.name}
+          </MenuItem>
         );
       })}
     </Select>
