@@ -1,4 +1,4 @@
-import { List } from "@mui/material";
+import { List, Divider} from "@mui/material";
 import ProjectComponent from "./ProjectComponent";
 import { IProjectRepository } from "../projects/IProjectRepository";
 
@@ -25,11 +25,17 @@ const ProjectListComponent: React.FC<ProjectListComponentProps> = async ({
     <List
       sx={{
         overflowY: "scroll",
+        width: "100%",
         height: "100%"
       }}
     >
       {projects.map((project, index) => (
+        <div>
         <ProjectComponent project={project} key={index} />
+        {index < projects.length - 1 &&
+          <Divider />
+        }
+        </div>
       ))}
     </List>
   );
