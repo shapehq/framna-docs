@@ -1,33 +1,38 @@
+"use client";
+
 import { MenuItem, Select, SelectChangeEvent } from "@mui/material";
-import { IVersionRepository } from "../projects/IVersionRepository";
-import { IProject } from "../projects/IProject";
+import { IVersion } from "../projects/IVersion";
 import { useState } from "react";
+import { getProject, getVersion } from "../utils/UrlUtils";
+import { publish } from "../utils/EventsUtils";
+import { Events } from "../events/BaseEvent";
+import VersionChangedEvent from "../events/VersionChangedEvent";
+import { useRouter } from "next/navigation";
 
 interface VersionSelectorComponentProps {
-  versionRepository: IVersionRepository;
-  project: IProject;
+  versions: IVersion[];
+  version?: string;
 }
 
-const VersionSelectorComponent: React.FC<
-  VersionSelectorComponentProps
-> = async ({ versionRepository, project }) => {
-  const versions = await versionRepository.getVersions(project);
-  const [version, setVersion] = useState(versions[0].name);
+const VersionSelectorComponent: React.FC<VersionSelectorComponentProps> = ({
+  versions,
+  version
+}) => {
+  const router = useRouter();
 
   const handleVersionChange = (event: SelectChangeEvent) => {
-    setVersion(event.target.value);
+    const versionName = event.target.value;
+    router.push(`/${getProject()}/${versionName}`);
   };
 
   return (
-    <Select
-      labelId="demo-simple-select-label"
-      id="demo-simple-select"
-      value={version}
-      label="Age"
-      onChange={handleVersionChange}
-    >
+    <Select value={version} label="Version" onChange={handleVersionChange}>
       {versions.map((version, index) => {
-        return <MenuItem key={index} value={version.name}>{version.name}</MenuItem>;
+        return (
+          <MenuItem key={`Version-${index}`} value={version.name}>
+            {version.name}
+          </MenuItem>
+        );
       })}
     </Select>
   );

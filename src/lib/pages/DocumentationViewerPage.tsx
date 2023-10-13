@@ -2,18 +2,19 @@
 
 import { Box } from "@mui/material";
 import DocumentationViewerComponent from "../components/DocumentationViewerComponent";
+import { IOpenApiSpecification } from "../projects/IOpenApiSpecification";
 
 interface DocumentationViewerPageProps {
-  url: string;
+  openApiSpecification: IOpenApiSpecification;
 }
 
 const DocumentationViewerPage: React.FC<DocumentationViewerPageProps> = ({
-  url,
+  openApiSpecification,
 }) => {
   return (
     <Box style={{ paddingTop: '50px' }}>
       <DocumentationViewerComponent
-        url={url}
+        url={openApiSpecification.url}
       />
     </Box>
   );

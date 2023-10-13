@@ -2,15 +2,16 @@ import { Avatar, Box } from "@mui/material";
 import { IUserProvider } from "../auth/IUserProvider";
 import SettingsComponent from "./SettingsComponent"
 import { SIDEBAR_SPACING } from "../style/dimensions";
+import { IUser } from "../auth/IUser";
 
 interface UserComponentProps {
-  userProvider: IUserProvider;
+  user: IUser;
 }
 
 const UserComponent: React.FC<UserComponentProps> = async ({
-  userProvider,
+  user,
 }) => {
-  const user = await userProvider.getUser();
+  const name = user.name !== "" ? user.name : user.userName;
   
   return (
     <Box
@@ -22,8 +23,8 @@ const UserComponent: React.FC<UserComponentProps> = async ({
         marginTop: SIDEBAR_SPACING,
       }}
     >
-      <Avatar src={user.avatarURL} alt={user.name} />
-      <Box sx={{padding: "10px", flex: 1}}>{user.name}</Box>
+      <Avatar src={user.avatarURL} alt={name} />
+      <Box sx={{padding: "10px", flex: 1}}>Hi {name} 👋</Box>
       <SettingsComponent/>
     </Box>
   );

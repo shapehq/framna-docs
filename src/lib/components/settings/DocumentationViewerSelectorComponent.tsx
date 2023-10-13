@@ -2,14 +2,16 @@ import { ToggleButtonGroup, ToggleButton } from "@mui/material";
 import { useState } from "react";
 import { DocumentationVisualizer } from "../DocumentationViewerComponent";
 import { getSettings, setSettings } from "@/lib/utils/SettingsUtils";
-import Image from 'next/image'
+import Image from "next/image";
+import SettingsChangedEvent from "@/lib/events/SettingsChangeEvent";
+import { publish } from "@/lib/utils/EventsUtils";
 
 const DocumentationViewerSelectorComponent: React.FC = () => {
   const [visualizer, setVisualizer] = useState(
     getSettings().documentationVisualizer
   );
   const handleChange = (
-    _event: React.MouseEvent<HTMLElement>, 
+    _event: React.MouseEvent<HTMLElement>,
     documentationVisualizer: DocumentationVisualizer
   ) => {
     setVisualizer(documentationVisualizer);
@@ -19,6 +21,7 @@ const DocumentationViewerSelectorComponent: React.FC = () => {
         documentationVisualizer,
       })
     );
+    publish(new SettingsChangedEvent());
   };
   return (
     <ToggleButtonGroup
