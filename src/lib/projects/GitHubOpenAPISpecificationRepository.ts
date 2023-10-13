@@ -1,7 +1,7 @@
 
 import { IGitHubClient } from "@/lib/github/IGitHubClient"
 import { IGitHubVersion } from "./IGitHubVersion"
-import { IOpenApiSpecificationRepository } from "./IOpenAPISpecificationRepository"
+import { IOpenApiSpecificationRepository } from "./IOpenApiSpecificationRepository"
 import { IOpenApiSpecification } from "./IOpenApiSpecification"
 
 export class GitHubOpenApiSpecificationRepository implements IOpenApiSpecificationRepository {

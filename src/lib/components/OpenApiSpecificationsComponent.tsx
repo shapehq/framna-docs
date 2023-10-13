@@ -1,8 +1,6 @@
 import { IUser } from "../auth/IUser";
 import { IGitHubVersion } from "../projects/IGitHubVersion";
-import { IOpenApiSpecificationRepository } from "../projects/IOpenAPISpecificationRepository";
-import { IProject } from "../projects/IProject";
-import { IVersion } from "../projects/IVersion";
+import { IOpenApiSpecificationRepository } from "../projects/IOpenApiSpecificationRepository";
 import OpenApiSpecificationSelectorComponent from "./OpenApiSpecificationSelectorComponent";
 
 interface OpenApiSpecificationsComponentProps {
