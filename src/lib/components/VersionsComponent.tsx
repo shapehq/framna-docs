@@ -6,21 +6,23 @@ import VersionSelectorComponent from "./VersionSelectorComponent";
 
 interface VersionsComponentProps {
   versionRepository: IVersionRepository;
-  project: IProject;
+  projectName: string;
+  versionName?: string;
   user: IUser;
 }
 
 const VersionsComponent: React.FC<VersionsComponentProps> = async ({
   versionRepository,
-  project,
+  projectName,
+  versionName,
   user,
 }) => {
   const versions = await versionRepository.getVersions({
-    ...project,
+    name: projectName,
     owner: user.userName,
   } as IGitHubProject);
 
-  return <VersionSelectorComponent versions={versions} />;
+  return <VersionSelectorComponent versions={versions} version={versionName} />;
 };
 
 export default VersionsComponent;

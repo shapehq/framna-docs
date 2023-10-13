@@ -6,25 +6,33 @@ import { IVersion } from "../projects/IVersion";
 import OpenApiSpecificationSelectorComponent from "./OpenApiSpecificationSelectorComponent";
 
 interface OpenApiSpecificationsComponentProps {
-  version: IVersion;
-  project: IProject;
+  versionName: string;
+  projectName: string;
   user: IUser;
   openApiSpecificationRepository: IOpenApiSpecificationRepository;
+  specificationName?: string;
 }
 
 const OpenApiSpecificationsComponent: React.FC<
   OpenApiSpecificationsComponentProps
-> = async ({ version, openApiSpecificationRepository, user, project }) => {
+> = async ({
+  versionName,
+  openApiSpecificationRepository,
+  user,
+  projectName,
+  specificationName,
+}) => {
   const openApiSpecifications =
     await openApiSpecificationRepository.getOpenAPISpecifications({
       owner: user.userName,
-      repository: project.name,
-      ...version,
+      repository: projectName,
+      name: versionName,
     } as IGitHubVersion);
 
   return (
     <OpenApiSpecificationSelectorComponent
       openApiSpecifications={openApiSpecifications}
+      openAPISpecification={specificationName}
     />
   );
 };

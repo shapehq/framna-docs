@@ -1,6 +1,15 @@
+"use client";
+
 import { Menu } from "@mui/icons-material";
 import { AppBar, Toolbar, IconButton, Typography } from "@mui/material";
-import { ReactNode } from "react";
+import { ReactNode, useEffect, useState } from "react";
+import { getProject, getVersion } from "../utils/UrlUtils";
+import { Events } from "../events/BaseEvent";
+import { subscribe, unsubscribe } from "../utils/EventsUtils";
+import ProjectChangedEvent, {
+  ProjectChangedEventData,
+} from "../events/ProjectChangedEvent";
+import { VersionChangedEventData } from "../events/VersionChangedEvent";
 
 interface AppBarComponentProps {
   drawerWidth: number;

@@ -3,26 +3,30 @@
 import { MenuItem, Select, SelectChangeEvent } from "@mui/material";
 import { IVersion } from "../projects/IVersion";
 import { useState } from "react";
+import { getProject, getVersion } from "../utils/UrlUtils";
+import { publish } from "../utils/EventsUtils";
+import { Events } from "../events/BaseEvent";
+import VersionChangedEvent from "../events/VersionChangedEvent";
+import { useRouter } from "next/navigation";
 
 interface VersionSelectorComponentProps {
   versions: IVersion[];
+  version?: string;
 }
 
 const VersionSelectorComponent: React.FC<VersionSelectorComponentProps> = ({
   versions,
+  version
 }) => {
-  const [version, setVersion] = useState(versions[0].name);
+  const router = useRouter();
 
   const handleVersionChange = (event: SelectChangeEvent) => {
-    setVersion(event.target.value);
+    const versionName = event.target.value;
+    router.push(`/${getProject()}/${versionName}`);
   };
 
   return (
-    <Select
-      value={version}
-      label="Version"
-      onChange={handleVersionChange}
-    >
+    <Select value={version} label="Version" onChange={handleVersionChange}>
       {versions.map((version, index) => {
         return (
           <MenuItem key={`Version-${index}`} value={version.name}>

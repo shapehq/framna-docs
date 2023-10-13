@@ -16,71 +16,18 @@ import WelcomePage from "@/lib/pages/WelcomePage";
 import VersionsComponent from "@/lib/components/VersionsComponent";
 import OpenApiSpecificationsComponent from "@/lib/components/OpenApiSpecificationsComponent";
 import { GitHubOpenApiSpecificationRepository } from "@/lib/projects/GitHubOpenAPISpecificationRepository";
+import { projectRepository, userProvider } from "./startup";
 
 export default async function Page() {
-  const organizationNameProvider = new HardcodedGitHubOrganizationNameProvider(
-    "shapehq"
-  );
-  const userProvider = new Auth0UserProvider();
-  const userDetailsProvider = new Auth0UserDetailsProvider(userProvider, {
-    domain: process.env.AUTH0_MANAGEMENT_DOMAIN,
-    clientId: process.env.AUTH0_MANAGEMENT_CLIENT_ID,
-    clientSecret: process.env.AUTH0_MANAGEMENT_CLIENT_SECRET,
-  });
-  const accessTokenProvider = new IdentityAccessTokenProvider(
-    userDetailsProvider,
-    "github"
-  );
-  const gitHubClientFactory = (
-    accessToken: string,
-    organizationName: string
-  ) => {
-    return new OctokitGitHubClient(accessToken, organizationName);
-  };
-  const gitHubClient = new DeferredGitHubClient(
-    organizationNameProvider,
-    accessTokenProvider,
-    gitHubClientFactory
-  );
-  const projectRepository = new GitHubProjectRepository(gitHubClient);
   const user = await userProvider.getUser();
-
-  const project = {
-    name: "test-openapi",
-  };
   return (
     <App
       userComponent={<UserComponent user={user} />}
       projectListComponent={
         <ProjectListComponent projectRepository={projectRepository} />
       }
-      versionSelectorComponent={
-        <VersionsComponent
-          versionRepository={new GitHubVersionRepository(gitHubClient)}
-          project={project}
-          user={user}
-        />
-      }
-      openApiSpecificationsComponent={
-        <OpenApiSpecificationsComponent
-          openApiSpecificationRepository={
-            new GitHubOpenApiSpecificationRepository(gitHubClient)
-          }
-          project={project}
-          version={{
-            name: "main",
-          }}
-          user={user}
-        />
-      }
     >
-      {/* <WelcomePage /> */}
-      <DocumentationViewerPage
-        openApiSpecification={{
-          name: "main",
-          url: "https://raw.githubusercontent.com/shapehq/test-openapi/main/test.yaml?token=BBUWR3NJGFPDMHZYF5QQZFDFFBQAS",
-        }}
-      />
+      <WelcomePage />
     </App>
   );
 }

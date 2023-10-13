@@ -14,21 +14,7 @@ interface DocumentationViewerPageProps {
 const DocumentationViewerPage: React.FC<DocumentationViewerPageProps> = ({
   openApiSpecification,
 }) => {
-  const [url, setUrl] = useState(openApiSpecification.url);
-
-  useEffect(() => {
-    const openApiSpecificationChangedListener = (
-      event: CustomEvent<OpenApiSpecificationChangedEventData>
-    ) => {
-      setUrl(event.detail.openApiSpecification.url);
-    };
-    subscribe(Events.OPEN_API_SPECIFICATION_CHANGED, openApiSpecificationChangedListener);
-    return () => {
-      unsubscribe(Events.OPEN_API_SPECIFICATION_CHANGED, openApiSpecificationChangedListener);
-    };
-  });
-
-  return <DocumentationViewerComponent url={url} />;
+  return <DocumentationViewerComponent url={openApiSpecification.url} />;
 };
 
 export default DocumentationViewerPage;
