@@ -31,13 +31,7 @@ export class GitHubVersionRepository implements IVersionRepository {
         }
       })
       return tagVersions.concat(branchVersions).sort((a, b) => {
-        if (a.name < b.name) {
-          return -1
-        }
-        if (a.name > b.name) {
-          return 1
-        }
-        return 0
+        return a.name.localeCompare(b.name)
       })
     })
   }

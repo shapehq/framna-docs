@@ -1,4 +1,6 @@
-import { Avatar, Box, Button } from "@mui/material";
+import { Avatar, Box } from "@mui/material";
+import { IUserProvider } from "../auth/IUserProvider";
+import SettingsComponent from "./SettingsComponent"
 import { SIDEBAR_SPACING } from "../style/dimensions";
 import { IUser } from "../auth/IUser";
 
@@ -6,41 +8,24 @@ interface UserComponentProps {
   user: IUser;
 }
 
-const UserComponent: React.FC<UserComponentProps> = async ({ user }) => {
+const UserComponent: React.FC<UserComponentProps> = async ({
+  user,
+}) => {
+  const name = user.name !== "" ? user.name : user.userName;
+  
   return (
     <Box
       component="div"
       sx={{
         display: "flex",
-        flexDirection: "column",
+        flexDirection: "row",
+        alignItems: "center",
         marginTop: SIDEBAR_SPACING,
       }}
     >
-      <Box
-        component="div"
-        sx={{
-          display: "flex",
-          flexDirection: "row",
-          marginBottom: "10px",
-          "& h2": {
-            marginLeft: "10px",
-          },
-        }}
-      >
-        <Avatar src={user.avatarURL} alt={user.name} />
-        <h2>Hi {user.name !== "" ? user.name : user.userName} 👋</h2>
-      </Box>
-      <p>
-        <Button
-          variant="contained"
-          href="/api/auth/logout"
-          sx={{
-            width: "100%",
-          }}
-        >
-          Log out
-        </Button>
-      </p>
+      <Avatar src={user.avatarURL} alt={name} />
+      <Box sx={{padding: "10px", flex: 1}}>Hi {name} 👋</Box>
+      <SettingsComponent/>
     </Box>
   );
 };

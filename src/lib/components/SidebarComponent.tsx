@@ -1,22 +1,22 @@
 "use client";
 
-import { Divider, Box, Drawer, Typography } from "@mui/material";
+import { Divider, Box, Drawer, IconButton, Typography } from "@mui/material";
 import { ReactNode } from "react";
+import { LibraryBooks } from '@mui/icons-material';
 import { SIDEBAR_SPACING } from "../style/dimensions";
-import SettingsComponent from "./SettingsComponent";
 
 interface SidebarComponentProps {
   projectListComponent: ReactNode;
   userComponent: ReactNode;
   drawerWidth: number;
-  mobileOpen: boolean;
+  open: boolean;
   handleDrawerToggle: () => void;
 }
 const SidebarComponent: React.FC<SidebarComponentProps> = ({
   projectListComponent,
   userComponent,
   drawerWidth,
-  mobileOpen,
+  open,
   handleDrawerToggle,
 }) => {
   const container =
@@ -28,24 +28,30 @@ const SidebarComponent: React.FC<SidebarComponentProps> = ({
         display: "flex",
         height: "100vh",
         justifyContent: "space-between",
-        flexDirection: "column",
-        padding: SIDEBAR_SPACING,
+        flexDirection: "column"
       }}
     >
-      <Typography
-        variant="h6"
+      <Box
+        style={{
+          display: "flex",
+          flexDirection: "row",
+          alignItems: "center",
+          padding: SIDEBAR_SPACING,
+          paddingBottom: 0
+        }}
         sx={{
-          marginBottom: "10px",
+          marginBottom: "5px",
         }}
       >
-        Projects
-      </Typography>
-      <Divider />
+        <LibraryBooks style={{ marginRight: '10px' }} />
+        <Typography variant="h6">
+          Projects
+        </Typography>
+      </Box>
       {projectListComponent}
-      <Divider />
-      <SettingsComponent />
-      <Divider />
+      <Box style={{ padding: SIDEBAR_SPACING }}>
       {userComponent}
+      </Box>
     </Box>
   );
 
@@ -57,11 +63,10 @@ const SidebarComponent: React.FC<SidebarComponentProps> = ({
         flexShrink: { sm: 0 },
       }}
     >
-      {/* Mobile drawer*/}
       <Drawer
         container={container}
         variant="temporary"
-        open={mobileOpen}
+        open={open}
         onClose={handleDrawerToggle}
         ModalProps={{
           keepMounted: true, // Better open performance on mobile.

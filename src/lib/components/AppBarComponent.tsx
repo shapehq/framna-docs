@@ -1,20 +1,14 @@
 "use client";
 
 import { Menu } from "@mui/icons-material";
-import { AppBar, Toolbar, IconButton, Typography } from "@mui/material";
-import { ReactNode, useEffect, useState } from "react";
-import { getProject, getVersion } from "../utils/UrlUtils";
-import { Events } from "../events/BaseEvent";
-import { subscribe, unsubscribe } from "../utils/EventsUtils";
-import ProjectChangedEvent, {
-  ProjectChangedEventData,
-} from "../events/ProjectChangedEvent";
-import { VersionChangedEventData } from "../events/VersionChangedEvent";
+import { AppBar, Toolbar, IconButton, Box, Divider } from "@mui/material";
+import { ReactNode } from "react";
+import Image from "next/image";
+import ShapeLogo from "../../../public/shape2023.svg";
 
 interface AppBarComponentProps {
   drawerWidth: number;
   handleDrawerToggle: () => void;
-  title: string;
   versionSelectorComponent?: ReactNode;
   openApiSpecificationsComponent?: ReactNode;
 }
@@ -22,13 +16,13 @@ interface AppBarComponentProps {
 const AppBarComponent: React.FC<AppBarComponentProps> = ({
   drawerWidth,
   handleDrawerToggle,
-  title,
   versionSelectorComponent,
   openApiSpecificationsComponent,
 }) => {
   return (
     <AppBar
       position="fixed"
+      elevation={0}
       sx={{
         width: { sm: `calc(100% - ${drawerWidth}px)` },
         ml: { sm: `${drawerWidth}px` },
@@ -48,12 +42,22 @@ const AppBarComponent: React.FC<AppBarComponentProps> = ({
         >
           <Menu />
         </IconButton>
-        <Typography variant="h6" noWrap component="div">
-          {title}
-        </Typography>
+      </Toolbar>
+      <Box
+        style={{
+          position: "absolute",
+          width: "100%",
+          height: "100%",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
+        <Image src={ShapeLogo} alt="Shape logo" />
         {versionSelectorComponent ?? <></>}
         {openApiSpecificationsComponent ?? <></>}
-      </Toolbar>
+      </Box>
+      <Divider />
     </AppBar>
   );
 };

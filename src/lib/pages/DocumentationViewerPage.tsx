@@ -1,11 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { Box } from "@mui/material";
 import DocumentationViewerComponent from "../components/DocumentationViewerComponent";
-import { Events } from "../events/BaseEvent";
 import { IOpenApiSpecification } from "../projects/IOpenApiSpecification";
-import { subscribe, unsubscribe } from "../utils/EventsUtils";
-import { OpenApiSpecificationChangedEventData } from "../events/OpenApiSpecificationChangedEvent";
 
 interface DocumentationViewerPageProps {
   openApiSpecification: IOpenApiSpecification;
@@ -14,7 +11,13 @@ interface DocumentationViewerPageProps {
 const DocumentationViewerPage: React.FC<DocumentationViewerPageProps> = ({
   openApiSpecification,
 }) => {
-  return <DocumentationViewerComponent url={openApiSpecification.url} />;
+  return (
+    <Box style={{ paddingTop: '50px' }}>
+      <DocumentationViewerComponent
+        url={openApiSpecification.url}
+      />
+    </Box>
+  );
 };
 
 export default DocumentationViewerPage;

@@ -1,17 +1,17 @@
-import { SelectChangeEvent, Select, MenuItem } from "@mui/material";
+import { ToggleButtonGroup, ToggleButton } from "@mui/material";
 import { useState } from "react";
 import { DocumentationVisualizer } from "../DocumentationViewerComponent";
 import { getSettings, setSettings } from "@/lib/utils/SettingsUtils";
+import Image from 'next/image'
 
 const DocumentationViewerSelectorComponent: React.FC = () => {
   const [visualizer, setVisualizer] = useState(
     getSettings().documentationVisualizer
   );
-
-  const handleChange = (event: SelectChangeEvent) => {
-    const documentationVisualizer = parseInt(
-      event.target.value
-    ) as DocumentationVisualizer;
+  const handleChange = (
+    _event: React.MouseEvent<HTMLElement>, 
+    documentationVisualizer: DocumentationVisualizer
+  ) => {
     setVisualizer(documentationVisualizer);
     setTimeout(() =>
       setSettings({
@@ -20,20 +20,21 @@ const DocumentationViewerSelectorComponent: React.FC = () => {
       })
     );
   };
-
   return (
-    <Select
+    <ToggleButtonGroup
+      exclusive
       value={visualizer.toString()}
-      label="Visualizer"
       onChange={handleChange}
+      fullWidth={true}
+      color="secondary"
     >
-      <MenuItem value={DocumentationVisualizer.SWAGGER.toString()}>
-        Swagger
-      </MenuItem>
-      <MenuItem value={DocumentationVisualizer.REDOCLY.toString()}>
-        Redocly
-      </MenuItem>
-    </Select>
+      <ToggleButton value={DocumentationVisualizer.SWAGGER.toString()}>
+        <Image src="/swagger.png" alt="Swagger" width={24} height={24} />
+      </ToggleButton>
+      <ToggleButton value={DocumentationVisualizer.REDOCLY.toString()}>
+        <Image src="/redocly.png" alt="Redocly" width={24} height={24} />
+      </ToggleButton>
+    </ToggleButtonGroup>
   );
 };
 

@@ -17,6 +17,11 @@ AUTH0_CLIENT_SECRET='Your client secret'
 AUTH0_MANAGEMENT_DOMAIN='shape-docs-dev.eu.auth0.com'
 AUTH0_MANAGEMENT_CLIENT_ID='Your client ID'
 AUTH0_MANAGEMENT_CLIENT_SECRET='Your client secret'
+GITHUB_CLIENT_ID='GitHub App client ID'
+GITHUB_CLIENT_SECRET='GitHub App client secret'
+GITHUB_APP_ID='the GitHub App id'
+GITHUB_PRIVATE_KEY_BASE_64='base 64 encoded version of the private key'
+GITHUB_WEBHOOK_SECRET='preshared secret also put in app conf in GitHub'
 ```
 
 Note that you need the following two Auth0 apps.
