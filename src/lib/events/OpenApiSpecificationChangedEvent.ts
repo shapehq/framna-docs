@@ -1,4 +1,4 @@
-import { IOpenApiSpecification } from "../projects/IOpenApiSpecification";
+import { IOpenApiSpecification } from "../projects/IOpenAPISpecification";
 import BaseEvent, { Events } from "./BaseEvent";
 
 export interface OpenApiSpecificationChangedEventData {

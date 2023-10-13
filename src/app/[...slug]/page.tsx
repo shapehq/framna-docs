@@ -11,9 +11,8 @@ import App from "@/lib/pages/App";
 import OpenApiSpecificationsComponent from "@/lib/components/OpenApiSpecificationsComponent";
 import VersionsComponent from "@/lib/components/VersionsComponent";
 import { getProject, getSpecification, getVersion } from "@/lib/utils/UrlUtils";
-import { IOpenApiSpecification } from "@/lib/projects/IOpenApiSpecification";
+import { IOpenApiSpecification } from "@/lib/projects/IOpenAPISpecification";
 import WelcomePage from "@/lib/pages/WelcomePage";
-import { type } from "os";
 
 export default async function Page({
   params,

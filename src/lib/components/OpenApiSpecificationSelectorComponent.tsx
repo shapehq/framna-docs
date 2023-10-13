@@ -2,7 +2,7 @@
 
 import { SelectChangeEvent, Select, MenuItem } from "@mui/material";
 import { useState } from "react";
-import { IOpenApiSpecification } from "../projects/IOpenApiSpecification";
+import { IOpenApiSpecification } from "../projects/IOpenAPISpecification";
 import OpenApiSpecificationChangedEvent from "../events/OpenApiSpecificationChangedEvent";
 import { publish } from "../utils/EventsUtils";
 import { getProject, getSpecification, getVersion } from "../utils/UrlUtils";
@@ -24,9 +24,7 @@ const OpenApiSpecificationSelectorComponent: React.FC<
     const openApiSpecification = openApiSpecifications.find(
       (x) => x.name === openApiSpecificationName
     );
-    router.push(
-      `/${getProject()}/${getVersion()}/${openApiSpecificationName}`
-    );
+    router.push(`/${getProject()}/${getVersion()}/${openApiSpecificationName}`);
   };
 
   return (

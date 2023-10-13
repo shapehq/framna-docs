@@ -1,4 +1,4 @@
-import { IOpenApiSpecification } from "./IOpenApiSpecification"
+import { IOpenApiSpecification } from "./IOpenAPISpecification"
 import { IVersion } from "./IVersion"
 
 export interface IOpenApiSpecificationRepository {

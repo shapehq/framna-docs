@@ -5,7 +5,7 @@ import { DeferredGitHubClient } from "@/lib/github/DeferredGitHubClient";
 import { HardcodedGitHubOrganizationNameProvider } from "@/lib/github/HardcodedGitHubOrganizationNameProvider";
 import { OctokitGitHubClient } from "@/lib/github/OctokitGitHubClient";
 import { AxiosNetworkClient } from "@/lib/networking/AxiosNetworkClient";
-import { GitHubOpenApiSpecificationRepository } from "@/lib/projects/GitHubOpenApiSpecificationRepository";
+import { GitHubOpenApiSpecificationRepository } from "@/lib/projects/GitHubOpenAPISpecificationRepository";
 import { GitHubProjectRepository } from "@/lib/projects/GitHubProjectRepository";
 import { GitHubVersionRepository } from "@/lib/projects/GitHubVersionRepository";
 
