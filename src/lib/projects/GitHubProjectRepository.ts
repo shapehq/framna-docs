@@ -35,7 +35,8 @@ export class GitHubProjectRepository implements IProjectRepository {
       return {
         name: defaultName,
         repository: repository.name,
-        owner: repository.owner
+        owner: repository.owner,
+        defaultBranch: repository.defaultBranch
       }
     }
     const configResponse: INetworkResponse<string> = await this.networkClient.get({
@@ -51,7 +52,8 @@ export class GitHubProjectRepository implements IProjectRepository {
       name: config.name || defaultName,
       image: imageURL,
       repository: repository.name,
-      owner: repository.owner
+      owner: repository.owner,
+      defaultBranch: repository.defaultBranch
     }
   }
   

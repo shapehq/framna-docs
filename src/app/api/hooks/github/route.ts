@@ -17,7 +17,8 @@ const privateKey = Buffer.from(GITHUB_PRIVATE_KEY_BASE_64!!, 'base64').toString(
 // we will only add comments in these repos for now
 const repositoryWhitelist = [
     'example-openapi',
-    'test-openapi'
+    'test-openapi',
+    'moonboon-openapi'
 ]
 
 const webhooks = new Webhooks({ secret: GITHUB_WEBHOOK_SECRET!! })

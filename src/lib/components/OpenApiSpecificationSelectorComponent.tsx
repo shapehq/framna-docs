@@ -1,6 +1,6 @@
 "use client";
 
-import { SelectChangeEvent, Select, MenuItem } from "@mui/material";
+import { SelectChangeEvent, Select, MenuItem, Divider } from "@mui/material";
 import { useState } from "react";
 import { IOpenApiSpecification } from "../projects/IOpenAPISpecification";
 import OpenApiSpecificationChangedEvent from "../events/OpenApiSpecificationChangedEvent";
@@ -40,6 +40,8 @@ const OpenApiSpecificationSelectorComponent: React.FC<
       value={openAPISpecification}
       label="Open API Specification"
       onChange={handleVersionChange}
+      sx={{ boxShadow: 'none', '.MuiOutlinedInput-notchedOutline': { border: 0 } }}
+      autoWidth
     >
       {openApiSpecifications.map((openApiSpecification, index) => {
         return (

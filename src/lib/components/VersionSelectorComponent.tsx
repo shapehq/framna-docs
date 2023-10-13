@@ -1,6 +1,6 @@
 "use client";
 
-import { MenuItem, Select, SelectChangeEvent } from "@mui/material";
+import { MenuItem, Select, SelectChangeEvent, Divider } from "@mui/material";
 import { IVersion } from "../projects/IVersion";
 import { useState } from "react";
 import { getProject, getVersion } from "../utils/UrlUtils";
@@ -34,7 +34,13 @@ const VersionSelectorComponent: React.FC<VersionSelectorComponentProps> = ({
   };
 
   return (
-    <Select value={version} label="Version" onChange={handleVersionChange}>
+    <Select
+      value={version} 
+      label="Version" 
+      onChange={handleVersionChange}
+      sx={{ boxShadow: 'none', '.MuiOutlinedInput-notchedOutline': { border: 0 } }}
+      autoWidth
+    >
       {versions.map((version, index) => {
         return (
           <MenuItem key={`Version-${index}`} value={version.name}>
