@@ -32,6 +32,8 @@ const OpenApiSpecificationSelectorComponent: React.FC<
       value={openAPISpecification}
       label="Open API Specification"
       onChange={handleVersionChange}
+      sx={{ boxShadow: 'none', '.MuiOutlinedInput-notchedOutline': { border: 0 } }}
+      autoWidth
     >
       {openApiSpecifications.map((openApiSpecification, index) => {
         return (
