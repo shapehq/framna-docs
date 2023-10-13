@@ -49,7 +49,7 @@ export default async function Page({
     <App
       userComponent={<UserComponent user={user} />}
       projectListComponent={
-        <ProjectListComponent projectRepository={projectRepository} />
+        <ProjectListComponent projectRepository={projectRepository} projectName={projectName}/>
       }
       {...(projectName && projectName.length > 0
         ? {

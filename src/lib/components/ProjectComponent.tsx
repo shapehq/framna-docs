@@ -1,6 +1,6 @@
 "use client";
 
-import { Avatar, ListItem, ListItemButton, ListItemText } from "@mui/material";
+import { Avatar, ListItem, ListItemButton, ListItemText, Typography } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import { IProject } from "../projects/IProject";
 import { Folder, FolderOpen } from "@mui/icons-material";
@@ -14,15 +14,14 @@ import { IGitHubProject } from "../projects/IGitHubProject";
 
 interface ProjectComponentProps {
   project: IGitHubProject;
+  selectedProject: boolean;
 }
 
-const ProjectComponent: React.FC<ProjectComponentProps> = ({ project }) => {
-  const [selectedProject, setSelectedProject] = useState(false);
+const ProjectComponent: React.FC<ProjectComponentProps> = ({ project, selectedProject }) => {
   const router = useRouter();
 
   const selectProject = () => {
     router.push(`/${project.repository.replace("-openapi", "")}`);
-    setSelectedProject(true);
   };
   const theme = useTheme();
 
@@ -47,7 +46,16 @@ const ProjectComponent: React.FC<ProjectComponentProps> = ({ project }) => {
             sx={{ width: 35, height: 35, marginRight: "10px" }}
           />
         )}
-        <ListItemText primary={project.name} />
+        {selectedProject && 
+          <ListItemText 
+            primary={
+              <Typography style={{ color: theme.palette.secondary.light, fontWeight: 'bold' }}>
+                {project.name}
+              </Typography>
+            }
+          /> 
+        }
+        {!selectedProject && <ListItemText primary={project.name} /> }
       </ListItemButton>
     </ListItem>
   );
