@@ -30,10 +30,10 @@ const ProjectListComponent: React.FC<ProjectListComponentProps> = async ({
       }}
     >
       {projects.map((project, index) => (
-        <div>
-        <ProjectComponent project={project} key={index} />
+        <div key={index}>
+        <ProjectComponent project={project} />
         {index < projects.length - 1 &&
-          <Divider />
+          <Divider/>
         }
         </div>
       ))}
