@@ -1,5 +1,6 @@
-import { Avatar, Box, Button } from "@mui/material";
+import { Avatar, Box } from "@mui/material";
 import { IUserProvider } from "../auth/IUserProvider";
+import SettingsComponent from "./SettingsComponent"
 import { SIDEBAR_SPACING } from "../style/dimensions";
 
 interface UserComponentProps {
@@ -10,41 +11,20 @@ const UserComponent: React.FC<UserComponentProps> = async ({
   userProvider,
 }) => {
   const user = await userProvider.getUser();
-
+  
   return (
     <Box
       component="div"
       sx={{
         display: "flex",
-        flexDirection: "column",
+        flexDirection: "row",
+        alignItems: "center",
         marginTop: SIDEBAR_SPACING,
       }}
     >
-      <Box
-        component="div"
-        sx={{
-          display: "flex",
-          flexDirection: "row",
-          marginBottom: "10px",
-          "& h2": {
-            marginLeft: "10px",
-          },
-        }}
-      >
-        <Avatar src={user.avatarURL} alt={user.name} />
-        <h2>Hi {user.name} 👋</h2>
-      </Box>
-      <p>
-        <Button
-          variant="contained"
-          href="/api/auth/logout"
-          sx={{
-            width: "100%"
-          }}
-        >
-          Log out
-        </Button>
-      </p>
+      <Avatar src={user.avatarURL} alt={user.name} />
+      <Box sx={{padding: "10px", flex: 1}}>{user.name}</Box>
+      <SettingsComponent/>
     </Box>
   );
 };
