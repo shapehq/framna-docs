@@ -22,17 +22,34 @@ export class GitHubVersionRepository implements IVersionRepository {
           repository: project.name,
           name: b.name
         }
+      }).sort((a, b) => {
+        return a.name.localeCompare(b.name)
       })
+      let candidateDefaultBranches = ["main", "master", "develop", "development"]
+      if (project.defaultBranch) {
+        candidateDefaultBranches.splice(0, 0, project.defaultBranch)
+      }
+      // Reverse them so the top-priority branches end up at the top of the list.
+      candidateDefaultBranches = candidateDefaultBranches.reverse()
+      // Move the top-priority branches to the top of the list.
+      for (const candidateDefaultBranch of candidateDefaultBranches) {
+        const defaultBranchIndex = branchVersions.findIndex(e => e.name === candidateDefaultBranch)
+        if (defaultBranchIndex !== -1) {
+          const defaultBranchVersion = branchVersions[defaultBranchIndex]
+          delete branchVersions[defaultBranchIndex]
+          branchVersions.splice(0, 0, defaultBranchVersion)
+        }
+      }
       const tagVersions = tags.map(t => {
         return {
           owner: project.owner,
           repository: project.name,
           name: t.name
         }
-      })
-      return tagVersions.concat(branchVersions).sort((a, b) => {
+      }).sort((a, b) => {
         return a.name.localeCompare(b.name)
       })
+      return branchVersions.concat(tagVersions)
     })
   }
 }
