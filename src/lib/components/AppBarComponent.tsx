@@ -53,24 +53,19 @@ const AppBarComponent: React.FC<AppBarComponentProps> = ({
           justifyContent: "center",
         }}
       >
-        <Image
-          src={ShapeLogo}
-          alt="Shape logo"
-          style={{
-            marginLeft: "auto",
-          }}
-        />
-        <Box
-          sx={{
-            marginLeft: "auto",
-            marginRight: "10px",
-          }}
-        >
-          {versionSelectorComponent ?? <></>}
-          {openApiSpecificationsComponent ?? <></>}
-        </Box>
+        <Image src={ShapeLogo} alt="Shape logo" />
       </Box>
       <Divider />
+      <Box
+        sx={{
+          position: "fixed",
+          right: "15px",
+          marginRight: "10px",
+        }}
+      >
+        {versionSelectorComponent ?? <></>}
+        {openApiSpecificationsComponent ?? <></>}
+      </Box>
     </AppBar>
   );
 };
