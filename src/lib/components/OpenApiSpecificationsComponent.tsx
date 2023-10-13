@@ -6,7 +6,6 @@ import OpenApiSpecificationSelectorComponent from "./OpenApiSpecificationSelecto
 interface OpenApiSpecificationsComponentProps {
   versionName: string;
   projectName: string;
-  user: IUser;
   openApiSpecificationRepository: IOpenApiSpecificationRepository;
   specificationName?: string;
 }
@@ -16,7 +15,6 @@ const OpenApiSpecificationsComponent: React.FC<
 > = async ({
   versionName,
   openApiSpecificationRepository,
-  user,
   projectName,
   specificationName,
 }) => {
@@ -31,6 +29,8 @@ const OpenApiSpecificationsComponent: React.FC<
     <OpenApiSpecificationSelectorComponent
       openApiSpecifications={openApiSpecifications}
       openAPISpecification={specificationName}
+      projectName={projectName}
+      versionName={versionName}
     />
   );
 };

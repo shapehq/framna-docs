@@ -76,7 +76,6 @@ export default async function Page({
                 projectName={projectName}
                 versionName={versionName}
                 specificationName={specificationName}
-                user={user}
               />
             ),
           }

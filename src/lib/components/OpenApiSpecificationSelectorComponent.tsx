@@ -11,20 +11,28 @@ import { useForceUpdate } from "../utils/Hooks";
 
 interface OpenApiSpecificationSelectorComponentProps {
   openApiSpecifications: IOpenApiSpecification[];
-  openAPISpecification?: string;
+  openAPISpecification?: string; 
+  versionName: string;
+  projectName: string;
 }
 
 const OpenApiSpecificationSelectorComponent: React.FC<
   OpenApiSpecificationSelectorComponentProps
-> = ({ openApiSpecifications, openAPISpecification }) => {
+> = ({ openApiSpecifications, openAPISpecification, projectName, versionName }) => {
   const router = useRouter();
+  const firstOpenAPISpecification = openApiSpecifications[0];
+  if (
+    (!openAPISpecification || openAPISpecification.length == 0) &&
+    firstOpenAPISpecification
+  ) {
+    router.push(
+      `/${projectName.replace("-openapi", "")}/${versionName}/${firstOpenAPISpecification.name}`
+    );
+  }
 
   const handleVersionChange = (event: SelectChangeEvent) => {
     const openApiSpecificationName = event.target.value;
-    const openApiSpecification = openApiSpecifications.find(
-      (x) => x.name === openApiSpecificationName
-    );
-    router.push(`/${getProject()}/${getVersion()}/${openApiSpecificationName}`);
+    router.push(`/${getProject()?.replace("-openapi", "")}/${getVersion()}/${openApiSpecificationName}`);
   };
 
   return (
