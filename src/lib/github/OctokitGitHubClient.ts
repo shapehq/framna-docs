@@ -60,7 +60,7 @@ export class OctokitGitHubClient implements IGitHubClient {
   async getTags(owner: string, repository: string): Promise<IGitHubTag[]> {
     let tags: IGitHubTag[] = []
     for await (const response of this.octokit.paginate.iterator(
-      this.octokit.rest.repos.listBranches,
+      this.octokit.rest.repos.listTags,
       {
         owner,
         repo: repository
