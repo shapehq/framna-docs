@@ -38,7 +38,7 @@ export default async function Page({
     const specifications =
       await gitHubOpenApiSpecificationRepository.getOpenAPISpecifications({
         name: versionName,
-        owner: user.userName,
+        owner: "shapehq",
         repository: projectName,
       });
     openApiSpecification = specifications.find(
