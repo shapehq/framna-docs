@@ -26,8 +26,10 @@ const ProjectComponent: React.FC<ProjectComponentProps> = ({ project, selectedPr
   const theme = useTheme();
 
   return (
-    <ListItem disablePadding>
-      <ListItemButton onClick={selectProject}>
+    <ListItem disablePadding >
+      <ListItemButton onClick={selectProject} sx={{
+        background: selectedProject ? "#0000000a" : "none",
+      }}>
         {project.image && (
           <Avatar
             src={project.image}
@@ -49,7 +51,7 @@ const ProjectComponent: React.FC<ProjectComponentProps> = ({ project, selectedPr
         {selectedProject && 
           <ListItemText 
             primary={
-              <Typography style={{ color: theme.palette.secondary.light, fontWeight: 'bold' }}>
+              <Typography style={{ fontWeight: 'bold' }}>
                 {project.name}
               </Typography>
             }
