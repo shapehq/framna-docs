@@ -19,7 +19,7 @@ const VersionsComponent: React.FC<VersionsComponentProps> = async ({
 }) => {
   const versions = await versionRepository.getVersions({
     name: projectName,
-    owner: user.userName,
+    owner: "shapehq",
   } as IGitHubProject);
 
   return <VersionSelectorComponent versions={versions} version={versionName} />;

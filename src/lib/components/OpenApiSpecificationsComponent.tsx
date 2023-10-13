@@ -24,7 +24,7 @@ const OpenApiSpecificationsComponent: React.FC<
 }) => {
   const openApiSpecifications =
     await openApiSpecificationRepository.getOpenAPISpecifications({
-      owner: user.userName,
+      owner: "shapehq",
       repository: projectName,
       name: versionName,
     } as IGitHubVersion);
