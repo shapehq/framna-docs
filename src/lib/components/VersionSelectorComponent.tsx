@@ -12,13 +12,19 @@ import { useRouter } from "next/navigation";
 interface VersionSelectorComponentProps {
   versions: IVersion[];
   version?: string;
+  projectName: string;
 }
 
 const VersionSelectorComponent: React.FC<VersionSelectorComponentProps> = ({
   versions,
-  version
+  version,
+  projectName
 }) => {
   const router = useRouter();
+  const firstVersion = versions[0];
+  if ((!version || version.length == 0) && firstVersion) {
+    router.push(`/${projectName}/${firstVersion.name}`);
+  }
 
   const handleVersionChange = (event: SelectChangeEvent) => {
     const versionName = event.target.value;

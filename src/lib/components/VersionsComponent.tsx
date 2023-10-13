@@ -22,7 +22,13 @@ const VersionsComponent: React.FC<VersionsComponentProps> = async ({
     owner: "shapehq",
   } as IGitHubProject);
 
-  return <VersionSelectorComponent versions={versions} version={versionName} />;
+  return (
+    <VersionSelectorComponent
+      versions={versions}
+      version={versionName}
+      projectName={projectName}
+    />
+  );
 };
 
 export default VersionsComponent;
