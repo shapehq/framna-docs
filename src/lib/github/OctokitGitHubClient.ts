@@ -5,7 +5,7 @@ import { IGitHubRepository } from "./IGitHubRepository"
 import { IGitHubTag } from "./IGitHubTag"
 import { Octokit } from "octokit"
 
-type GitHubItem = {name: string, download_url: string}
+type GitHubItem = {name: string, path: string, download_url: string}
 
 export class OctokitGitHubClient implements IGitHubClient {
   private organizationName: string
@@ -32,7 +32,8 @@ export class OctokitGitHubClient implements IGitHubClient {
         .map(e => {
           return {
             name: e.name,
-            owner: e.owner!.login
+            owner: e.owner!.login,
+            defaultBranch: e.default_branch
           }
         })
       )
@@ -72,19 +73,29 @@ export class OctokitGitHubClient implements IGitHubClient {
     return tags
   }
   
-  async getContent(owner: string, repository: string): Promise<IGitHubContentItem[]> {
+  async getContent(
+    owner: string,
+    repository: string,
+    ref?: string,
+    path?: string
+  ): Promise<IGitHubContentItem[]> {
     const response = await this.octokit.rest.repos.getContent({
       owner: owner,
       repo: repository,
-      path: ''
+      path: path || '',
+      ref: ref
     })
-    if (!Array.isArray(response.data)) {
-      return []
+    let items: GitHubItem[] = []
+    if (Array.isArray(response.data)) {
+      items = response.data as GitHubItem[]
+    } else {
+      items = [response.data as GitHubItem]
     }
-    return (response.data as GitHubItem[])
+    return items
       .map(e => {
         return {
           name: e.name,
+          path: e.path,
           url: e.download_url
         }
       })

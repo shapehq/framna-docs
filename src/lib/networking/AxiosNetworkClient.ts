@@ -1,10 +1,10 @@
 import axios from 'axios'
-import { NetworkClient } from './NetworkClient'
-import { NetworkResponse } from './NetworkResponse'
-import { NetworkRequest } from './NetworkRequest'
+import { INetworkClient } from './INetworkClient'
+import { INetworkResponse } from './INetworkResponse'
+import { INetworkRequest } from './INetworkRequest'
 
-export class AxiosNetworkClient implements NetworkClient {
-  async get<ResponseBody>(request: NetworkRequest): Promise<NetworkResponse<ResponseBody>> {
+export class AxiosNetworkClient implements INetworkClient {
+  async get<ResponseBody>(request: INetworkRequest): Promise<INetworkResponse<ResponseBody>> {
     return await this.send({
       method: 'get',
       url: request.url,
@@ -12,7 +12,7 @@ export class AxiosNetworkClient implements NetworkClient {
     })
   }
   
-  async post<ResponseBody>(request: NetworkRequest): Promise<NetworkResponse<ResponseBody>> {
+  async post<ResponseBody>(request: INetworkRequest): Promise<INetworkResponse<ResponseBody>> {
     return await this.send({
       method: 'post',
       url: request.url,
@@ -26,7 +26,7 @@ export class AxiosNetworkClient implements NetworkClient {
     url: string,
     headers?: {[key: string]: string},
     data?: any
-  }): Promise<NetworkResponse<ResponseBody>> {
+  }): Promise<INetworkResponse<ResponseBody>> {
     const response = await axios({
       method: request.method,
       url: request.url,

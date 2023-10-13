@@ -7,5 +7,10 @@ export interface IGitHubClient {
   getRepositories(suffix: string): Promise<IGitHubRepository[]>
   getBranches(owner: string, repository: string): Promise<IGitHubBranch[]>
   getTags(owner: string, repository: string): Promise<IGitHubTag[]>
-  getContent(owner: string, repository: string): Promise<IGitHubContentItem[]>
+  getContent(
+    owner: string,
+    repository: string,
+    ref?: string,
+    path?: string
+  ): Promise<IGitHubContentItem[]>
 }
