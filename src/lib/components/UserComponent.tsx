@@ -24,7 +24,7 @@ const UserComponent: React.FC<UserComponentProps> = async ({
       }}
     >
       <Avatar src={user.avatarURL} alt={name} />
-      <Box sx={{padding: "10px", flex: 1}}>Hi {name} 👋</Box>
+      <Box sx={{padding: "10px", flex: 1}}>{name}</Box>
       <SettingsComponent/>
     </Box>
   );
