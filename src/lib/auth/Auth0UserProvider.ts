@@ -11,8 +11,8 @@ export class Auth0UserProvider implements IUserProvider {
     }
     return {
       id: user.sub,
-      name: user.name,
-      avatarURL: user.picture 
+      name: user.name === '' ? user.nickname : user.name,
+      avatarURL: user.picture
     }
   }
 }
