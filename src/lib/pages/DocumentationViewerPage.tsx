@@ -1,7 +1,7 @@
 "use client";
 
-import DocumentationViewerComponent, {
-} from "../components/DocumentationViewerComponent";
+import { Box } from "@mui/material";
+import DocumentationViewerComponent from "../components/DocumentationViewerComponent";
 
 interface DocumentationViewerPageProps {
   url: string;
@@ -11,9 +11,11 @@ const DocumentationViewerPage: React.FC<DocumentationViewerPageProps> = ({
   url,
 }) => {
   return (
-    <DocumentationViewerComponent
-      url={url}
-    />
+    <Box style={{ paddingTop: '50px' }}>
+      <DocumentationViewerComponent
+        url={url}
+      />
+    </Box>
   );
 };
 
