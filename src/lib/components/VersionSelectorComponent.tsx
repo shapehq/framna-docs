@@ -1,12 +1,8 @@
 "use client";
 
-import { MenuItem, Select, SelectChangeEvent, Divider } from "@mui/material";
+import { MenuItem, Select, SelectChangeEvent } from "@mui/material";
 import { IVersion } from "../projects/IVersion";
-import { useState } from "react";
-import { getProject, getVersion } from "../utils/UrlUtils";
-import { publish } from "../utils/EventsUtils";
-import { Events } from "../events/BaseEvent";
-import VersionChangedEvent from "../events/VersionChangedEvent";
+import { getProject } from "../utils/UrlUtils";
 import { useRouter } from "next/navigation";
 
 interface VersionSelectorComponentProps {

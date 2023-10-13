@@ -1,13 +1,9 @@
 "use client";
 
-import { SelectChangeEvent, Select, MenuItem, Divider } from "@mui/material";
-import { useState } from "react";
+import { SelectChangeEvent, Select, MenuItem } from "@mui/material";
 import { IOpenApiSpecification } from "../projects/IOpenAPISpecification";
-import OpenApiSpecificationChangedEvent from "../events/OpenApiSpecificationChangedEvent";
-import { publish } from "../utils/EventsUtils";
-import { getProject, getSpecification, getVersion } from "../utils/UrlUtils";
+import { getProject, getVersion } from "../utils/UrlUtils";
 import { useRouter } from "next/navigation";
-import { useForceUpdate } from "../utils/Hooks";
 
 interface OpenApiSpecificationSelectorComponentProps {
   openApiSpecifications: IOpenApiSpecification[];

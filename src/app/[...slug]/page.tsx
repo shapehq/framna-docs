@@ -58,7 +58,6 @@ export default async function Page({
                 versionRepository={githubVersionRepository}
                 projectName={projectName}
                 versionName={versionName}
-                user={user}
               />
             ),
           }

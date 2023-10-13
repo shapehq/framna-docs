@@ -2,12 +2,6 @@
 
 import { Avatar, ListItem, ListItemButton, ListItemText, Typography } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
-import { IProject } from "../projects/IProject";
-import { Folder, FolderOpen } from "@mui/icons-material";
-import { getProject } from "../utils/UrlUtils";
-import { useState } from "react";
-import ProjectChangedEvent from "../events/ProjectChangedEvent";
-import { publish } from "../utils/EventsUtils";
 import { useRouter } from "next/navigation";
 import StringAvatar from "./StringAvatar";
 import { IGitHubProject } from "../projects/IGitHubProject";

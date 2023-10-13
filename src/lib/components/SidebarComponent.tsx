@@ -1,6 +1,6 @@
 "use client";
 
-import { Divider, Box, Drawer, IconButton, Typography } from "@mui/material";
+import { Box, Drawer, Typography } from "@mui/material";
 import { ReactNode } from "react";
 import { LibraryBooks } from '@mui/icons-material';
 import { SIDEBAR_SPACING } from "../style/dimensions";

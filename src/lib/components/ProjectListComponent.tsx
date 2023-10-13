@@ -2,7 +2,6 @@ import { List, Divider } from "@mui/material";
 import ProjectComponent from "./ProjectComponent";
 import { IProjectRepository } from "../projects/IProjectRepository";
 import { IGitHubProject } from "../projects/IGitHubProject";
-import { getProject } from "../utils/UrlUtils";
 
 interface ProjectListComponentProps {
   projectRepository: IProjectRepository;

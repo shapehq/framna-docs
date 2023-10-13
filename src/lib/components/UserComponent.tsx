@@ -1,5 +1,4 @@
 import { Avatar, Box } from "@mui/material";
-import { IUserProvider } from "../auth/IUserProvider";
 import SettingsComponent from "./SettingsComponent"
 import { SIDEBAR_SPACING } from "../style/dimensions";
 import { IUser } from "../auth/IUser";
