@@ -14,8 +14,6 @@ const ProjectListComponent: React.FC<ProjectListComponentProps> = async ({
   projectName
 }) => {
   const projects = (await projectRepository.getProjects()) as IGitHubProject[];
-  console.log(projects, projects)
-  console.log(projectName, projectName)
   // projects.push(...projects);
   // projects.push(...projects);
   // projects.push(...projects);

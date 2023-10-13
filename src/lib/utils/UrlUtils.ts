@@ -46,9 +46,7 @@ export function getVersion(url?: string) {
 export function getSpecification(url?: string) {
     if (typeof window !== 'undefined') {
         url = window.location.pathname
-        console.log(url, url)
     }
     const specification = getVersionAndSpecification(url).specification;
-    console.log(specification, specification)
     return specification ? decodeURI(specification) : undefined;
 }

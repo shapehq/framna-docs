@@ -32,11 +32,9 @@ const DocumentationViewerComponent: React.FC<
 
   switch (visualizer.toString()) {
     case DocumentationVisualizer.SWAGGER.toString():
-      console.log("here");
       return <SwaggerComponent url={url} />;
 
     case DocumentationVisualizer.REDOCLY.toString():
-      console.log("here2");
       return <RedoclyComponent url={url} />;
   }
 };

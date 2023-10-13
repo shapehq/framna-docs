@@ -99,7 +99,7 @@ export const POST = async (req: NextRequest): Promise<NextResponse> => {
     })
 
     webhooks.on("pull_request.opened", async ({ id, name, payload }) => {
-        console.log(`Received event ${name}#${id} with action`, payload.action)
+        console.log(`Received event ${name}#${id}`)
         if (!alreadyProcessedEvents.has(id)) {
             console.log("Processing event")
             alreadyProcessedEvents.add(id)
@@ -109,7 +109,7 @@ export const POST = async (req: NextRequest): Promise<NextResponse> => {
         }
     })
     webhooks.on("pull_request.reopened", async ({ id, name, payload }) => {
-        console.log(`Received event ${name}#${id} with action`, payload.action)
+        console.log(`Received event ${name}#${id}`)
         if (!alreadyProcessedEvents.has(id)) {
             console.log("Processing event")
             alreadyProcessedEvents.add(id)
