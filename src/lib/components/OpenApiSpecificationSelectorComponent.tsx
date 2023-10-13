@@ -26,13 +26,13 @@ const OpenApiSpecificationSelectorComponent: React.FC<
     firstOpenAPISpecification
   ) {
     router.push(
-      `/${projectName}/${versionName}/${firstOpenAPISpecification.name}`
+      `/${projectName.replace("-openapi", "")}/${versionName}/${firstOpenAPISpecification.name}`
     );
   }
 
   const handleVersionChange = (event: SelectChangeEvent) => {
     const openApiSpecificationName = event.target.value;
-    router.push(`/${getProject()}/${getVersion()}/${openApiSpecificationName}`);
+    router.push(`/${getProject()?.replace("-openapi", "")}/${getVersion()}/${openApiSpecificationName}`);
   };
 
   return (

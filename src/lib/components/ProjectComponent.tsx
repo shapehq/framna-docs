@@ -21,7 +21,7 @@ const ProjectComponent: React.FC<ProjectComponentProps> = ({ project }) => {
   const router = useRouter();
 
   const selectProject = () => {
-    router.push(`/${project.repository}`);
+    router.push(`/${project.repository.replace("-openapi", "")}`);
     setSelectedProject(true);
   };
   const theme = useTheme();

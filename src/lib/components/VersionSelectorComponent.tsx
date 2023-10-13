@@ -18,17 +18,19 @@ interface VersionSelectorComponentProps {
 const VersionSelectorComponent: React.FC<VersionSelectorComponentProps> = ({
   versions,
   version,
-  projectName
+  projectName,
 }) => {
   const router = useRouter();
   const firstVersion = versions[0];
   if ((!version || version.length == 0) && firstVersion) {
-    router.push(`/${projectName}/${firstVersion.name}`);
+    router.push(
+      `/${projectName?.replace("-openapi", "")}/${firstVersion.name}`
+    );
   }
 
   const handleVersionChange = (event: SelectChangeEvent) => {
     const versionName = event.target.value;
-    router.push(`/${getProject()}/${versionName}`);
+    router.push(`/${getProject()?.replace("-openapi", "")}/${versionName}`);
   };
 
   return (
