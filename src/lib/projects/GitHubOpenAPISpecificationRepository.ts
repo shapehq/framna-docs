@@ -12,7 +12,7 @@ export class GitHubOpenApiSpecificationRepository implements IOpenApiSpecificati
   }
 
   async getOpenAPISpecifications(version: IGitHubVersion): Promise<IOpenApiSpecification[]> {
-    const content = await this.gitHubClient.getContent(version.owner, version.repository)
+    const content = await this.gitHubClient.getContent(version.owner, version.repository, version.name)
     return content.filter(e => {
       return this.isOpenAPISpecification(e.name)
     })
