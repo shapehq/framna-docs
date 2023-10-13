@@ -4,14 +4,15 @@ export function getProject(url?: string) {
     }
     url = url?.substring(1);// remove first slash
     const firstSlash = url?.indexOf('/');
+    let project = url ? decodeURI(url) : undefined
     if (firstSlash != -1 && url) {
-        return decodeURI(url.substring(0, firstSlash));
+        project = decodeURI(url.substring(0, firstSlash));
     }
-    return url ? decodeURI(url) : undefined;
+    return project ? project + "-openapi" : project;
 }
 
 function getVersionAndSpecification(url?: string) {
-    const project = getProject(url);
+    const project = getProject(url)?.replace('-openapi', '');
     if (url && project) {
         const versionAndSpecification = url.substring(project.length + 2)// remove first slash
         let specification: string | undefined = undefined;

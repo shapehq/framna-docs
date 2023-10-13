@@ -22,7 +22,7 @@ const VersionSelectorComponent: React.FC<VersionSelectorComponentProps> = ({
 
   const handleVersionChange = (event: SelectChangeEvent) => {
     const versionName = event.target.value;
-    router.push(`/${getProject()}/${versionName}`);
+    router.push(`/${getProject()!.replace("-openapi", "")}/${versionName}`);
   };
 
   return (

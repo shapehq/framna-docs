@@ -24,7 +24,7 @@ const OpenApiSpecificationSelectorComponent: React.FC<
     const openApiSpecification = openApiSpecifications.find(
       (x) => x.name === openApiSpecificationName
     );
-    router.push(`/${getProject()}/${getVersion()}/${openApiSpecificationName}`);
+    router.push(`/${getProject()?.replace("-openapi", "")}/${getVersion()}/${openApiSpecificationName}`);
   };
 
   return (
