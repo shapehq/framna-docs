@@ -23,6 +23,10 @@ const ProjectListComponent: React.FC<ProjectListComponentProps> = async ({
   // projects.push(...projects);
   // projects.push(...projects);
   // projects.push(...projects);
+  
+  const isSelected = (project: IGitHubProject) => {
+    return projectName == project.repository
+  }
 
   return (
     <List
@@ -34,8 +38,9 @@ const ProjectListComponent: React.FC<ProjectListComponentProps> = async ({
     >
       {projects.map((project, index) => (
         <div key={index}>
-          <ProjectComponent project={project} selectedProject={projectName == project.repository} />
-          {index < projects.length - 1 && <Divider />}
+          {(index == 0 && isSelected(project)) && <Divider />}
+          <ProjectComponent project={project} selectedProject={isSelected(project)} />
+          {(index < projects.length - 1 || isSelected(project)) && <Divider />}
         </div>
       ))}
     </List>
