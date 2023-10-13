@@ -25,7 +25,8 @@
     "react-dom": "^18.2.0",
     "redoc": "^2.1.2",
     "styled-components": "^6.0.8",
-    "swagger-ui-react": "^5.9.0"
+    "swagger-ui-react": "^5.9.0",
+    "yaml": "^2.3.2"
   },
   "devDependencies": {
     "@types/jest": "^29.5.5",

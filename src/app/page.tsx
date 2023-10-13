@@ -13,6 +13,7 @@ import { OctokitGitHubClient } from "@/lib/github/OctokitGitHubClient";
 import VersionSelectorComponent from "@/lib/components/VersionSelectorComponent";
 import { GitHubVersionRepository } from "@/lib/projects/GitHubVersionRepository";
 import WelcomePage from "@/lib/pages/WelcomePage";
+import { AxiosNetworkClient } from "@/lib/networking/AxiosNetworkClient"
 
 export default async function Page() {
   const organizationNameProvider = new HardcodedGitHubOrganizationNameProvider(
@@ -41,7 +42,8 @@ export default async function Page() {
     accessTokenProvider,
     gitHubClientFactory
   );
-  const projectRepository = new GitHubProjectRepository(gitHubClient);
+  const networkClient = new AxiosNetworkClient()
+  const projectRepository = new GitHubProjectRepository(gitHubClient, networkClient);
   const userProvider = new Auth0UserProvider();
 
   return (
