@@ -27,14 +27,6 @@ export default function ProjectsPage(
   )
   return (
     <SidebarContainer
-      primaryHeader={
-        <Stack direction="row" alignItems="center" spacing={1}>
-          <LibraryBooks/>
-          <Typography variant="h6">
-            Projects
-          </Typography>
-        </Stack>
-      }
       primary={
         <ProjectList
           isLoading={isLoading}
