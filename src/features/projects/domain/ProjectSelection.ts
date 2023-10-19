@@ -30,6 +30,10 @@ export function getProjectSelection(
   if (isLoading) {
     return { state: ProjectSelectionState.LOADING }
   }
+  if (!selectedProjectId && projects.length == 1) {
+    // If no project is selected and the user only has a single project then we select that.
+    selectedProjectId = projects[0].id
+  }
   if (!selectedProjectId) {
     return { state: ProjectSelectionState.NO_PROJECT_SELECTED }
   }
