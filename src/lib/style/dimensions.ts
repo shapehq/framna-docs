@@ -1,1 +1,0 @@
-export const SIDEBAR_SPACING = "15px";

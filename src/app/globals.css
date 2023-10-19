@@ -15,9 +15,14 @@
   }
 }
 
-body {
+html, body {
   color: rgb(var(--foreground-rgb));
   background: rgb(var(--background-rgb));
+  height: 100%;
+}
+
+body {
+  overflow-y: scroll;
 }
 
 a {
@@ -26,4 +31,12 @@ a {
 
 a:hover {
   text-decoration: underline;
+}
+
+.disable-text-selection {
+   -moz-user-select: none;
+   -webkit-user-select: none;
+   -ms-user-select: none;
+   user-select: none;
+   cursor: default;
 }
