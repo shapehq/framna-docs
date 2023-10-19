@@ -4,8 +4,12 @@ import { blue } from "@mui/material/colors"
 const theme = (_prefersDarkMode: boolean) => createTheme({
   palette: {
     mode: "light",
-    primary: blue,
-    secondary: blue
+    primary: {
+      main: blue[700]
+    },
+    secondary: {
+      main: blue[700]
+    }
   },
   typography: {
     button: {
