@@ -6,42 +6,39 @@ import ProjectAvatar from "./ProjectAvatar"
 interface ProjectListItemProps<ProjectType extends IProject> {
   readonly project: ProjectType
   readonly isSelected: boolean
-  readonly divider?: boolean
 }
 
 const ProjectListItem = <ProjectType extends IProject>(
   {
     project,
-    isSelected,
-    divider
+    isSelected
   }: ProjectListItemProps<ProjectType>
 ) => {
   const router = useRouter()
   return (
-    <ListItem disablePadding divider={divider || false}>
+    <ListItem disablePadding>
       <ListItemButton
         onClick={() => router.push(`/${project.id}`)}
         selected={isSelected}
         sx={{
-          background: isSelected ? "#0000000a" : "none",
           paddingLeft: "15px",
           paddingRight: "15px",
-          paddingTop: "10px",
-          paddingBottom: "10px"
+          paddingTop: "15px",
+          paddingBottom: "15px"
         }}
         disableGutters
       >
         <ProjectAvatar
           project={project}
           sx={{
-            width: 35,
-            height: 35,
-            marginRight: "10px"
+            width: 40,
+            height: 40,
+            marginRight: "12px"
           }}
         />
         <ListItemText
           primary={
-            <Typography style={{ fontWeight: isSelected ? "bold" : "normal" }}>
+            <Typography variant="h6" style={{ fontWeight: isSelected ? "bold" : "normal" }}>
               {project.name}
             </Typography>
           }

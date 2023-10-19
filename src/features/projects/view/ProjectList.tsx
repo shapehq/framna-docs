@@ -35,7 +35,6 @@ const ProjectList = <ProjectType extends IProject>(
           key={project.id}
           project={project}
           isSelected={project.id === selectedProjectId}
-          divider={index < projects.length - 1}
         />
       ))}
     </List>
