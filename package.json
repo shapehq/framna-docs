@@ -2,6 +2,10 @@
   "name": "shape-docs",
   "version": "0.1.0",
   "private": true,
+  "engines": {
+    "node": "20.8.1",
+    "npm": "10.1.0"
+  },
   "scripts": {
     "dev": "next dev",
     "build": "next build",
