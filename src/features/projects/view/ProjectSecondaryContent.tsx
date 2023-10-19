@@ -1,7 +1,6 @@
 "use client"
 
 import ProjectSelection, { ProjectSelectionState } from "../domain/ProjectSelection"
-import WelcomePage from "@/features/welcome/views/WelcomePage"
 import DocumentationViewer from "./docs/DocumentationViewer"
 import ProjectErrorContent from "./ProjectErrorContent"
 
@@ -10,9 +9,8 @@ export default function ProjectSecondaryContent(
 ) {
   switch (projectSelection.state) {
   case ProjectSelectionState.LOADING:
-    return <WelcomePage/>
   case ProjectSelectionState.NO_PROJECT_SELECTED:
-    return <WelcomePage/>
+    return <></>
   case ProjectSelectionState.HAS_SELECTION:
     return <DocumentationViewer url={projectSelection.selection!.specification.url}/>
   case ProjectSelectionState.PROJECT_NOT_FOUND:
