@@ -30,7 +30,7 @@ const ProjectList = <ProjectType extends IProject>(
           />
         ))
       }
-      {!isLoading && projects.map((project, index) => (
+      {!isLoading && projects.map(project => (
         <ProjectListItem
           key={project.id}
           project={project}
