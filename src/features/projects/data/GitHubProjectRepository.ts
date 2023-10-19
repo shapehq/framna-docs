@@ -162,7 +162,8 @@ export default class GitHubProjectRepository implements IProjectRepository<IProj
           repository,
           item.name,
           ref.name
-        )
+        ),
+        editURL: `https://github.com/${owner}/${repository}/edit/${ref.name}/${item.name}`
       }
     })
     .filter((e: IOpenApiSpecification | null) => {

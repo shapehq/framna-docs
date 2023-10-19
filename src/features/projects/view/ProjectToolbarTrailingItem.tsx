@@ -1,18 +1,19 @@
 "use client"
 
 import { useRouter } from "next/navigation"
-import { Stack } from "@mui/material"
+import { Stack, IconButton } from "@mui/material"
 import ProjectSelection, { ProjectSelectionState } from "../domain/ProjectSelection"
 import VersionSelector from "./docs/VersionSelector"
 import SpecificationSelector from "./docs/SpecificationSelector"
+import EditIcon from "@mui/icons-material/Edit"
 
 export default function ProjectToolbarTrailingItem(
   { projectSelection }: { projectSelection: ProjectSelection }
 ) {
   const router = useRouter()
+  const currentSelection = projectSelection.selection!
   const onSelectVersion = (versionId: string) => {
     // Let's see if we can find a specification with the same name.
-    const currentSelection = projectSelection.selection!
     const newVersion = currentSelection.project.versions.find(e => {
       return e.id == versionId
     })
@@ -30,23 +31,25 @@ export default function ProjectToolbarTrailingItem(
     }
   }
   const onSelectSpecification = (specificationId: string) => {
-    const currentSelection = projectSelection.selection!
     router.push(`/${currentSelection.project.id}/${currentSelection.version.id}/${specificationId}`)
   }
   switch (projectSelection.state) {
   case ProjectSelectionState.HAS_SELECTION:
     return (
-      <Stack direction="row">
+      <Stack direction="row" alignItems="center">
         <VersionSelector
-          versions={projectSelection.selection!.project.versions}
-          selection={projectSelection.selection!.version.id}
+          versions={currentSelection.project.versions}
+          selection={currentSelection.version.id}
           onSelect={onSelectVersion}
         />
         <SpecificationSelector
-          specifications={projectSelection.selection!.version.specifications}
-          selection={projectSelection.selection!.specification.id}
+          specifications={currentSelection.version.specifications}
+          selection={currentSelection.specification.id}
           onSelect={onSelectSpecification}
         />
+        <IconButton href={currentSelection.specification.editURL} target="_blank" >
+          <EditIcon />
+        </IconButton>
       </Stack>
     )
   case ProjectSelectionState.LOADING:
