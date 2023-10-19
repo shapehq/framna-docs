@@ -1,5 +1,6 @@
 "use client"
 
+import { useRouter } from "next/navigation"
 import SidebarContainer from "@/common/SidebarContainer"
 import ProjectList from "./ProjectList"
 import ProjectSecondaryContent from "./ProjectSecondaryContent"
@@ -16,6 +17,7 @@ interface ProjectsPageProps {
 export default function ProjectsPage(
   { projectId, versionId, specificationId }: ProjectsPageProps
 ) {
+  const router = useRouter()
   const { projects, isLoading } = useProjects()
   const projectSelection = getProjectSelection(
     isLoading,
@@ -24,13 +26,24 @@ export default function ProjectsPage(
     versionId,
     specificationId
   )
+  // Ensure the URL reflects the current selection of project, version, and specification.
+  const currentSelection = projectSelection.selection
+  if (currentSelection != null && (
+    currentSelection?.project.id != projectId ||
+    currentSelection?.version.id != versionId ||
+    currentSelection?.specification.id != specificationId
+  )) {
+    router.replace(
+      `/${currentSelection.project.id}/${currentSelection.version.id}/${currentSelection.specification.id}`
+    )
+  }
   return (
     <SidebarContainer
       primary={
         <ProjectList
           isLoading={isLoading}
           projects={projects}
-          selectedProjectId={projectSelection.selection?.project.id}
+          selectedProjectId={currentSelection?.project.id}
         />
       }
       secondary={
