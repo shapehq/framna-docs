@@ -17,7 +17,7 @@ const UserListItem: React.FC<{
         display: "flex",
         flexDirection: "row",
         alignItems: "center",
-        marginTop: 15
+        padding: "15px"
       }}
     >
       {!isLoading && user && user.picture && 

@@ -10,10 +10,10 @@ const SidebarContent: React.FC<{
 }) => {
   return (
     <>
-      {children}
-      <Box style={{ padding: 15 }}>
-        <UserListItem secondaryItem={<SettingsButton/>} />
+      <Box sx={{ overflow: "auto", flex: 1 }}>
+        {children}
       </Box>
+      <UserListItem secondaryItem={<SettingsButton/>} />
     </>
   )
 }
