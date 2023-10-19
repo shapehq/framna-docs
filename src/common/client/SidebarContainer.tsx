@@ -14,6 +14,7 @@ const Main = styled("main", { shouldForwardProp: (prop) => prop !== "open" })<{
   display: "flex",
   flexDirection: "column",
   flexGrow: 1,
+  overflowY: "auto",
   transition: theme.transitions.create("margin", {
     easing: theme.transitions.easing.sharp,
     duration: theme.transitions.duration.leavingScreen,
@@ -153,8 +154,10 @@ const SidebarContainer: React.FC<SidebarContainerProps> = ({
         {primary}
       </Drawer>
       <Main open={open}>
-        <Toolbar />
-        {secondary}
+        <Toolbar/>
+        <Box sx={{ overflowY: "scroll" }}>
+          {secondary}
+        </Box>
       </Main>
     </Box>
   )
