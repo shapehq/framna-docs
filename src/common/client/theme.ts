@@ -1,14 +1,22 @@
 import { createTheme } from "@mui/material/styles"
-import { blue } from '@mui/material/colors'
+import { blue } from "@mui/material/colors"
 
-const theme = createTheme({
+const theme = (_prefersDarkMode: boolean) => createTheme({
   palette: {
+    mode: "light",
     primary: blue,
-    secondary: blue,
+    secondary: blue
   },
   typography: {
     button: {
       textTransform: "none"
+    }
+  },
+  components: {
+    MuiButtonBase: {
+      defaultProps: {
+        disableRipple: true
+      }
     }
   }
 })

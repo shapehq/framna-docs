@@ -7,12 +7,13 @@ import { CacheProvider } from "@emotion/react"
 import { ThemeProvider } from "@mui/material/styles"
 import CssBaseline from "@mui/material/CssBaseline"
 import theme from "./theme"
+import useMediaQuery from "@mui/material/useMediaQuery"
 
 // This implementation is from emotion-js
 // https://github.com/emotion-js/emotion/issues/2928#issuecomment-1319747902
 export default function ThemeRegistry(props: any) {
   const { options, children } = props;
-
+  const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)');
   const [{ cache, flush }] = useState(() => {
     const cache = createCache(options);
     cache.compat = true;
@@ -55,7 +56,7 @@ export default function ThemeRegistry(props: any) {
 
   return (
     <CacheProvider value={cache}>
-      <ThemeProvider theme={theme}>
+      <ThemeProvider theme={theme(prefersDarkMode)}>
         <CssBaseline />
         {children}
       </ThemeProvider>

@@ -2,41 +2,10 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --foreground-rgb: 0, 0, 0;
-  --background-rgb: 255, 255, 255;
-  --primary-tint: 255, 77, 91;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --foreground-rgb: 255, 255, 255;
-    --background-rgb: 0, 0, 0;
-  }
-}
-
 html, body {
-  color: rgb(var(--foreground-rgb));
-  background: rgb(var(--background-rgb));
   height: 100%;
 }
 
 body {
   overflow-y: scroll;
-}
-
-a {
-  color: rgb(var(--primary-tint));
-}
-
-a:hover {
-  text-decoration: underline;
-}
-
-.disable-text-selection {
-   -moz-user-select: none;
-   -webkit-user-select: none;
-   -ms-user-select: none;
-   user-select: none;
-   cursor: default;
 }
