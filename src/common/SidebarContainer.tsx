@@ -19,7 +19,7 @@ const SidebarContainer: React.FC<SidebarContainerProps> = ({
     <ClientSidebarContainer
       primaryHeader={
         <Stack direction="row" alignItems="center" spacing={1}>
-          <Image src="/duck.png" alt="Duck" width={40} height={45}/>
+          <Image src="/duck.png" alt="Duck" width={40} height={45} priority={true}/>
         </Stack>
       }
       primary={
