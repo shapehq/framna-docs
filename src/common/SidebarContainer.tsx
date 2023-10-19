@@ -1,15 +1,19 @@
 import { ReactNode } from "react"
+import Image from "next/image"
+import { Box, Stack } from "@mui/material"
 import ClientSidebarContainer from "./client/SidebarContainer"
 import SidebarContent from "./SidebarContent"
 
 interface SidebarContainerProps {
   readonly primary: ReactNode
   readonly secondary: ReactNode
+  readonly toolbarTrailing?: ReactNode
 }
 
 const SidebarContainer: React.FC<SidebarContainerProps> = ({
   primary,
-  secondary
+  secondary,
+  toolbarTrailing
 }) => {
   return (
     <ClientSidebarContainer
@@ -23,7 +27,19 @@ const SidebarContainer: React.FC<SidebarContainerProps> = ({
           {primary}
         </SidebarContent>
       }
-      secondaryHeader={<LogoHeaderOverlay/>}
+      secondaryHeader={
+        <>
+          {toolbarTrailing != undefined && 
+            <Box sx={{ 
+              display: "flex",
+              width: "100%",
+              justifyContent: "right"
+            }}>
+              {toolbarTrailing}
+            </Box>
+          }
+        </>
+      }
       secondary={secondary}
     />
   )

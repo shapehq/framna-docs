@@ -1,41 +1,32 @@
-"use client";
+"use client"
 
-import { useRouter } from "next/navigation"
-import { MenuItem, Select, SelectChangeEvent } from "@mui/material"
+import { Select, MenuItem, SelectChangeEvent, FormControl } from "@mui/material"
 import IVersion from "../../domain/IVersion"
 
 interface VersionSelectorProps {
   versions: IVersion[]
-  selectedVersionId?: string
-  selectedProjectId: string
+  selection: string
+  onSelect: (versionId: string) => void
 }
 
 const VersionSelector: React.FC<VersionSelectorProps> = ({
   versions,
-  selectedVersionId,
-  selectedProjectId
+  selection,
+  onSelect
 }) => {
-  const router = useRouter()
   const handleVersionChange = (event: SelectChangeEvent) => {
-    const versionId = event.target.value
-    router.push(`/${selectedProjectId}/${versionId}`)
+    onSelect(event.target.value)
   }
   return (
-    <Select
-      value={selectedVersionId} 
-      label="Version" 
-      onChange={handleVersionChange}
-      sx={{ boxShadow: 'none', '.MuiOutlinedInput-notchedOutline': { border: 0 } }}
-      autoWidth
-    >
-      {versions.map(version => {
-        return (
+    <FormControl sx={{ m: 1, minWidth: 120 }} size="small">
+      <Select defaultValue={selection} onChange={handleVersionChange}>
+        {versions.map(version => 
           <MenuItem key={version.id} value={version.id}>
             {version.name}
           </MenuItem>
-        )
-      })}
-    </Select>
+        )}
+      </Select>
+    </FormControl>
   )
 }
 

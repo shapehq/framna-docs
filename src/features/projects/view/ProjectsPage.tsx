@@ -5,6 +5,7 @@ import { LibraryBooks } from "@mui/icons-material"
 import SidebarContainer from "@/common/SidebarContainer"
 import ProjectList from "./ProjectList"
 import ProjectSecondaryContent from "./ProjectSecondaryContent"
+import ProjectToolbarTrailingItem from "./ProjectToolbarTrailingItem"
 import useProjects from "../data/useProjects"
 import { getProjectSelection } from "../domain/ProjectSelection"
 
@@ -36,6 +37,9 @@ export default function ProjectsPage(
       }
       secondary={
         <ProjectSecondaryContent projectSelection={projectSelection}/>
+      }
+      toolbarTrailing={
+        <ProjectToolbarTrailingItem projectSelection={projectSelection} />
       }
     />
   )
