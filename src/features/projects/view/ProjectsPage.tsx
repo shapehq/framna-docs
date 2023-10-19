@@ -1,7 +1,5 @@
 "use client"
 
-import { Typography, Stack } from "@mui/material"
-import { LibraryBooks } from "@mui/icons-material"
 import SidebarContainer from "@/common/SidebarContainer"
 import ProjectList from "./ProjectList"
 import ProjectSecondaryContent from "./ProjectSecondaryContent"
