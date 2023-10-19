@@ -11,7 +11,7 @@ const SettingsList: React.FC = () => {
         style={{justifyContent: "flex-start"}}
         href="/api/auth/logout"
         sx={{ marginTop: "10px" }}
-        color="secondary"
+        color="primary"
       >
         Log out
       </Button>

@@ -1,7 +1,6 @@
 "use client"
 
 import { useState } from "react"
-import Image from "next/image"
 import { ToggleButtonGroup, ToggleButton } from "@mui/material"
 import DocumentationVisualizer from "../domain/DocumentationVisualizer"
 import { settingsStore } from "@/common/client/startup"
@@ -24,12 +23,13 @@ const DocumentationVisualizationPicker: React.FC = () => {
       onChange={handleChange}
       fullWidth={true}
       color="secondary"
+      aria-label="Viewer"
     >
       <ToggleButton value={DocumentationVisualizer.SWAGGER.toString()}>
-        <Image src="/swagger.png" alt="Swagger" width={24} height={24} />
+        Swagger
       </ToggleButton>
       <ToggleButton value={DocumentationVisualizer.REDOCLY.toString()}>
-        <Image src="/redocly.png" alt="Redocly" width={24} height={24} />
+        Redocly
       </ToggleButton>
     </ToggleButtonGroup>
   )

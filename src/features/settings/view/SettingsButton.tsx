@@ -30,7 +30,6 @@ const SettingsButton: React.FC = () => {
           vertical: 'bottom',
           horizontal: 'left',
         }}
-        elevation={2}
       >
         <SettingsList/>
       </Popover>
