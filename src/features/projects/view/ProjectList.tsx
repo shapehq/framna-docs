@@ -24,10 +24,7 @@ const ProjectList = <ProjectType extends IProject>(
     >
       {isLoading && 
         [...new Array(loadingItemCount)].map((_, index) => (
-          <ProjectListItemPlaceholder 
-            key={index}
-            divider={index < loadingItemCount - 1}
-          />
+          <ProjectListItemPlaceholder key={index}/>
         ))
       }
       {!isLoading && projects.map(project => (
