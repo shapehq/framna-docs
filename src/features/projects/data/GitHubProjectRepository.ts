@@ -112,12 +112,12 @@ export default class GitHubProjectRepository implements IProjectRepository<IProj
   }
   
   private getConfig(searchResult: any): IProjectConfig | null {
-    const rawConfig = searchResult.configYml.text || searchResult.configYaml.text
-    if (!rawConfig || rawConfig.length == 0) {
+    const yml = searchResult.configYml || searchResult.configYaml
+    if (!yml || !yml.text || yml.text.length == 0) {
       return null
     }
     const parser = new ProjectConfigParser()
-    return parser.parse(rawConfig)
+    return parser.parse(yml.text)
   }
   
   private getVersions(searchResult: any): IVersion[] {
