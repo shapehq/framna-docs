@@ -29,9 +29,11 @@ const ProjectsPageTrailingToolbarItem = (
           selection={stateContainer.selection!.specification.id}
           onSelect={onSelectSpecification}
         />
-        <IconButton href={stateContainer.selection!.specification.editURL} target="_blank" >
-          <EditIcon />
-        </IconButton>
+        {stateContainer.selection!.specification.editURL &&
+          <IconButton href={stateContainer.selection!.specification.editURL} target="_blank" >
+            <EditIcon />
+          </IconButton>
+        }
       </Stack>
     )
   case ProjectPageState.LOADING:
