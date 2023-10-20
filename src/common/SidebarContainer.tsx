@@ -2,6 +2,7 @@ import dynamic from "next/dynamic"
 import { ReactNode } from "react"
 import Image from "next/image"
 import { Box, Stack } from "@mui/material"
+import { useTheme } from "@mui/material/styles"
 import { useSessionStorage } from "usehooks-ts"
 import ClientSidebarContainer from "./client/SidebarContainer"
 import SidebarContent from "./SidebarContent"
@@ -18,6 +19,7 @@ const SidebarContainer: React.FC<SidebarContainerProps> = ({
   toolbarTrailing
 }) => {
   const [open, setOpen] = useSessionStorage("isDrawerOpen", true)
+  const theme = useTheme()
   return (
     <ClientSidebarContainer
       isDrawerOpen={open}
@@ -38,7 +40,8 @@ const SidebarContainer: React.FC<SidebarContainerProps> = ({
             <Box sx={{ 
               display: "flex",
               width: "100%",
-              justifyContent: "right"
+              justifyContent: "right",
+              color: theme.palette.text.primary
             }}>
               {toolbarTrailing}
             </Box>

@@ -1,4 +1,4 @@
-import { Stack, IconButton } from "@mui/material"
+import { Stack, IconButton, Typography, Link } from "@mui/material"
 import { ProjectPageStateContainer, ProjectPageState } from "../domain/ProjectPageState"
 import VersionSelector from "./docs/VersionSelector"
 import SpecificationSelector from "./docs/SpecificationSelector"
@@ -18,12 +18,30 @@ const ProjectsPageTrailingToolbarItem = (
   switch (stateContainer.state) {
   case ProjectPageState.HAS_SELECTION:
     return (
-      <Stack direction="row" alignItems="center">
+      <Stack direction="row" alignItems="center" spacing={1}>
+        {stateContainer.selection!.version.url &&
+          <Link
+            variant="body1"
+            color="inherit"
+            underline="hover"
+            href={stateContainer.selection!.version.url}
+            target="_blank"
+          >
+            {stateContainer.selection!.project.name}
+          </Link>
+        }
+        {!stateContainer.selection!.version.url &&
+          <Typography variant="body1">
+            {stateContainer.selection!.project.name}
+          </Typography>
+        }
+        <Typography variant="h6">/</Typography>
         <VersionSelector
           versions={stateContainer.selection!.project.versions}
           selection={stateContainer.selection!.version.id}
           onSelect={onSelectVersion}
         />
+        <Typography variant="h6">/</Typography>
         <SpecificationSelector
           specifications={stateContainer.selection!.version.specifications}
           selection={stateContainer.selection!.specification.id}
