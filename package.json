@@ -34,6 +34,7 @@
     "styled-components": "^6.0.8",
     "swagger-ui-react": "^5.9.0",
     "swr": "^2.2.4",
+    "usehooks-ts": "^2.9.1",
     "yaml": "^2.3.2"
   },
   "devDependencies": {

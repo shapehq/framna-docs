@@ -1,4 +1,4 @@
-import { ReactNode, useState } from "react"
+import { ReactNode } from "react"
 import { Box, Drawer, Divider, IconButton, Toolbar } from "@mui/material"
 import MuiAppBar, { AppBarProps as MuiAppBarProps } from "@mui/material/AppBar"
 import { ChevronLeft, Menu } from "@mui/icons-material"
@@ -86,6 +86,8 @@ const AppBar = styled(MuiAppBar, {
 }))
 
 interface SidebarContainerProps {
+  isDrawerOpen: boolean
+  onToggleDrawerOpen: (isDrawerOpen: boolean) => void
   primaryHeader?: ReactNode
   primary: ReactNode
   secondaryHeader?: ReactNode
@@ -93,24 +95,19 @@ interface SidebarContainerProps {
 }
 
 const SidebarContainer: React.FC<SidebarContainerProps> = ({
+  isDrawerOpen,
+  onToggleDrawerOpen,
   primaryHeader,
   primary,
   secondaryHeader,
   secondary
-}) => {  
-  const [open, setOpen] = useState(true)
-  const handleDrawerOpen = () => {
-    setOpen(true)
-  }
-  const handleDrawerClose = () => {
-    setOpen(false)
-  }
+}) => {
   const theme = useTheme()
   return (
     <Box sx={{ display: "flex", height: "100%" }}>
       <AppBar
         position="fixed"
-        open={open}
+        open={isDrawerOpen}
         elevation={0}
         sx={{backgroundColor: theme.palette.background.default}}
       >
@@ -118,12 +115,12 @@ const SidebarContainer: React.FC<SidebarContainerProps> = ({
           <IconButton
             color="inherit"
             aria-label="open drawer"
-            onClick={handleDrawerOpen}
+            onClick={() => onToggleDrawerOpen(true)}
             edge="start"
             sx={{
               mr: 2,
               color: theme.palette.text.primary,
-              ...(open && { display: "none" })
+              ...(isDrawerOpen && { display: "none" })
             }}
           >
             <Menu/>
@@ -135,7 +132,7 @@ const SidebarContainer: React.FC<SidebarContainerProps> = ({
       <Drawer
         variant="persistent"
         anchor="left"
-        open={open}
+        open={isDrawerOpen}
         sx={{
           width: drawerWidth,
           flexShrink: 0,
@@ -146,12 +143,12 @@ const SidebarContainer: React.FC<SidebarContainerProps> = ({
         }}
       >
         <DrawerHeader
-          handleDrawerClose={handleDrawerClose}
+          handleDrawerClose={() => onToggleDrawerOpen(false)}
           primaryHeader={primaryHeader}
         />
         {primary}
       </Drawer>
-      <Main open={open}>
+      <Main open={isDrawerOpen}>
         <Toolbar/>
         <Box sx={{ overflowY: "scroll" }}>
           {secondary}
