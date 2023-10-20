@@ -1,3 +1,7 @@
+<p align="center">
+  <img height="300" src="/logo.png">
+</p>
+
 # shape-docs
 
 Portal displaying our projects that are documented with OpenAPI.
