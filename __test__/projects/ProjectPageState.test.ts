@@ -43,8 +43,7 @@ test("It selects the first project when there is only one project", async () => 
         specifications: [{
           id: "hello",
           name: "hello.yml",
-          url: "https://example.com/hello.yml",
-          editURL: "https://example.com/edit/hello.yml"
+          url: "https://example.com/hello.yml"
         }]
       }]
     }]
@@ -71,13 +70,11 @@ test("It selects the first version and specification of the specified project", 
         specifications: [{
           id: "hello1",
           name: "hello1.yml",
-          url: "https://example.com/hello.yml",
-          editURL: "https://example.com/edit/hello.yml"
+          url: "https://example.com/hello.yml"
         }, {
           id: "hello2",
           name: "hello2.yml",
-          url: "https://example.com/hello.yml",
-          editURL: "https://example.com/edit/hello.yml"
+          url: "https://example.com/hello.yml"
         }]
       }, {
         id: "baz2",
@@ -113,8 +110,7 @@ test("It selects the first specification of the specified project and version", 
         specifications: [{
           id: "hello1",
           name: "hello1.yml",
-          url: "https://example.com/hello.yml",
-          editURL: "https://example.com/edit/hello.yml"
+          url: "https://example.com/hello.yml"
         }]
       }]
     }]
@@ -146,13 +142,11 @@ test("It selects the specification of the specified version", async () => {
         specifications: [{
           id: "hello1",
           name: "hello1.yml",
-          url: "https://example.com/hello.yml",
-          editURL: "https://example.com/edit/hello.yml"
+          url: "https://example.com/hello.yml"
         }, {
           id: "hello2",
           name: "hello2.yml",
-          url: "https://example.com/hello.yml",
-          editURL: "https://example.com/edit/hello.yml"
+          url: "https://example.com/hello.yml"
         }]
       }]
     }]
@@ -185,13 +179,11 @@ test("It selects the specified project, version, and specification", async () =>
         specifications: [{
           id: "hello1",
           name: "hello1.yml",
-          url: "https://example.com/hello.yml",
-          editURL: "https://example.com/edit/hello.yml"
+          url: "https://example.com/hello.yml"
         }, {
           id: "hello2",
           name: "hello2.yml",
-          url: "https://example.com/hello.yml",
-          editURL: "https://example.com/edit/hello.yml"
+          url: "https://example.com/hello.yml"
         }]
       }]
     }]
@@ -245,8 +237,7 @@ test("It errors when the selected specification cannot be found", async () => {
         specifications: [{
           id: "hello",
           name: "hello.yml",
-          url: "https://example.com/hello.yml",
-          editURL: "https://example.com/edit/hello.yml"
+          url: "https://example.com/hello.yml"
         }]
       }]
     }]
