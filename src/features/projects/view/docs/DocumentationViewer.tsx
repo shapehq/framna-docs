@@ -1,5 +1,3 @@
-"use client"
-
 import { useEffect } from "react"
 import { Events } from "@/common/events/BaseEvent"
 import { subscribe, unsubscribe } from "@/common/events/utils"

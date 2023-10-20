@@ -1,5 +1,3 @@
-"use client"
-
 import { ReactNode, useState } from "react"
 import { Box, Drawer, Divider, IconButton, Toolbar } from "@mui/material"
 import MuiAppBar, { AppBarProps as MuiAppBarProps } from "@mui/material/AppBar"

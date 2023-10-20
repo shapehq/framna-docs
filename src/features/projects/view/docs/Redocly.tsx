@@ -1,5 +1,3 @@
-"use client"
-
 import { RedocStandalone } from "redoc"
 
 const Redocly = ({ url }: { url: string }) => {

@@ -1,5 +1,3 @@
-"use client"
-
 import { Select, MenuItem, SelectChangeEvent, FormControl } from "@mui/material"
 import IVersion from "../../domain/IVersion"
 

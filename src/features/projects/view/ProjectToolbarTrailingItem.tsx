@@ -1,5 +1,3 @@
-"use client"
-
 import { useRouter } from "next/navigation"
 import { Stack, IconButton } from "@mui/material"
 import ProjectSelection, { ProjectSelectionState } from "../domain/ProjectSelection"

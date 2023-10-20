@@ -1,5 +1,3 @@
-"use client"
-
 import { SelectChangeEvent, Select, MenuItem, FormControl } from "@mui/material"
 import IOpenApiSpecification from "../../domain/IOpenApiSpecification"
 

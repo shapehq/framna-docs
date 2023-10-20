@@ -1,5 +1,3 @@
-"use client"
-
 import { ReactNode } from "react"
 import { Avatar, Box, Typography, Skeleton } from "@mui/material"
 import { useUser } from '@auth0/nextjs-auth0/client'

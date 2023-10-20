@@ -1,5 +1,3 @@
-"use client"
-
 import { useState } from "react"
 import { ToggleButtonGroup, ToggleButton } from "@mui/material"
 import DocumentationVisualizer from "../domain/DocumentationVisualizer"

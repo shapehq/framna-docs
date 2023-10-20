@@ -1,5 +1,3 @@
-"use client"
-
 import { useState } from "react"
 import { Popover, IconButton } from "@mui/material"
 import { MoreHoriz } from "@mui/icons-material"

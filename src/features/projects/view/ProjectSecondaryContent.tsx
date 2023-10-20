@@ -1,5 +1,3 @@
-"use client"
-
 import ProjectSelection, { ProjectSelectionState } from "../domain/ProjectSelection"
 import DocumentationViewer from "./docs/DocumentationViewer"
 import ProjectErrorContent from "./ProjectErrorContent"
