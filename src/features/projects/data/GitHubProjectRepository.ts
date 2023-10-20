@@ -100,10 +100,11 @@ export default class GitHubProjectRepository implements IProjectRepository<IProj
         searchResult.defaultBranchRef.name
       )
     }
+    const defaultName = searchResult.name.replace(/\-openapi$/, "")
     return {
-      id: searchResult.name.replace(/\-openapi$/, ""),
-      name: searchResult.name,
-      displayName: config?.name || searchResult.name,
+      id: defaultName,
+      name: defaultName,
+      displayName: config?.name || defaultName,
       versions: this.getVersions(searchResult).filter(e => {
         return e.specifications.length > 0
       }),
