@@ -12,7 +12,7 @@ const ProjectListItemPlaceholder = () => {
       }}
     >
       <Skeleton
-        variant="circular"
+        variant="rounded"
         animation="wave"
         sx={{ width: 40, height: 40, marginRight: "12px" }}
       />
