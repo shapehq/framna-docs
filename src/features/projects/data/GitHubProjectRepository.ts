@@ -102,7 +102,8 @@ export default class GitHubProjectRepository implements IProjectRepository<IProj
     }
     return {
       id: searchResult.name.replace(/\-openapi$/, ""),
-      name: config?.name || searchResult.name,
+      name: searchResult.name,
+      displayName: config?.name || searchResult.name,
       versions: this.getVersions(searchResult).filter(e => {
         return e.specifications.length > 0
       }),
@@ -172,7 +173,8 @@ export default class GitHubProjectRepository implements IProjectRepository<IProj
     return {
       id: ref.name,
       name: ref.name,
-      specifications: specifications
+      specifications: specifications,
+      url: `https://github.com/${owner}/${repository}/tree/${ref.name}`
     }
   }
 

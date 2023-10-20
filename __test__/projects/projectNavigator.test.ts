@@ -12,8 +12,7 @@ test("It navigates to first specification when changing version", async () => {
         specifications: [{
           id: "baz.yml",
           name: "baz.yml",
-          url: "https://example.com/baz.yml",
-          editURL: "https://example.com/edit/baz.yml"
+          url: "https://example.com/baz.yml"
         }]
       }, {
         id: "hello",
@@ -21,8 +20,7 @@ test("It navigates to first specification when changing version", async () => {
         specifications: [{
           id: "world.yml",
           name: "world.yml",
-          url: "https://example.com/world.yml",
-          editURL: "https://example.com/edit/world.yml"
+          url: "https://example.com/world.yml"
         }]
       }]
     },
@@ -34,8 +32,7 @@ test("It navigates to first specification when changing version", async () => {
     specification: {
       id: "baz.yml",
       name: "baz.yml",
-      url: "https://example.com/baz.yml",
-      editURL: "https://example.com/edit/baz.yml"
+      url: "https://example.com/baz.yml"
     }
   }
   let pushedPath: string | undefined
@@ -60,8 +57,7 @@ test("It navigates when selecting specification", async () => {
         specifications: [{
           id: "hello.yml",
           name: "hello.yml",
-          url: "https://example.com/hello.yml",
-          editURL: "https://example.com/edit/hello.yml"
+          url: "https://example.com/hello.yml"
         }]
       }]
     },
@@ -71,15 +67,13 @@ test("It navigates when selecting specification", async () => {
       specifications: [{
         id: "hello.yml",
         name: "hello.yml",
-        url: "https://example.com/hello.yml",
-        editURL: "https://example.com/edit/hello.yml"
+        url: "https://example.com/hello.yml"
       }]
     },
     specification: {
       id: "baz.yml",
       name: "baz.yml",
-      url: "https://example.com/baz.yml",
-      editURL: "https://example.com/edit/baz.yml"
+      url: "https://example.com/baz.yml"
     }
   }
   let pushedPath: string | undefined
@@ -111,8 +105,7 @@ test("It navigates even when new specification could not be found", async () => 
     specification: {
       id: "baz.yml",
       name: "baz.yml",
-      url: "https://example.com/baz.yml",
-      editURL: "https://example.com/edit/baz.yml"
+      url: "https://example.com/baz.yml"
     }
   }
   let pushedPath: string | undefined
@@ -137,13 +130,11 @@ test("It finds a specification with the same name when changing version", async 
         specifications: [{
           id: "hello.yml",
           name: "hello.yml",
-          url: "https://example.com/hello.yml",
-          editURL: "https://example.com/edit/hello.yml"
+          url: "https://example.com/hello.yml"
         }, {
           id: "earth.yml",
           name: "earth.yml",
-          url: "https://example.com/earth.yml",
-          editURL: "https://example.com/edit/earth.yml"
+          url: "https://example.com/earth.yml"
         }]
       }, {
         id: "baz",
@@ -151,23 +142,19 @@ test("It finds a specification with the same name when changing version", async 
         specifications: [{
           id: "moon.yml",
           name: "moon.yml",
-          url: "https://example.com/moon.yml",
-          editURL: "https://example.com/edit/moon.yml"
+          url: "https://example.com/moon.yml"
         }, {
           id: "saturn.yml",
           name: "saturn.yml",
-          url: "https://example.com/saturn.yml",
-          editURL: "https://example.com/edit/saturn.yml"
+          url: "https://example.com/saturn.yml"
         }, {
           id: "earth.yml",
           name: "earth.yml",
-          url: "https://example.com/earth.yml",
-          editURL: "https://example.com/edit/earth.yml"
+          url: "https://example.com/earth.yml"
         }, {
           id: "jupiter.yml",
           name: "jupiter.yml",
-          url: "https://example.com/jupiter.yml",
-          editURL: "https://example.com/edit/jupiter.yml"
+          url: "https://example.com/jupiter.yml"
         }]
       }]
     },
@@ -179,8 +166,7 @@ test("It finds a specification with the same name when changing version", async 
     specification: {
       id: "earth.yml",
       name: "earth.yml",
-      url: "https://example.com/earth.yml",
-      editURL: "https://example.com/edit/earth.yml"
+      url: "https://example.com/earth.yml"
     }
   }
   let pushedPath: string | undefined
