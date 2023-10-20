@@ -1,4 +1,4 @@
-import { useTheme } from "@mui/material/styles"
+import { alpha, useTheme } from "@mui/material/styles"
 import { SxProps } from "@mui/system"
 import { Avatar } from "@mui/material"
 import IProject from "../domain/IProject"
@@ -24,9 +24,10 @@ function ProjectAvatar<ProjectType extends IProject>(
         sx={{
           ...sx,
           bgcolor: theme.palette.divider,
-          border: `1px solid ${theme.palette.divider}`
+          border: `1px solid ${alpha(theme.palette.divider, 0.02)}`
         }}
         alt={project.name}
+        variant="rounded"
       >
         {Array.from(project.name)[0]}
       </Avatar>
