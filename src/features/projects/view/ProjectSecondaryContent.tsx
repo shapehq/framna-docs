@@ -9,6 +9,8 @@ export default function ProjectSecondaryContent(
   case ProjectSelectionState.LOADING:
   case ProjectSelectionState.NO_PROJECT_SELECTED:
     return <></>
+  case ProjectSelectionState.ERROR:
+    return <ProjectErrorContent text={projectSelection.error!.toString()}/>
   case ProjectSelectionState.HAS_SELECTION:
     return <DocumentationViewer url={projectSelection.selection!.specification.url}/>
   case ProjectSelectionState.PROJECT_NOT_FOUND:

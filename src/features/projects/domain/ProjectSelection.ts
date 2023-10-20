@@ -4,6 +4,7 @@ import IOpenApiSpecification from "../domain/IOpenApiSpecification"
 
 export enum ProjectSelectionState {
   LOADING,
+  ERROR,
   HAS_SELECTION,
   NO_PROJECT_SELECTED,
   PROJECT_NOT_FOUND,
@@ -13,6 +14,7 @@ export enum ProjectSelectionState {
 
 export type ProjectSelection = {
   readonly state: ProjectSelectionState
+  readonly error?: Error
   readonly selection?: {
     readonly project: IProject
     readonly version: IVersion
@@ -22,6 +24,7 @@ export type ProjectSelection = {
 
 export function getProjectSelection(
   isLoading: boolean,
+  error: Error,
   projects: IProject[],
   selectedProjectId?: string,
   selectedVersionId?: string,
@@ -29,6 +32,9 @@ export function getProjectSelection(
 ): ProjectSelection {
   if (isLoading) {
     return { state: ProjectSelectionState.LOADING }
+  }
+  if (error) {
+    return { state: ProjectSelectionState.ERROR, error }
   }
   if (!selectedProjectId && projects.length == 1) {
     // If no project is selected and the user only has a single project then we select that.

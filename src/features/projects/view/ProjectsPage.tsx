@@ -18,9 +18,10 @@ export default function ProjectsPage(
   { projectId, versionId, specificationId }: ProjectsPageProps
 ) {
   const router = useRouter()
-  const { projects, isLoading } = useProjects()
+  const { projects, error, isLoading } = useProjects()
   const projectSelection = getProjectSelection(
     isLoading,
+    error,
     projects,
     projectId,
     versionId,
