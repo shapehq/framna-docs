@@ -19,14 +19,14 @@ export default function ProjectsPage(
 ) {
   const router = useRouter()
   const { projects, error, isLoading } = useProjects()
-  const projectSelection = getProjectSelection(
+  const projectSelection = getProjectSelection({
     isLoading,
     error,
     projects,
-    projectId,
-    versionId,
-    specificationId
-  )
+    selectedProjectId: projectId,
+    selectedVersionId: versionId,
+    selectedSpecificationId: specificationId
+  })
   // Ensure the URL reflects the current selection of project, version, and specification.
   const currentSelection = projectSelection.selection
   if (currentSelection != null && (

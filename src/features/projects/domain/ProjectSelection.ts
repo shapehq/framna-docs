@@ -22,14 +22,23 @@ export type ProjectSelection = {
   }
 }
 
-export function getProjectSelection(
-  isLoading: boolean,
-  error: Error,
-  projects: IProject[],
-  selectedProjectId?: string,
-  selectedVersionId?: string,
+type GetProjectSelectionProps = {
+  isLoading?: boolean
+  error?: Error
+  projects?: IProject[]
+  selectedProjectId?: string
+  selectedVersionId?: string
   selectedSpecificationId?: string
-): ProjectSelection {
+}
+
+export function getProjectSelection({
+  isLoading,
+  error,
+  projects,
+  selectedProjectId,
+  selectedVersionId,
+  selectedSpecificationId
+}: GetProjectSelectionProps): ProjectSelection {
   if (isLoading) {
     return { state: ProjectSelectionState.LOADING }
   }
