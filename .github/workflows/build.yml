@@ -2,10 +2,24 @@ name: Build
 on:
   workflow_dispatch: {}
   pull_request:
-    branches: [main]
+    branches: [main, develop]
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
+env:
+  AUTH0_SECRET: 336f7a926310cff425cea29556dce2a98859b8d234aa27968696c2e6f1cb7d34
+  AUTH0_BASE_URL: http://dev.local:3000
+  AUTH0_ISSUER_BASE_URL: https://shape-docs-dev.eu.auth0.com
+  AUTH0_CLIENT_ID: this-is-our-client-id
+  AUTH0_CLIENT_SECRET: this-is-our-client-secret
+  AUTH0_MANAGEMENT_DOMAIN: shape-docs-dev.eu.auth0.com
+  AUTH0_MANAGEMENT_CLIENT_ID: this-is-our-management-client-id
+  AUTH0_MANAGEMENT_CLIENT_SECRET: this-is-our-management-client-secret
+  GITHUB_CLIENT_ID: this-is-our-github-client-id
+  GITHUB_CLIENT_SECRET: this-is-our-github-client-secret
+  GITHUB_APP_ID: 12345
+  GITHUB_PRIVATE_KEY_BASE_64: LS0tLS1CRUdJTiBPUEVOU1NIIFBSSVZBVEUgS0VZLS0tLS0KYjNCbGJuTnphQzFyWlhrdGRqRUFBQUFBQkc1dmJtVUFBQUFFYm05dVpRQUFBQUFBQUFBQkFBQUFNd0FBQUF0emMyZ3RaVwpReU5UVXhPUUFBQUNCS2NaL3UyL3dubDA4R1BjeXdiSVc2QVdKdnhVL2o0V0g2UnkxODVPSHZDd0FBQUpBYW01MzdHcHVkCit3QUFBQXR6YzJndFpXUXlOVFV4T1FBQUFDQktjWi91Mi93bmwwOEdQY3l3YklXNkFXSnZ4VS9qNFdINlJ5MTg1T0h2Q3cKQUFBRUJ6T2htRGpuY3R0QSt3ai9USHRnWnN6MklRWjdLM2ovb0Z1OEZBNTMxTDhrcHhuKzdiL0NlWFR3WTl6TEJzaGJvQgpZbS9GVCtQaFlmcEhMWHprNGU4TEFBQUFDMlp2YjBCb1lYQmxMbVJyQVFJPQotLS0tLUVORCBPUEVOU1NIIFBSSVZBVEUgS0VZLS0tLS0K
+  GITHUB_WEBHOOK_SECRET: super-duper-secret
 jobs:
   build:
     name: Build
@@ -16,7 +30,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: 16
+          node-version: 20
       - name: Install Dependencies
         run: npm install
       - name: Build
