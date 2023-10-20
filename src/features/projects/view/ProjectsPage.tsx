@@ -3,10 +3,11 @@
 import { useRouter } from "next/navigation"
 import SidebarContainer from "@/common/SidebarContainer"
 import ProjectList from "./ProjectList"
-import ProjectSecondaryContent from "./ProjectSecondaryContent"
-import ProjectToolbarTrailingItem from "./ProjectToolbarTrailingItem"
+import ProjectsPageSecondaryContent from "./ProjectsPageSecondaryContent"
+import ProjectsPageTrailingToolbarItem from "./ProjectsPageTrailingToolbarItem"
 import useProjects from "../data/useProjects"
-import { getProjectSelection } from "../domain/ProjectSelection"
+import { getProjectPageState } from "../domain/ProjectPageState"
+import projectNavigator from "../domain/projectNavigator"
 
 interface ProjectsPageProps {
   readonly projectId?: string
@@ -19,7 +20,7 @@ export default function ProjectsPage(
 ) {
   const router = useRouter()
   const { projects, error, isLoading } = useProjects()
-  const projectSelection = getProjectSelection({
+  const stateContainer = getProjectPageState({
     isLoading,
     error,
     projects,
@@ -28,14 +29,12 @@ export default function ProjectsPage(
     selectedSpecificationId: specificationId
   })
   // Ensure the URL reflects the current selection of project, version, and specification.
-  const currentSelection = projectSelection.selection
-  if (currentSelection != null && (
-    currentSelection?.project.id != projectId ||
-    currentSelection?.version.id != versionId ||
-    currentSelection?.specification.id != specificationId
-  )) {
-    router.replace(
-      `/${currentSelection.project.id}/${currentSelection.version.id}/${currentSelection.specification.id}`
+  if (stateContainer.selection) {
+    const candidateSelection = { projectId, versionId, specificationId }
+    projectNavigator.navigateToCurrentSelection(
+      candidateSelection,
+      stateContainer.selection,
+      router
     )
   }
   return (
@@ -44,14 +43,22 @@ export default function ProjectsPage(
         <ProjectList
           isLoading={isLoading}
           projects={projects}
-          selectedProjectId={currentSelection?.project.id}
+          selectedProjectId={stateContainer.selection?.project.id}
         />
       }
       secondary={
-        <ProjectSecondaryContent projectSelection={projectSelection}/>
+        <ProjectsPageSecondaryContent stateContainer={stateContainer} />  
       }
       toolbarTrailing={
-        <ProjectToolbarTrailingItem projectSelection={projectSelection} />
+        <ProjectsPageTrailingToolbarItem
+          stateContainer={stateContainer}
+          onSelectVersion={(versionId: string) => {
+            projectNavigator.navigateToVersion(stateContainer.selection!, versionId, router)
+          }}
+          onSelectSpecification={(specificationId: string) => {
+            projectNavigator.navigateToSpecification(stateContainer.selection!, specificationId, router)
+          }}
+        />
       }
     />
   )
