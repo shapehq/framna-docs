@@ -1,91 +1,26 @@
-import ProjectListComponent from "@/lib/components/ProjectListComponent";
-import UserComponent from "@/lib/components/UserComponent";
-import DocumentationViewerPage from "@/lib/pages/DocumentationViewerPage";
-import {
-  userProvider,
-  projectRepository,
-  gitHubOpenApiSpecificationRepository,
-  githubVersionRepository,
-} from "../startup";
-import App from "@/lib/pages/App";
-import OpenApiSpecificationsComponent from "@/lib/components/OpenApiSpecificationsComponent";
-import VersionsComponent from "@/lib/components/VersionsComponent";
-import { getProject, getSpecification, getVersion } from "@/lib/utils/UrlUtils";
-import { IOpenApiSpecification } from "@/lib/projects/IOpenAPISpecification";
-import WelcomePage from "@/lib/pages/WelcomePage";
+import { getProjectId, getSpecificationId, getVersionId } from "@/common/UrlUtils"
+import ProjectsPage from "@/features/projects/view/ProjectsPage"
 
-export default async function Page({
-  params,
-}: {
-  params: { slug: string | string[] };
-}) {
-  const user = await userProvider.getUser();
-  let url: string;
+type PageParams = { slug: string | string[] }
+
+export default function Page({ params }: { params: PageParams }) {
+  const url = getURL(params)
+  return (
+    <ProjectsPage
+      projectId={getProjectId(url)}
+      versionId={getVersionId(url)}
+      specificationId={getSpecificationId(url)}
+    />
+  )
+}
+
+function getURL(params: PageParams) {
   if (typeof params.slug === "string") {
-    url = "/" + params.slug;
+    return "/" + params.slug
   } else {
-    url = params.slug.reduce(
+    return params.slug.reduce(
       (previousValue, currentValue) => `${previousValue}/${currentValue}`,
       ""
-    );
+    )
   }
-  let openApiSpecification: IOpenApiSpecification | undefined;
-  const projectName = getProject(url);
-  const versionName = getVersion(url);
-  const specificationName = getSpecification(url);
-  if (projectName && versionName && specificationName) {
-    const specifications =
-      await gitHubOpenApiSpecificationRepository.getOpenAPISpecifications({
-        name: versionName,
-        owner: "shapehq",
-        repository: projectName,
-      });
-    openApiSpecification = specifications.find(
-      (x) => x.name == specificationName
-    );
-  }
-
-  return (
-    <App
-      userComponent={<UserComponent user={user} />}
-      projectListComponent={
-        <ProjectListComponent projectRepository={projectRepository} projectName={projectName}/>
-      }
-      {...(projectName && projectName.length > 0
-        ? {
-            versionSelectorComponent: (
-              <VersionsComponent
-                versionRepository={githubVersionRepository}
-                projectName={projectName}
-                versionName={versionName}
-                user={user}
-              />
-            ),
-          }
-        : {})}
-      {...(projectName &&
-      projectName.length > 0 &&
-      versionName &&
-      versionName.length > 0
-        ? {
-            openApiSpecificationsComponent: (
-              <OpenApiSpecificationsComponent
-                openApiSpecificationRepository={
-                  gitHubOpenApiSpecificationRepository
-                }
-                projectName={projectName}
-                versionName={versionName}
-                specificationName={specificationName}
-              />
-            ),
-          }
-        : {})}
-    >
-      {openApiSpecification ? (
-        <DocumentationViewerPage openApiSpecification={openApiSpecification} />
-      ) : (
-        <WelcomePage />
-      )}
-    </App>
-  );
 }
