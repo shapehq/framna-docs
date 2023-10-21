@@ -1,5 +1,6 @@
 namespace NodeJS {
   interface ProcessEnv {
+    SHAPE_DOCS_BASE_URL: string
     AUTH0_SECRET: string
     AUTH0_BASE_URL: string
     AUTH0_ISSUER_BASE_URL: string
@@ -13,6 +14,8 @@ namespace NodeJS {
     GITHUB_APP_ID: string
     GITHUB_PRIVATE_KEY_BASE_64: string
     GITHUB_WEBHOOK_SECRET: string
+    GITHUB_WEBHOK_REPOSITORY_ALLOWLIST?: string
+    GITHUB_WEBHOK_REPOSITORY_DISALLOWLIST?: string
     DATABASE_URL: string
   }
 }
