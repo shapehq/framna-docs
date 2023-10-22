@@ -7,10 +7,10 @@ import IPullRequestCommentRepository, {
 } from "../domain/IPullRequestCommentRepository"
 
 export type GitHubPullRequestCommentRepositoryConfig = {
-  appId: string,
-  privateKey: string,
-  clientId: string,
+  appId: string
+  clientId: string
   clientSecret: string
+  privateKey: string
 }
 
 type InstallationAuthenticator = (installationId: number) => Promise<{token: string}>
@@ -19,7 +19,12 @@ export default class GitHubPullRequestCommentRepository implements IPullRequestC
   readonly auth: InstallationAuthenticator
   
   constructor(config: GitHubPullRequestCommentRepositoryConfig) {
-    const appAuth = createAppAuth(config)
+    const appAuth = createAppAuth({
+      appId: config.appId,
+      clientId: config.clientId,
+      clientSecret: config.clientSecret,
+      privateKey: config.privateKey
+    })
     this.auth = async (installationId: number) => {
       return await appAuth({ type: "installation", installationId })
     }
@@ -35,7 +40,7 @@ export default class GitHubPullRequestCommentRepository implements IPullRequestC
       repo: operation.repositoryName,
       issue_number: operation.pullRequestNumber,
     })
-    let result: PullRequestComment[] = []
+    const result: PullRequestComment[] = []
     for await (const comment of comments) {
       result.push({
         body: comment.body || "",

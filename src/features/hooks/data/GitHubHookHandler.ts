@@ -1,5 +1,5 @@
 import { NextRequest } from "next/server"
-import { Webhooks } from "@octokit/webhooks"
+import { Webhooks, EmitterWebhookEventName } from "@octokit/webhooks"
 import IPullRequestEventHandler from "../domain/IPullRequestEventHandler"
 
 interface GitHubHookHandlerConfig {
@@ -20,7 +20,7 @@ class GitHubHookHandler {
   async handle(req: NextRequest): Promise<void> {
     await this.webhooks.verifyAndReceive({
       id: req.headers.get('X-GitHub-Delivery') as string,
-      name: req.headers.get('X-GitHub-Event') as any,
+      name: req.headers.get('X-GitHub-Event') as EmitterWebhookEventName,
       payload: await req.text(),
       signature: req.headers.get('X-Hub-Signature') as string,
     }).catch((error) => {

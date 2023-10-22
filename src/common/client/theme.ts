@@ -1,7 +1,7 @@
 import { createTheme } from "@mui/material/styles"
 import { blue } from "@mui/material/colors"
 
-const theme = (_prefersDarkMode: boolean) => createTheme({
+const theme = () => createTheme({
   palette: {
     mode: "light",
     primary: {

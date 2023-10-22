@@ -5,7 +5,7 @@ export interface IProjectRouter {
   replace(path: string): void
 }
 
-export default {
+const projectNavigator = {
   navigateToVersion(
     selection: ProjectPageSelection,
     versionId: string,
@@ -55,3 +55,5 @@ export default {
     }
   }
 }
+
+export default projectNavigator

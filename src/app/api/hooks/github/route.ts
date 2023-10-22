@@ -28,7 +28,7 @@ const commentRepository = new GitHubPullRequestCommentRepository({
   appId: GITHUB_APP_ID,
   privateKey: privateKey,
   clientId: GITHUB_CLIENT_ID,
-  clientSecret: GITHUB_WEBHOOK_SECRET
+  clientSecret: GITHUB_CLIENT_SECRET
 })
 const hookHandler = new GitHubHookHandler({
   secret: GITHUB_WEBHOOK_SECRET,
