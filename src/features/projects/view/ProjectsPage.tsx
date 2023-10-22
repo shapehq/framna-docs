@@ -5,9 +5,10 @@ import SidebarContainer from "@/common/SidebarContainer"
 import ProjectList from "./ProjectList"
 import ProjectsPageSecondaryContent from "./ProjectsPageSecondaryContent"
 import ProjectsPageTrailingToolbarItem from "./ProjectsPageTrailingToolbarItem"
-import useProjects from "../data/useProjects"
+import IProject from "../domain/IProject"
 import { getProjectPageState } from "../domain/ProjectPageState"
 import projectNavigator from "../domain/projectNavigator"
+import useProjects from "../data/useProjects"
 
 interface ProjectsPageProps {
   readonly projectId?: string
@@ -28,14 +29,10 @@ export default function ProjectsPage(
     selectedVersionId: versionId,
     selectedSpecificationId: specificationId
   })
-  // Ensure the URL reflects the current selection of project, version, and specification.
-  if (stateContainer.selection) {
-    const candidateSelection = { projectId, versionId, specificationId }
-    projectNavigator.navigateToCurrentSelection(
-      candidateSelection,
-      stateContainer.selection,
-      router
-    )
+  const handleProjectSelected = (project: IProject) => {
+    const version = project.versions[0]
+    const specification = version.specifications[0]
+    router.push(`/${project.id}/${version.id}/${specification.id}`)
   }
   return (
     <SidebarContainer
@@ -44,6 +41,7 @@ export default function ProjectsPage(
           isLoading={isLoading}
           projects={projects}
           selectedProjectId={stateContainer.selection?.project.id}
+          onSelectProject={handleProjectSelected}
         />
       }
       secondary={

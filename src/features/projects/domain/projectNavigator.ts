@@ -34,26 +34,7 @@ const projectNavigator = {
     router: IProjectRouter
   ) {
     router.push(`/${selection.project.id}/${selection.version.id}/${specificationId}`)
-  },
-  navigateToCurrentSelection(
-    candidateSelection: {
-      projectId?: string,
-      versionId?: string,
-      specificationId?: string
-    },
-    actualSelection: ProjectPageSelection,
-    router: IProjectRouter
-  ) {
-    if (
-      actualSelection.project.id != candidateSelection.projectId ||
-      actualSelection.version.id != candidateSelection.versionId ||
-      actualSelection.specification.id != candidateSelection.specificationId
-    ) {
-      router.replace(
-        `/${actualSelection.project.id}/${actualSelection.version.id}/${actualSelection.specification.id}`
-      )
-    }
-  }
+  } 
 }
 
 export default projectNavigator
