@@ -3,18 +3,20 @@ import ProjectListItem from "./ProjectListItem"
 import ProjectListItemPlaceholder from "./ProjectListItemPlaceholder"
 import IProject from "../domain/IProject"
 
-interface ProjectListProps<ProjectType extends IProject> {
+interface ProjectListProps {
   readonly isLoading: boolean
-  readonly projects: ProjectType[]
+  readonly projects: IProject[]
   readonly selectedProjectId?: string
+  readonly onSelectProject: (project: IProject) => void
 }
 
-const ProjectList = <ProjectType extends IProject>(
+const ProjectList = (
   {
     isLoading,
     projects,
-    selectedProjectId
-  }: ProjectListProps<ProjectType>
+    selectedProjectId,
+    onSelectProject
+  }: ProjectListProps
 ) => {
   const loadingItemCount = 6
   if (isLoading || projects.length > 0) {
@@ -33,6 +35,7 @@ const ProjectList = <ProjectType extends IProject>(
             key={project.id}
             project={project}
             isSelected={project.id === selectedProjectId}
+            onSelectProject={onSelectProject}
           />
         ))}
       </List>
