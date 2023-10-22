@@ -4,12 +4,12 @@
 
 # shape-docs
 
-Portal displaying our projects that are documented with OpenAPI.
+Portal displaying our projects that are documented with OpenAPI. Hosted on [docs.shapetools.io](https://docs.shapetools.io) and [staging.docs.shapetools.io](https://staging.docs.shapetools.io).
 
 [![Build](https://github.com/shapehq/shape-docs/actions/workflows/build.yml/badge.svg)](https://github.com/shapehq/shape-docs/actions/workflows/build.yml)
 [![Test](https://github.com/shapehq/shape-docs/actions/workflows/test.yml/badge.svg)](https://github.com/shapehq/shape-docs/actions/workflows/test.yml)
 
-## Running the App Locally
+## 💻 Running the App Locally
 
 Create a file named `.env.local` in the root of the project with the following contents. Make sure to replace any placeholders and generate a random secret using OpenSSL.
 
@@ -74,3 +74,18 @@ npm run dev
 ```
 
 Finally, open the application on https://dev.local:3000.
+
+## 🚀 Deploying the App
+
+The app is hosted on Heroku in two different environments.
+
+|Environment|URL|Branch|
+|-|-|-|
+|Staging|[staging.docs.shapetools.io](https://staging.docs.shapetools.io)|develop|
+|Production|[docs.shapetools.io](https://docs.shapetools.io)|main|
+
+Each environment is deployed by merging changes into their respective branch. Heroku is responsible for observing changes to the repository and schedule a deployment when changes are observed.
+
+## 📖 Getting Started with Shape Docs
+
+Details on getting started showing documentation on Shape Docs can be [found on our Conflouence](https://shapedk.atlassian.net/wiki/spaces/DEVELOPERS/pages/3795615745/Shape+Docs).
