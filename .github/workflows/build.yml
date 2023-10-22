@@ -7,6 +7,7 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
 env:
+  NEXT_TELEMETRY_DISABLED: 1
   AUTH0_SECRET: 336f7a926310cff425cea29556dce2a98859b8d234aa27968696c2e6f1cb7d34
   AUTH0_BASE_URL: http://dev.local:3000
   AUTH0_ISSUER_BASE_URL: https://shape-docs-dev.eu.auth0.com
