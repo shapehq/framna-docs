@@ -2,6 +2,14 @@ import { ManagementClient } from "auth0"
 import { getSession } from "@auth0/nextjs-auth0"
 import IOAuthTokenRepository, { IOAuthToken } from "../domain/IOAuthTokenRepository"
 
+type Auth0User = {
+  readonly user_id: string
+  readonly identities: Auth0UserIdentity[]
+  readonly app_metadata?: Auth0UserAppMetadata
+}
+
+type Auth0UserAppMetadata = {[key: string]: Auth0UserAppMetadataAuthToken | undefined}
+
 type Auth0UserAppMetadataAuthToken = {
   readonly access_token: string
   readonly refresh_token: string
@@ -15,11 +23,7 @@ type Auth0UserIdentity = {
   readonly refresh_token: string
 }
 
-type Auth0User = {
-  readonly user_id: string
-  readonly identities: Auth0UserIdentity[]
-  readonly app_metadata?: {[key: string]: any}
-}
+
 
 interface Auth0OAuthIdentityProviderConfig {
   readonly domain: string
@@ -70,7 +74,7 @@ export default class Auth0OAuthTokenRepository implements IOAuthTokenRepository 
       access_token_expires_at: token.accessTokenExpiryDate.toISOString(),
       refresh_token_expires_at: token.refreshTokenExpiryDate.toISOString()
     }
-    const appMetadata: any = {}
+    const appMetadata: Auth0UserAppMetadata = {}
     appMetadata[authTokenKey] = appMetadataToken
     await this.managementClient.users.update({ id: user.user_id }, {
       app_metadata: appMetadata
@@ -106,6 +110,7 @@ export default class Auth0OAuthTokenRepository implements IOAuthTokenRepository 
     const authTokenKey = this.getAuthTokenMetadataKey(this.connection)
     const authToken = user.app_metadata[authTokenKey]
     if (
+      authToken &&
       authToken.access_token && authToken.access_token.length > 0 &&
       authToken.refresh_token && authToken.refresh_token.length > 0 &&
       authToken.access_token_expires_at && authToken.access_token_expires_at.length > 0 &&

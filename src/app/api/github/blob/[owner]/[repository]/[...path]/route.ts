@@ -21,6 +21,6 @@ export async function GET(req: NextRequest, { params }: { params: GetBlobParams 
     path: fullPath,
     ref: ref || undefined
   })
-  let item = response.data as GitHubContentItem
+  const item = response.data as GitHubContentItem
   return NextResponse.redirect(new URL(item.download_url))
 }

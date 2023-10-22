@@ -3,10 +3,10 @@ import PostCommentPullRequestEventHandler from "../../src/features/hooks/domain/
 test("It adds a comment to the repository", async () => {
   let didAddComment = false
   const sut = new PostCommentPullRequestEventHandler({
-    async getComments(_operation) {
+    async getComments() {
       return []
     },
-    async addComment(_operation) {
+    async addComment() {
       didAddComment = true
     }
   }, "https://docs.shapetools.io")
@@ -23,7 +23,7 @@ test("It adds a comment to the repository", async () => {
 test("It adds a comment containing a link to the documentation", async () => {
   let commentBody: string | undefined
   const sut = new PostCommentPullRequestEventHandler({
-    async getComments(_operation) {
+    async getComments() {
       return []
     },
     async addComment(operation) {
@@ -43,7 +43,7 @@ test("It adds a comment containing a link to the documentation", async () => {
 test("It removes the \"openapi\" suffix of the repository name", async () => {
   let commentBody: string | undefined
   const sut = new PostCommentPullRequestEventHandler({
-    async getComments(_operation) {
+    async getComments() {
       return []
     },
     async addComment(operation) {
