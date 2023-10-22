@@ -74,3 +74,18 @@ npm run dev
 ```
 
 Finally, open the application on https://dev.local:3000.
+
+## Deploying the App
+
+The app is hosted on Heroku in two different environments.
+
+|Environment|URL|Branch|
+|-|-|-|
+|Staging|[staging.docs.shapetools.io](https://staging.docs.shapetools.io)|develop|
+|Production|[docs.shapetools.io](https://docs.shapetools.io)|main|
+
+Each environment is deployed by merging changes into their respective branch. Heroku is responsible for observing changes to the repository and schedule a deployment when changes are observed.
+
+## Getting Started with Shape Docs
+
+Details on getting started showing documentation on Shape Docs can be [found on our Conflouence](https://shapedk.atlassian.net/wiki/spaces/DEVELOPERS/pages/3795615745/Shape+Docs).
