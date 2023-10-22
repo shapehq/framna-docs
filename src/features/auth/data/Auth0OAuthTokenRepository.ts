@@ -23,8 +23,6 @@ type Auth0UserIdentity = {
   readonly refresh_token: string
 }
 
-
-
 interface Auth0OAuthIdentityProviderConfig {
   readonly domain: string
   readonly clientId: string
