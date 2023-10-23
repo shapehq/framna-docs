@@ -14,6 +14,7 @@ export default class KeyValueOAuthTokenRepository implements IOAuthTokenReposito
     if (!rawOAuthToken) {
       throw new Error(`No OAuthToken stored for user with ID ${userId}.`)
     }
+    /* eslint-disable-next-line  @typescript-eslint/no-explicit-any */
     let obj: any | undefined
     try {
       obj = JSON.parse(rawOAuthToken)
