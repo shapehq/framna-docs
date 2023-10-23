@@ -1,4 +1,5 @@
-import IOAuthTokenRefresher, { IOAuthTokenRefreshResult } from "../domain/IOAuthTokenRefresher"
+import OAuthToken from "../domain/OAuthToken"
+import IOAuthTokenRefresher from "../domain/IOAuthTokenRefresher"
 
 export interface GitHubOAuthTokenRefresherConfig {
   readonly clientId: string
@@ -12,7 +13,7 @@ export default class GitHubOAuthTokenRefresher implements IOAuthTokenRefresher {
     this.config = config
   }
   
-  async refreshAccessToken(refreshToken: string): Promise<IOAuthTokenRefreshResult> {
+  async refreshAccessToken(refreshToken: string): Promise<OAuthToken> {
     const url = this.getAccessTokenURL(refreshToken)
     const response = await fetch(url, { method: "POST" })
     if (response.status != 200) {

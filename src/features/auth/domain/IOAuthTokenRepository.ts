@@ -1,11 +1,7 @@
-export interface IOAuthToken {
-  readonly accessToken: string
-  readonly refreshToken: string
-  readonly accessTokenExpiryDate: Date
-  readonly refreshTokenExpiryDate: Date
-}
+import OAuthToken from "./OAuthToken"
 
 export default interface IOAuthTokenRepository {
-  getOAuthToken(): Promise<IOAuthToken>
-  storeOAuthToken(token: IOAuthToken): Promise<void>
+  getOAuthToken(userId: string): Promise<OAuthToken>
+  storeOAuthToken(token: OAuthToken, userId: string): Promise<void>
+  deleteOAuthToken(userId: string): Promise<void>
 }
