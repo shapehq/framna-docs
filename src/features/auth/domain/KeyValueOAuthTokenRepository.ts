@@ -14,28 +14,37 @@ export default class KeyValueOAuthTokenRepository implements IOAuthTokenReposito
     if (!rawOAuthToken) {
       throw new Error(`No OAuthToken stored for user with ID ${userId}.`)
     }
+    let obj: any | undefined
     try {
-      const obj = JSON.parse(rawOAuthToken)
-      if (Object.prototype.hasOwnProperty.call(obj, "accessToken")) {
-        throw new Error(`Stored OAuthToken for user with ID ${userId} lacks the accessToken property.`)
-      }
-      if (Object.prototype.hasOwnProperty.call(obj, "refreshToken")) {
-        throw new Error(`Stored OAuthToken for user with ID ${userId} lacks the refreshToken property.`)
-      }
-      if (Object.prototype.hasOwnProperty.call(obj, "accessTokenExpiryDate")) {
-        throw new Error(`Stored OAuthToken for user with ID ${userId} lacks the accessTokenExpiryDate property.`)
-      }
-      if (Object.prototype.hasOwnProperty.call(obj, "refreshTokenExpiryDate")) {
-        throw new Error(`Stored OAuthToken for user with ID ${userId} lacks the refreshTokenExpiryDate property.`)
-      }
-      return {
-        accessToken: obj.accessToken,
-        refreshToken: obj.refreshToken,
-        accessTokenExpiryDate: new Date(obj.accessTokenExpiryDate),
-        refreshTokenExpiryDate: new Date(obj.refreshTokenExpiryDate)
-      }
-    } catch {
+      obj = JSON.parse(rawOAuthToken)
+    } catch(error) {
       throw new Error(`Could not decode OAuthToken read from store for user with ID ${userId}.`)
+    }
+    if (!obj.accessToken) {
+      throw new Error(`Stored OAuthToken for user with ID ${userId} lacks the accessToken property.`)
+    }
+    if (!obj.refreshToken) {
+      throw new Error(`Stored OAuthToken for user with ID ${userId} lacks the refreshToken property.`)
+    }
+    if (!obj.accessTokenExpiryDate) {
+      throw new Error(`Stored OAuthToken for user with ID ${userId} lacks the accessTokenExpiryDate property.`)
+    }
+    if (!obj.refreshTokenExpiryDate) {
+      throw new Error(`Stored OAuthToken for user with ID ${userId} lacks the refreshTokenExpiryDate property.`)
+    }
+    const accessTokenExpiryDate = new Date(obj.accessTokenExpiryDate)
+    const refreshTokenExpiryDate = new Date(obj.refreshTokenExpiryDate)
+    if (!isValidDate(accessTokenExpiryDate)) {
+      throw new Error(`Stored OAuthToken for user with ID ${userId} has an accessTokenExpiryDate property but it contains an invalid date.`)
+    }
+    if (!isValidDate(refreshTokenExpiryDate)) {
+      throw new Error(`Stored OAuthToken for user with ID ${userId} has an refreshTokenExpiryDate property but it contains an invalid date.`)
+    }
+    return {
+      accessToken: obj.accessToken,
+      refreshToken: obj.refreshToken,
+      accessTokenExpiryDate: accessTokenExpiryDate,
+      refreshTokenExpiryDate: refreshTokenExpiryDate
     }
   }
   
@@ -50,4 +59,8 @@ export default class KeyValueOAuthTokenRepository implements IOAuthTokenReposito
   private getStoreKey(userId: string): string {
     return `authToken[${userId}]`
   }
+}
+
+function isValidDate(date: Date) {
+  return date instanceof Date && !isNaN((date as unknown) as number)
 }
