@@ -10,7 +10,8 @@ test("It reads the access token from the repository", async () => {
         refreshTokenExpiryDate: new Date(new Date().getTime() + 3600 * 1000)
       }
     },
-    async storeOAuthToken() {}
+    async storeOAuthToken() {},
+    async deleteOAuthToken() {}
   }, {
     async refreshAccessToken() {
       return {
@@ -35,7 +36,8 @@ test("It refreshes an expired access token", async () => {
         refreshTokenExpiryDate: new Date(new Date().getTime() + 3600 * 1000)
       }
     },
-    async storeOAuthToken() {}
+    async storeOAuthToken() {},
+    async deleteOAuthToken() {}
   }, {
     async refreshAccessToken() {
       return {
@@ -63,7 +65,8 @@ test("It stores the refreshed access token", async () => {
     },
     async storeOAuthToken() {
       didStoreRefreshedToken = true
-    }
+    },
+    async deleteOAuthToken() {}
   }, {
     async refreshAccessToken() {
       return {
@@ -88,7 +91,8 @@ test("It errors when the refresh token has expired", async () => {
         refreshTokenExpiryDate: new Date(new Date().getTime() - 3600 * 1000)
       }
     },
-    async storeOAuthToken() {}
+    async storeOAuthToken() {},
+    async deleteOAuthToken() {}
   }, {
     async refreshAccessToken() {
       return {
