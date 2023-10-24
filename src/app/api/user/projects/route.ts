@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server"
-import { projectRepository } from "@/common/startup"
+import { projectRepository } from "@/composition"
 
 export async function GET() {
   const projects = await projectRepository.getProjects()

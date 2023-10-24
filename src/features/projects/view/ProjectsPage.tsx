@@ -1,7 +1,7 @@
 "use client"
 
 import { useRouter } from "next/navigation"
-import SidebarContainer from "@/common/SidebarContainer"
+import SidebarContainer from "@/features/sidebar/view/client/SidebarContainer"
 import ProjectList from "./ProjectList"
 import ProjectsPageSecondaryContent from "./ProjectsPageSecondaryContent"
 import ProjectsPageTrailingToolbarItem from "./ProjectsPageTrailingToolbarItem"

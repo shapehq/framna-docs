@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server"
-import { gitHubClient } from "@/common/startup"
+import { gitHubClient } from "@/composition"
 
 interface GetBlobParams {
   owner: string

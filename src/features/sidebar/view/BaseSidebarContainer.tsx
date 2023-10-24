@@ -85,22 +85,20 @@ const AppBar = styled(MuiAppBar, {
   }),
 }))
 
-interface SidebarContainerProps {
-  isDrawerOpen: boolean
-  onToggleDrawerOpen: (isDrawerOpen: boolean) => void
-  primaryHeader?: ReactNode
-  primary: ReactNode
-  secondaryHeader?: ReactNode
-  secondary: ReactNode
-}
-
-const SidebarContainer: React.FC<SidebarContainerProps> = ({
+const BaseSidebarContainer = ({
   isDrawerOpen,
   onToggleDrawerOpen,
   primaryHeader,
   primary,
   secondaryHeader,
   secondary
+}: {
+  isDrawerOpen: boolean
+  onToggleDrawerOpen: (isDrawerOpen: boolean) => void
+  primaryHeader?: ReactNode
+  primary: ReactNode
+  secondaryHeader?: ReactNode
+  secondary: ReactNode
 }) => {
   const theme = useTheme()
   return (
@@ -158,4 +156,4 @@ const SidebarContainer: React.FC<SidebarContainerProps> = ({
   )
 }
 
-export default SidebarContainer
+export default BaseSidebarContainer

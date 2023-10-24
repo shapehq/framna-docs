@@ -1,6 +1,6 @@
 import { ReactNode } from "react"
 import { redirect } from "next/navigation"
-import { sessionOAuthTokenRepository } from "@/common/startup"
+import { sessionOAuthTokenRepository } from "@/composition"
 
 export default async function SessionOAuthTokenBarrier({
   children
