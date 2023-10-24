@@ -1,6 +1,7 @@
 import AccessTokenService from "@/features/auth/domain/AccessTokenService"
 import Auth0RefreshTokenReader from "@/features/auth/data/Auth0RefreshTokenReader"
-import Auth0SessionDataRepository from "@/common//userData/Auth0SessionDataRepository"
+import Auth0SessionDataRepository from "@/common/userData/Auth0SessionDataRepository"
+import CachingProjectDataSource from "@/features/projects/domain/CachingProjectDataSource"
 import GitHubClient from "@/common/github/GitHubClient"
 import GitHubOAuthTokenRefresher from "@/features/auth/data/GitHubOAuthTokenRefresher"
 import GitHubProjectDataSource from "@/features/projects/data/GitHubProjectDataSource"
@@ -53,9 +54,21 @@ export const gitHubClient = new GitHubClient({
   accessTokenReader: accessTokenService
 })
 
-export const projectDataSource = new GitHubProjectDataSource(
-  gitHubClient,
-  GITHUB_ORGANIZATION_NAME
+export const sessionProjectRepository = new SessionProjectRepository(
+  new Auth0SessionDataRepository(
+    new KeyValueUserDataRepository(
+      new RedisKeyValueStore(REDIS_URL),
+      "projects"
+    )
+  )
+)
+
+export const projectDataSource = new CachingProjectDataSource(
+  new GitHubProjectDataSource(
+    gitHubClient,
+    GITHUB_ORGANIZATION_NAME
+  ),
+  sessionProjectRepository
 )
 
 export const initialOAuthTokenService = new InitialOAuthTokenService({
@@ -68,15 +81,6 @@ export const initialOAuthTokenService = new InitialOAuthTokenService({
   oAuthTokenRefresher: gitHubOAuthTokenRefresher,
   oAuthTokenRepository: new UserDataOAuthTokenRepository(oAuthTokenRepository)
 })
-
-export const sessionProjectRepository = new SessionProjectRepository(
-  new Auth0SessionDataRepository(
-    new KeyValueUserDataRepository(
-      new RedisKeyValueStore(REDIS_URL),
-      "projects"
-    )
-  )
-)
 
 export const logoutHandler = async () => {
   await authLogoutHandler(sessionOAuthTokenRepository, sessionProjectRepository)
