@@ -13,10 +13,10 @@ export default class RedisKeyValueStore implements IKeyValueStore {
   }
   
   async set(key: string, data: string | number | Buffer): Promise<void> {
-    this.redis.set(key, data)
+    await this.redis.set(key, data)
   }
   
   async delete(key: string): Promise<void> {
-    this.redis.del(key)
+    await this.redis.del(key)
   }
 }
