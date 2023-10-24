@@ -20,16 +20,16 @@ function ProjectAvatar({
           bgcolor: theme.palette.divider,
           border: `1px solid ${alpha(theme.palette.divider, 0.02)}`
         }}
-        alt={project.displayName || project.name}
+        alt={project.displayName}
         variant="rounded"
       >
-        {Array.from(project.displayName || project.name)[0]}
+        {Array.from(project.displayName)[0]}
       </Avatar>
     )
   } else {
     return (
-      <Avatar sx={sx} alt={project.displayName || project.name} variant="rounded">
-        {Array.from(project.displayName || project.name)[0]}
+      <Avatar sx={sx} alt={project.displayName} variant="rounded">
+        {Array.from(project.displayName)[0]}
       </Avatar>
     )
   }

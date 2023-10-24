@@ -15,6 +15,7 @@ Portal displaying our projects that are documented with OpenAPI. Hosted on [docs
 Create a file named `.env.local` in the root of the project with the following contents. Make sure to replace any placeholders and generate a random secret using OpenSSL.
 
 ```
+NEXT_PUBLIC_SHAPE_DOCS_TITLE='Shape Docs'
 SHAPE_DOCS_BASE_URL='https://docs.shapetools.io'
 AUTH0_SECRET='use [openssl rand -hex 32] to generate a 32 bytes value'
 AUTH0_BASE_URL='http://dev.local:3000'
@@ -39,6 +40,7 @@ Each environment variable is described in the table below.
 
 |Environment Variable|Description|
 |-|-|
+|NEXT_PUBLIC_SHAPE_DOCS_TITLE|Title of the portal. Displayed to the user in the browser.|
 |SHAPE_DOCS_BASE_URL|The URL where Shape Docs is hosted.|
 |AUTH0_SECRET|A long secret value used to encrypt the session cookie. Generate it using `openssl rand -hex 32`.|AUTH0_BASE_URL|The base URL of your Auth0 application. `http://dev.local:3000` during development.|
 |AUTH0_ISSUER_BASE_URL|The URL of your Auth0 tenant domain.|

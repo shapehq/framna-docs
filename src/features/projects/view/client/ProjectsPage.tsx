@@ -9,6 +9,7 @@ import ProjectsPageSecondaryContent from "../ProjectsPageSecondaryContent"
 import ProjectsPageTrailingToolbarItem from "../ProjectsPageTrailingToolbarItem"
 import { getProjectPageState } from "../../domain/ProjectPageState"
 import projectNavigator from "../../domain/projectNavigator"
+import updateWindowTitle from "../../domain/updateWindowTitle"
 import useProjects from "../../data/useProjects"
 
 export default function ProjectsPage({
@@ -39,6 +40,13 @@ export default function ProjectsPage({
     const specification = version.specifications[0]
     projectNavigator.navigate(router, project.id, version.id, specification.id)
   }
+  useEffect(() => {
+    updateWindowTitle(
+      document,
+      process.env.NEXT_PUBLIC_SHAPE_DOCS_TITLE,
+      stateContainer.selection
+    )
+  }, [stateContainer.selection])
   useEffect(() => {
     if (!stateContainer.selection) {
       return
