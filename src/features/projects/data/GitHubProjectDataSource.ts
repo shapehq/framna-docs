@@ -149,7 +149,8 @@ export default class GitHubProjectDataSource implements IProjectDataSource {
   
   private getVersions(searchResult: SearchResult): Version[] {
     const branchVersions = searchResult.branches.nodes.map((ref: Ref) => {
-      return this.mapVersionFromRef(searchResult.owner.login, searchResult.name, ref)
+      const isDefaultRef = ref.name == searchResult.defaultBranchRef.name
+      return this.mapVersionFromRef(searchResult.owner.login, searchResult.name, ref, isDefaultRef)
     })
     const tagVersions = searchResult.tags.nodes.map((ref: Ref) => {
       return this.mapVersionFromRef(searchResult.owner.login, searchResult.name, ref)
@@ -177,7 +178,12 @@ export default class GitHubProjectDataSource implements IProjectDataSource {
     return allVersions
   }
   
-  private mapVersionFromRef(owner: string, repository: string, ref: Ref): Version {
+  private mapVersionFromRef(
+    owner: string,
+    repository: string,
+    ref: Ref,
+    isDefaultRef: boolean = false
+  ): Version {
     const specifications = ref.target.tree.entries.filter(file => {
       return this.isOpenAPISpecification(file.name)
     }).map(file => {
@@ -197,7 +203,8 @@ export default class GitHubProjectDataSource implements IProjectDataSource {
       id: ref.name,
       name: ref.name,
       specifications: specifications,
-      url: `https://github.com/${owner}/${repository}/tree/${ref.name}`
+      url: `https://github.com/${owner}/${repository}/tree/${ref.name}`,
+      isDefault: isDefaultRef
     }
   }
 

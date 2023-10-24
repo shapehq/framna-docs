@@ -37,7 +37,7 @@ const ProjectListItem = (
         <ListItemText
           primary={
             <Typography variant="h6" style={{ fontWeight: isSelected ? "bold" : "normal" }}>
-              {project.displayName || project.name}
+              {project.displayName}
             </Typography>
           }
         /> 
