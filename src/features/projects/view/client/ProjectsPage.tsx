@@ -25,8 +25,6 @@ export default function ProjectsPage({
   const { projects: clientProjects, error, isLoading: isClientLoading } = useProjects()
   const projects = isClientLoading ? (serverProjects || []) : clientProjects
   const isLoading = serverProjects === undefined && isClientLoading
-  console.log(serverProjects)
-  console.log(isLoading)
   const stateContainer = getProjectPageState({
     isLoading,
     error,
