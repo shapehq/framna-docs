@@ -43,10 +43,6 @@ export function getProjectPageState({
     return { state: ProjectPageState.ERROR, error }
   }
   projects = projects || []
-  if (!selectedProjectId && projects.length == 1) {
-    // If no project is selected and the user only has a single project then we select that.
-    selectedProjectId = projects[0].id
-  }
   if (!selectedProjectId) {
     return { state: ProjectPageState.NO_PROJECT_SELECTED }
   }
