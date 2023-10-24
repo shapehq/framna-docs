@@ -1,5 +1,6 @@
-import ISessionOAuthTokenRepository from "../domain/ISessionOAuthTokenRepository"
-import IOAuthTokenRefresher from "../domain/IOAuthTokenRefresher"
+import ISessionOAuthTokenRepository from "./ISessionOAuthTokenRepository"
+import IOAuthTokenRefresher from "./IOAuthTokenRefresher"
+import { UnauthorizedError } from "./AuthError"
 
 export default class AccessTokenService {
   private readonly tokenRepository: ISessionOAuthTokenRepository
@@ -28,7 +29,7 @@ export default class AccessTokenService {
     } else if (refreshTokenExpiryDate.getTime() > now.getTime()) {
       return await this.refreshSpecifiedAccessToken(authToken.refreshToken)
     } else {
-      throw new Error("Both the access token and refresh token have expired.")
+      throw new UnauthorizedError("Both the access token and refresh token have expired.")
     }
   }
   

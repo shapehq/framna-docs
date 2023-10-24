@@ -1,5 +1,6 @@
 import OAuthToken from "../domain/OAuthToken"
 import IOAuthTokenRefresher from "../domain/IOAuthTokenRefresher"
+import { UnauthorizedError } from "../domain/AuthError"
 
 export interface GitHubOAuthTokenRefresherConfig {
   readonly clientId: string
@@ -17,7 +18,7 @@ export default class GitHubOAuthTokenRefresher implements IOAuthTokenRefresher {
     const url = this.getAccessTokenURL(refreshToken)
     const response = await fetch(url, { method: "POST" })
     if (response.status != 200) {
-      throw new Error(
+      throw new UnauthorizedError(
         `Failed refreshing access token with HTTP status ${response.status}: ${response.statusText}`
       )
     }
@@ -27,9 +28,9 @@ export default class GitHubOAuthTokenRefresher implements IOAuthTokenRefresher {
     const errorDescription = params.get("error_description")
     if (error && error.length > 0) {
       if (errorDescription && errorDescription.length > 0) {
-        throw new Error(errorDescription)
+        throw new UnauthorizedError(errorDescription)
       } else {
-        throw new Error(error)
+        throw new UnauthorizedError(error)
       }
     }
     const newAccessToken = params.get("access_token")
@@ -42,7 +43,7 @@ export default class GitHubOAuthTokenRefresher implements IOAuthTokenRefresher {
       !newRawAccessTokenExpiryDate || newRawAccessTokenExpiryDate.length <= 0 ||
       !newRawRefreshTokenExpiryDate || newRawRefreshTokenExpiryDate.length <= 0
     ) {
-      throw new Error("Refreshing access token did not produce a valid access token")
+      throw new UnauthorizedError("Refreshing access token did not produce a valid access token")
     }
     const accessTokenExpiryDate = new Date(
       new Date().getTime() + parseInt(newRawAccessTokenExpiryDate) * 1000

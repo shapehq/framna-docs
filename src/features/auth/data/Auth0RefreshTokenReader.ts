@@ -1,5 +1,6 @@
 import { ManagementClient } from "auth0"
 import IRefreshTokenReader from "../domain/IRefreshTokenReader"
+import { UnauthorizedError } from "../domain/AuthError"
 
 interface Auth0RefreshTokenReaderConfig {
   domain: string
@@ -27,7 +28,7 @@ export default class Auth0RefreshTokenReader implements IRefreshTokenReader {
       return identity.connection.toLowerCase() == this.connection.toLowerCase()
     })
     if (!identity) {
-      throw new Error(`No identity found for connection "${this.connection}"`)
+      throw new UnauthorizedError(`No identity found for connection "${this.connection}"`)
     }
     return identity.refresh_token
   }
