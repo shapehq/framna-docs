@@ -1,12 +1,9 @@
-import { Octokit } from "octokit"
-import { GraphQlQueryResponseData } from "@octokit/graphql"
-import AccessTokenService from "@/features/auth/domain/AccessTokenService"
+import IGitHubClient from "@/common/github/IGitHubClient"
 import IProject from "../domain/IProject"
 import IProjectConfig from "../domain/IProjectConfig"
 import IProjectRepository from "../domain/IProjectRepository"
 import IVersion from "../domain/IVersion"
 import ProjectConfigParser from "../domain/ProjectConfigParser"
-import IGitHubOrganizationNameProvider from "./IGitHubOrganizationNameProvider"
 
 type SearchResult = {
   readonly name: string
@@ -44,22 +41,16 @@ type File = {
 }
 
 export default class GitHubProjectRepository implements IProjectRepository<IProject> {
-  private organizationNameProvider: IGitHubOrganizationNameProvider
-  private accessTokenService: AccessTokenService
+  private gitHubClient: IGitHubClient
+  private organizationName: string
   
-  constructor(
-    organizationNameProvider: IGitHubOrganizationNameProvider, 
-    accessTokenService: AccessTokenService
-  ) {
-    this.organizationNameProvider = organizationNameProvider
-    this.accessTokenService = accessTokenService
+  constructor(gitHubClient: IGitHubClient, organizationName: string) {
+    this.gitHubClient = gitHubClient
+    this.organizationName = organizationName
   }
   
   async getProjects(): Promise<IProject[]> {
-    const organizationName = await this.organizationNameProvider.getOrganizationName()
-    const accessToken = await this.accessTokenService.getAccessToken()
-    const octokit = new Octokit({ auth: accessToken })
-    const response: GraphQlQueryResponseData = await octokit.graphql(`
+    const response = await this.gitHubClient.graphql(`
       query Repositories($searchQuery: String!) {
         search(query: $searchQuery, type: REPOSITORY, first: 100) {
           results: nodes {
@@ -110,7 +101,7 @@ export default class GitHubProjectRepository implements IProjectRepository<IProj
       }
       `,
       {
-        searchQuery: `org:${organizationName} openapi in:name`
+        searchQuery: `org:${this.organizationName} openapi in:name`
       }
     )
     return response.search.results.map((searchResult: SearchResult) => {

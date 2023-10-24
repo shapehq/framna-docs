@@ -1,8 +1,5 @@
-import { Octokit } from "octokit"
 import { NextRequest, NextResponse } from "next/server"
-import { accessTokenService } from "@/common/startup"
-
-type GitHubContentItem = {download_url: string}
+import { gitHubClient } from "@/common/startup"
 
 interface GetBlobParams {
   owner: string
@@ -11,16 +8,12 @@ interface GetBlobParams {
 }
 
 export async function GET(req: NextRequest, { params }: { params: GetBlobParams }) {
-  const accessToken = await accessTokenService.getAccessToken()
-  const octokit = new Octokit({ auth: accessToken })
-  const fullPath = params.path.join("/")
-  const ref = req.nextUrl.searchParams.get("ref")
-  const response = await octokit.rest.repos.getContent({
-    owner: params.owner,
-    repo: params.repository,
-    path: fullPath,
-    ref: ref || undefined
+  const item = await gitHubClient.getRepositoryContent({
+    repositoryOwner: params.owner,
+    repositoryName: params.repository,
+    path:  params.path.join("/"),
+    ref: req.nextUrl.searchParams.get("ref") || undefined
   })
-  const item = response.data as GitHubContentItem
-  return NextResponse.redirect(new URL(item.download_url))
+  const url = new URL(item.downloadURL)
+  return NextResponse.redirect(url)
 }

@@ -31,6 +31,8 @@ GITHUB_PRIVATE_KEY_BASE_64='base 64 encoded version of the private key'
 GITHUB_WEBHOOK_SECRET='preshared secret also put in app conf in GitHub'
 GITHUB_WEBHOK_REPOSITORY_ALLOWLIST=''
 GITHUB_WEBHOK_REPOSITORY_DISALLOWLIST=''
+GITHUB_ORGANIZATION_NAME='shapehq'
+REDIS_URL=''
 ```
 
 Each environment variable is described in the table below.
@@ -52,6 +54,8 @@ Each environment variable is described in the table below.
 |GITHUB_WEBHOOK_SECRET|Secret shared with the GitHub app to validate a webhook call.|
 |GITHUB_WEBHOK_REPOSITORY_ALLOWLIST|Comma-separated list of repositories from which webhook calls should be accepted. Leave empty to accept calls from all repositories.|
 |GITHUB_WEBHOK_REPOSITORY_DISALLOWLIST|Comma-separated list of repositories from which webhook calls should be ignored. The list of disallowed repositories takes precedence over the list of allowed repositories.|
+|GITHUB_ORGANIZATION_NAME|Name of the organization to show repositories for.|
+|REDIS_URL|The URL to the Redis store.|
 
 You need the following two Auth0 apps.
 
