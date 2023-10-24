@@ -10,17 +10,21 @@ import { getProjectPageState } from "../../domain/ProjectPageState"
 import projectNavigator from "../../domain/projectNavigator"
 import useProjects from "../../data/useProjects"
 
-interface ProjectsPageProps {
-  readonly projectId?: string
-  readonly versionId?: string
-  readonly specificationId?: string
-}
-
-export default function ProjectsPage(
-  { projectId, versionId, specificationId }: ProjectsPageProps
-) {
+export default function ProjectsPage({
+  projects: serverProjects,
+  projectId,
+  versionId,
+  specificationId
+}: {
+  projects: Project[]
+  projectId?: string
+  versionId?: string
+  specificationId?: string
+}) {
   const router = useRouter()
-  const { projects, error, isLoading } = useProjects()
+  const { projects: clientProjects, error, isLoading: isClientLoading } = useProjects()
+  const projects = isClientLoading ? serverProjects : clientProjects
+  const isLoading = serverProjects === undefined && isClientLoading
   const stateContainer = getProjectPageState({
     isLoading,
     error,
