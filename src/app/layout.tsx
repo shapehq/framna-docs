@@ -2,7 +2,7 @@ import "./globals.css"
 import type { Metadata } from "next"
 import { Inter } from "next/font/google"
 import { CssBaseline } from "@mui/material"
-import ThemeRegistry from "@/common/ThemeRegistry"
+import ThemeRegistry from "@/common/theme/ThemeRegistry"
 import { UserProvider } from "@auth0/nextjs-auth0/client"
 
 const inter = Inter({ subsets: ["latin"] })
