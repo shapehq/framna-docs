@@ -1,6 +1,7 @@
 import ZodJSONCoder from "../../../common/utils/ZodJSONCoder"
 import ISessionDataRepository from "@/common/userData/ISessionDataRepository"
-import ISessionOAuthTokenRepository from "../domain/SessionOAuthTokenRepository"
+import ISessionOAuthTokenRepository from "./SessionOAuthTokenRepository"
+import { UnauthorizedError } from "./AuthError"
 import OAuthToken, { OAuthTokenSchema } from "./OAuthToken"
 
 export default class SessionOAuthTokenRepository implements ISessionOAuthTokenRepository {
@@ -13,7 +14,7 @@ export default class SessionOAuthTokenRepository implements ISessionOAuthTokenRe
   async getOAuthToken(): Promise<OAuthToken> {
     const string = await this.repository.get()
     if (!string) {
-      throw new Error(`No OAuthToken stored for user.`)
+      throw new UnauthorizedError(`No OAuthToken stored for user.`)
     }
     return ZodJSONCoder.decode(OAuthTokenSchema, string)
   }
