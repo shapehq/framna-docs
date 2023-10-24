@@ -12,7 +12,7 @@ export function getProjectId(url?: string) {
 }
 
 function getVersionAndSpecification(url?: string) {
-    const project = getProjectId(url)?.replace('-openapi', '');
+    const project = getProjectId(url)
     if (url && project) {
         const versionAndSpecification = url.substring(project.length + 2)// remove first slash
         let specification: string | undefined = undefined;
