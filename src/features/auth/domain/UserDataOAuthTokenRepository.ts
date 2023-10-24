@@ -1,7 +1,8 @@
+import ZodJSONCoder from "@/common/utils/ZodJSONCoder"
 import IUserDataRepository from "@/common/userData/IUserDataRepository"
-import IUserDataOAuthTokenRepository from "../domain/UserDataOAuthTokenRepository"
-import OAuthToken from "../domain/OAuthToken"
-import OAuthTokenCoder from "../domain/OAuthTokenCoder"
+import IUserDataOAuthTokenRepository from ".//UserDataOAuthTokenRepository"
+import { UnauthorizedError } from "./AuthError"
+import OAuthToken, { OAuthTokenSchema } from "./OAuthToken"
 
 export default class UserDataOAuthTokenRepository implements IUserDataOAuthTokenRepository {
   private readonly repository: IUserDataRepository<string>
@@ -13,13 +14,13 @@ export default class UserDataOAuthTokenRepository implements IUserDataOAuthToken
   async getOAuthToken(userId: string): Promise<OAuthToken> {
     const string = await this.repository.get(userId)
     if (!string) {
-      throw new Error(`No OAuthToken stored for user with ID ${userId}.`)
+      throw new UnauthorizedError(`No OAuthToken stored for user with ID ${userId}.`)
     }
-    return OAuthTokenCoder.decode(string)
+    return ZodJSONCoder.decode(OAuthTokenSchema, string)
   }
   
   async storeOAuthToken(userId: string, token: OAuthToken): Promise<void> {
-    const string = OAuthTokenCoder.encode(token)
+    const string = ZodJSONCoder.encode(OAuthTokenSchema, token)
     await this.repository.set(userId, string)
   }
   

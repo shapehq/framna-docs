@@ -10,7 +10,9 @@ import {
 } from "@auth0/nextjs-auth0"
 import {
   initialOAuthTokenService,
-  sessionOAuthTokenRepository
+  sessionOAuthTokenRepository,
+  sessionProjectRepository,
+  logoutHandler
 } from "@/composition"
 
 const { SHAPE_DOCS_BASE_URL } = process.env
@@ -26,7 +28,11 @@ const onError: AppRouterOnError = async () => {
 }
 
 const onLogout: NextAppRouterHandler = async (req: NextRequest, ctx: AppRouteHandlerFnContext) => {
-  await sessionOAuthTokenRepository.deleteOAuthToken().catch(() => null)
+  await Promise.all([
+    sessionOAuthTokenRepository.deleteOAuthToken().catch(() => null),
+    sessionProjectRepository.deleteProjects().catch(() => null)
+  ])
+  await logoutHandler()
   return await handleLogout(req, ctx)
 }
 

@@ -1,8 +1,8 @@
 import IGitHubClient from "@/common/github/IGitHubClient"
-import IProject from "../domain/IProject"
+import Project from "../domain/Project"
 import IProjectConfig from "../domain/IProjectConfig"
-import IProjectRepository from "../domain/IProjectRepository"
-import IVersion from "../domain/IVersion"
+import IProjectDataSource from "../domain/IProjectDataSource"
+import Version from "../domain/Version"
 import ProjectConfigParser from "../domain/ProjectConfigParser"
 
 type SearchResult = {
@@ -40,7 +40,7 @@ type File = {
   readonly name: string
 }
 
-export default class GitHubProjectRepository implements IProjectRepository<IProject> {
+export default class GitHubProjectDataSource implements IProjectDataSource {
   private gitHubClient: IGitHubClient
   private organizationName: string
   
@@ -49,7 +49,7 @@ export default class GitHubProjectRepository implements IProjectRepository<IProj
     this.organizationName = organizationName
   }
   
-  async getProjects(): Promise<IProject[]> {
+  async getProjects(): Promise<Project[]> {
     const response = await this.gitHubClient.graphql(`
       query Repositories($searchQuery: String!) {
         search(query: $searchQuery, type: REPOSITORY, first: 100) {
@@ -107,15 +107,15 @@ export default class GitHubProjectRepository implements IProjectRepository<IProj
     return response.search.results.map((searchResult: SearchResult) => {
       return this.mapProject(searchResult)
     })
-    .filter((project: IProject) => {
+    .filter((project: Project) => {
       return project.versions.length > 0
     })
-    .sort((a: IProject, b: IProject) => {
+    .sort((a: Project, b: Project) => {
       return a.name.localeCompare(b.name)
     })
   }
   
-  private mapProject(searchResult: SearchResult): IProject {
+  private mapProject(searchResult: SearchResult): Project {
     const config = this.getConfig(searchResult)
     let imageURL: string | undefined
     if (config && config.image) {
@@ -147,7 +147,7 @@ export default class GitHubProjectRepository implements IProjectRepository<IProj
     return parser.parse(yml.text)
   }
   
-  private getVersions(searchResult: SearchResult): IVersion[] {
+  private getVersions(searchResult: SearchResult): Version[] {
     const branchVersions = searchResult.branches.nodes.map((ref: Ref) => {
       return this.mapVersionFromRef(searchResult.owner.login, searchResult.name, ref)
     })
@@ -160,12 +160,12 @@ export default class GitHubProjectRepository implements IProjectRepository<IProj
     ]
     // Reverse them so the top-priority branches end up at the top of the list.
     .reverse()
-    const allVersions = branchVersions.concat(tagVersions).sort((a: IVersion, b: IVersion) => {
+    const allVersions = branchVersions.concat(tagVersions).sort((a: Version, b: Version) => {
       return a.name.localeCompare(b.name)
     })
     // Move the top-priority branches to the top of the list.
     for (const candidateDefaultBranch of candidateDefaultBranches) {
-      const defaultBranchIndex = allVersions.findIndex((version: IVersion) => {
+      const defaultBranchIndex = allVersions.findIndex((version: Version) => {
         return version.name === candidateDefaultBranch
       })
       if (defaultBranchIndex !== -1) {
@@ -177,7 +177,7 @@ export default class GitHubProjectRepository implements IProjectRepository<IProj
     return allVersions
   }
   
-  private mapVersionFromRef(owner: string, repository: string, ref: Ref): IVersion {
+  private mapVersionFromRef(owner: string, repository: string, ref: Ref): Version {
     const specifications = ref.target.tree.entries.filter(file => {
       return this.isOpenAPISpecification(file.name)
     }).map(file => {

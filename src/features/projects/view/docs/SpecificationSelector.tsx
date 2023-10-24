@@ -1,8 +1,8 @@
 import { SelectChangeEvent, Select, MenuItem, FormControl } from "@mui/material"
-import IOpenApiSpecification from "../../domain/IOpenApiSpecification"
+import OpenApiSpecification from "../../domain/OpenApiSpecification"
 
 interface SpecificationSelectorProps {
-  specifications: IOpenApiSpecification[]
+  specifications: OpenApiSpecification[]
   selection: string
   onSelect: (specificationId: string) => void
 }

@@ -12,7 +12,7 @@ const ProjectsPageSecondaryContent = ({
   case ProjectPageState.NO_PROJECT_SELECTED:
     return <></>
   case ProjectPageState.ERROR:
-    return <ProjectErrorContent text={stateContainer.error!.toString()}/>
+    return <ProjectErrorContent text={stateContainer.error!.message}/>
   case ProjectPageState.HAS_SELECTION:
     return <DocumentationViewer url={stateContainer.selection!.specification.url}/>
   case ProjectPageState.PROJECT_NOT_FOUND:

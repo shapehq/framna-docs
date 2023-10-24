@@ -1,5 +1,6 @@
-import IProject from "./IProject"
+import Project from "./Project"
 
-export default interface IProjectRepository<ProjectType extends IProject> {
-  getProjects(): Promise<ProjectType[]>
+export default interface IProjectRepository {
+  getProjects(): Promise<Project[]>
+  storeProjects(projects: Project[]): Promise<void>
 }

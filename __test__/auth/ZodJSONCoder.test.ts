@@ -1,4 +1,14 @@
-import OAuthTokenCoder from "../../src/features/auth/domain/OAuthTokenCoder"
+import { z } from "zod"
+import ZodJSONCoder from "../../src/common/utils/ZodJSONCoder"
+
+const SampleAuthTokenSchema = z.object({
+  accessToken: z.string(),
+  refreshToken: z.string(),
+  accessTokenExpiryDate: z.coerce.date(),
+  refreshTokenExpiryDate: z.coerce.date()
+})
+
+type SampleAuthToken = z.infer<typeof SampleAuthTokenSchema>
 
 test("It encodes a valid token", async () => {
   const token = {
@@ -7,7 +17,7 @@ test("It encodes a valid token", async () => {
     accessTokenExpiryDate: new Date(new Date().getTime() + 3600 * 1000),
     refreshTokenExpiryDate: new Date(new Date().getTime() + 24 * 3600 * 1000)
   }
-  const str = OAuthTokenCoder.encode(token)
+  const str = ZodJSONCoder.encode(SampleAuthTokenSchema, token)
   const decodedToken = JSON.parse(str)
   expect(decodedToken.accessToken).toBe(token.accessToken)
   expect(decodedToken.refreshToken).toBe(token.refreshToken)
@@ -24,7 +34,7 @@ test("It decodes a valid token", async () => {
     accessTokenExpiryDate: accessTokenExpiryDate,
     refreshTokenExpiryDate: refreshTokenExpiryDate
   })
-  const token = OAuthTokenCoder.decode(str)
+  const token: SampleAuthToken = ZodJSONCoder.decode(SampleAuthTokenSchema, str)
   expect(token.accessToken).toBe("foo")
   expect(token.refreshToken).toBe("bar")
   expect(token.accessTokenExpiryDate).toEqual(accessTokenExpiryDate)
@@ -37,7 +47,7 @@ test("It throws an error when the returned OAuth token does not contain an acces
     accessTokenExpiryDate: new Date(new Date().getTime() + 3600 * 1000),
     refreshTokenExpiryDate: new Date(new Date().getTime() + 24 * 3600 * 1000)
   })
-  expect(() => OAuthTokenCoder.decode(str)).toThrow()
+  expect(() => ZodJSONCoder.decode(SampleAuthTokenSchema, str)).toThrow()
 })
 
 test("It throws an error when the returned OAuth token does not contain an refresh token", async () => {
@@ -46,7 +56,7 @@ test("It throws an error when the returned OAuth token does not contain an refre
     accessTokenExpiryDate: new Date(new Date().getTime() + 3600 * 1000),
     refreshTokenExpiryDate: new Date(new Date().getTime() + 24 * 3600 * 1000)
   })
-  expect(() => OAuthTokenCoder.decode(str)).toThrow()
+  expect(() => ZodJSONCoder.decode(SampleAuthTokenSchema, str)).toThrow()
 })
 
 test("It throws an error when the returned OAuth token does not contain an expiry date for the access token", async () => {
@@ -55,7 +65,7 @@ test("It throws an error when the returned OAuth token does not contain an expir
     refreshToken: "bar",
     refreshTokenExpiryDate: new Date(new Date().getTime() + 24 * 3600 * 1000)
   })
-  expect(() => OAuthTokenCoder.decode(str)).toThrow()
+  expect(() => ZodJSONCoder.decode(SampleAuthTokenSchema, str)).toThrow()
 })
 
 test("It throws an error when the returned OAuth token does not contain an expiry date for the refresh token", async () => {
@@ -64,7 +74,7 @@ test("It throws an error when the returned OAuth token does not contain an expir
     refreshToken: "bar",
     accessTokenExpiryDate: new Date(new Date().getTime() + 3600 * 1000)
   })
-  expect(() => OAuthTokenCoder.decode(str)).toThrow()
+  expect(() => ZodJSONCoder.decode(SampleAuthTokenSchema, str)).toThrow()
 })
 
 test("It throws an error when the returned OAuth token does not contain a valid expiry date for the access token", async () => {
@@ -74,7 +84,7 @@ test("It throws an error when the returned OAuth token does not contain a valid 
     accessTokenExpiryDate: "baz",
     refreshTokenExpiryDate: new Date(new Date().getTime() + 3600 * 1000)
   })
-  expect(() => OAuthTokenCoder.decode(str)).toThrow()
+  expect(() => ZodJSONCoder.decode(SampleAuthTokenSchema, str)).toThrow()
 })
 
 test("It throws an error when the returned OAuth token does not contain a valid expiry date for the refresh token", async () => {
@@ -84,5 +94,5 @@ test("It throws an error when the returned OAuth token does not contain a valid 
     accessTokenExpiryDate: new Date(new Date().getTime() + 3600 * 1000),
     refreshTokenExpiryDate: "baz"
   })
-  expect(() => OAuthTokenCoder.decode(str)).toThrow()
+  expect(() => ZodJSONCoder.decode(SampleAuthTokenSchema, str)).toThrow()
 })

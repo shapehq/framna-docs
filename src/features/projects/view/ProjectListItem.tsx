@@ -1,5 +1,5 @@
 import { ListItem, ListItemButton, ListItemText, Typography } from "@mui/material"
-import IProject from "../domain/IProject"
+import Project from "../domain/Project"
 import ProjectAvatar from "./ProjectAvatar"
 
 const ProjectListItem = (
@@ -8,9 +8,9 @@ const ProjectListItem = (
     isSelected,
     onSelectProject
   }: {
-    project: IProject
+    project: Project
     isSelected: boolean
-    onSelectProject: (project: IProject) => void
+    onSelectProject: (project: Project) => void
   }
 ) => {
   return (

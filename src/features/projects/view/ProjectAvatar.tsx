@@ -1,13 +1,13 @@
 import { alpha, useTheme } from "@mui/material/styles"
 import { SxProps } from "@mui/system"
 import { Avatar } from "@mui/material"
-import IProject from "../domain/IProject"
+import Project from "../domain/Project"
 
 function ProjectAvatar({
   project,
   sx
 }: {
-  project: IProject,
+  project: Project,
   sx?: SxProps
 }) {
   const theme = useTheme()
