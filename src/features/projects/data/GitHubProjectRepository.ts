@@ -1,30 +1,56 @@
-import { Octokit } from "octokit"
-import AccessTokenService from "@/features/auth/domain/AccessTokenService"
+import IGitHubClient from "@/common/github/IGitHubClient"
 import IProject from "../domain/IProject"
 import IProjectConfig from "../domain/IProjectConfig"
 import IProjectRepository from "../domain/IProjectRepository"
 import IVersion from "../domain/IVersion"
-import IOpenApiSpecification from "../domain/IOpenApiSpecification"
 import ProjectConfigParser from "../domain/ProjectConfigParser"
-import IGitHubOrganizationNameProvider from "./IGitHubOrganizationNameProvider"
+
+type SearchResult = {
+  readonly name: string
+  readonly owner: {
+    readonly login: string
+  }
+  readonly defaultBranchRef: {
+    readonly name: string
+  }
+  readonly configYml?: {
+    readonly text: string
+  }
+  readonly configYaml?: {
+    readonly text: string
+  }
+  readonly branches: NodesContainer<Ref>
+  readonly tags: NodesContainer<Ref>
+}
+
+type NodesContainer<T> = {
+  readonly nodes: T[]
+}
+
+type Ref = {
+  readonly name: string
+  readonly target: {
+    readonly tree: {
+      readonly entries: File[]
+    }
+  }
+}
+
+type File = {
+  readonly name: string
+}
 
 export default class GitHubProjectRepository implements IProjectRepository<IProject> {
-  private organizationNameProvider: IGitHubOrganizationNameProvider
-  private accessTokenService: AccessTokenService
+  private gitHubClient: IGitHubClient
+  private organizationName: string
   
-  constructor(
-    organizationNameProvider: IGitHubOrganizationNameProvider, 
-    accessTokenService: AccessTokenService
-  ) {
-    this.organizationNameProvider = organizationNameProvider
-    this.accessTokenService = accessTokenService
+  constructor(gitHubClient: IGitHubClient, organizationName: string) {
+    this.gitHubClient = gitHubClient
+    this.organizationName = organizationName
   }
   
   async getProjects(): Promise<IProject[]> {
-    const organizationName = await this.organizationNameProvider.getOrganizationName()
-    const accessToken = await this.accessTokenService.getAccessToken()
-    const octokit = new Octokit({ auth: accessToken })
-    const response: any = await octokit.graphql(`
+    const response = await this.gitHubClient.graphql(`
       query Repositories($searchQuery: String!) {
         search(query: $searchQuery, type: REPOSITORY, first: 100) {
           results: nodes {
@@ -75,21 +101,21 @@ export default class GitHubProjectRepository implements IProjectRepository<IProj
       }
       `,
       {
-        searchQuery: `org:${organizationName} openapi in:name`
+        searchQuery: `org:${this.organizationName} openapi in:name`
       }
     )
-    return response.search.results.map((e: any) => {
-      return this.mapProject(e)
+    return response.search.results.map((searchResult: SearchResult) => {
+      return this.mapProject(searchResult)
     })
-    .filter((e: IProject) => {
-      return e.versions.length > 0
+    .filter((project: IProject) => {
+      return project.versions.length > 0
     })
-    .sort((a: any, b: any) => {
+    .sort((a: IProject, b: IProject) => {
       return a.name.localeCompare(b.name)
     })
   }
   
-  private mapProject(searchResult: any): IProject {
+  private mapProject(searchResult: SearchResult): IProject {
     const config = this.getConfig(searchResult)
     let imageURL: string | undefined
     if (config && config.image) {
@@ -100,19 +126,19 @@ export default class GitHubProjectRepository implements IProjectRepository<IProj
         searchResult.defaultBranchRef.name
       )
     }
-    const defaultName = searchResult.name.replace(/\-openapi$/, "")
+    const defaultName = searchResult.name.replace(/-openapi$/, "")
     return {
       id: defaultName,
       name: defaultName,
       displayName: config?.name || defaultName,
-      versions: this.getVersions(searchResult).filter(e => {
-        return e.specifications.length > 0
+      versions: this.getVersions(searchResult).filter(version => {
+        return version.specifications.length > 0
       }),
       imageURL: imageURL
     }
   }
   
-  private getConfig(searchResult: any): IProjectConfig | null {
+  private getConfig(searchResult: SearchResult): IProjectConfig | null {
     const yml = searchResult.configYml || searchResult.configYaml
     if (!yml || !yml.text || yml.text.length == 0) {
       return null
@@ -121,11 +147,11 @@ export default class GitHubProjectRepository implements IProjectRepository<IProj
     return parser.parse(yml.text)
   }
   
-  private getVersions(searchResult: any): IVersion[] {
-    const branchVersions = searchResult.branches.nodes.map((ref: any) => {
+  private getVersions(searchResult: SearchResult): IVersion[] {
+    const branchVersions = searchResult.branches.nodes.map((ref: Ref) => {
       return this.mapVersionFromRef(searchResult.owner.login, searchResult.name, ref)
     })
-    const tagVersions = searchResult.tags.nodes.map((ref: any) => {
+    const tagVersions = searchResult.tags.nodes.map((ref: Ref) => {
       return this.mapVersionFromRef(searchResult.owner.login, searchResult.name, ref)
     })
     const defaultBranchName = searchResult.defaultBranchRef.name
@@ -134,13 +160,13 @@ export default class GitHubProjectRepository implements IProjectRepository<IProj
     ]
     // Reverse them so the top-priority branches end up at the top of the list.
     .reverse()
-    let allVersions = branchVersions.concat(tagVersions).sort((a: any, b: any) => {
+    const allVersions = branchVersions.concat(tagVersions).sort((a: IVersion, b: IVersion) => {
       return a.name.localeCompare(b.name)
     })
     // Move the top-priority branches to the top of the list.
     for (const candidateDefaultBranch of candidateDefaultBranches) {
-      const defaultBranchIndex = allVersions.findIndex((e: any) => {
-        return e.name === candidateDefaultBranch
+      const defaultBranchIndex = allVersions.findIndex((version: IVersion) => {
+        return version.name === candidateDefaultBranch
       })
       if (defaultBranchIndex !== -1) {
         const branchVersion = allVersions[defaultBranchIndex]
@@ -151,25 +177,21 @@ export default class GitHubProjectRepository implements IProjectRepository<IProj
     return allVersions
   }
   
-  private mapVersionFromRef(owner: string, repository: string, ref: any): IVersion {
-    const specifications = ref.target.tree.entries.map((item: any) => {
-      if (!this.isOpenAPISpecification(item.name)) {
-        return null
-      }
+  private mapVersionFromRef(owner: string, repository: string, ref: Ref): IVersion {
+    const specifications = ref.target.tree.entries.filter(file => {
+      return this.isOpenAPISpecification(file.name)
+    }).map(file => {
       return {
-        id: item.name,
-        name: item.name,
+        id: file.name,
+        name: file.name,
         url: this.getGitHubBlobURL(
           owner,
           repository,
-          item.name,
+          file.name,
           ref.name
         ),
-        editURL: `https://github.com/${owner}/${repository}/edit/${ref.name}/${item.name}`
+        editURL: `https://github.com/${owner}/${repository}/edit/${ref.name}/${file.name}`
       }
-    })
-    .filter((e: IOpenApiSpecification | null) => {
-      return e != null
     })
     return {
       id: ref.name,

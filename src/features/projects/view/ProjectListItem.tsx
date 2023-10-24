@@ -1,24 +1,22 @@
-import { useRouter } from "next/navigation"
 import { ListItem, ListItemButton, ListItemText, Typography } from "@mui/material"
 import IProject from "../domain/IProject"
 import ProjectAvatar from "./ProjectAvatar"
 
-interface ProjectListItemProps<ProjectType extends IProject> {
-  readonly project: ProjectType
-  readonly isSelected: boolean
-}
-
-const ProjectListItem = <ProjectType extends IProject>(
+const ProjectListItem = (
   {
     project,
-    isSelected
-  }: ProjectListItemProps<ProjectType>
+    isSelected,
+    onSelectProject
+  }: {
+    project: IProject
+    isSelected: boolean
+    onSelectProject: (project: IProject) => void
+  }
 ) => {
-  const router = useRouter()
   return (
     <ListItem disablePadding>
       <ListItemButton
-        onClick={() => router.push(`/${project.id}`)}
+        onClick={() => onSelectProject(project)}
         selected={isSelected}
         sx={{
           paddingLeft: "15px",

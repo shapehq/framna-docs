@@ -1,13 +1,13 @@
-import IOAuthTokenRepository from "../domain/IOAuthTokenRepository"
+import ISessionOAuthTokenRepository from "../domain/ISessionOAuthTokenRepository"
 import IOAuthTokenRefresher from "../domain/IOAuthTokenRefresher"
 
 export default class AccessTokenService {
-  private readonly tokenRepository: IOAuthTokenRepository
+  private readonly tokenRepository: ISessionOAuthTokenRepository
   private readonly tokenRefresher: IOAuthTokenRefresher
   private readonly tokenExpirationThreshold = 5 * 60 * 1000
   
   constructor(
-    tokenRepository: IOAuthTokenRepository,
+    tokenRepository: ISessionOAuthTokenRepository,
     tokenRefresher: IOAuthTokenRefresher
   ) {
     this.tokenRepository = tokenRepository
@@ -26,13 +26,13 @@ export default class AccessTokenService {
     if (accessTokenExpiryDate.getTime() > now.getTime()) {
       return authToken.accessToken
     } else if (refreshTokenExpiryDate.getTime() > now.getTime()) {
-      return await this.refreshAccessToken(authToken.refreshToken)
+      return await this.refreshSpecifiedAccessToken(authToken.refreshToken)
     } else {
-      throw new Error("Tokens have expired")
+      throw new Error("Both the access token and refresh token have expired.")
     }
   }
   
-  private async refreshAccessToken(refreshToken: string): Promise<string> {
+  private async refreshSpecifiedAccessToken(refreshToken: string): Promise<string> {
     const refreshResult = await this.tokenRefresher.refreshAccessToken(refreshToken)
     await this.tokenRepository.storeOAuthToken(refreshResult)
     return refreshResult.accessToken

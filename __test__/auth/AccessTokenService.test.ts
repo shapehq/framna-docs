@@ -1,5 +1,4 @@
 import AccessTokenService from "../../src/features/auth/domain/AccessTokenService"
-import { IOAuthToken } from "../../src/features/auth/domain/IOAuthTokenRepository"
 
 test("It reads the access token from the repository", async () => {
   const sut = new AccessTokenService({
@@ -11,9 +10,10 @@ test("It reads the access token from the repository", async () => {
         refreshTokenExpiryDate: new Date(new Date().getTime() + 3600 * 1000)
       }
     },
-    async storeOAuthToken(_token: IOAuthToken) {}
+    async storeOAuthToken() {},
+    async deleteOAuthToken() {}
   }, {
-    async refreshAccessToken(_refreshToken: string) {
+    async refreshAccessToken() {
       return {
         accessToken: "foo",
         refreshToken: "bar",
@@ -36,9 +36,10 @@ test("It refreshes an expired access token", async () => {
         refreshTokenExpiryDate: new Date(new Date().getTime() + 3600 * 1000)
       }
     },
-    async storeOAuthToken(_token: IOAuthToken) {}
+    async storeOAuthToken() {},
+    async deleteOAuthToken() {}
   }, {
-    async refreshAccessToken(_refreshToken: string) {
+    async refreshAccessToken() {
       return {
         accessToken: "new",
         refreshToken: "bar",
@@ -62,11 +63,12 @@ test("It stores the refreshed access token", async () => {
         refreshTokenExpiryDate: new Date(new Date().getTime() + 3600 * 1000)
       }
     },
-    async storeOAuthToken(_token: IOAuthToken) {
+    async storeOAuthToken() {
       didStoreRefreshedToken = true
-    }
+    },
+    async deleteOAuthToken() {}
   }, {
-    async refreshAccessToken(_refreshToken: string) {
+    async refreshAccessToken() {
       return {
         accessToken: "new",
         refreshToken: "bar",
@@ -89,9 +91,10 @@ test("It errors when the refresh token has expired", async () => {
         refreshTokenExpiryDate: new Date(new Date().getTime() - 3600 * 1000)
       }
     },
-    async storeOAuthToken(_token: IOAuthToken) {}
+    async storeOAuthToken() {},
+    async deleteOAuthToken() {}
   }, {
-    async refreshAccessToken(_refreshToken: string) {
+    async refreshAccessToken() {
       return {
         accessToken: "new",
         refreshToken: "bar",

@@ -1,19 +1,22 @@
 "use client"
 
-import { useState } from "react"
-import createCache from "@emotion/cache"
+import { ReactNode, useState } from "react"
+import createCache, { Options } from "@emotion/cache"
 import { useServerInsertedHTML } from "next/navigation"
 import { CacheProvider } from "@emotion/react"
 import { ThemeProvider } from "@mui/material/styles"
 import CssBaseline from "@mui/material/CssBaseline"
 import theme from "./theme"
-import useMediaQuery from "@mui/material/useMediaQuery"
+
+type ThemeRegistryProps = {
+  options: Options
+  children: ReactNode
+}
 
 // This implementation is from emotion-js
 // https://github.com/emotion-js/emotion/issues/2928#issuecomment-1319747902
-export default function ThemeRegistry(props: any) {
+export default function ThemeRegistry(props: ThemeRegistryProps) {
   const { options, children } = props;
-  const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)');
   const [{ cache, flush }] = useState(() => {
     const cache = createCache(options);
     cache.compat = true;
@@ -56,7 +59,7 @@ export default function ThemeRegistry(props: any) {
 
   return (
     <CacheProvider value={cache}>
-      <ThemeProvider theme={theme(prefersDarkMode)}>
+      <ThemeProvider theme={theme()}>
         <CssBaseline />
         {children}
       </ThemeProvider>
