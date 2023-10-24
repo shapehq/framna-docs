@@ -1,13 +1,13 @@
 import { List, Box, Typography } from "@mui/material"
 import ProjectListItem from "./ProjectListItem"
 import ProjectListItemPlaceholder from "./ProjectListItemPlaceholder"
-import IProject from "../domain/IProject"
+import Project from "../domain/Project"
 
 interface ProjectListProps {
   readonly isLoading: boolean
-  readonly projects: IProject[]
+  readonly projects: Project[]
   readonly selectedProjectId?: string
-  readonly onSelectProject: (project: IProject) => void
+  readonly onSelectProject: (project: Project) => void
 }
 
 const ProjectList = (

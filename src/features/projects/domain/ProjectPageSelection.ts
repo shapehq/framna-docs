@@ -1,11 +1,11 @@
-import IProject from "../domain/IProject"
-import IVersion from "../domain/IVersion"
-import IOpenApiSpecification from "../domain/IOpenApiSpecification"
+import Project from "../domain/Project"
+import Version from "../domain/Version"
+import OpenApiSpecification from "../domain/OpenApiSpecification"
 
 type ProjectPageSelection = {
-  readonly project: IProject
-  readonly version: IVersion
-  readonly specification: IOpenApiSpecification
+  readonly project: Project
+  readonly version: Version
+  readonly specification: OpenApiSpecification
 }
 
 export default ProjectPageSelection

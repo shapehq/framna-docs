@@ -1,8 +1,8 @@
 import { Select, MenuItem, SelectChangeEvent, FormControl } from "@mui/material"
-import IVersion from "../../domain/IVersion"
+import Version from "../../domain/Version"
 
 interface VersionSelectorProps {
-  versions: IVersion[]
+  versions: Version[]
   selection: string
   onSelect: (versionId: string) => void
 }
