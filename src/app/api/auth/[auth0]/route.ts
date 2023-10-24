@@ -13,7 +13,7 @@ import {
   sessionOAuthTokenRepository,
   sessionProjectRepository,
   logoutHandler
-} from "@/composition"} from "@/composition"
+} from "@/composition"
 
 const { SHAPE_DOCS_BASE_URL } = process.env
 
