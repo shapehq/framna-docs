@@ -1,5 +1,6 @@
 namespace NodeJS {
   interface ProcessEnv {
+    NEXT_PUBLIC_SHAPE_DOCS_TITLE: string
     SHAPE_DOCS_BASE_URL: string
     AUTH0_SECRET: string
     AUTH0_BASE_URL: string

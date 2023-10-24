@@ -2,12 +2,14 @@ import Project from "../../src/features/projects/domain/Project"
 import CachingProjectDataSource from "../../src/features/projects/domain/CachingProjectDataSource"
 
 test("It caches projects read from the data source", async () => {
-  const projects = [{
+  const projects: Project[] = [{
     id: "foo",
     name: "foo",
+    displayName: "foo",
     versions: [{
       id: "bar",
       name: "bar",
+      isDefault: false,
       specifications: [{
         id: "baz.yml",
         name: "baz.yml",
@@ -16,6 +18,7 @@ test("It caches projects read from the data source", async () => {
     }, {
       id: "hello",
       name: "hello",
+      isDefault: false,
       specifications: [{
         id: "world.yml",
         name: "world.yml",

@@ -1,5 +1,6 @@
 "use client"
 
+import { useEffect } from "react"
 import { useRouter } from "next/navigation"
 import SidebarContainer from "@/features/sidebar/view/client/SidebarContainer"
 import Project from "../../domain/Project"
@@ -8,6 +9,7 @@ import ProjectsPageSecondaryContent from "../ProjectsPageSecondaryContent"
 import ProjectsPageTrailingToolbarItem from "../ProjectsPageTrailingToolbarItem"
 import { getProjectPageState } from "../../domain/ProjectPageState"
 import projectNavigator from "../../domain/projectNavigator"
+import updateWindowTitle from "../../domain/updateWindowTitle"
 import useProjects from "../../data/useProjects"
 
 export default function ProjectsPage({
@@ -38,6 +40,13 @@ export default function ProjectsPage({
     const specification = version.specifications[0]
     router.push(`/${project.id}/${version.id}/${specification.id}`)
   }
+  useEffect(() => {
+    updateWindowTitle(
+      document,
+      process.env.NEXT_PUBLIC_SHAPE_DOCS_TITLE,
+      stateContainer.selection
+    )
+  }, [stateContainer.selection])
   return (
     <SidebarContainer
       primary={

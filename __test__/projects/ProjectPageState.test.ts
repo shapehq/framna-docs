@@ -22,10 +22,12 @@ test("It gracefully errors when no project has been selected", async () => {
     projects: [{
       id: "foo",
       name: "foo",
+      displayName: "foo",
       versions: []
     }, {
       id: "bar",
       name: "bar",
+      displayName: "bar",
       versions: []
     }]
   })
@@ -38,13 +40,16 @@ test("It selects the first version and specification of the specified project", 
     projects: [{
       id: "foo",
       name: "foo",
+      displayName: "foo",
       versions: []
     }, {
       id: "bar",
       name: "bar",
+      displayName: "bar",
       versions: [{
         id: "baz1",
         name: "baz1",
+        isDefault: false,
         specifications: [{
           id: "hello1",
           name: "hello1.yml",
@@ -57,6 +62,7 @@ test("It selects the first version and specification of the specified project", 
       }, {
         id: "baz2",
         name: "baz2",
+        isDefault: false,
         specifications: []
       }]
     }]
@@ -74,17 +80,21 @@ test("It selects the first specification of the specified project and version", 
     projects: [{
       id: "foo",
       name: "foo",
+      displayName: "foo",
       versions: []
     }, {
       id: "bar",
       name: "bar",
+      displayName: "bar",
       versions: [{
         id: "baz1",
         name: "baz1",
+        isDefault: false,
         specifications: []
       }, {
         id: "baz2",
         name: "baz2",
+        isDefault: false,
         specifications: [{
           id: "hello1",
           name: "hello1.yml",
@@ -106,17 +116,21 @@ test("It selects the specification of the specified version", async () => {
     projects: [{
       id: "foo",
       name: "foo",
+      displayName: "foo",
       versions: []
     }, {
       id: "bar",
       name: "bar",
+      displayName: "bar",
       versions: [{
         id: "baz1",
         name: "baz1",
+        isDefault: false,
         specifications: []
       }, {
         id: "baz2",
         name: "baz2",
+        isDefault: false,
         specifications: [{
           id: "hello1",
           name: "hello1.yml",
@@ -143,17 +157,21 @@ test("It selects the specified project, version, and specification", async () =>
     projects: [{
       id: "foo",
       name: "foo",
+      displayName: "foo",
       versions: []
     }, {
       id: "bar",
       name: "bar",
+      displayName: "bar",
       versions: [{
         id: "baz1",
         name: "baz1",
+        isDefault: false,
         specifications: []
       }, {
         id: "baz2",
         name: "baz2",
+        isDefault: false,
         specifications: [{
           id: "hello1",
           name: "hello1.yml",
@@ -178,6 +196,7 @@ test("It errors when the selected project cannot be found", async () => {
     projects: [{
       id: "bar",
       name: "bar",
+      displayName: "bar",
       versions: []
     }]
   })
@@ -191,9 +210,11 @@ test("It errors when the selected version cannot be found", async () => {
     projects: [{
       id: "foo",
       name: "foo",
+      displayName: "foo",
       versions: [{
         id: "baz",
         name: "baz",
+        isDefault: false,
         specifications: []
       }]
     }]
@@ -209,9 +230,11 @@ test("It errors when the selected specification cannot be found", async () => {
     projects: [{
       id: "foo",
       name: "foo",
+      displayName: "foo",
       versions: [{
         id: "bar",
         name: "bar",
+        isDefault: false,
         specifications: [{
           id: "hello",
           name: "hello.yml",
@@ -229,6 +252,7 @@ test("It errors when the selected project has no versions", async () => {
     projects: [{
       id: "foo",
       name: "foo",
+      displayName: "foo",
       versions: []
     }]
   })
@@ -242,9 +266,11 @@ test("It errors when the selected version has no specifications", async () => {
     projects: [{
       id: "foo",
       name: "foo",
+      displayName: "foo",
       versions: [{
         id: "bar",
         name: "bar",
+        isDefault: false,
         specifications: []
       }]
     }]

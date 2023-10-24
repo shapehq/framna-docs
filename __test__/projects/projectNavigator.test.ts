@@ -6,9 +6,11 @@ test("It navigates to first specification when changing version", async () => {
     project: {
       id: "foo",
       name: "foo",
+      displayName: "foo",
       versions: [{
         id: "bar",
         name: "bar",
+        isDefault: false,
         specifications: [{
           id: "baz.yml",
           name: "baz.yml",
@@ -17,6 +19,7 @@ test("It navigates to first specification when changing version", async () => {
       }, {
         id: "hello",
         name: "hello",
+        isDefault: false,
         specifications: [{
           id: "world.yml",
           name: "world.yml",
@@ -27,6 +30,7 @@ test("It navigates to first specification when changing version", async () => {
     version: {
       id: "bar",
       name: "bar",
+      isDefault: false,
       specifications: []
     },
     specification: {
@@ -51,9 +55,11 @@ test("It navigates when selecting specification", async () => {
     project: {
       id: "foo",
       name: "foo",
+      displayName: "foo",
       versions: [{
         id: "bar",
         name: "bar",
+        isDefault: false,
         specifications: [{
           id: "hello.yml",
           name: "hello.yml",
@@ -64,6 +70,7 @@ test("It navigates when selecting specification", async () => {
     version: {
       id: "bar",
       name: "bar",
+      isDefault: false,
       specifications: [{
         id: "hello.yml",
         name: "hello.yml",
@@ -95,11 +102,13 @@ test("It navigates even when new specification could not be found", async () => 
     project: {
       id: "foo",
       name: "foo",
+      displayName: "foo",
       versions: []
     },
     version: {
       id: "bar",
       name: "bar",
+      isDefault: false,
       specifications: []
     },
     specification: {
@@ -124,9 +133,11 @@ test("It finds a specification with the same name when changing version", async 
     project: {
       id: "foo",
       name: "foo",
+      displayName: "foo",
       versions: [{
         id: "bar",
         name: "bar",
+        isDefault: false,
         specifications: [{
           id: "hello.yml",
           name: "hello.yml",
@@ -139,6 +150,7 @@ test("It finds a specification with the same name when changing version", async 
       }, {
         id: "baz",
         name: "baz",
+        isDefault: false,
         specifications: [{
           id: "moon.yml",
           name: "moon.yml",
@@ -161,6 +173,7 @@ test("It finds a specification with the same name when changing version", async 
     version: {
       id: "bar",
       name: "bar",
+      isDefault: false,
       specifications: []
     },
     specification: {
