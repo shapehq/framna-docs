@@ -16,15 +16,17 @@ export default function ProjectsPage({
   versionId,
   specificationId
 }: {
-  projects: Project[]
+  projects?: Project[]
   projectId?: string
   versionId?: string
   specificationId?: string
 }) {
   const router = useRouter()
   const { projects: clientProjects, error, isLoading: isClientLoading } = useProjects()
-  const projects = isClientLoading ? serverProjects : clientProjects
+  const projects = isClientLoading ? (serverProjects || []) : clientProjects
   const isLoading = serverProjects === undefined && isClientLoading
+  console.log(serverProjects)
+  console.log(isLoading)
   const stateContainer = getProjectPageState({
     isLoading,
     error,

@@ -9,10 +9,10 @@ export default class SessionProjectRepository {
     this.repository = repository
   }
   
-  async getProjects(): Promise<Project[]> {
+  async getProjects(): Promise<Project[] | undefined> {
     const string = await this.repository.get()
     if (!string) {
-      return []
+      return undefined
     }
     return ZodJSONCoder.decode(ProjectSchema.array(), string)
   }
