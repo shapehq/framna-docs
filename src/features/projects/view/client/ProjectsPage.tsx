@@ -54,7 +54,7 @@ export default function ProjectsPage({
     // Ensure the URL reflects the current selection of project, version, and specification.
     const urlSelection = { projectId, versionId, specificationId }
     projectNavigator.navigateIfNeeded(router, urlSelection, stateContainer.selection)
-  }, [])
+  }, [router, projectId, versionId, specificationId, stateContainer.selection])
   return (
     <SidebarContainer
       primary={
