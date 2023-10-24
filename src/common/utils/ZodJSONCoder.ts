@@ -2,7 +2,6 @@ import { ZodType } from "zod"
 
 export default class ZodJSONCoder {
   static encode<Schema extends ZodType, T>(schema: Schema, value: T): string {
-    console.log("Encode")
     const validatedValue = schema.parse(value)
     return JSON.stringify(validatedValue)
   }
