@@ -1,6 +1,6 @@
-import { getProjectId, getSpecificationId, getVersionId } from "@/common/UrlUtils"
+import { getProjectId, getSpecificationId, getVersionId } from "@/common/utils/url"
 import SessionOAuthTokenBarrier from "@/features/auth/view/SessionOAuthTokenBarrier"
-import ProjectsPage from "@/features/projects/view/ProjectsPage"
+import ProjectsPage from "@/features/projects/view/client/ProjectsPage"
 
 type PageParams = { slug: string | string[] }
 

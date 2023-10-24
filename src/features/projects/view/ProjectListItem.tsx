@@ -2,18 +2,16 @@ import { ListItem, ListItemButton, ListItemText, Typography } from "@mui/materia
 import IProject from "../domain/IProject"
 import ProjectAvatar from "./ProjectAvatar"
 
-interface ProjectListItemProps<ProjectType extends IProject> {
-  readonly project: ProjectType
-  readonly isSelected: boolean
-  readonly onSelectProject: (project: IProject) => void
-}
-
-const ProjectListItem = <ProjectType extends IProject>(
+const ProjectListItem = (
   {
     project,
     isSelected,
     onSelectProject
-  }: ProjectListItemProps<ProjectType>
+  }: {
+    project: IProject
+    isSelected: boolean
+    onSelectProject: (project: IProject) => void
+  }
 ) => {
   return (
     <ListItem disablePadding>

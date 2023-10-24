@@ -1,14 +1,14 @@
 "use client"
 
 import { useRouter } from "next/navigation"
-import SidebarContainer from "@/common/SidebarContainer"
-import ProjectList from "./ProjectList"
-import ProjectsPageSecondaryContent from "./ProjectsPageSecondaryContent"
-import ProjectsPageTrailingToolbarItem from "./ProjectsPageTrailingToolbarItem"
-import IProject from "../domain/IProject"
-import { getProjectPageState } from "../domain/ProjectPageState"
-import projectNavigator from "../domain/projectNavigator"
-import useProjects from "../data/useProjects"
+import SidebarContainer from "@/features/sidebar/view/client/SidebarContainer"
+import ProjectList from "../ProjectList"
+import ProjectsPageSecondaryContent from "../ProjectsPageSecondaryContent"
+import ProjectsPageTrailingToolbarItem from "../ProjectsPageTrailingToolbarItem"
+import IProject from "../../domain/IProject"
+import { getProjectPageState } from "../../domain/ProjectPageState"
+import projectNavigator from "../../domain/projectNavigator"
+import useProjects from "../../data/useProjects"
 
 interface ProjectsPageProps {
   readonly projectId?: string

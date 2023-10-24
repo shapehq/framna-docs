@@ -4,7 +4,7 @@ import GitHubPullRequestCommentRepository from "@/features/hooks/data/GitHubPull
 import PostCommentPullRequestEventHandler from "@/features/hooks/domain/PostCommentPullRequestEventHandler"
 import RepositoryNameCheckingPullRequestEventHandler from "@/features/hooks/domain/RepositoryNameCheckingPullRequestEventHandler"
 import ExistingCommentCheckingPullRequestEventHandler from "@/features/hooks/domain/ExistingCommentCheckingPullRequestEventHandler"
-import { gitHubClient } from "@/common/startup"
+import { gitHubClient } from "@/composition"
 
 const {
   SHAPE_DOCS_BASE_URL,

@@ -3,9 +3,13 @@ import { SxProps } from "@mui/system"
 import { Avatar } from "@mui/material"
 import IProject from "../domain/IProject"
 
-function ProjectAvatar<ProjectType extends IProject>(
-  {project, sx}: {project: ProjectType, sx?: SxProps}
-) {
+function ProjectAvatar({
+  project,
+  sx
+}: {
+  project: IProject,
+  sx?: SxProps
+}) {
   const theme = useTheme()
   if (project.imageURL) {
     return (

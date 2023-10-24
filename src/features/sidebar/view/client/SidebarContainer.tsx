@@ -1,27 +1,27 @@
+"use client"
+
 import dynamic from "next/dynamic"
 import { ReactNode } from "react"
 import Image from "next/image"
 import { Box, Stack } from "@mui/material"
 import { useTheme } from "@mui/material/styles"
 import { useSessionStorage } from "usehooks-ts"
-import ClientSidebarContainer from "./client/SidebarContainer"
-import SidebarContent from "./SidebarContent"
+import BaseSidebarContainer from "../BaseSidebarContainer"
+import SidebarContent from "../SidebarContent"
 
-interface SidebarContainerProps {
-  readonly primary: ReactNode
-  readonly secondary: ReactNode
-  readonly toolbarTrailing?: ReactNode
-}
-
-const SidebarContainer: React.FC<SidebarContainerProps> = ({
+const SidebarContainer = ({
   primary,
   secondary,
   toolbarTrailing
+}: {
+  primary: ReactNode
+  secondary?: ReactNode
+  toolbarTrailing?: ReactNode
 }) => {
   const [open, setOpen] = useSessionStorage("isDrawerOpen", true)
   const theme = useTheme()
   return (
-    <ClientSidebarContainer
+    <BaseSidebarContainer
       isDrawerOpen={open}
       onToggleDrawerOpen={setOpen}
       primaryHeader={

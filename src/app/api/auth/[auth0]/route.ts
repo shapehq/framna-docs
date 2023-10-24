@@ -11,7 +11,7 @@ import {
 import {
   initialOAuthTokenService,
   sessionOAuthTokenRepository
-} from "@/common/startup"
+} from "@/composition"
 
 const afterCallback: AfterCallbackAppRoute = async (_req, session) => {
   await initialOAuthTokenService.fetchInitialAuthTokenForUser(session.user.sub)
