@@ -1,4 +1,4 @@
-import logoutHandler from "@/common/authHandler/logout"
+import logoutHandler from "../../../src/common/authHandler/logout"
 
 test("It deletes the user's auth token", async () => {
   let didDeleteAuthToken = false

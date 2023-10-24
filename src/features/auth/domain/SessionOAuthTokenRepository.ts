@@ -1,4 +1,4 @@
-import ZodJSONCoder from "@/common/utils/ZodJSONCoder"
+import ZodJSONCoder from "../../../common/utils/ZodJSONCoder"
 import ISessionDataRepository from "@/common/userData/ISessionDataRepository"
 import ISessionOAuthTokenRepository from "../domain/SessionOAuthTokenRepository"
 import OAuthToken, { OAuthTokenSchema } from "./OAuthToken"
