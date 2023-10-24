@@ -1,6 +1,6 @@
-import IProject from "./IProject"
-import IVersion from "./IVersion"
-import IOpenApiSpecification from "./IOpenApiSpecification"
+import Project from "./Project"
+import Version from "./Version"
+import OpenApiSpecification from "./OpenApiSpecification"
 import ProjectPageSelection from "./ProjectPageSelection"
 
 export enum ProjectPageState {
@@ -22,7 +22,7 @@ export type ProjectPageStateContainer = {
 type GetProjectPageStateProps = {
   isLoading?: boolean
   error?: Error
-  projects?: IProject[]
+  projects?: Project[]
   selectedProjectId?: string
   selectedVersionId?: string
   selectedSpecificationId?: string
@@ -43,10 +43,6 @@ export function getProjectPageState({
     return { state: ProjectPageState.ERROR, error }
   }
   projects = projects || []
-  if (!selectedProjectId && projects.length == 1) {
-    // If no project is selected and the user only has a single project then we select that.
-    selectedProjectId = projects[0].id
-  }
   if (!selectedProjectId) {
     return { state: ProjectPageState.NO_PROJECT_SELECTED }
   }
@@ -55,7 +51,7 @@ export function getProjectPageState({
     return { state: ProjectPageState.PROJECT_NOT_FOUND }
   }
   // Find selected version or default to first version if none is selected.
-  let version: IVersion
+  let version: Version
   if (selectedVersionId) {
     const selectedVersion = project.versions.find(e => e.id == selectedVersionId)
     if (selectedVersion) {
@@ -69,7 +65,7 @@ export function getProjectPageState({
     return { state: ProjectPageState.VERSION_NOT_FOUND }
   }
   // Find selected specification or default to first specification if none is selected.
-  let specification: IOpenApiSpecification
+  let specification: OpenApiSpecification
   if (selectedSpecificationId) {
     const selectedSpecification = version.specifications.find(e => e.id == selectedSpecificationId)
     if (selectedSpecification) {

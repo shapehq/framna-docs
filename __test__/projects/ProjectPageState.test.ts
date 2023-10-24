@@ -32,28 +32,6 @@ test("It gracefully errors when no project has been selected", async () => {
   expect(sut.state).toEqual(ProjectPageState.NO_PROJECT_SELECTED)
 })
 
-test("It selects the first project when there is only one project", async () => {
-  const sut = getProjectPageState({
-    projects: [{
-      id: "foo",
-      name: "foo",
-      versions: [{
-        id: "bar",
-        name: "bar",
-        specifications: [{
-          id: "hello",
-          name: "hello.yml",
-          url: "https://example.com/hello.yml"
-        }]
-      }]
-    }]
-  })
-  expect(sut.state).toEqual(ProjectPageState.HAS_SELECTION)
-  expect(sut.selection!.project.id).toEqual("foo")
-  expect(sut.selection!.version.id).toEqual("bar")
-  expect(sut.selection!.specification.id).toEqual("hello")
-})
-
 test("It selects the first version and specification of the specified project", async () => {
   const sut = getProjectPageState({
     selectedProjectId: "bar",

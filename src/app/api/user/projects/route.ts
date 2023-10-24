@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server"
-import { projectRepository } from "@/composition"
+import { projectDataSource } from "@/composition"
 
 export async function GET() {
-  const projects = await projectRepository.getProjects()
+  const projects = await projectDataSource.getProjects()
   return NextResponse.json({projects})
 }

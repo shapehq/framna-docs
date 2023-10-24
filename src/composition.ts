@@ -1,14 +1,17 @@
 import AccessTokenService from "@/features/auth/domain/AccessTokenService"
 import Auth0RefreshTokenReader from "@/features/auth/data/Auth0RefreshTokenReader"
-import Auth0SessionDataRepository from "@/common//userData/Auth0SessionDataRepository"
+import Auth0SessionDataRepository from "@/common/userData/Auth0SessionDataRepository"
+import CachingProjectDataSource from "@/features/projects/domain/CachingProjectDataSource"
 import GitHubClient from "@/common/github/GitHubClient"
 import GitHubOAuthTokenRefresher from "@/features/auth/data/GitHubOAuthTokenRefresher"
-import GitHubProjectRepository from "@/features/projects/data/GitHubProjectRepository"
+import GitHubProjectDataSource from "@/features/projects/data/GitHubProjectDataSource"
 import InitialOAuthTokenService from "@/features/auth/domain/InitialOAuthTokenService"
 import KeyValueUserDataRepository from "@/common//userData/KeyValueUserDataRepository"
 import RedisKeyValueStore from "@/common/keyValueStore/RedisKeyValueStore"
 import SessionOAuthTokenRepository from "@/features/auth/domain/SessionOAuthTokenRepository"
+import SessionProjectRepository from "./features/projects/domain/SessionProjectRepository"
 import UserDataOAuthTokenRepository from "@/features/auth/domain/UserDataOAuthTokenRepository"
+import authLogoutHandler from "@/common/authHandler/logout"
 
 const {
   AUTH0_MANAGEMENT_DOMAIN,
@@ -51,9 +54,21 @@ export const gitHubClient = new GitHubClient({
   accessTokenReader: accessTokenService
 })
 
-export const projectRepository = new GitHubProjectRepository(
-  gitHubClient,
-  GITHUB_ORGANIZATION_NAME
+export const sessionProjectRepository = new SessionProjectRepository(
+  new Auth0SessionDataRepository(
+    new KeyValueUserDataRepository(
+      new RedisKeyValueStore(REDIS_URL),
+      "projects"
+    )
+  )
+)
+
+export const projectDataSource = new CachingProjectDataSource(
+  new GitHubProjectDataSource(
+    gitHubClient,
+    GITHUB_ORGANIZATION_NAME
+  ),
+  sessionProjectRepository
 )
 
 export const initialOAuthTokenService = new InitialOAuthTokenService({
@@ -66,3 +81,7 @@ export const initialOAuthTokenService = new InitialOAuthTokenService({
   oAuthTokenRefresher: gitHubOAuthTokenRefresher,
   oAuthTokenRepository: new UserDataOAuthTokenRepository(oAuthTokenRepository)
 })
+
+export const logoutHandler = async () => {
+  await authLogoutHandler(sessionOAuthTokenRepository, sessionProjectRepository)
+}

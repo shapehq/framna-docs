@@ -1,8 +1,8 @@
 import useSWR from "swr"
 import fetcher from "@/common/utils/fetcher"
-import IProject from "../domain/IProject"
+import Project from "../domain/Project"
 
-type ProjectContainer = { projects: IProject[] }
+type ProjectContainer = { projects: Project[] }
 
 export default function useProjects() {
   const { data, error, isLoading } = useSWR<ProjectContainer, Error>(
