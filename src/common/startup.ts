@@ -1,12 +1,14 @@
 import AccessTokenService from "@/features/auth/domain/AccessTokenService"
 import Auth0RefreshTokenReader from "@/features/auth/data/Auth0RefreshTokenReader"
-import Auth0SessionOAuthTokenRepository from "@/features/auth/data/Auth0SessionOAuthTokenRepository"
+import Auth0SessionDataRepository from "./userData/Auth0SessionDataRepository"
 import GitHubClient from "@/common/github/GitHubClient"
 import GitHubOAuthTokenRefresher from "@/features/auth/data/GitHubOAuthTokenRefresher"
 import GitHubProjectRepository from "@/features/projects/data/GitHubProjectRepository"
 import InitialOAuthTokenService from "@/features/auth/domain/InitialOAuthTokenService"
-import KeyValueOAuthTokenRepository from "@/features/auth/domain/KeyValueOAuthTokenRepository"
-import RedisKeyValueStore from "./caching/RedisKeyValueStore"
+import KeyValueUserDataRepository from "./userData/KeyValueUserDataRepository"
+import RedisKeyValueStore from "./keyValueStore/RedisKeyValueStore"
+import SessionOAuthTokenRepository from "@/features/auth/domain/SessionOAuthTokenRepository"
+import UserDataOAuthTokenRepository from "@/features/auth/domain/UserDataOAuthTokenRepository"
 
 const {
   AUTH0_MANAGEMENT_DOMAIN,
@@ -22,12 +24,13 @@ const {
 
 const gitHubPrivateKey = Buffer.from(GITHUB_PRIVATE_KEY_BASE_64, "base64").toString("utf-8")
 
-const oAuthTokenRepository = new KeyValueOAuthTokenRepository(
-  new RedisKeyValueStore(REDIS_URL)
+const oAuthTokenRepository = new KeyValueUserDataRepository(
+  new RedisKeyValueStore(REDIS_URL),
+  "authToken"
 )
 
-export const sessionOAuthTokenRepository = new Auth0SessionOAuthTokenRepository(
-  oAuthTokenRepository
+export const sessionOAuthTokenRepository = new SessionOAuthTokenRepository(
+  new Auth0SessionDataRepository(oAuthTokenRepository)
 )
 
 const gitHubOAuthTokenRefresher = new GitHubOAuthTokenRefresher({
@@ -61,5 +64,5 @@ export const initialOAuthTokenService = new InitialOAuthTokenService({
     connection: "github"
   }),
   oAuthTokenRefresher: gitHubOAuthTokenRefresher,
-  oAuthTokenRepository: oAuthTokenRepository
+  oAuthTokenRepository: new UserDataOAuthTokenRepository(oAuthTokenRepository)
 })

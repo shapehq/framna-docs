@@ -103,7 +103,7 @@ test("It stores the refreshed auth token for the correct user ID", async () => {
           refreshTokenExpiryDate: new Date()
         }
       },
-      async storeOAuthToken(token, userId) {
+      async storeOAuthToken(userId, token) {
         storedAuthToken = token
         storedUserId = userId
       },
