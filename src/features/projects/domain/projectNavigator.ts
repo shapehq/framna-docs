@@ -7,9 +7,9 @@ export interface IProjectRouter {
 
 const projectNavigator = {
   navigateToVersion(
+    router: IProjectRouter,
     selection: ProjectPageSelection,
     versionId: string,
-    router: IProjectRouter
   ) {
     // Let's see if we can find a specification with the same name.
     const newVersion = selection.project.versions.find(e => {
@@ -28,13 +28,32 @@ const projectNavigator = {
       router.push(`/${selection.project.id}/${newVersion.id}/${firstSpecification.id}`)
     }
   },
-  navigateToSpecification(
-    selection: ProjectPageSelection,
-    specificationId: string,
-    router: IProjectRouter
+  navigate(
+    router: IProjectRouter,
+    projectId: string,
+    versionId: string,
+    specificationId: string
   ) {
-    router.push(`/${selection.project.id}/${selection.version.id}/${specificationId}`)
-  } 
+    router.push(`/${projectId}/${versionId}/${specificationId}`)
+  },
+  navigateIfNeeded(
+    router: IProjectRouter,
+    urlComponents: {
+      projectId?: string,
+      versionId?: string,
+      specificationId?: string
+    },
+    selection: ProjectPageSelection
+  ) {
+    if (
+      urlComponents.projectId != selection.project.id ||
+      urlComponents.versionId != selection.version.id ||
+      urlComponents.specificationId != selection.specification.id
+    ) {
+      const path = `/${selection.project.id}/${selection.version.id}/${selection.specification.id}`
+      router.replace(path)
+    }
+  }
 }
 
 export default projectNavigator

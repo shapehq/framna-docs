@@ -1,5 +1,6 @@
 "use client"
 
+import { useEffect } from "react"
 import { useRouter } from "next/navigation"
 import SidebarContainer from "@/features/sidebar/view/client/SidebarContainer"
 import Project from "../../domain/Project"
@@ -36,15 +37,23 @@ export default function ProjectsPage({
   const handleProjectSelected = (project: Project) => {
     const version = project.versions[0]
     const specification = version.specifications[0]
-    router.push(`/${project.id}/${version.id}/${specification.id}`)
+    projectNavigator.navigate(router, project.id, version.id, specification.id)
   }
+  useEffect(() => {
+    if (!stateContainer.selection) {
+      return
+    }
+    // Ensure the URL reflects the current selection of project, version, and specification.
+    const urlSelection = { projectId, versionId, specificationId }
+    projectNavigator.navigateIfNeeded(router, urlSelection, stateContainer.selection)
+  }, [])
   return (
     <SidebarContainer
       primary={
         <ProjectList
           isLoading={isLoading}
           projects={projects}
-          selectedProjectId={stateContainer.selection?.project.id}
+          selectedProjectId={projectId}
           onSelectProject={handleProjectSelected}
         />
       }
@@ -55,10 +64,10 @@ export default function ProjectsPage({
         <ProjectsPageTrailingToolbarItem
           stateContainer={stateContainer}
           onSelectVersion={(versionId: string) => {
-            projectNavigator.navigateToVersion(stateContainer.selection!, versionId, router)
+            projectNavigator.navigateToVersion(router, stateContainer.selection!, versionId)
           }}
           onSelectSpecification={(specificationId: string) => {
-            projectNavigator.navigateToSpecification(stateContainer.selection!, specificationId, router)
+            projectNavigator.navigate(router, projectId!, versionId!, specificationId)
           }}
         />
       }
