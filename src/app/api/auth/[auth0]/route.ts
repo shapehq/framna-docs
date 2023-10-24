@@ -11,9 +11,9 @@ import {
 import {
   initialOAuthTokenService,
   sessionOAuthTokenRepository,
-  sessionProjectRepository
-} from "@/composition"
-import { logoutHandler } from "@/composition"
+  sessionProjectRepository,
+  logoutHandler
+} from "@/composition"} from "@/composition"
 
 const { SHAPE_DOCS_BASE_URL } = process.env
 
