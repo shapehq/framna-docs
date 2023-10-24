@@ -8,9 +8,9 @@ import InitialOAuthTokenService from "@/features/auth/domain/InitialOAuthTokenSe
 import KeyValueUserDataRepository from "@/common//userData/KeyValueUserDataRepository"
 import RedisKeyValueStore from "@/common/keyValueStore/RedisKeyValueStore"
 import SessionOAuthTokenRepository from "@/features/auth/domain/SessionOAuthTokenRepository"
-import UserDataOAuthTokenRepository from "@/features/auth/domain/UserDataOAuthTokenRepository"
-
 import SessionProjectRepository from "./features/projects/domain/SessionProjectRepository"
+import UserDataOAuthTokenRepository from "@/features/auth/domain/UserDataOAuthTokenRepository"
+import authLogoutHandler from "@/common/authHandler/logout"
 
 const {
   AUTH0_MANAGEMENT_DOMAIN,
@@ -77,3 +77,7 @@ export const sessionProjectRepository = new SessionProjectRepository(
     )
   )
 )
+
+export const logoutHandler = async () => {
+  await authLogoutHandler(sessionOAuthTokenRepository, sessionProjectRepository)
+}

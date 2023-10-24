@@ -1,8 +1,9 @@
 import ZodJSONCoder from "@/common/utils/ZodJSONCoder"
 import ISessionDataRepository from "@/common/userData/ISessionDataRepository"
+import ISessionProjectRepository from "./ISessionProjectRepository"
 import Project, { ProjectSchema } from "./Project"
 
-export default class SessionProjectRepository {
+export default class SessionProjectRepository implements ISessionProjectRepository {
   private readonly repository: ISessionDataRepository<string>
   
   constructor(repository: ISessionDataRepository<string>) {

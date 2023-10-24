@@ -13,6 +13,7 @@ import {
   sessionOAuthTokenRepository,
   sessionProjectRepository
 } from "@/composition"
+import { logoutHandler } from "@/composition"
 
 const { SHAPE_DOCS_BASE_URL } = process.env
 
@@ -31,6 +32,7 @@ const onLogout: NextAppRouterHandler = async (req: NextRequest, ctx: AppRouteHan
     sessionOAuthTokenRepository.deleteOAuthToken().catch(() => null),
     sessionProjectRepository.deleteProjects().catch(() => null)
   ])
+  await logoutHandler()
   return await handleLogout(req, ctx)
 }
 
