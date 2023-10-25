@@ -3,7 +3,7 @@ import { Box } from "@mui/material"
 import UserListItem from "@/features/user/view/UserListItem"
 import SettingsButton from "@/features/settings/view/SettingsButton"
 
-const PrimaryContent = ({
+const Sidebar = ({
   children
 }: {
   children: ReactNode
@@ -18,4 +18,4 @@ const PrimaryContent = ({
   )
 }
 
-export default PrimaryContent
+export default Sidebar

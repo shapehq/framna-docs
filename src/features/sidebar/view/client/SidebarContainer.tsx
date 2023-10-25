@@ -6,16 +6,16 @@ import Image from "next/image"
 import { Box, Stack } from "@mui/material"
 import { useTheme } from "@mui/material/styles"
 import { useSessionStorage } from "usehooks-ts"
-import PrimaryContent from "../PrimaryContent"
 import ResponsiveSidebarContainer from "../base/responsive/SidebarContainer"
+import Sidebar from "../Sidebar"
 
 const SidebarContainer = ({
-  primary,
-  secondary,
+  sidebar,
+  children,
   toolbarTrailing
 }: {
-  primary: ReactNode
-  secondary?: ReactNode
+  sidebar?: ReactNode
+  children?: ReactNode
   toolbarTrailing?: ReactNode
 }) => {
   const [open, setOpen] = useSessionStorage("isDrawerOpen", true)
@@ -30,9 +30,9 @@ const SidebarContainer = ({
         </Stack>
       }
       primary={
-        <PrimaryContent>
-          {primary}
-        </PrimaryContent>
+        <Sidebar>
+          {sidebar}
+        </Sidebar>
       }
       secondaryHeader={
         <>
@@ -48,7 +48,7 @@ const SidebarContainer = ({
           }
         </>
       }
-      secondary={secondary}
+      secondary={children}
     />
   )
 }

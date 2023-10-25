@@ -57,16 +57,13 @@ export default function ProjectsPage({
   }, [router, projectId, versionId, specificationId, stateContainer.selection])
   return (
     <SidebarContainer
-      primary={
+      sidebar={
         <ProjectList
           isLoading={isLoading}
           projects={projects}
           selectedProjectId={projectId}
           onSelectProject={handleProjectSelected}
         />
-      }
-      secondary={
-        <ProjectsPageSecondaryContent stateContainer={stateContainer} />  
       }
       toolbarTrailing={
         <ProjectsPageTrailingToolbarItem
@@ -79,6 +76,8 @@ export default function ProjectsPage({
           }}
         />
       }
-    />
+    >
+      <ProjectsPageSecondaryContent stateContainer={stateContainer} />  
+    </SidebarContainer>
   )
 }
