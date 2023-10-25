@@ -46,7 +46,6 @@ export default function ResponsiveSecondaryHeader({
           </Box>
         </Collapse>
       }
-      <Divider/>
     </SecondaryHeader>
   )
 }
