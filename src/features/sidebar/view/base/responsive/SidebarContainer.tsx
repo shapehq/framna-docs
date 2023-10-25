@@ -1,10 +1,10 @@
 import { ReactNode } from "react"
 import { Box } from "@mui/material"
-import Drawer from "./responsive/Drawer"
-import SecondaryHeader from "./responsive/SecondaryHeader"
-import SecondaryContent from "./responsive/SecondaryContent"
+import Drawer from "./Drawer"
+import SecondaryHeader from "./SecondaryHeader"
+import SecondaryContent from "./SecondaryContent"
 
-const BaseSidebarContainer = ({
+const SidebarContainer = ({
   isDrawerOpen,
   onToggleDrawerOpen,
   primaryHeader,
@@ -47,4 +47,4 @@ const BaseSidebarContainer = ({
   )
 }
 
-export default BaseSidebarContainer
+export default SidebarContainer

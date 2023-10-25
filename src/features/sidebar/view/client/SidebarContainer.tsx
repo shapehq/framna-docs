@@ -6,8 +6,8 @@ import Image from "next/image"
 import { Box, Stack } from "@mui/material"
 import { useTheme } from "@mui/material/styles"
 import { useSessionStorage } from "usehooks-ts"
-import BaseSidebarContainer from "../base/SidebarContainer"
 import PrimaryContent from "../PrimaryContent"
+import ResponsiveSidebarContainer from "../base/responsive/SidebarContainer"
 
 const SidebarContainer = ({
   primary,
@@ -21,7 +21,7 @@ const SidebarContainer = ({
   const [open, setOpen] = useSessionStorage("isDrawerOpen", true)
   const theme = useTheme()
   return (
-    <BaseSidebarContainer
+    <ResponsiveSidebarContainer
       isDrawerOpen={open}
       onToggleDrawerOpen={setOpen}
       primaryHeader={
