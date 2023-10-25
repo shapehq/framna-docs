@@ -24,7 +24,7 @@ export async function GET(req: NextRequest, { params }: { params: GetBlobParams 
     const cacheExpirationInSeconds = 60 * 60 * 24 * 30; // 30 days
   
     headers.set("Content-Type", "image/*");
-    headers.set("cache-control", `max-age=${cacheExpirationInSeconds}`);
+    headers.set("cache-control", `stale-while-revalidate=${cacheExpirationInSeconds}`);
 
     return new NextResponse(file, { status: 200, statusText: "OK", headers })
   } else {
