@@ -22,17 +22,19 @@ const MobileToolbar = ({
     <Stack
       direction="column"
       spacing={1}
-      sx={{ display: { sm: "none", md: "flex" } }}
+      sx={{ display: { sm: "block", md: "none" } }}
     >
       <VersionSelector
         versions={project.versions}
         selection={version.id}
         onSelect={onSelectVersion}
+        sx={{ width: "100%" }}
       />
       <SpecificationSelector
         specifications={version.specifications}
         selection={specification.id}
         onSelect={onSelectSpecification}
+        sx={{ width: "100%" }}
       />
     </Stack>
   )
