@@ -1,6 +1,6 @@
 import { ReactNode } from "react"
 import { SxProps } from "@mui/system"
-import { Box, Divider, IconButton, Stack, Collapse } from "@mui/material"
+import { Box, IconButton, Stack, Collapse } from "@mui/material"
 import SecondaryHeader from "../SecondaryHeader"
 import ExpandCircleDownIcon from "@mui/icons-material/ExpandCircleDown"
 

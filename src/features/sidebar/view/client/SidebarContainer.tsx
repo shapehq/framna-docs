@@ -27,7 +27,7 @@ const SidebarContainer = ({
     if (!canCloseDrawer) {
       setOpen(true)
     }
-  }, [canCloseDrawer])
+  }, [canCloseDrawer, setOpen])
   return (
     <ResponsiveSidebarContainer
       canCloseDrawer={canCloseDrawer}
