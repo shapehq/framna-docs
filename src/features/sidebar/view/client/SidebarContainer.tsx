@@ -2,54 +2,42 @@
 
 import dynamic from "next/dynamic"
 import { ReactNode } from "react"
-import Image from "next/image"
-import { Box, Stack } from "@mui/material"
-import { useTheme } from "@mui/material/styles"
 import { useSessionStorage } from "usehooks-ts"
-import BaseSidebarContainer from "../BaseSidebarContainer"
-import SidebarContent from "../SidebarContent"
+import ResponsiveSidebarContainer from "../base/responsive/SidebarContainer"
+import Sidebar from "../Sidebar"
+import SidebarHeader from "../SidebarHeader"
+import TrailingToolbar from "./TrailingToolbar"
 
 const SidebarContainer = ({
-  primary,
-  secondary,
-  toolbarTrailing
+  sidebar,
+  children,
+  trailingToolbar
 }: {
-  primary: ReactNode
-  secondary?: ReactNode
-  toolbarTrailing?: ReactNode
+  sidebar?: ReactNode
+  children?: ReactNode
+  trailingToolbar?: ReactNode
 }) => {
   const [open, setOpen] = useSessionStorage("isDrawerOpen", true)
-  const theme = useTheme()
   return (
-    <BaseSidebarContainer
+    <ResponsiveSidebarContainer
       isDrawerOpen={open}
       onToggleDrawerOpen={setOpen}
-      primaryHeader={
-        <Stack direction="row" alignItems="center" spacing={1}>
-          <Image src="/duck.png" alt="Duck" width={40} height={45} priority={true}/>
-        </Stack>
+      sidebarHeader={
+        <SidebarHeader/>
       }
-      primary={
-        <SidebarContent>
-          {primary}
-        </SidebarContent>
+      sidebar={
+        <Sidebar>
+          {sidebar}
+        </Sidebar>
       }
-      secondaryHeader={
-        <>
-          {toolbarTrailing != undefined && 
-            <Box sx={{ 
-              display: "flex",
-              width: "100%",
-              justifyContent: "right",
-              color: theme.palette.text.primary
-            }}>
-              {toolbarTrailing}
-            </Box>
-          }
-        </>
+      header={trailingToolbar &&
+        <TrailingToolbar>
+          {trailingToolbar}
+        </TrailingToolbar>
       }
-      secondary={secondary}
-    />
+    >
+      {children}
+    </ResponsiveSidebarContainer>
   )
 }
 
