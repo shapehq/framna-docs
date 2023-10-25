@@ -2,12 +2,12 @@
 
 import dynamic from "next/dynamic"
 import { ReactNode } from "react"
-import Image from "next/image"
-import { Box, Stack } from "@mui/material"
+import { Box } from "@mui/material"
 import { useTheme } from "@mui/material/styles"
 import { useSessionStorage } from "usehooks-ts"
 import ResponsiveSidebarContainer from "../base/responsive/SidebarContainer"
 import Sidebar from "../Sidebar"
+import SidebarHeader from "../SidebarHeader"
 
 const SidebarContainer = ({
   sidebar,
@@ -24,11 +24,7 @@ const SidebarContainer = ({
     <ResponsiveSidebarContainer
       isDrawerOpen={open}
       onToggleDrawerOpen={setOpen}
-      primaryHeader={
-        <Stack direction="row" alignItems="center" spacing={1}>
-          <Image src="/duck.png" alt="Duck" width={40} height={45} priority={true}/>
-        </Stack>
-      }
+      primaryHeader={<SidebarHeader/>}
       primary={
         <Sidebar>
           {sidebar}
