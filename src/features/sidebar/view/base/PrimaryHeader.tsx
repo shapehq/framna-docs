@@ -17,8 +17,9 @@ export default function PrimaryHeader({
         onClick={onClose}
         sx={{ zIndex: 1000 }}
         edge="start"
-        children={<ChevronLeftIcon />}
-      />
+      >
+        <ChevronLeftIcon/>
+      </IconButton>
       <Box
         sx={{ 
           position: "fixed",
@@ -28,8 +29,9 @@ export default function PrimaryHeader({
           alignItems: "center",
           width: `${width}px`
         }}
-        children={children}
-      />
+      >
+        {children}
+      </Box>
     </Box>
   )
 }

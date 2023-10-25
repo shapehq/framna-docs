@@ -17,14 +17,16 @@ export default function ResponsiveDrawer({
         drawerWidth={0}
         isDrawerOpen={false}
         sx={{ ...sx, display: { xs: "flex", sm: "none" } }}
-        children={children}
-      />
+      >
+        {children}
+      </SecondaryWrapper>
       <SecondaryWrapper
         drawerWidth={drawerWidth}
         isDrawerOpen={offsetContent}
         sx={{ ...sx, display: { xs: "none", sm: "flex" } }}
-        children={children}
-      />
+      >
+        {children}
+      </SecondaryWrapper>
     </>
   )
 }

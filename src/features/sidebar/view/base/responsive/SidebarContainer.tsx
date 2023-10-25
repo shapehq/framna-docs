@@ -30,8 +30,9 @@ const SidebarContainer = ({
         <PrimaryHeader
           width={drawerWidth}
           onClose={() => onToggleDrawerOpen(false)}
-          children={sidebarHeader}
-        />
+        >
+          {sidebarHeader}
+        </PrimaryHeader>
         {sidebar}
       </Drawer>
       <SecondaryWrapper drawerWidth={drawerWidth} offsetContent={isDrawerOpen}>

@@ -26,7 +26,11 @@ const SidebarContainer = ({
       isDrawerOpen={open}
       onToggleDrawerOpen={setOpen}
       sidebarHeader={<SidebarHeader/>}
-      sidebar={<Sidebar children={sidebar}/>}
+      sidebar={
+        <Sidebar>
+          {sidebar}
+        </Sidebar>
+      }
       header={
         <ResponsiveSecondaryHeader
           showOpenDrawer={!open}
@@ -37,8 +41,9 @@ const SidebarContainer = ({
           mobileToolbar={mobileToolbar}
         />
       }
-      children={children}
-    />
+    >
+      {children}
+    </ResponsiveSidebarContainer>
   )
 }
 

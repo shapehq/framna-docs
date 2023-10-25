@@ -1,10 +1,8 @@
 import { ReactNode } from "react"
 import { SxProps } from "@mui/system"
 import { Box, Divider, IconButton } from "@mui/material"
-import AppBar from "@mui/material/AppBar"
 import { useTheme } from "@mui/material/styles"
 import MenuIcon from "@mui/icons-material/Menu"
-import EditIcon from "@mui/icons-material/Edit"
 
 export default function SecondaryHeader({
   showOpenDrawer,
@@ -23,6 +21,7 @@ export default function SecondaryHeader({
   return (
     <Box
       sx={{
+        ...sx,
         backgroundColor: theme.palette.background.default,
         color: theme.palette.text.primary
       }}
@@ -37,8 +36,9 @@ export default function SecondaryHeader({
             color: theme.palette.text.primary,
             ...(!showOpenDrawer && { display: "none" })
           }}
-          children={<MenuIcon/>}
-        />
+        >
+          <MenuIcon/>
+        </IconButton>
         <Box sx={{ display: "flex", flexGrow: 1, justifyContent: "end" }}> 
           {trailingItem}
         </Box>

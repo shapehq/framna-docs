@@ -37,7 +37,8 @@ export default function Drawer({
          boxSizing: "border-box"
        }
      }}
-     children={children}
-    />
+    >
+      {children}
+    </MuiDrawer>
   )
 }

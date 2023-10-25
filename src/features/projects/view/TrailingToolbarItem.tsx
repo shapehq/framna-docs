@@ -54,8 +54,9 @@ const TrailingToolbarItem = ({
             href={specification.editURL}
             target="_blank"
             edge="end"
-            children={<EditIcon/>}
-          />
+          >
+            <EditIcon/>
+          </IconButton>
         }
       </Stack>
     </>

@@ -21,16 +21,18 @@ export default function RespnsiveDrawer({
         onClose={onClose}
         keepMounted={true}
         sx={{ display: { xs: "block", sm: "none" } }}
-        children={children}
-      />
+      >
+        {children}
+      </Drawer>
       <Drawer 
         variant="persistent"
         width={width}
         isOpen={isOpen}
         keepMounted={false}
         sx={{ display: { xs: "none", sm: "block" } }}
-        children={children}
-      />
+        >
+          {children}
+        </Drawer>
     </>
   )
 }
