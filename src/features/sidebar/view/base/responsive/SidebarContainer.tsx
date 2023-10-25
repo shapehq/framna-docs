@@ -5,6 +5,7 @@ import PrimaryHeader from "../PrimaryHeader"
 import SecondaryWrapper from "./SecondaryWrapper"
 
 const SidebarContainer = ({
+  canCloseDrawer,
   isDrawerOpen,
   onToggleDrawerOpen,
   sidebarHeader,
@@ -12,6 +13,7 @@ const SidebarContainer = ({
   header,
   children
 }: {
+  canCloseDrawer: boolean,
   isDrawerOpen: boolean
   onToggleDrawerOpen: (isDrawerOpen: boolean) => void
   sidebarHeader?: ReactNode
@@ -29,6 +31,7 @@ const SidebarContainer = ({
       >
         <PrimaryHeader
           width={drawerWidth}
+          canCloseDrawer={canCloseDrawer}
           onClose={() => onToggleDrawerOpen(false)}
         >
           {sidebarHeader}

@@ -64,6 +64,7 @@ export default function ProjectsPage({
   }
   return (
     <SidebarContainer
+      canCloseDrawer={stateContainer.selection !== undefined}
       sidebar={
         <ProjectList
           isLoading={isLoading}
