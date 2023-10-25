@@ -74,18 +74,18 @@ export default function ProjectsPage({
       }
       toolbarTrailingItem={stateContainer.selection &&
         <TrailingToolbarItem
-          project={stateContainer.selection!.project}
-          version={stateContainer.selection!.version}
-          specification={stateContainer.selection!.specification}
+          project={stateContainer.selection.project}
+          version={stateContainer.selection.version}
+          specification={stateContainer.selection.specification}
           onSelectVersion={selectVersion}
           onSelectSpecification={selectSpecification}
         />
       }
-      mobileToolbar={
+      mobileToolbar={stateContainer.selection &&
         <MobileToolbar
-          project={stateContainer.selection!.project}
-          version={stateContainer.selection!.version}
-          specification={stateContainer.selection!.specification}
+          project={stateContainer.selection.project}
+          version={stateContainer.selection.version}
+          specification={stateContainer.selection.specification}
           onSelectVersion={selectVersion}
           onSelectSpecification={selectSpecification}
         />
