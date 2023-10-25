@@ -1,70 +1,50 @@
 import { ReactNode } from "react"
 import { SxProps } from "@mui/system"
-import { Divider, IconButton, Toolbar } from "@mui/material"
-import MuiAppBar, { AppBarProps as MuiAppBarProps } from "@mui/material/AppBar"
-import { styled, useTheme } from "@mui/material/styles"
+import { Box, Divider, IconButton } from "@mui/material"
+import AppBar from "@mui/material/AppBar"
+import { useTheme } from "@mui/material/styles"
 import MenuIcon from "@mui/icons-material/Menu"
-
-interface AppBarProps extends MuiAppBarProps {
-  drawerWidth: number
-  isDrawerOpen?: boolean
-}
-
-const AppBar = styled(MuiAppBar, {
-  shouldForwardProp: (prop) => prop !== "isDrawerOpen"
-})<AppBarProps>(({ theme, drawerWidth, isDrawerOpen }) => ({
-  transition: theme.transitions.create(["margin", "width"], {
-    easing: theme.transitions.easing.sharp,
-    duration: theme.transitions.duration.leavingScreen
-  }),
-  ...(isDrawerOpen && {
-    width: `calc(100% - ${drawerWidth}px)`,
-    marginLeft: `${drawerWidth}px`,
-    transition: theme.transitions.create(["margin", "width"], {
-      easing: theme.transitions.easing.easeOut,
-      duration: theme.transitions.duration.enteringScreen
-    })
-  })
-}))
+import EditIcon from "@mui/icons-material/Edit"
 
 export default function SecondaryHeader({
-  drawerWidth,
-  isDrawerOpen,
-  onOpen,
+  showOpenDrawer,
+  onOpenDrawer,
+  trailingItem,
   children,
   sx
 }: {
-  drawerWidth: number
-  isDrawerOpen: boolean
-  onOpen: () => void
-  children: ReactNode,
+  showOpenDrawer: boolean
+  onOpenDrawer: () => void
+  trailingItem?: ReactNode
+  children?: ReactNode
   sx?: SxProps
 }) {
   const theme = useTheme()
   return (
-    <AppBar
-      position="fixed"
-      drawerWidth={drawerWidth}
-      isDrawerOpen={isDrawerOpen}
-      elevation={0}
-      sx={{ ...sx, backgroundColor: theme.palette.background.default }}
+    <Box
+      sx={{
+        backgroundColor: theme.palette.background.default,
+        color: theme.palette.text.primary
+      }}
     >
-      <Toolbar>
+      <Box sx={{ display: "flex", alignItems: "center", padding: 2 }}>
         <IconButton
           color="inherit"
-          onClick={onOpen}
+          onClick={onOpenDrawer}
           edge="start"
           sx={{
             mr: 2,
             color: theme.palette.text.primary,
-            ...(isDrawerOpen && { display: "none" })
+            ...(!showOpenDrawer && { display: "none" })
           }}
-        >
-          <MenuIcon/>
-        </IconButton>
-        {children}
-      </Toolbar>
+          children={<MenuIcon/>}
+        />
+        <Box sx={{ display: "flex", flexGrow: 1, justifyContent: "end" }}> 
+          {trailingItem}
+        </Box>
+      </Box>
+      {children}
       <Divider />
-    </AppBar>
+    </Box>
   )
 }

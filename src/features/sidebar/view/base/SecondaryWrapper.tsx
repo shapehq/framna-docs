@@ -1,20 +1,16 @@
 import { ReactNode } from "react"
 import { SxProps } from "@mui/system"
-import { Box, Toolbar } from "@mui/material"
+import { Stack } from "@mui/material"
 import { styled } from "@mui/material/styles"
 
-interface MainProps {
+interface WrapperStackProps {
   drawerWidth: number
   isDrawerOpen: boolean
 }
 
-const Main = styled("main", {
+const WrapperStack = styled(Stack, {
   shouldForwardProp: (prop) => prop !== "isDrawerOpen"
-})<MainProps>(({ theme, drawerWidth, isDrawerOpen }) => ({
-  display: "flex",
-  flexDirection: "column",
-  flexGrow: 1,
-  overflowY: "auto",
+})<WrapperStackProps>(({ theme, drawerWidth, isDrawerOpen }) => ({
   transition: theme.transitions.create("margin", {
     easing: theme.transitions.easing.sharp,
     duration: theme.transitions.duration.leavingScreen
@@ -29,7 +25,7 @@ const Main = styled("main", {
   })
 }))
 
-export default function SecondaryContent({
+export default function SecondaryWrapper({
   drawerWidth,
   isDrawerOpen,
   children,
@@ -41,11 +37,14 @@ export default function SecondaryContent({
   sx?: SxProps
 }) {
   return (
-    <Main drawerWidth={drawerWidth} isDrawerOpen={isDrawerOpen} sx={sx}>
-      <Toolbar/>
-      <Box sx={{ overflowY: "scroll" }}>
-        {children}
-      </Box>
-    </Main>
+    <WrapperStack
+      direction="column"
+      spacing={0}
+      drawerWidth={drawerWidth}
+      isDrawerOpen={isDrawerOpen}
+      sx={{ ...sx, width: "100%", overflowY: "auto" }}
+    >
+      {children}
+    </WrapperStack>
   )
 }

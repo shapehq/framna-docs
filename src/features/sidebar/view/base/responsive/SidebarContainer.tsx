@@ -1,8 +1,8 @@
 import { ReactNode } from "react"
-import { Box } from "@mui/material"
+import { Stack } from "@mui/material"
 import Drawer from "./Drawer"
-import SecondaryHeader from "./SecondaryHeader"
-import SecondaryContent from "./SecondaryContent"
+import PrimaryHeader from "../PrimaryHeader"
+import SecondaryWrapper from "./SecondaryWrapper"
 
 const SidebarContainer = ({
   isDrawerOpen,
@@ -21,29 +21,26 @@ const SidebarContainer = ({
 }) => {
   const drawerWidth = 320
   return (
-    <Box sx={{ display: "flex", height: "100%" }}>
-      <SecondaryHeader
-        drawerWidth={drawerWidth}
-        offsetContent={isDrawerOpen}
-        onOpen={() => onToggleDrawerOpen(true)}
-      >
-        {header}
-      </SecondaryHeader>
+    <Stack direction="row" spacing={0} sx={{ width: "100%", height: "100%" }}>
       <Drawer
         width={drawerWidth}
         isOpen={isDrawerOpen}
-        header={sidebarHeader}
         onClose={() => onToggleDrawerOpen(false)}
       >
+        <PrimaryHeader
+          width={drawerWidth}
+          onClose={() => onToggleDrawerOpen(false)}
+          children={sidebarHeader}
+        />
         {sidebar}
       </Drawer>
-      <SecondaryContent
-        drawerWidth={drawerWidth}
-        offsetContent={isDrawerOpen}
-      >
-        {children}
-      </SecondaryContent>
-    </Box>
+      <SecondaryWrapper drawerWidth={drawerWidth} offsetContent={isDrawerOpen}>
+        {header}
+        <main style={{ flexGrow: "1", overflowY: "auto" }}>
+          {children}
+        </main>
+      </SecondaryWrapper>
+    </Stack>
   )
 }
 
