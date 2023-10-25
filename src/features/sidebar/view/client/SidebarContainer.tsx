@@ -6,8 +6,8 @@ import Image from "next/image"
 import { Box, Stack } from "@mui/material"
 import { useTheme } from "@mui/material/styles"
 import { useSessionStorage } from "usehooks-ts"
-import BaseSidebarContainer from "../BaseSidebarContainer"
-import SidebarContent from "../SidebarContent"
+import BaseSidebarContainer from "../base/SidebarContainer"
+import PrimaryContent from "../PrimaryContent"
 
 const SidebarContainer = ({
   primary,
@@ -30,9 +30,9 @@ const SidebarContainer = ({
         </Stack>
       }
       primary={
-        <SidebarContent>
+        <PrimaryContent>
           {primary}
-        </SidebarContent>
+        </PrimaryContent>
       }
       secondaryHeader={
         <>

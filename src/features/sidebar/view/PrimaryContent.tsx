@@ -3,7 +3,11 @@ import { Box } from "@mui/material"
 import UserListItem from "@/features/user/view/UserListItem"
 import SettingsButton from "@/features/settings/view/SettingsButton"
 
-const SidebarContent = ({ children }: { children: ReactNode }) => {
+const PrimaryContent = ({
+  children
+}: {
+  children: ReactNode
+}) => {
   return (
     <>
       <Box sx={{ overflow: "auto", flex: 1 }}>
@@ -14,4 +18,4 @@ const SidebarContent = ({ children }: { children: ReactNode }) => {
   )
 }
 
-export default SidebarContent
+export default PrimaryContent
