@@ -34,7 +34,7 @@ export default function SecondaryHeader({
           sx={{
             mr: 2,
             color: theme.palette.text.primary,
-            ...(!showOpenDrawer && { display: "none" })
+            ...(!showOpenDrawer && { visibility: "hidden" })
           }}
         >
           <MenuIcon/>
