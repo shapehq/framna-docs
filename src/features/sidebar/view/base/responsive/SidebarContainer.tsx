@@ -7,17 +7,17 @@ import SecondaryContent from "./SecondaryContent"
 const SidebarContainer = ({
   isDrawerOpen,
   onToggleDrawerOpen,
-  primaryHeader,
-  primary,
-  secondaryHeader,
-  secondary
+  sidebarHeader,
+  sidebar,
+  header,
+  children
 }: {
   isDrawerOpen: boolean
   onToggleDrawerOpen: (isDrawerOpen: boolean) => void
-  primaryHeader?: ReactNode
-  primary: ReactNode
-  secondaryHeader?: ReactNode
-  secondary: ReactNode
+  sidebarHeader?: ReactNode
+  sidebar: ReactNode
+  header?: ReactNode
+  children?: ReactNode
 }) => {
   const drawerWidth = 320
   return (
@@ -27,21 +27,21 @@ const SidebarContainer = ({
         offsetContent={isDrawerOpen}
         onOpen={() => onToggleDrawerOpen(true)}
       >
-        {secondaryHeader}
+        {header}
       </SecondaryHeader>
       <Drawer
         width={drawerWidth}
         isOpen={isDrawerOpen}
-        header={primaryHeader}
+        header={sidebarHeader}
         onClose={() => onToggleDrawerOpen(false)}
       >
-        {primary}
+        {sidebar}
       </Drawer>
       <SecondaryContent
         drawerWidth={drawerWidth}
         offsetContent={isDrawerOpen}
       >
-        {secondary}
+        {children}
       </SecondaryContent>
     </Box>
   )

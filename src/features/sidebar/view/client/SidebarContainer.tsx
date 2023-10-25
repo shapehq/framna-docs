@@ -22,21 +22,22 @@ const SidebarContainer = ({
     <ResponsiveSidebarContainer
       isDrawerOpen={open}
       onToggleDrawerOpen={setOpen}
-      primaryHeader={
+      sidebarHeader={
         <SidebarHeader/>
       }
-      primary={
+      sidebar={
         <Sidebar>
           {sidebar}
         </Sidebar>
       }
-      secondaryHeader={trailingToolbar &&
+      header={trailingToolbar &&
         <TrailingToolbar>
           {trailingToolbar}
         </TrailingToolbar>
       }
-      secondary={children}
-    />
+    >
+      {children}
+    </ResponsiveSidebarContainer>
   )
 }
 
