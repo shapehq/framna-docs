@@ -1,39 +1,53 @@
 "use client"
 
 import dynamic from "next/dynamic"
-import { ReactNode } from "react"
+import { ReactNode, useEffect } from "react"
 import { useSessionStorage } from "usehooks-ts"
 import ResponsiveSidebarContainer from "../base/responsive/SidebarContainer"
+import ResponsiveSecondaryHeader from "../base/responsive/SecondaryHeader"
 import Sidebar from "../Sidebar"
 import SidebarHeader from "../SidebarHeader"
-import TrailingToolbar from "./TrailingToolbar"
 
 const SidebarContainer = ({
+  canCloseDrawer,
   sidebar,
   children,
-  trailingToolbar
+  toolbarTrailingItem,
+  mobileToolbar
 }: {
+  canCloseDrawer: boolean,
   sidebar?: ReactNode
   children?: ReactNode
-  trailingToolbar?: ReactNode
+  toolbarTrailingItem?: ReactNode
+  mobileToolbar?: ReactNode
 }) => {
   const [open, setOpen] = useSessionStorage("isDrawerOpen", true)
+  const [showMobileToolbar, setShowMobileToolbar] = useSessionStorage("isMobileToolbarVisible", true)
+  useEffect(() => {
+    if (!canCloseDrawer) {
+      setOpen(true)
+    }
+  }, [canCloseDrawer])
   return (
     <ResponsiveSidebarContainer
-      isDrawerOpen={open}
+      canCloseDrawer={canCloseDrawer}
+      isDrawerOpen={open || !canCloseDrawer}
       onToggleDrawerOpen={setOpen}
-      sidebarHeader={
-        <SidebarHeader/>
-      }
+      sidebarHeader={<SidebarHeader/>}
       sidebar={
         <Sidebar>
           {sidebar}
         </Sidebar>
       }
-      header={trailingToolbar &&
-        <TrailingToolbar>
-          {trailingToolbar}
-        </TrailingToolbar>
+      header={
+        <ResponsiveSecondaryHeader
+          showOpenDrawer={!open && canCloseDrawer}
+          onOpenDrawer={() => setOpen(true)}
+          showMobileToolbar={showMobileToolbar}
+          onToggleMobileToolbar={setShowMobileToolbar}
+          trailingItem={toolbarTrailingItem}
+          mobileToolbar={mobileToolbar}
+        />
       }
     >
       {children}

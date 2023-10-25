@@ -1,24 +1,23 @@
+import { SxProps } from "@mui/system"
 import { SelectChangeEvent, Select, MenuItem, FormControl } from "@mui/material"
 import OpenApiSpecification from "../../domain/OpenApiSpecification"
 
-interface SpecificationSelectorProps {
+const SpecificationSelector = ({
+  specifications,
+  selection,
+  onSelect,
+  sx
+}: {
   specifications: OpenApiSpecification[]
   selection: string
   onSelect: (specificationId: string) => void
-}
-
-const SpecificationSelector: React.FC<
-  SpecificationSelectorProps
-> = ({
-  specifications,
-  selection,
-  onSelect
+  sx?: SxProps
 }) => {
   const handleVersionChange = (event: SelectChangeEvent) => {
     onSelect(event.target.value)
   }
   return (
-    <FormControl sx={{ m: 1, minWidth: 120 }} size="small">
+    <FormControl sx={{ m: 1, minWidth: 120, margin: 0, ...sx }} size="small">
       <Select defaultValue={selection} onChange={handleVersionChange}>
         {specifications.map(specification =>
           <MenuItem key={specification.id} value={specification.id}>

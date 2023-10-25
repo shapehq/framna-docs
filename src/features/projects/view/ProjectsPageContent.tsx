@@ -2,7 +2,7 @@ import { ProjectPageStateContainer, ProjectPageState } from "../domain/ProjectPa
 import ProjectErrorContent from "./ProjectErrorContent"
 import DocumentationViewer from "./docs/DocumentationViewer"
 
-const ProjectsPageSecondaryContent = ({
+const ProjectsPageContent = ({
   stateContainer
 }: {
   stateContainer: ProjectPageStateContainer  
@@ -24,4 +24,4 @@ const ProjectsPageSecondaryContent = ({
   }
 }
 
-export default ProjectsPageSecondaryContent
+export default ProjectsPageContent

@@ -1,22 +1,21 @@
 import { ReactNode } from "react"
 import { SxProps } from "@mui/system"
 import { Drawer as MuiDrawer } from "@mui/material"
-import PrimaryHeader from "./PrimaryHeader"
 
 export default function Drawer({
   variant,
   width,
   isOpen,
-  header,
   onClose,
+  keepMounted,
   sx,
   children
 }: {
   variant: "persistent" | "temporary",
   width: number
   isOpen: boolean
-  header: ReactNode,
-  onClose: () => void,
+  onClose?: () => void
+  keepMounted?: boolean
   sx: SxProps,
   children?: ReactNode
 }) {
@@ -25,6 +24,10 @@ export default function Drawer({
       variant={variant}
       anchor="left"
       open={isOpen}
+      onClose={onClose}
+      ModalProps={{
+        keepMounted: keepMounted || false
+      }}
       sx={{ 
        ...sx,
        width: width,
@@ -35,9 +38,6 @@ export default function Drawer({
        }
      }}
     >
-      <PrimaryHeader width={width} onClose={onClose}>
-        {header}
-      </PrimaryHeader>
       {children}
     </MuiDrawer>
   )

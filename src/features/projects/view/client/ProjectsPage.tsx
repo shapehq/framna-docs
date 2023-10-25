@@ -5,8 +5,9 @@ import { useRouter } from "next/navigation"
 import SidebarContainer from "@/features/sidebar/view/client/SidebarContainer"
 import Project from "../../domain/Project"
 import ProjectList from "../ProjectList"
-import ProjectsPageSecondaryContent from "../ProjectsPageSecondaryContent"
-import ProjectsPageTrailingToolbarItem from "../ProjectsPageTrailingToolbarItem"
+import ProjectsPageContent from "../ProjectsPageContent"
+import TrailingToolbarItem from "../TrailingToolbarItem"
+import MobileToolbar from "../MobileToolbar"
 import { getProjectPageState } from "../../domain/ProjectPageState"
 import projectNavigator from "../../domain/projectNavigator"
 import updateWindowTitle from "../../domain/updateWindowTitle"
@@ -55,8 +56,15 @@ export default function ProjectsPage({
     const urlSelection = { projectId, versionId, specificationId }
     projectNavigator.navigateIfNeeded(router, urlSelection, stateContainer.selection)
   }, [router, projectId, versionId, specificationId, stateContainer.selection])
+  const selectVersion = (versionId: string) => {
+    projectNavigator.navigateToVersion(router, stateContainer.selection!, versionId)
+  }
+  const selectSpecification = (specificationId: string) => {
+    projectNavigator.navigate(router, projectId!, versionId!, specificationId)
+  }
   return (
     <SidebarContainer
+      canCloseDrawer={stateContainer.selection !== undefined}
       sidebar={
         <ProjectList
           isLoading={isLoading}
@@ -65,19 +73,26 @@ export default function ProjectsPage({
           onSelectProject={handleProjectSelected}
         />
       }
-      trailingToolbar={
-        <ProjectsPageTrailingToolbarItem
-          stateContainer={stateContainer}
-          onSelectVersion={(versionId: string) => {
-            projectNavigator.navigateToVersion(router, stateContainer.selection!, versionId)
-          }}
-          onSelectSpecification={(specificationId: string) => {
-            projectNavigator.navigate(router, projectId!, versionId!, specificationId)
-          }}
+      toolbarTrailingItem={stateContainer.selection &&
+        <TrailingToolbarItem
+          project={stateContainer.selection.project}
+          version={stateContainer.selection.version}
+          specification={stateContainer.selection.specification}
+          onSelectVersion={selectVersion}
+          onSelectSpecification={selectSpecification}
+        />
+      }
+      mobileToolbar={stateContainer.selection &&
+        <MobileToolbar
+          project={stateContainer.selection.project}
+          version={stateContainer.selection.version}
+          specification={stateContainer.selection.specification}
+          onSelectVersion={selectVersion}
+          onSelectSpecification={selectSpecification}
         />
       }
     >
-      <ProjectsPageSecondaryContent stateContainer={stateContainer} />  
+      <ProjectsPageContent stateContainer={stateContainer} />  
     </SidebarContainer>
   )
 }
