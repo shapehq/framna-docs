@@ -65,7 +65,7 @@ export default function ProjectsPage({
           onSelectProject={handleProjectSelected}
         />
       }
-      toolbarTrailing={
+      trailingToolbar={
         <ProjectsPageTrailingToolbarItem
           stateContainer={stateContainer}
           onSelectVersion={(versionId: string) => {
