@@ -15,5 +15,8 @@ export async function GET(req: NextRequest) {
   const host = req.headers.get('host')
   const redirectURI = req.nextUrl.protocol + "//" + host
   url.searchParams.append("post_logout_redirect_uri", redirectURI)
-  return NextResponse.redirect(url)
+
+  const response = NextResponse.redirect(url)
+  response.cookies.delete("appSession")
+  return response
 }
