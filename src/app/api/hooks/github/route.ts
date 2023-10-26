@@ -13,12 +13,15 @@ const {
   GITHUB_WEBHOK_REPOSITORY_DISALLOWLIST
 } = process.env
 
-const allowedRepositoryNames = (GITHUB_WEBHOK_REPOSITORY_ALLOWLIST || "")
-  .split(",")
-  .map(e => e.trim())
-const disallowedRepositoryNames = (GITHUB_WEBHOK_REPOSITORY_DISALLOWLIST || "")
-  .split(",")
-  .map(e => e.trim())
+const listFromCommaSeparatedString = (str?: string) => {
+  if (!str) {
+    return []
+  }
+  return str.split(",").map(e => e.trim())
+}
+
+const allowedRepositoryNames = listFromCommaSeparatedString(GITHUB_WEBHOK_REPOSITORY_ALLOWLIST)
+const disallowedRepositoryNames = listFromCommaSeparatedString(GITHUB_WEBHOK_REPOSITORY_DISALLOWLIST)
   
 const hookHandler = new GitHubHookHandler({
   secret: GITHUB_WEBHOOK_SECRET,
