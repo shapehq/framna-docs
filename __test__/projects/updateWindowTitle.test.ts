@@ -2,13 +2,18 @@ import updateWindowTitle from "../../src/features/projects/domain/updateWindowTi
 
 test("It uses default title when there is no selection", async () => {
   const store: { title: string } = { title: "" }
-  updateWindowTitle(store, "Shape Docs")
+  updateWindowTitle({
+    storage: store,
+    defaultTitle: "Shape Docs"
+  })
   expect(store.title).toEqual("Shape Docs")
 })
 
 test("It leaves out specification when the specification has a generic name", async () => {
   const store: { title: string } = { title: "" }
-  updateWindowTitle(store, "Shape Docs", {
+  updateWindowTitle({
+    storage: store,
+    defaultTitle: "Shape Docs",
     project: {
       id: "foo",
       name: "foo",
@@ -40,7 +45,9 @@ test("It leaves out specification when the specification has a generic name", as
 
 test("It leaves out version when it is the defualt version", async () => {
   const store: { title: string } = { title: "" }
-  updateWindowTitle(store, "Shape Docs", {
+  updateWindowTitle({
+    storage: store,
+    defaultTitle: "Shape Docs",
     project: {
       id: "foo",
       name: "foo",
@@ -68,7 +75,9 @@ test("It leaves out version when it is the defualt version", async () => {
 
 test("It adds version when it is not the defualt version", async () => {
   const store: { title: string } = { title: "" }
-  updateWindowTitle(store, "Shape Docs", {
+  updateWindowTitle({
+    storage: store,
+    defaultTitle: "Shape Docs",
     project: {
       id: "foo",
       name: "foo",
@@ -93,10 +102,3 @@ test("It adds version when it is not the defualt version", async () => {
   })
   expect(store.title).toEqual("foo / bar")
 })
-
-//   } else if (selection.version.isDefault) {
-//     storage.title = selection.project.displayName
-//   } else {
-//     storage.title = `${selection.project.displayName} / ${selection.version.name}`
-//   }
-// }

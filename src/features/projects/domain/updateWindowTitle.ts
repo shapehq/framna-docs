@@ -1,20 +1,30 @@
-import ProjectPageSelection from "./ProjectPageSelection"
+import Project from "./Project"
+import Version from "./Version"
+import OpenApiSpecification from "./OpenApiSpecification"
 
-export default function updateWindowTitle(
+export default function updateWindowTitle({
+  storage,
+  defaultTitle,
+  project,
+  version,
+  specification,
+}: {
   storage: { title: string },
   defaultTitle: string,
-  selection?: ProjectPageSelection
-) {
-  if (!selection) {
+  project?: Project,
+  version?: Version,
+  specification?: OpenApiSpecification
+}) {
+  if (!project || !version || !specification) {
     storage.title = defaultTitle
     return
   }
-  if (!isSpecificationNameGeneric(selection.specification.name)) {
-    storage.title = `${selection.project.displayName} / ${selection.version.name} / ${selection.specification.name}`
-  } else if (!selection.version.isDefault) {
-    storage.title = `${selection.project.displayName} / ${selection.version.name}`
+  if (!isSpecificationNameGeneric(specification.name)) {
+    storage.title = `${project.displayName} / ${version.name} / ${specification.name}`
+  } else if (!version.isDefault) {
+    storage.title = `${project.displayName} / ${version.name}`
   } else {
-    storage.title = selection.project.displayName
+    storage.title = project.displayName
   }
 }
 

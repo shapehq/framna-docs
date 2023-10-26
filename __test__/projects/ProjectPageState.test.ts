@@ -1,41 +1,7 @@
-import {
-  getProjectPageState,
-  ProjectPageState
-} from "../../src/features/projects/domain/ProjectPageState"
+import getSelection from "../../src/features/projects/domain/getSelection"
 
-test("It enters the loading state", async () => {
-  const sut = getProjectPageState({ isLoading: true })
-  expect(sut.state).toEqual(ProjectPageState.LOADING)
-})
-
-test("It enters the error state", async () => {
-  const sut = getProjectPageState({
-    isLoading: false,
-    error: new Error("foo")
-  })
-  expect(sut.state).toEqual(ProjectPageState.ERROR)
-  expect(sut.error).toEqual(new Error("foo"))
-})
-
-test("It gracefully errors when no project has been selected", async () => {
-  const sut = getProjectPageState({
-    projects: [{
-      id: "foo",
-      name: "foo",
-      displayName: "foo",
-      versions: []
-    }, {
-      id: "bar",
-      name: "bar",
-      displayName: "bar",
-      versions: []
-    }]
-  })
-  expect(sut.state).toEqual(ProjectPageState.NO_PROJECT_SELECTED)
-})
-
-test("It selects the first project when there is only one project", async () => {
-  const sut = getProjectPageState({
+test("It selects the first project when there is only one project", () => {
+  const sut = getSelection({
     projects: [{
       id: "foo",
       name: "foo",
@@ -52,15 +18,14 @@ test("It selects the first project when there is only one project", async () => 
       }]
     }]
   })
-  expect(sut.state).toEqual(ProjectPageState.HAS_SELECTION)
-  expect(sut.selection!.project.id).toEqual("foo")
-  expect(sut.selection!.version.id).toEqual("bar")
-  expect(sut.selection!.specification.id).toEqual("hello")
+  expect(sut.project!.id).toEqual("foo")
+  expect(sut.version!.id).toEqual("bar")
+  expect(sut.specification!.id).toEqual("hello")
 })
 
-test("It selects the first version and specification of the specified project", async () => {
-  const sut = getProjectPageState({
-    selectedProjectId: "bar",
+test("It selects the first version and specification of the specified project", () => {
+  const sut = getSelection({
+    projectId: "bar",
     projects: [{
       id: "foo",
       name: "foo",
@@ -91,16 +56,15 @@ test("It selects the first version and specification of the specified project", 
       }]
     }]
   })
-  expect(sut.state).toEqual(ProjectPageState.HAS_SELECTION)
-  expect(sut.selection!.project.id).toEqual("bar")
-  expect(sut.selection!.version.id).toEqual("baz1")
-  expect(sut.selection!.specification.id).toEqual("hello1")
+  expect(sut.project!.id).toEqual("bar")
+  expect(sut.version!.id).toEqual("baz1")
+  expect(sut.specification!.id).toEqual("hello1")
 })
 
-test("It selects the first specification of the specified project and version", async () => {
-  const sut = getProjectPageState({
-    selectedProjectId: "bar",
-    selectedVersionId: "baz2",
+test("It selects the first specification of the specified project and version", () => {
+  const sut = getSelection({
+    projectId: "bar",
+    versionId: "baz2",
     projects: [{
       id: "foo",
       name: "foo",
@@ -127,57 +91,15 @@ test("It selects the first specification of the specified project and version", 
       }]
     }]
   })
-  expect(sut.state).toEqual(ProjectPageState.HAS_SELECTION)
-  expect(sut.selection!.project.id).toEqual("bar")
-  expect(sut.selection!.version.id).toEqual("baz2")
-  expect(sut.selection!.specification.id).toEqual("hello1")
+  expect(sut.project!.id).toEqual("bar")
+  expect(sut.version!.id).toEqual("baz2")
+  expect(sut.specification!.id).toEqual("hello1")
 })
 
-test("It selects the specification of the specified version", async () => {
-  const sut = getProjectPageState({
-    selectedProjectId: "bar",
-    selectedVersionId: "baz2",
-    projects: [{
-      id: "foo",
-      name: "foo",
-      displayName: "foo",
-      versions: []
-    }, {
-      id: "bar",
-      name: "bar",
-      displayName: "bar",
-      versions: [{
-        id: "baz1",
-        name: "baz1",
-        isDefault: false,
-        specifications: []
-      }, {
-        id: "baz2",
-        name: "baz2",
-        isDefault: false,
-        specifications: [{
-          id: "hello1",
-          name: "hello1.yml",
-          url: "https://example.com/hello.yml"
-        }, {
-          id: "hello2",
-          name: "hello2.yml",
-          url: "https://example.com/hello.yml"
-        }]
-      }]
-    }]
-  })
-  expect(sut.state).toEqual(ProjectPageState.HAS_SELECTION)
-  expect(sut.selection!.project.id).toEqual("bar")
-  expect(sut.selection!.version.id).toEqual("baz2")
-  expect(sut.selection!.specification.id).toEqual("hello1")
-})
-
-test("It selects the specified project, version, and specification", async () => {
-  const sut = getProjectPageState({
-    selectedProjectId: "bar",
-    selectedVersionId: "baz2",
-    selectedSpecificationId: "hello2",
+test("It selects the specification of the specified version", () => {
+  const sut = getSelection({
+    projectId: "bar",
+    versionId: "baz2",
     projects: [{
       id: "foo",
       name: "foo",
@@ -208,15 +130,54 @@ test("It selects the specified project, version, and specification", async () =>
       }]
     }]
   })
-  expect(sut.state).toEqual(ProjectPageState.HAS_SELECTION)
-  expect(sut.selection!.project.id).toEqual("bar")
-  expect(sut.selection!.version.id).toEqual("baz2")
-  expect(sut.selection!.specification.id).toEqual("hello2")
+  expect(sut.project!.id).toEqual("bar")
+  expect(sut.version!.id).toEqual("baz2")
+  expect(sut.specification!.id).toEqual("hello1")
 })
 
-test("It errors when the selected project cannot be found", async () => {
-  const sut = getProjectPageState({
-    selectedProjectId: "foo",
+test("It selects the specified project, version, and specification", () => {
+  const sut = getSelection({
+    projectId: "bar",
+    versionId: "baz2",
+    specificationId: "hello2",
+    projects: [{
+      id: "foo",
+      name: "foo",
+      displayName: "foo",
+      versions: []
+    }, {
+      id: "bar",
+      name: "bar",
+      displayName: "bar",
+      versions: [{
+        id: "baz1",
+        name: "baz1",
+        isDefault: false,
+        specifications: []
+      }, {
+        id: "baz2",
+        name: "baz2",
+        isDefault: false,
+        specifications: [{
+          id: "hello1",
+          name: "hello1.yml",
+          url: "https://example.com/hello.yml"
+        }, {
+          id: "hello2",
+          name: "hello2.yml",
+          url: "https://example.com/hello.yml"
+        }]
+      }]
+    }]
+  })
+  expect(sut.project!.id).toEqual("bar")
+  expect(sut.version!.id).toEqual("baz2")
+  expect(sut.specification!.id).toEqual("hello2")
+})
+
+test("It returns a undefined project, version, and specification when the selected project cannot be found", () => {
+  const sut = getSelection({
+    projectId: "foo",
     projects: [{
       id: "bar",
       name: "bar",
@@ -224,13 +185,15 @@ test("It errors when the selected project cannot be found", async () => {
       versions: []
     }]
   })
-  expect(sut.state).toEqual(ProjectPageState.PROJECT_NOT_FOUND)
+  expect(sut.project).toBeUndefined()
+  expect(sut.version).toBeUndefined()
+  expect(sut.specification).toBeUndefined()
 })
 
-test("It errors when the selected version cannot be found", async () => {
-  const sut = getProjectPageState({
-    selectedProjectId: "foo",
-    selectedVersionId: "bar",
+test("It returns a undefined version and specification when the selected version cannot be found", () => {
+  const sut = getSelection({
+    projectId: "foo",
+    versionId: "bar",
     projects: [{
       id: "foo",
       name: "foo",
@@ -243,14 +206,16 @@ test("It errors when the selected version cannot be found", async () => {
       }]
     }]
   })
-  expect(sut.state).toEqual(ProjectPageState.VERSION_NOT_FOUND)
+  expect(sut.project!.id).toEqual("foo")
+  expect(sut.version).toBeUndefined()
+  expect(sut.specification).toBeUndefined()
 })
 
-test("It errors when the selected specification cannot be found", async () => {
-  const sut = getProjectPageState({
-    selectedProjectId: "foo",
-    selectedVersionId: "bar",
-    selectedSpecificationId: "baz",
+test("It returns a undefined specification when the selected specification cannot be found", () => {
+  const sut = getSelection({
+    projectId: "foo",
+    versionId: "bar",
+    specificationId: "baz",
     projects: [{
       id: "foo",
       name: "foo",
@@ -267,86 +232,7 @@ test("It errors when the selected specification cannot be found", async () => {
       }]
     }]
   })
-  expect(sut.state).toEqual(ProjectPageState.SPECIFICATION_NOT_FOUND)
-})
-
-test("It errors when the selected project has no versions", async () => {
-  const sut = getProjectPageState({
-    selectedProjectId: "foo",
-    projects: [{
-      id: "foo",
-      name: "foo",
-      displayName: "foo",
-      versions: []
-    }]
-  })
-  expect(sut.state).toEqual(ProjectPageState.VERSION_NOT_FOUND)
-})
-
-test("It errors when the selected version has no specifications", async () => {
-  const sut = getProjectPageState({
-    selectedProjectId: "foo",
-    selectedVersionId: "bar",
-    projects: [{
-      id: "foo",
-      name: "foo",
-      displayName: "foo",
-      versions: [{
-        id: "bar",
-        name: "bar",
-        isDefault: false,
-        specifications: []
-      }]
-    }]
-  })
-  expect(sut.state).toEqual(ProjectPageState.SPECIFICATION_NOT_FOUND)
-})
-
-test("It enters loading state, even when attempting to load a project that does not exist", async () => {
-  const sut = getProjectPageState({
-    selectedProjectId: "doesnotexist",
-    selectedVersionId: "bar",
-    selectedSpecificationId: "baz",
-    isLoading: true,
-    projects: [{
-      id: "foo",
-      name: "foo",
-      displayName: "foo",
-      versions: [{
-        id: "bar",
-        name: "bar",
-        isDefault: false,
-        specifications: []
-      }]
-    }]
-  })
-  expect(sut.state).toEqual(ProjectPageState.LOADING)
-})
-
-test("It selects project, version, and specification when they exist even when still loading", async () => {
-  const sut = getProjectPageState({
-    selectedProjectId: "foo",
-    selectedVersionId: "bar",
-    selectedSpecificationId: "baz",
-    isLoading: true,
-    projects: [{
-      id: "foo",
-      name: "foo",
-      displayName: "foo",
-      versions: [{
-        id: "bar",
-        name: "bar",
-        isDefault: false,
-        specifications: [{
-          id: "baz",
-          name: "baz.yml",
-          url: "https://example.com/baz.yml"
-        }]
-      }]
-    }]
-  })
-  expect(sut.state).toEqual(ProjectPageState.HAS_SELECTION)
-  expect(sut.selection!.project.id).toEqual("foo")
-  expect(sut.selection!.version.id).toEqual("bar")
-  expect(sut.selection!.specification.id).toEqual("baz")
+  expect(sut.project!.id).toEqual("foo")
+  expect(sut.version!.id).toEqual("bar")
+  expect(sut.specification).toBeUndefined()
 })

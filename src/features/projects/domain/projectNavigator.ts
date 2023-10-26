@@ -1,4 +1,4 @@
-import ProjectPageSelection from "./ProjectPageSelection"
+import Project from "./Project"
 
 export interface IProjectRouter {
   push(path: string): void
@@ -8,24 +8,25 @@ export interface IProjectRouter {
 const projectNavigator = {
   navigateToVersion(
     router: IProjectRouter,
-    selection: ProjectPageSelection,
+    project: Project,
     versionId: string,
+    preferredSpecificationName: string
   ) {
     // Let's see if we can find a specification with the same name.
-    const newVersion = selection.project.versions.find(e => {
+    const newVersion = project.versions.find(e => {
       return e.id == versionId
     })
     if (!newVersion) {
       return
     }
     const candidateSpecification = newVersion.specifications.find(e => {
-      return e.name == selection.specification.name
+      return e.name == preferredSpecificationName
     })
     if (candidateSpecification) {
-      router.push(`/${selection.project.id}/${newVersion.id}/${candidateSpecification.id}`)
+      router.push(`/${project.id}/${newVersion.id}/${candidateSpecification.id}`)
     } else {
       const firstSpecification = newVersion.specifications[0]
-      router.push(`/${selection.project.id}/${newVersion.id}/${firstSpecification.id}`)
+      router.push(`/${project.id}/${newVersion.id}/${firstSpecification.id}`)
     }
   },
   navigate(
@@ -43,14 +44,21 @@ const projectNavigator = {
       versionId?: string,
       specificationId?: string
     },
-    selection: ProjectPageSelection
+    selection: {
+      projectId?: string,
+      versionId?: string,
+      specificationId?: string
+    }
   ) {
+    if (!selection.projectId || !selection.versionId || !selection.specificationId) {
+      return
+    }
     if (
-      urlComponents.projectId != selection.project.id ||
-      urlComponents.versionId != selection.version.id ||
-      urlComponents.specificationId != selection.specification.id
+      urlComponents.projectId != selection.projectId ||
+      urlComponents.versionId != selection.versionId ||
+      urlComponents.specificationId != selection.specificationId
     ) {
-      const path = `/${selection.project.id}/${selection.version.id}/${selection.specification.id}`
+      const path = `/${selection.projectId}/${selection.versionId}/${selection.specificationId}`
       router.replace(path)
     }
   }
