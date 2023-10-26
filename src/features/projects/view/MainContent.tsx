@@ -1,7 +1,7 @@
 import Project from "../domain/Project"
 import Version from "../domain/Version"
 import OpenApiSpecification from "../domain/OpenApiSpecification"
-import ProjectErrorContent from "./ProjectErrorContent"
+import ErrorMessage from "./ErrorMessage"
 import DocumentationViewer from "./docs/DocumentationViewer"
 
 const MainContent = ({
@@ -22,13 +22,13 @@ const MainContent = ({
   } else if (isLoading) {
     return <></>
   } else if (error) {
-    return <ProjectErrorContent text={error.message}/>
+    return <ErrorMessage text={error.message}/>
   } else if (!project) {
-    return <ProjectErrorContent text="The project was not found."/>
+    return <ErrorMessage text="The project was not found."/>
   } else if (!version) {
-    return <ProjectErrorContent text="The selected branch or tag was not found."/>
+    return <ErrorMessage text="The selected branch or tag was not found."/>
   } else {
-    return <ProjectErrorContent text="The selected specification was not found."/>
+    return <ErrorMessage text="The selected specification was not found."/>
   }
 }
 
