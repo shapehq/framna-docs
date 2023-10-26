@@ -7,10 +7,10 @@ import useMediaQuery from "@mui/material/useMediaQuery"
 import SidebarContainer from "@/features/sidebar/view/client/SidebarContainer"
 import Project from "../../domain/Project"
 import ProjectList from "../ProjectList"
-import ProjectsPageContent from "../ProjectsPageContent"
-import TrailingToolbarItem from "../TrailingToolbarItem"
+import MainContent from "../MainContent"
 import MobileToolbar from "../MobileToolbar"
-import { getProjectPageState } from "../../domain/ProjectPageState"
+import TrailingToolbarItem from "../TrailingToolbarItem"
+import getSelection from "../../domain/getSelection"
 import projectNavigator from "../../domain/projectNavigator"
 import updateWindowTitle from "../../domain/updateWindowTitle"
 import useProjects from "../../data/useProjects"
@@ -32,30 +32,31 @@ export default function ProjectsPage({
   const { projects: clientProjects, error, isLoading: isClientLoading } = useProjects()
   const [forceCloseSidebar, setForceCloseSidebar] = useState(false)
   const projects = isClientLoading ? (serverProjects || []) : clientProjects
-  const isLoading = serverProjects === undefined && isClientLoading
-  const stateContainer = getProjectPageState({
-    isLoading,
-    error,
+  const { project, version, specification } = getSelection({
     projects,
-    selectedProjectId: projectId,
-    selectedVersionId: versionId,
-    selectedSpecificationId: specificationId
+    projectId,
+    versionId,
+    specificationId
   })
   useEffect(() => {
-    updateWindowTitle(
-      document,
-      process.env.NEXT_PUBLIC_SHAPE_DOCS_TITLE,
-      stateContainer.selection
-    )
-  }, [stateContainer.selection])
+    updateWindowTitle({
+      storage: document,
+      defaultTitle: process.env.NEXT_PUBLIC_SHAPE_DOCS_TITLE,
+      project,
+      version,
+      specification
+    })
+  }, [project, version, specification])
   useEffect(() => {
-    if (!stateContainer.selection) {
-      return
-    }
     // Ensure the URL reflects the current selection of project, version, and specification.
     const urlSelection = { projectId, versionId, specificationId }
-    projectNavigator.navigateIfNeeded(router, urlSelection, stateContainer.selection)
-  }, [router, projectId, versionId, specificationId, stateContainer.selection])
+    const selection = {
+      projectId: project?.id,
+      versionId: version?.id,
+      specificationId: specification?.id
+    }
+    projectNavigator.navigateIfNeeded(router, urlSelection, selection)
+  }, [router, projectId, versionId, specificationId, project, version, specification])
   const selectProject = (project: Project) => {
     setForceCloseSidebar(!isDesktopLayout)
     const version = project.versions[0]
@@ -63,43 +64,56 @@ export default function ProjectsPage({
     projectNavigator.navigate(router, project.id, version.id, specification.id)
   }
   const selectVersion = (versionId: string) => {
-    projectNavigator.navigateToVersion(router, stateContainer.selection!, versionId)
+    projectNavigator.navigateToVersion(router, project!, versionId, specification!.name)
   }
   const selectSpecification = (specificationId: string) => {
     projectNavigator.navigate(router, projectId!, versionId!, specificationId)
   }
   return (
     <SidebarContainer
-      canCloseDrawer={stateContainer.selection !== undefined}
+      canCloseDrawer={
+        project !== undefined &&
+        version !== undefined &&
+        specification !== undefined
+      }
       forceClose={forceCloseSidebar}
       sidebar={
         <ProjectList
-          isLoading={isLoading}
+          isLoading={serverProjects === undefined && isClientLoading}
           projects={projects}
           selectedProjectId={projectId}
           onSelectProject={selectProject}
         />
       }
-      toolbarTrailingItem={stateContainer.selection &&
+      toolbarTrailingItem={project && version && specification &&
         <TrailingToolbarItem
-          project={stateContainer.selection.project}
-          version={stateContainer.selection.version}
-          specification={stateContainer.selection.specification}
+          project={project}
+          version={version}
+          specification={specification}
           onSelectVersion={selectVersion}
           onSelectSpecification={selectSpecification}
         />
       }
-      mobileToolbar={stateContainer.selection &&
+      mobileToolbar={project && version && specification &&
         <MobileToolbar
-          project={stateContainer.selection.project}
-          version={stateContainer.selection.version}
-          specification={stateContainer.selection.specification}
+          project={project}
+          version={version}
+          specification={specification}
           onSelectVersion={selectVersion}
           onSelectSpecification={selectSpecification}
         />
       }
     >
-      <ProjectsPageContent stateContainer={stateContainer} />  
+      {/* If the user has not selected any project then we do not render any content */} 
+      {projectId &&
+        <MainContent
+          isLoading={isClientLoading}
+          error={error}
+          project={project}
+          version={version}
+          specification={specification}
+        />
+      }
     </SidebarContainer>
   )
 }
