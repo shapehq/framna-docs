@@ -1,6 +1,7 @@
 import Project from "../domain/Project"
 import Version from "../domain/Version"
 import OpenApiSpecification from "../domain/OpenApiSpecification"
+import DelayedLoading from "./DelayedLoading"
 import ErrorMessage from "./ErrorMessage"
 import DocumentationViewer from "./docs/DocumentationViewer"
 
@@ -20,7 +21,7 @@ const MainContent = ({
   if (project && version && specification) {
     return <DocumentationViewer url={specification.url}/>
   } else if (isLoading) {
-    return <></>
+    return <DelayedLoading/>
   } else if (error) {
     return <ErrorMessage text={error.message}/>
   } else if (!project) {
