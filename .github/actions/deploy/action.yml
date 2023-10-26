@@ -15,6 +15,12 @@ runs:
         echo "::add-mask::$API_KEY"
         echo "HEROKU_API_KEY=$(echo $API_KEY)" >> $GITHUB_ENV
       shell: bash
+    - name: Install SSH Key
+      run: |
+        op read --out-file ~/.ssh/heroku "op://Shape Docs GitHub Actions/Heroku SSH Key/ssh-key"
+        op read --out-file ~/.ssh/heroku.pub "op://Shape Docs GitHub Actions/Heroku SSH Key/ssh-key.pub"
+        ssh-add ~/.ssh/heroku
+      shell: bash
     - name: Add Heroku Git Remote
       run: heroku git:remote -a ${{ inputs.heroku-app }}
       shell: bash
