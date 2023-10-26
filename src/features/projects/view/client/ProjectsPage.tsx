@@ -32,9 +32,8 @@ export default function ProjectsPage({
   const { projects: clientProjects, error, isLoading: isClientLoading } = useProjects()
   const [forceCloseSidebar, setForceCloseSidebar] = useState(false)
   const projects = isClientLoading ? (serverProjects || []) : clientProjects
-  const isLoading = serverProjects === undefined && isClientLoading
   const stateContainer = getProjectPageState({
-    isLoading,
+    isLoading: isClientLoading,
     error,
     projects,
     selectedProjectId: projectId,
@@ -74,7 +73,7 @@ export default function ProjectsPage({
       forceClose={forceCloseSidebar}
       sidebar={
         <ProjectList
-          isLoading={isLoading}
+          isLoading={serverProjects === undefined && isClientLoading}
           projects={projects}
           selectedProjectId={projectId}
           onSelectProject={selectProject}
