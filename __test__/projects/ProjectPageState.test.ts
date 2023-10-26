@@ -302,3 +302,51 @@ test("It errors when the selected version has no specifications", async () => {
   expect(sut.state).toEqual(ProjectPageState.SPECIFICATION_NOT_FOUND)
 })
 
+test("It enters loading state, even when attempting to load a project that does not exist", async () => {
+  const sut = getProjectPageState({
+    selectedProjectId: "doesnotexist",
+    selectedVersionId: "bar",
+    selectedSpecificationId: "baz",
+    isLoading: true,
+    projects: [{
+      id: "foo",
+      name: "foo",
+      displayName: "foo",
+      versions: [{
+        id: "bar",
+        name: "bar",
+        isDefault: false,
+        specifications: []
+      }]
+    }]
+  })
+  expect(sut.state).toEqual(ProjectPageState.LOADING)
+})
+
+test("It selects project, version, and specification when they exist even when still loading", async () => {
+  const sut = getProjectPageState({
+    selectedProjectId: "foo",
+    selectedVersionId: "bar",
+    selectedSpecificationId: "baz",
+    isLoading: true,
+    projects: [{
+      id: "foo",
+      name: "foo",
+      displayName: "foo",
+      versions: [{
+        id: "bar",
+        name: "bar",
+        isDefault: false,
+        specifications: [{
+          id: "baz",
+          name: "baz.yml",
+          url: "https://example.com/baz.yml"
+        }]
+      }]
+    }]
+  })
+  expect(sut.state).toEqual(ProjectPageState.HAS_SELECTION)
+  expect(sut.selection!.project.id).toEqual("foo")
+  expect(sut.selection!.version.id).toEqual("bar")
+  expect(sut.selection!.specification.id).toEqual("baz")
+})

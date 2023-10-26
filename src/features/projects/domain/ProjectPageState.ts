@@ -36,56 +36,70 @@ export function getProjectPageState({
   selectedVersionId,
   selectedSpecificationId
 }: GetProjectPageStateProps): ProjectPageStateContainer {
-  if (isLoading) {
-    return { state: ProjectPageState.LOADING }
-  }
-  if (error) {
-    return { state: ProjectPageState.ERROR, error }
-  }
-  projects = projects || []
   // If no project is selected and the user only has a single project then we select that.
+  projects = projects || []
   if (!selectedProjectId && projects.length == 1) {
     selectedProjectId = projects[0].id
   }
-  if (!selectedProjectId) {
+  const { project, version, specification } = getSelection(
+    projects,
+    selectedProjectId,
+    selectedVersionId,
+    selectedSpecificationId
+  )
+  if (project && version && specification) {
+    return {
+      state: ProjectPageState.HAS_SELECTION,
+      selection: { project, version, specification }
+    }
+  } else if (isLoading) {
+    return { state: ProjectPageState.LOADING }
+  } else if (error) {
+    return { state: ProjectPageState.ERROR, error }
+  } else if (!selectedProjectId) {
     return { state: ProjectPageState.NO_PROJECT_SELECTED }
-  }
-  const project = projects.find(e => e.id == selectedProjectId)
-  if (!project) {
+  } else if (!project) {
     return { state: ProjectPageState.PROJECT_NOT_FOUND }
-  }
-  // Find selected version or default to first version if none is selected.
-  let version: Version
-  if (selectedVersionId) {
-    const selectedVersion = project.versions.find(e => e.id == selectedVersionId)
-    if (selectedVersion) {
-      version = selectedVersion
-    } else {
-      return { state: ProjectPageState.VERSION_NOT_FOUND }
-    }
-  } else if (project.versions.length > 0) {
-    version = project.versions[0]
-  } else {
+  } else if (!version) {
     return { state: ProjectPageState.VERSION_NOT_FOUND }
-  }
-  // Find selected specification or default to first specification if none is selected.
-  let specification: OpenApiSpecification
-  if (selectedSpecificationId) {
-    const selectedSpecification = version.specifications.find(e => e.id == selectedSpecificationId)
-    if (selectedSpecification) {
-      specification = selectedSpecification
-    } else {
-      return { state: ProjectPageState.SPECIFICATION_NOT_FOUND }
-    }
-  } else if (version.specifications.length > 0) {
-    specification = version.specifications[0]
   } else {
     return { state: ProjectPageState.SPECIFICATION_NOT_FOUND }
   }
-  return {
-    state: ProjectPageState.HAS_SELECTION,
-    selection: { project, version, specification }
+}
+
+function getSelection(
+  projects: Project[],
+  projectId?: string,
+  versionId?: string,
+  specificationId?: string
+): {
+  project?: Project,
+  version?: Version,
+  specification?: OpenApiSpecification
+} {
+  if (!projectId) {
+    return {}
   }
+  const project = projects.find(e => e.id == projectId)
+  if (!project) {
+    return {}
+  }
+  let version: Version | undefined
+  if (versionId) {
+    version = project.versions.find(e => e.id == versionId)
+  } else if (project.versions.length > 0) {
+    version = project.versions[0]
+  }
+  if (!version) {
+    return { project }
+  }
+  let specification: OpenApiSpecification | undefined
+  if (specificationId) {
+    specification = version.specifications.find(e => e.id == specificationId)
+  } else if (version.specifications.length > 0) {
+    specification = version.specifications[0]
+  }
+  return { project, version, specification }
 }
 
 export default ProjectPageState
