@@ -17,8 +17,12 @@ export default function PrimaryHeader({
     <Box sx={{ display: "flex", alignItems: "center", padding: 2 }}>
       <IconButton
         onClick={onClose}
-        sx={{ zIndex: 1000, visibility: canCloseDrawer ? "visible" : "hidden" }}
         edge="start"
+        disabled={!canCloseDrawer}
+        sx={{
+          zIndex: 1000,
+          opacity: canCloseDrawer ? 1 : 0
+        }}
       >
         <ChevronLeftIcon/>
       </IconButton>
