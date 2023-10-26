@@ -12,11 +12,15 @@ runs:
     - name: Get Heroku API Key
       run: |
         API_KEY=$(op read "op://Shape Docs GitHub Actions/Heroku API Key/password")
+        echo "::add-mask::$API_KEY"
         echo "HEROKU_API_KEY=$(echo $API_KEY)" >> $GITHUB_ENV
       shell: bash
     - name: Add Heroku Git Remote
       run: heroku git:remote -a ${{ inputs.heroku-app }}
       shell: bash
     - name: Push to Heroku
-      run: git push heroku ${{ inputs.source-branch }}:main
+      run: |
+        git config --global user.name "GitHub Actions"
+        git config --global user.email "heroku@shape.dk"
+        git push heroku ${{ inputs.source-branch }}:main
       shell: bash
