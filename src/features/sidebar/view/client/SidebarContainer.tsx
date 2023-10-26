@@ -1,55 +1,64 @@
 "use client"
 
 import dynamic from "next/dynamic"
-import { ReactNode } from "react"
-import Image from "next/image"
-import { Box, Stack } from "@mui/material"
-import { useTheme } from "@mui/material/styles"
+import { ReactNode, useEffect } from "react"
 import { useSessionStorage } from "usehooks-ts"
-import BaseSidebarContainer from "../BaseSidebarContainer"
-import SidebarContent from "../SidebarContent"
+import ResponsiveSidebarContainer from "../base/responsive/SidebarContainer"
+import ResponsiveSecondaryHeader from "../base/responsive/SecondaryHeader"
+import Sidebar from "../Sidebar"
+import SidebarHeader from "../SidebarHeader"
 
 const SidebarContainer = ({
-  primary,
-  secondary,
-  toolbarTrailing
+  canCloseDrawer,
+  forceClose,
+  sidebar,
+  children,
+  toolbarTrailingItem,
+  mobileToolbar
 }: {
-  primary: ReactNode
-  secondary?: ReactNode
-  toolbarTrailing?: ReactNode
+  canCloseDrawer: boolean,
+  forceClose: boolean,
+  sidebar?: ReactNode
+  children?: ReactNode
+  toolbarTrailingItem?: ReactNode
+  mobileToolbar?: ReactNode
 }) => {
   const [open, setOpen] = useSessionStorage("isDrawerOpen", true)
-  const theme = useTheme()
+  const [showMobileToolbar, setShowMobileToolbar] = useSessionStorage("isMobileToolbarVisible", true)
+  useEffect(() => {
+    if (!canCloseDrawer) {
+      setOpen(true)
+    }
+  }, [canCloseDrawer, setOpen])
+  useEffect(() => {
+    if (forceClose) {
+      setOpen(false)
+    }
+  }, [forceClose])
   return (
-    <BaseSidebarContainer
-      isDrawerOpen={open}
+    <ResponsiveSidebarContainer
+      canCloseDrawer={canCloseDrawer}
+      isDrawerOpen={open || !canCloseDrawer}
       onToggleDrawerOpen={setOpen}
-      primaryHeader={
-        <Stack direction="row" alignItems="center" spacing={1}>
-          <Image src="/duck.png" alt="Duck" width={40} height={45} priority={true}/>
-        </Stack>
+      sidebarHeader={<SidebarHeader/>}
+      sidebar={
+        <Sidebar>
+          {sidebar}
+        </Sidebar>
       }
-      primary={
-        <SidebarContent>
-          {primary}
-        </SidebarContent>
+      header={
+        <ResponsiveSecondaryHeader
+          showOpenDrawer={!open && canCloseDrawer}
+          onOpenDrawer={() => setOpen(true)}
+          showMobileToolbar={showMobileToolbar}
+          onToggleMobileToolbar={setShowMobileToolbar}
+          trailingItem={toolbarTrailingItem}
+          mobileToolbar={mobileToolbar}
+        />
       }
-      secondaryHeader={
-        <>
-          {toolbarTrailing != undefined && 
-            <Box sx={{ 
-              display: "flex",
-              width: "100%",
-              justifyContent: "right",
-              color: theme.palette.text.primary
-            }}>
-              {toolbarTrailing}
-            </Box>
-          }
-        </>
-      }
-      secondary={secondary}
-    />
+    >
+      {children}
+    </ResponsiveSidebarContainer>
   )
 }
 

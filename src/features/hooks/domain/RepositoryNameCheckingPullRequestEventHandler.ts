@@ -16,18 +16,30 @@ export default class RepositoryNameCheckingPullRequestEventHandler implements IP
   }
   
   async pullRequestOpened(event: IPullRequestOpenedEvent): Promise<void> {
-    if (!event.repositoryName.match(/-openapi$/)) {
+    if (!this.repositoryNameHasExpectedSuffix(event.repositoryName)) {
       return
     }
-    if (
-      this.allowedRepositoryNames.length != 0 &&
-      !this.allowedRepositoryNames.includes(event.repositoryName)
-    ) {
+    if (!this.isAllowedRepositoryName(event.repositoryName)) {
       return
     }
-    if (this.disallowedRepositoryNames.includes(event.repositoryName)) {
+    if (this.isDisallowedRepositoryName(event.repositoryName)) {
       return
     }
     return await this.eventHandler.pullRequestOpened(event)
+  }
+  
+  private repositoryNameHasExpectedSuffix(repositoryName: string) {
+    return repositoryName.match(/-openapi$/)
+  }
+  
+  private isAllowedRepositoryName(repositoryName: string) {
+    if (this.allowedRepositoryNames.length == 0) {
+      return true
+    }
+    return this.allowedRepositoryNames.includes(repositoryName)
+  }
+  
+  private isDisallowedRepositoryName(repositoryName: string) {
+    return this.disallowedRepositoryNames.includes(repositoryName)
   }
 }

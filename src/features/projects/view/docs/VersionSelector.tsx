@@ -1,22 +1,23 @@
+import { SxProps } from "@mui/system"
 import { Select, MenuItem, SelectChangeEvent, FormControl } from "@mui/material"
 import Version from "../../domain/Version"
 
-interface VersionSelectorProps {
-  versions: Version[]
-  selection: string
-  onSelect: (versionId: string) => void
-}
-
-const VersionSelector: React.FC<VersionSelectorProps> = ({
+const VersionSelector = ({
   versions,
   selection,
-  onSelect
+  onSelect,
+  sx
+}: {
+  versions: Version[]
+  selection: string
+  onSelect: (versionId: string) => void,
+  sx?: SxProps
 }) => {
   const handleVersionChange = (event: SelectChangeEvent) => {
     onSelect(event.target.value)
   }
   return (
-    <FormControl sx={{ m: 1, minWidth: 120 }} size="small">
+    <FormControl sx={{ m: 1, minWidth: 120, margin: 0, ...sx }} size="small">
       <Select defaultValue={selection} onChange={handleVersionChange}>
         {versions.map(version => 
           <MenuItem key={version.id} value={version.id}>

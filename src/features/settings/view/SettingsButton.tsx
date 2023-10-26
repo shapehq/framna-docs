@@ -31,7 +31,7 @@ const SettingsButton: React.FC = () => {
       >
         <SettingsList/>
       </Popover>
-      <IconButton onClick={handlePopoverClick}>
+      <IconButton edge="end" onClick={handlePopoverClick}>
         <MoreHoriz />
       </IconButton>
     </>

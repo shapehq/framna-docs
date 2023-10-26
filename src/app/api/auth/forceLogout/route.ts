@@ -12,7 +12,11 @@ export async function GET(req: NextRequest) {
   // should be provided that is not needed as the user is not fully logged
   // in at this point.
   const url = new URL(AUTH0_ISSUER_BASE_URL + "/oidc/logout")
-  const redirectURI = req.nextUrl.protocol + "//" + req.nextUrl.host
+  const host = req.headers.get('host')
+  const redirectURI = req.nextUrl.protocol + "//" + host
   url.searchParams.append("post_logout_redirect_uri", redirectURI)
-  return NextResponse.redirect(url)
+
+  const response = NextResponse.redirect(url)
+  response.cookies.delete("appSession")
+  return response
 }
