@@ -1,0 +1,21 @@
+name: Deploy to Staging
+on:
+  workflow_dispatch: {}
+  push:
+    branches:
+      - develop
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+env:
+  OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN_SHAPE_DOCS }}
+jobs:
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy
+        uses: ./.github/actions/deploy
+        with:
+          heroku-app: shape-docs-staging
+          source-branch: develop
