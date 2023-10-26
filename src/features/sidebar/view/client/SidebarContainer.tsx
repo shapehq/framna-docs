@@ -10,12 +10,14 @@ import SidebarHeader from "../SidebarHeader"
 
 const SidebarContainer = ({
   canCloseDrawer,
+  forceClose,
   sidebar,
   children,
   toolbarTrailingItem,
   mobileToolbar
 }: {
   canCloseDrawer: boolean,
+  forceClose: boolean,
   sidebar?: ReactNode
   children?: ReactNode
   toolbarTrailingItem?: ReactNode
@@ -28,6 +30,11 @@ const SidebarContainer = ({
       setOpen(true)
     }
   }, [canCloseDrawer, setOpen])
+  useEffect(() => {
+    if (forceClose) {
+      setOpen(false)
+    }
+  }, [forceClose])
   return (
     <ResponsiveSidebarContainer
       canCloseDrawer={canCloseDrawer}

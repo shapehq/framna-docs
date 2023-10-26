@@ -1,7 +1,9 @@
 "use client"
 
-import { useEffect } from "react"
+import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
+import { useTheme } from "@mui/material/styles"
+import useMediaQuery from "@mui/material/useMediaQuery"
 import SidebarContainer from "@/features/sidebar/view/client/SidebarContainer"
 import Project from "../../domain/Project"
 import ProjectList from "../ProjectList"
@@ -25,7 +27,10 @@ export default function ProjectsPage({
   specificationId?: string
 }) {
   const router = useRouter()
+  const theme = useTheme()
+  const isDesktopLayout = useMediaQuery(theme.breakpoints.up("sm"))
   const { projects: clientProjects, error, isLoading: isClientLoading } = useProjects()
+  const [forceCloseSidebar, setForceCloseSidebar] = useState(false)
   const projects = isClientLoading ? (serverProjects || []) : clientProjects
   const isLoading = serverProjects === undefined && isClientLoading
   const stateContainer = getProjectPageState({
@@ -36,11 +41,6 @@ export default function ProjectsPage({
     selectedVersionId: versionId,
     selectedSpecificationId: specificationId
   })
-  const handleProjectSelected = (project: Project) => {
-    const version = project.versions[0]
-    const specification = version.specifications[0]
-    projectNavigator.navigate(router, project.id, version.id, specification.id)
-  }
   useEffect(() => {
     updateWindowTitle(
       document,
@@ -56,6 +56,12 @@ export default function ProjectsPage({
     const urlSelection = { projectId, versionId, specificationId }
     projectNavigator.navigateIfNeeded(router, urlSelection, stateContainer.selection)
   }, [router, projectId, versionId, specificationId, stateContainer.selection])
+  const selectProject = (project: Project) => {
+    setForceCloseSidebar(!isDesktopLayout)
+    const version = project.versions[0]
+    const specification = version.specifications[0]
+    projectNavigator.navigate(router, project.id, version.id, specification.id)
+  }
   const selectVersion = (versionId: string) => {
     projectNavigator.navigateToVersion(router, stateContainer.selection!, versionId)
   }
@@ -65,12 +71,13 @@ export default function ProjectsPage({
   return (
     <SidebarContainer
       canCloseDrawer={stateContainer.selection !== undefined}
+      forceClose={forceCloseSidebar}
       sidebar={
         <ProjectList
           isLoading={isLoading}
           projects={projects}
           selectedProjectId={projectId}
-          onSelectProject={handleProjectSelected}
+          onSelectProject={selectProject}
         />
       }
       toolbarTrailingItem={stateContainer.selection &&
