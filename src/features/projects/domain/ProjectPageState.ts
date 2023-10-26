@@ -80,7 +80,7 @@ function getSelection(
   if (!projectId) {
     return {}
   }
-  let project = projects.find(e => e.id == projectId)
+  const project = projects.find(e => e.id == projectId)
   if (!project) {
     return {}
   }
