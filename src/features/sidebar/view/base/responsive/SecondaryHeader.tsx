@@ -33,7 +33,7 @@ export default function ResponsiveSecondaryHeader({
             <IconButton
               edge="end"
               onClick={() => onToggleMobileToolbar(!showMobileToolbar) }
-              sx={{ display: { sm: "block", md: "none" } }}
+              sx={{ display: { sm: "flex", md: "none" } }}
             >
               <ExpandCircleDownIcon sx={{
                 transform: showMobileToolbar ? "rotate(180deg)" : "none" }}
