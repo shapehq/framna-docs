@@ -3,7 +3,7 @@ import Version from "../domain/Version"
 import OpenApiSpecification from "../domain/OpenApiSpecification"
 import DelayedLoadingIndicator from "@/common/loading/DelayedLoadingIndicator"
 import ErrorMessage from "./ErrorMessage"
-import DocumentationViewer from "./docs/DocumentationViewer"
+import Documentation from "./Documentation"
 
 const MainContent = ({
   isLoading,
@@ -19,7 +19,7 @@ const MainContent = ({
   specification?: OpenApiSpecification  
 }) => {
   if (project && version && specification) {
-    return <DocumentationViewer url={specification.url}/>
+    return <Documentation url={specification.url}/>
   } else if (isLoading) {
     return <DelayedLoadingIndicator/>
   } else if (error) {

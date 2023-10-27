@@ -1,31 +1,35 @@
-import { ToggleButtonGroup, ToggleButton } from "@mui/material"
+import { FormControl, Select, MenuItem, SelectChangeEvent } from "@mui/material"
 import DocumentationVisualizer from "../domain/DocumentationVisualizer"
 import useDocumentationVisualizer from "@/features/settings/data/useDocumentationVisualizer"
 
 const DocumentationVisualizationPicker: React.FC = () => {
   const [value, setValue] = useDocumentationVisualizer()
-  const handleChange = (
-    _event: React.MouseEvent<HTMLElement>,
-    documentationVisualizer: DocumentationVisualizer
-  ) => {
-    setValue(documentationVisualizer)
+  const handleChange = (event: SelectChangeEvent) => {
+    setValue(parseInt(event.target.value))
   }
   return (
-    <ToggleButtonGroup
-      exclusive
-      value={value}
-      onChange={handleChange}
-      fullWidth={true}
-      color="secondary"
-      aria-label="Viewer"
-    >
-      <ToggleButton value={DocumentationVisualizer.SWAGGER}>
-        Swagger
-      </ToggleButton>
-      <ToggleButton value={DocumentationVisualizer.REDOCLY}>
-        Redocly
-      </ToggleButton>
-    </ToggleButtonGroup>
+    <FormControl fullWidth sx={{ m: 1, minWidth: 120, margin: 0 }} size="small">
+      <Select defaultValue={value.toString()} onChange={handleChange}>
+        <MenuItem
+          key={DocumentationVisualizer.REDOCLY}
+          value={DocumentationVisualizer.REDOCLY.toString()}
+        >
+          Redocly
+        </MenuItem>
+        <MenuItem
+          key={DocumentationVisualizer.STOPLIGHT}
+          value={DocumentationVisualizer.STOPLIGHT.toString()}
+        >
+          Stoplight
+        </MenuItem>
+        <MenuItem
+          key={DocumentationVisualizer.SWAGGER}
+          value={DocumentationVisualizer.SWAGGER.toString()}
+        >
+          Swagger
+        </MenuItem>
+      </Select>
+    </FormControl>
   )
 }
 
