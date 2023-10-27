@@ -22,7 +22,6 @@
     "@octokit/auth-app": "^6.0.1",
     "@octokit/core": "^5.0.1",
     "@octokit/webhooks": "^12.0.3",
-    "@stoplight/elements": "^7.13.7",
     "auth0": "^4.0.1",
     "core-js": "^3.33.1",
     "encoding": "^0.1.13",

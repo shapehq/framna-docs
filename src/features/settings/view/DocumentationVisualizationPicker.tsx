@@ -17,12 +17,6 @@ const DocumentationVisualizationPicker: React.FC = () => {
           Redocly
         </MenuItem>
         <MenuItem
-          key={DocumentationVisualizer.STOPLIGHT}
-          value={DocumentationVisualizer.STOPLIGHT.toString()}
-        >
-          Stoplight
-        </MenuItem>
-        <MenuItem
           key={DocumentationVisualizer.SWAGGER}
           value={DocumentationVisualizer.SWAGGER.toString()}
         >
