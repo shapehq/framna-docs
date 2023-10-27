@@ -10,7 +10,12 @@ const LoadingWrapper = ({
   children: ReactNode
 }) => {
   return (
-    <Box sx={{ width: "100%", height: "100%", position: "relative", overflow: "scroll" }}>
+    <Box sx={{
+      width: "100%",
+      height: "100%",
+      position: "relative",
+      overflowY: showLoadingIndicator ? "scroll" : "auto"
+    }}>
       {showLoadingIndicator &&
         <Box sx={{ width: "100%", height: "100%", position: "absolute" }}>
           <LoadingIndicator/>
