@@ -39,8 +39,8 @@ const SidebarContainer = ({
       }
       header={
         <ResponsiveSecondaryHeader
-          showOpenDrawer={!isSidebarOpen}
-          onOpenDrawer={() => onToggleSidebarOpen(true)}
+          isOpenSidebarEnabled={!isSidebarOpen}
+          onOpenSidebar={() => onToggleSidebarOpen(true)}
           showMobileToolbar={showMobileToolbar}
           onToggleMobileToolbar={setShowMobileToolbar}
           trailingItem={toolbarTrailingItem}

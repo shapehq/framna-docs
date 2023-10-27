@@ -4,19 +4,19 @@ import { Stack } from "@mui/material"
 import { styled } from "@mui/material/styles"
 
 interface WrapperStackProps {
-  drawerWidth: number
-  isDrawerOpen: boolean
+  sidebarWidth: number
+  isSidebarOpen: boolean
 }
 
 const WrapperStack = styled(Stack, {
-  shouldForwardProp: (prop) => prop !== "isDrawerOpen"
-})<WrapperStackProps>(({ theme, drawerWidth, isDrawerOpen }) => ({
+  shouldForwardProp: (prop) => prop !== "isSidebarOpen"
+})<WrapperStackProps>(({ theme, sidebarWidth, isSidebarOpen }) => ({
   transition: theme.transitions.create("margin", {
     easing: theme.transitions.easing.sharp,
     duration: theme.transitions.duration.leavingScreen
   }),
-  marginLeft: `-${drawerWidth}px`,
-  ...(isDrawerOpen && {
+  marginLeft: `-${sidebarWidth}px`,
+  ...(isSidebarOpen && {
     transition: theme.transitions.create("margin", {
       easing: theme.transitions.easing.easeOut,
       duration: theme.transitions.duration.enteringScreen,
@@ -26,13 +26,13 @@ const WrapperStack = styled(Stack, {
 }))
 
 export default function SecondaryWrapper({
-  drawerWidth,
-  isDrawerOpen,
+  sidebarWidth,
+  isSidebarOpen,
   children,
   sx
 }: {
-  drawerWidth: number
-  isDrawerOpen: boolean
+  sidebarWidth: number
+  isSidebarOpen: boolean
   children: ReactNode
   sx?: SxProps
 }) {
@@ -40,8 +40,8 @@ export default function SecondaryWrapper({
     <WrapperStack
       direction="column"
       spacing={0}
-      drawerWidth={drawerWidth}
-      isDrawerOpen={isDrawerOpen}
+      sidebarWidth={sidebarWidth}
+      isSidebarOpen={isSidebarOpen}
       sx={{ ...sx, width: "100%", overflowY: "auto" }}
     >
       {children}

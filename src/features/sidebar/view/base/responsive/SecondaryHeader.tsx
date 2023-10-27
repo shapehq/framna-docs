@@ -5,16 +5,16 @@ import SecondaryHeader from "../SecondaryHeader"
 import ExpandCircleDownIcon from "@mui/icons-material/ExpandCircleDown"
 
 export default function ResponsiveSecondaryHeader({
-  showOpenDrawer,
-  onOpenDrawer,
+  isOpenSidebarEnabled,
+  onOpenSidebar,
   showMobileToolbar,
   onToggleMobileToolbar,
   trailingItem,
   mobileToolbar,
   sx
 }: {
-  showOpenDrawer: boolean
-  onOpenDrawer: () => void
+  isOpenSidebarEnabled: boolean
+  onOpenSidebar: () => void
   showMobileToolbar: boolean
   onToggleMobileToolbar: (showMobileToolbar: boolean) => void
   trailingItem?: ReactNode
@@ -24,8 +24,8 @@ export default function ResponsiveSecondaryHeader({
   return (
     <SecondaryHeader
       sx={sx}
-      showOpenDrawer={showOpenDrawer}
-      onOpenDrawer={onOpenDrawer}
+      isOpenSidebarEnabled={isOpenSidebarEnabled}
+      onOpenSidebar={onOpenSidebar}
       trailingItem={
         <Stack direction="row" alignItems="center">
           {trailingItem}

@@ -15,30 +15,30 @@ const SidebarContainer = ({
 }: {
   isSidebarOpen: boolean,
   isCloseSidebarEnabled: boolean,
-  onToggleSidebarOpen: (isDrawerOpen: boolean) => void
+  onToggleSidebarOpen: (isSidebarOpen: boolean) => void
   sidebarHeader?: ReactNode
   sidebar: ReactNode
   header?: ReactNode
   children?: ReactNode
 }) => {
-  const drawerWidth = 320
+  const sidebarWidth = 320
   return (
     <Stack direction="row" spacing={0} sx={{ width: "100%", height: "100%" }}>
       <Drawer
-        width={drawerWidth}
+        width={sidebarWidth}
         isOpen={isSidebarOpen}
         onClose={() => onToggleSidebarOpen(false)}
       >
         <PrimaryHeader
-          width={drawerWidth}
-          canCloseDrawer={isCloseSidebarEnabled}
+          width={sidebarWidth}
+          isCloseEnabled={isCloseSidebarEnabled}
           onClose={() => onToggleSidebarOpen(false)}
         >
           {sidebarHeader}
         </PrimaryHeader>
         {sidebar}
       </Drawer>
-      <SecondaryWrapper drawerWidth={drawerWidth} offsetContent={isSidebarOpen}>
+      <SecondaryWrapper sidebarWidth={sidebarWidth} offsetContent={isSidebarOpen}>
         {header}
         <main style={{ flexGrow: "1", overflowY: "auto" }}>
           {children}

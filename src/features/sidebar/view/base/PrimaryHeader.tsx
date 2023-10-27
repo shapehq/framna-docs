@@ -3,12 +3,12 @@ import { Box, IconButton } from "@mui/material"
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft"
 
 export default function PrimaryHeader({
-  canCloseDrawer,
+  isCloseEnabled,
   width,
   onClose,
   children
 }: {
-  canCloseDrawer: boolean,
+  isCloseEnabled: boolean,
   width: number,
   onClose: () => void
   children?: ReactNode
@@ -18,10 +18,10 @@ export default function PrimaryHeader({
       <IconButton
         onClick={onClose}
         edge="start"
-        disabled={!canCloseDrawer}
+        disabled={!isCloseEnabled}
         sx={{
           zIndex: 1000,
-          opacity: canCloseDrawer ? 1 : 0
+          opacity: isCloseEnabled ? 1 : 0
         }}
       >
         <ChevronLeftIcon/>
