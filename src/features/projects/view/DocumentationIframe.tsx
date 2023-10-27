@@ -14,7 +14,6 @@ const DocumentationIframe = ({
   const searchParams = new URLSearchParams()
   searchParams.append("visualizer", visualizer.toString())
   searchParams.append("url", url)
-  console.log(isIframeLoaded)
   return (
       <Box sx={{ width: "100%", height: "100%", position: "relative" }}>
         <iframe
