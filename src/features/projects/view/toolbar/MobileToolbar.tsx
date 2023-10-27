@@ -1,9 +1,9 @@
 import { Stack } from "@mui/material"
-import Project from "../domain/Project"
-import Version from "../domain/Version"
-import OpenApiSpecification from "../domain/OpenApiSpecification"
-import VersionSelector from "./docs/VersionSelector"
-import SpecificationSelector from "./docs/SpecificationSelector"
+import Project from "../../domain/Project"
+import Version from "../../domain/Version"
+import OpenApiSpecification from "../../domain/OpenApiSpecification"
+import VersionSelector from "./VersionSelector"
+import SpecificationSelector from "./SpecificationSelector"
 
 const MobileToolbar = ({
   project,
