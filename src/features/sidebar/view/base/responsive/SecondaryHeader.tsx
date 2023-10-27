@@ -30,7 +30,11 @@ export default function ResponsiveSecondaryHeader({
         <Stack direction="row" alignItems="center">
           {trailingItem}
           {mobileToolbar &&
-            <IconButton edge="end" onClick={() => onToggleMobileToolbar(!showMobileToolbar) }>
+            <IconButton
+              edge="end"
+              onClick={() => onToggleMobileToolbar(!showMobileToolbar) }
+              sx={{ display: { sm: "block", md: "none" } }}
+            >
               <ExpandCircleDownIcon sx={{
                 transform: showMobileToolbar ? "rotate(180deg)" : "none" }}
               />
