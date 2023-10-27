@@ -41,7 +41,11 @@ export default function ResponsiveSecondaryHeader({
     >
       {mobileToolbar &&
         <Collapse in={showMobileToolbar} >
-          <Box sx={{ padding: 2, paddingTop: 0, display: { sm: "block", md: "none" } }}>
+          <Box sx={{
+            padding: 2,
+            paddingTop: 0,
+            display: { sm: "block", md: "none" }
+          }}>
             {mobileToolbar}
           </Box>
         </Collapse>
