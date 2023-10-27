@@ -5,16 +5,16 @@ import SecondaryHeader from "../SecondaryHeader"
 import ExpandCircleDownIcon from "@mui/icons-material/ExpandCircleDown"
 
 export default function ResponsiveSecondaryHeader({
-  showOpenDrawer,
-  onOpenDrawer,
+  isOpenSidebarEnabled,
+  onOpenSidebar,
   showMobileToolbar,
   onToggleMobileToolbar,
   trailingItem,
   mobileToolbar,
   sx
 }: {
-  showOpenDrawer: boolean
-  onOpenDrawer: () => void
+  isOpenSidebarEnabled: boolean
+  onOpenSidebar: () => void
   showMobileToolbar: boolean
   onToggleMobileToolbar: (showMobileToolbar: boolean) => void
   trailingItem?: ReactNode
@@ -24,24 +24,32 @@ export default function ResponsiveSecondaryHeader({
   return (
     <SecondaryHeader
       sx={sx}
-      showOpenDrawer={showOpenDrawer}
-      onOpenDrawer={onOpenDrawer}
+      isOpenSidebarEnabled={isOpenSidebarEnabled}
+      onOpenSidebar={onOpenSidebar}
       trailingItem={
-        <Stack direction="row" alignItems="center" spacing={1}>
+        <Stack direction="row" alignItems="center">
           {trailingItem}
-          <Box sx={{ display: { sm: mobileToolbar ? "block" : "none", md: "none" } }}>
-            <IconButton edge="end" onClick={() => onToggleMobileToolbar(!showMobileToolbar) }>
+          {mobileToolbar &&
+            <IconButton
+              edge="end"
+              onClick={() => onToggleMobileToolbar(!showMobileToolbar) }
+              sx={{ display: { sm: "block", md: "none" } }}
+            >
               <ExpandCircleDownIcon sx={{
                 transform: showMobileToolbar ? "rotate(180deg)" : "none" }}
               />
             </IconButton>
-          </Box>
+          }
         </Stack>
       }
     >
       {mobileToolbar &&
         <Collapse in={showMobileToolbar} >
-          <Box sx={{ padding: 2, paddingTop: 0, display: { sm: "block", md: "none" } }}>
+          <Box sx={{
+            padding: 2,
+            paddingTop: 0,
+            display: { sm: "block", md: "none" }
+          }}>
             {mobileToolbar}
           </Box>
         </Collapse>

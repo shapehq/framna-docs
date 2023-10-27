@@ -1,12 +1,12 @@
 import { ReactNode } from "react"
 import SecondaryWrapper from "../SecondaryWrapper"
 
-export default function ResponsiveDrawer({
-  drawerWidth,
+export default function ResponsiveSecondaryWrapper({
+  sidebarWidth,
   offsetContent,
   children
 }: {
-  drawerWidth: number
+  sidebarWidth: number
   offsetContent: boolean
   children: ReactNode
 }) {
@@ -14,15 +14,15 @@ export default function ResponsiveDrawer({
   return (
     <>
       <SecondaryWrapper
-        drawerWidth={0}
-        isDrawerOpen={false}
+        sidebarWidth={0}
+        isSidebarOpen={false}
         sx={{ ...sx, display: { xs: "flex", sm: "none" } }}
       >
         {children}
       </SecondaryWrapper>
       <SecondaryWrapper
-        drawerWidth={drawerWidth}
-        isDrawerOpen={offsetContent}
+        sidebarWidth={sidebarWidth}
+        isSidebarOpen={offsetContent}
         sx={{ ...sx, display: { xs: "none", sm: "flex" } }}
       >
         {children}
