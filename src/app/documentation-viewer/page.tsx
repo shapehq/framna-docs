@@ -7,7 +7,6 @@ export default async function Page({
 }: {
   searchParams: SearchParams
 }) {
-  console.log(searchParams)
   return (
     <DocumentationViewer
       visualizer={parseInt(searchParams.visualizer)}
