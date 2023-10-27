@@ -27,15 +27,15 @@ export default function ResponsiveSecondaryHeader({
       showOpenDrawer={showOpenDrawer}
       onOpenDrawer={onOpenDrawer}
       trailingItem={
-        <Stack direction="row" alignItems="center" spacing={1}>
+        <Stack direction="row" alignItems="center">
           {trailingItem}
-          <Box sx={{ display: { sm: mobileToolbar ? "block" : "none", md: "none" } }}>
+          {mobileToolbar &&
             <IconButton edge="end" onClick={() => onToggleMobileToolbar(!showMobileToolbar) }>
               <ExpandCircleDownIcon sx={{
                 transform: showMobileToolbar ? "rotate(180deg)" : "none" }}
               />
             </IconButton>
-          </Box>
+          }
         </Stack>
       }
     >
