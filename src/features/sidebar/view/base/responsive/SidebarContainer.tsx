@@ -5,17 +5,17 @@ import PrimaryHeader from "../PrimaryHeader"
 import SecondaryWrapper from "./SecondaryWrapper"
 
 const SidebarContainer = ({
-  canCloseDrawer,
-  isDrawerOpen,
-  onToggleDrawerOpen,
+  isSidebarOpen,
+  isCloseSidebarEnabled,
+  onToggleSidebarOpen,
   sidebarHeader,
   sidebar,
   header,
   children
 }: {
-  canCloseDrawer: boolean,
-  isDrawerOpen: boolean
-  onToggleDrawerOpen: (isDrawerOpen: boolean) => void
+  isSidebarOpen: boolean,
+  isCloseSidebarEnabled: boolean,
+  onToggleSidebarOpen: (isDrawerOpen: boolean) => void
   sidebarHeader?: ReactNode
   sidebar: ReactNode
   header?: ReactNode
@@ -26,19 +26,19 @@ const SidebarContainer = ({
     <Stack direction="row" spacing={0} sx={{ width: "100%", height: "100%" }}>
       <Drawer
         width={drawerWidth}
-        isOpen={isDrawerOpen}
-        onClose={() => onToggleDrawerOpen(false)}
+        isOpen={isSidebarOpen}
+        onClose={() => onToggleSidebarOpen(false)}
       >
         <PrimaryHeader
           width={drawerWidth}
-          canCloseDrawer={canCloseDrawer}
-          onClose={() => onToggleDrawerOpen(false)}
+          canCloseDrawer={isCloseSidebarEnabled}
+          onClose={() => onToggleSidebarOpen(false)}
         >
           {sidebarHeader}
         </PrimaryHeader>
         {sidebar}
       </Drawer>
-      <SecondaryWrapper drawerWidth={drawerWidth} offsetContent={isDrawerOpen}>
+      <SecondaryWrapper drawerWidth={drawerWidth} offsetContent={isSidebarOpen}>
         {header}
         <main style={{ flexGrow: "1", overflowY: "auto" }}>
           {children}

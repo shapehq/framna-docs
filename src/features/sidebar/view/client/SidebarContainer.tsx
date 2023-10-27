@@ -1,7 +1,7 @@
 "use client"
 
 import dynamic from "next/dynamic"
-import { ReactNode, useEffect } from "react"
+import { ReactNode } from "react"
 import { useSessionStorage } from "usehooks-ts"
 import ResponsiveSidebarContainer from "../base/responsive/SidebarContainer"
 import ResponsiveSecondaryHeader from "../base/responsive/SecondaryHeader"
@@ -9,37 +9,28 @@ import Sidebar from "../Sidebar"
 import SidebarHeader from "../SidebarHeader"
 
 const SidebarContainer = ({
-  canCloseDrawer,
-  forceClose,
+  isSidebarOpen,
+  isCloseSidebarEnabled,
+  onToggleSidebarOpen,
   sidebar,
   children,
   toolbarTrailingItem,
   mobileToolbar
 }: {
-  canCloseDrawer: boolean,
-  forceClose: boolean,
+  isSidebarOpen: boolean,
+  isCloseSidebarEnabled: boolean,
+  onToggleSidebarOpen: (isSidebarOpen: boolean) => void,
   sidebar?: ReactNode
   children?: ReactNode
   toolbarTrailingItem?: ReactNode
   mobileToolbar?: ReactNode
 }) => {
-  const [open, setOpen] = useSessionStorage("isDrawerOpen", true)
   const [showMobileToolbar, setShowMobileToolbar] = useSessionStorage("isMobileToolbarVisible", true)
-  useEffect(() => {
-    if (!canCloseDrawer) {
-      setOpen(true)
-    }
-  }, [canCloseDrawer, setOpen])
-  useEffect(() => {
-    if (forceClose) {
-      setOpen(false)
-    }
-  }, [forceClose, setOpen])
   return (
     <ResponsiveSidebarContainer
-      canCloseDrawer={canCloseDrawer}
-      isDrawerOpen={open || !canCloseDrawer}
-      onToggleDrawerOpen={setOpen}
+      isCloseSidebarEnabled={isCloseSidebarEnabled}
+      isSidebarOpen={isSidebarOpen || !isCloseSidebarEnabled}
+      onToggleSidebarOpen={onToggleSidebarOpen}
       sidebarHeader={<SidebarHeader/>}
       sidebar={
         <Sidebar>
@@ -48,8 +39,8 @@ const SidebarContainer = ({
       }
       header={
         <ResponsiveSecondaryHeader
-          showOpenDrawer={!open && canCloseDrawer}
-          onOpenDrawer={() => setOpen(true)}
+          showOpenDrawer={!isSidebarOpen && isCloseSidebarEnabled}
+          onOpenDrawer={() => onToggleSidebarOpen(true)}
           showMobileToolbar={showMobileToolbar}
           onToggleMobileToolbar={setShowMobileToolbar}
           trailingItem={toolbarTrailingItem}
