@@ -12,7 +12,7 @@ const DelayedLoadingIndicator = ({
       setVisible(true)
     }, delay || 1000)
     return () => clearTimeout(timer)
-  }, [setVisible])
+  }, [delay, setVisible])
   return <>{isVisible && <LoadingIndicator/>}</>
 }
 
