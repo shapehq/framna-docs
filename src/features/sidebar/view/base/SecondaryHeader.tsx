@@ -5,14 +5,14 @@ import { useTheme } from "@mui/material/styles"
 import MenuIcon from "@mui/icons-material/Menu"
 
 export default function SecondaryHeader({
-  showOpenDrawer,
-  onOpenDrawer,
+  isOpenSidebarEnabled,
+  onOpenSidebar,
   trailingItem,
   children,
   sx
 }: {
-  showOpenDrawer: boolean
-  onOpenDrawer: () => void
+  isOpenSidebarEnabled: boolean
+  onOpenSidebar: () => void
   trailingItem?: ReactNode
   children?: ReactNode
   sx?: SxProps
@@ -29,12 +29,12 @@ export default function SecondaryHeader({
       <Box sx={{ display: "flex", alignItems: "center", padding: 2 }}>
         <IconButton
           color="inherit"
-          onClick={onOpenDrawer}
+          onClick={onOpenSidebar}
           edge="start"
           sx={{
             mr: 2,
             color: theme.palette.text.primary,
-            ...(!showOpenDrawer && { visibility: "hidden" })
+            ...(!isOpenSidebarEnabled && { visibility: "hidden" })
           }}
         >
           <MenuIcon/>

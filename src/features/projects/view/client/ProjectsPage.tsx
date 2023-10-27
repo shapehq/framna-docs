@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { useTheme } from "@mui/material/styles"
 import useMediaQuery from "@mui/material/useMediaQuery"
@@ -14,6 +14,7 @@ import getSelection from "../../domain/getSelection"
 import projectNavigator from "../../domain/projectNavigator"
 import updateWindowTitle from "../../domain/updateWindowTitle"
 import useProjects from "../../data/useProjects"
+import useSidebarOpen from "@/common/state/useSidebarOpen"
 
 export default function ProjectsPage({
   projects: serverProjects,
@@ -28,9 +29,9 @@ export default function ProjectsPage({
 }) {
   const router = useRouter()
   const theme = useTheme()
+  const [isSidebarOpen, setSidebarOpen] = useSidebarOpen()
   const isDesktopLayout = useMediaQuery(theme.breakpoints.up("sm"))
   const { projects: clientProjects, error, isLoading: isClientLoading } = useProjects()
-  const [forceCloseSidebar, setForceCloseSidebar] = useState(false)
   const projects = isClientLoading ? (serverProjects || []) : clientProjects
   const { project, version, specification } = getSelection({
     projects,
@@ -57,8 +58,16 @@ export default function ProjectsPage({
     }
     projectNavigator.navigateIfNeeded(router, urlSelection, selection)
   }, [router, projectId, versionId, specificationId, project, version, specification])
+  useEffect(() => {
+    // Show the sidebar if no project is selected.
+    if (projectId === undefined) {
+      setSidebarOpen(true)
+    }
+  }, [projectId, setSidebarOpen])
   const selectProject = (project: Project) => {
-    setForceCloseSidebar(!isDesktopLayout)
+    if (!isDesktopLayout) {
+      setSidebarOpen(false)
+    }
     const version = project.versions[0]
     const specification = version.specifications[0]
     projectNavigator.navigate(router, project.id, version.id, specification.id)
@@ -71,8 +80,9 @@ export default function ProjectsPage({
   }
   return (
     <SidebarContainer
-      canCloseDrawer={projectId !== undefined}
-      forceClose={forceCloseSidebar}
+      isCloseSidebarEnabled={projectId !== undefined}
+      isSidebarOpen={isSidebarOpen}
+      onToggleSidebarOpen={setSidebarOpen}
       sidebar={
         <ProjectList
           isLoading={serverProjects === undefined && isClientLoading}
