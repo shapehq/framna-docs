@@ -71,11 +71,7 @@ export default function ProjectsPage({
   }
   return (
     <SidebarContainer
-      canCloseDrawer={
-        project !== undefined &&
-        version !== undefined &&
-        specification !== undefined
-      }
+      canCloseDrawer={projectId !== undefined}
       forceClose={forceCloseSidebar}
       sidebar={
         <ProjectList
