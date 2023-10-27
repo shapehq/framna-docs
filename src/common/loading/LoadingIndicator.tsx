@@ -26,7 +26,11 @@ const LoadingIndicator = () => {
     }}>
       {Array.from(Array(3).keys()).map((e) => {
         return (
-          <Typography key={count} variant="h3" sx={{ opacity: e + 1 == count ? 0.5 : 0.2 }}>
+          <Typography
+            key={count}
+            variant="h3"
+            sx={{ opacity: e + 1 == count ? 0.5 : 0.2 }}
+          >
             •
           </Typography>
         )
