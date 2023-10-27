@@ -58,6 +58,12 @@ export default function ProjectsPage({
     }
     projectNavigator.navigateIfNeeded(router, urlSelection, selection)
   }, [router, projectId, versionId, specificationId, project, version, specification])
+  useEffect(() => {
+    // Show the sidebar if no project is selected.
+    if (projectId === undefined) {
+      setSidebarOpen(true)
+    }
+  }, [projectId, setSidebarOpen])
   const selectProject = (project: Project) => {
     if (!isDesktopLayout) {
       setSidebarOpen(false)

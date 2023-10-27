@@ -29,7 +29,7 @@ const SidebarContainer = ({
   return (
     <ResponsiveSidebarContainer
       isCloseSidebarEnabled={isCloseSidebarEnabled}
-      isSidebarOpen={isSidebarOpen || !isCloseSidebarEnabled}
+      isSidebarOpen={isSidebarOpen}
       onToggleSidebarOpen={onToggleSidebarOpen}
       sidebarHeader={<SidebarHeader/>}
       sidebar={
@@ -39,7 +39,7 @@ const SidebarContainer = ({
       }
       header={
         <ResponsiveSecondaryHeader
-          showOpenDrawer={!isSidebarOpen && isCloseSidebarEnabled}
+          showOpenDrawer={!isSidebarOpen}
           onOpenDrawer={() => onToggleSidebarOpen(true)}
           showMobileToolbar={showMobileToolbar}
           onToggleMobileToolbar={setShowMobileToolbar}
