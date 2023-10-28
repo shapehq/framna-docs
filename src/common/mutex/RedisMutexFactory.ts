@@ -1,8 +1,9 @@
 import Redis from "ioredis"
+import IMutex from "./IMutex"
 import IMutexFactory from "./IMutexFactory"
 import { Mutex } from "redis-semaphore"
 
-class RedisMutex {
+class RedisMutex implements IMutex {
   private readonly mutex: Mutex
   
   constructor(redis: Redis, key: string) {
@@ -25,16 +26,7 @@ export default class RedisMutexFactory implements IMutexFactory {
     this.redis = new Redis(url)
   }
   
-  async withMutex<T>(key: string, f: () => Promise<T>): Promise<T> {
-    const mutex = new RedisMutex(this.redis, key)
-    await mutex.acquire()
-    try {
-      const value = await f()
-      await mutex.release()
-      return value
-    } catch(error) {
-      await mutex.release()
-      throw error
-    }
+  makeMutex(key: string): IMutex {
+    return new RedisMutex(this.redis, key)
   }
 }

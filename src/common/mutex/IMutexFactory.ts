@@ -1,3 +1,5 @@
+import IMutex from "./IMutex"
+
 export default interface IMutexFactory {
-  withMutex<T>(key: string, f: () => Promise<T>): Promise<T>
+  makeMutex(key: string): IMutex
 }

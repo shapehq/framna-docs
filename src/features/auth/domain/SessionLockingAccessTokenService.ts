@@ -1,5 +1,6 @@
 import ISession from "@/common/session/ISession"
 import IMutexFactory from "@/common/mutex/IMutexFactory"
+import withMutex from "../../../common/mutex/withMutex"
 import IAccessTokenService from "./IAccessTokenService"
 
 export default class SessionLockingAccessTokenService implements IAccessTokenService {
@@ -19,8 +20,8 @@ export default class SessionLockingAccessTokenService implements IAccessTokenSer
   
   async getAccessToken(): Promise<string> {
     const userId = await this.session.getUserId()
-    const mutexKey = `mutexAccessToken[${userId}]`
-    return await this.mutexFactory.withMutex(mutexKey, async () => {
+    const mutex = this.mutexFactory.makeMutex(`mutexAccessToken[${userId}]`)
+    return await withMutex(mutex, async () => {
       return await this.accessTokenService.getAccessToken()
     })
   }
