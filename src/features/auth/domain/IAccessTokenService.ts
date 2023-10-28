@@ -1,3 +1,3 @@
 export default interface IAccessTokenService {
-  async getAccessToken(): Promise<string>
+  getAccessToken(): Promise<string>
 }
