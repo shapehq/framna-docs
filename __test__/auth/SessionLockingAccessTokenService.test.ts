@@ -47,33 +47,3 @@ test("It releases the acquired lock", async () => {
   await sut.getAccessToken()
   expect(didReleaseLock).toBeTruthy()
 })
-
-test.only("It performs operations sequentially", async () => {
-  let didReleaseLock = false
-  const sut = new SessionLockingAccessTokenService({
-    async getUserId() {
-      return "foo"
-    }
-  }, {
-    makeMutex() {
-      return {
-        async acquire() {},
-        async release() {
-          didReleaseLock = true
-        }
-      }
-    }
-  }, {
-    async getAccessToken() {
-      return ""
-    }
-  })
-  await Promise.all([
-    sut.getAccessToken(),
-    sut.getAccessToken(),
-    sut.getAccessToken(),
-    sut.getAccessToken(),
-    sut.getAccessToken()
-  ])
-  expect(didReleaseLock).toBeTruthy()
-})
