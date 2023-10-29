@@ -18,7 +18,7 @@ const SettingsList = () => {
         fullWidth={true}
         style={{justifyContent: "flex-start"}}
         href="/api/auth/logout"
-        sx={{ marginTop: "10px" }}
+        sx={{ marginTop: 1.3 }}
       >
         Log out
       </Button>
