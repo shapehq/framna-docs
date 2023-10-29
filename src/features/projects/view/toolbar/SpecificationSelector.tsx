@@ -1,5 +1,6 @@
 import { SxProps } from "@mui/system"
 import { SelectChangeEvent, Select, MenuItem, FormControl } from "@mui/material"
+import MenuItemHover from "@/common/ui/MenuItemHover"
 import OpenApiSpecification from "../../domain/OpenApiSpecification"
 
 const SpecificationSelector = ({
@@ -21,7 +22,9 @@ const SpecificationSelector = ({
       <Select defaultValue={selection} onChange={handleVersionChange}>
         {specifications.map(specification =>
           <MenuItem key={specification.id} value={specification.id}>
-            {specification.name}
+            <MenuItemHover>
+              {specification.name}
+            </MenuItemHover>
           </MenuItem>
         )}
       </Select>
