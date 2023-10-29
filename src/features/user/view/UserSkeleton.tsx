@@ -1,5 +1,4 @@
 import { Box, Stack, Skeleton } from "@mui/material"
-import MenuItemHover from "@/common/ui/MenuItemHover"
 
 const UserSkeleton = () => {
   return (
