@@ -35,8 +35,10 @@ function ProjectAvatar({
           sx={{ position: "absolute", zIndex: 500 }}
         />
         {project.imageURL &&
+          /* eslint-disable-next-line @next/next/no-img-element */
           <img 
             src={project.imageURL}
+            alt={project.displayName}
             style={{ position: "absolute", zIndex: 1000 }}
           />
         }
