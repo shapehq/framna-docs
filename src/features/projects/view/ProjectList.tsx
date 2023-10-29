@@ -1,5 +1,3 @@
-import { useTheme } from "@mui/material/styles"
-
 import { List, Box, Typography } from "@mui/material"
 import ProjectListItem from "./ProjectListItem"
 import ProjectListItemPlaceholder from "./ProjectListItemPlaceholder"
@@ -20,23 +18,10 @@ const ProjectList = (
     onSelectProject
   }: ProjectListProps
 ) => {
-  const theme = useTheme()
   const loadingItemCount = 6
   if (isLoading || projects.length > 0) {
     return (
-      <List
-        disablePadding
-        sx={{
-          width: "100%",
-          height: "100%",
-          "&& .Mui-selected, && .Mui-selected:hover": {
-            background: theme.palette.background.default
-          },
-          "& .MuiListItemButton-root:hover": {
-            background: theme.palette.background.default
-          }
-       }}
-      >
+      <List disablePadding sx={{ width: "100%", height: "100%" }}>
         {isLoading && 
           [...new Array(loadingItemCount)].map((_, index) => (
             <ProjectListItemPlaceholder key={index}/>

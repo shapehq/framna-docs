@@ -1,5 +1,6 @@
 import { SxProps } from "@mui/system"
-import { Select, MenuItem, SelectChangeEvent, FormControl } from "@mui/material"
+import { Box, Select, MenuItem, SelectChangeEvent, FormControl } from "@mui/material"
+import MenuItemHover from "@/common/ui/MenuItemHover"
 import Version from "../../domain/Version"
 
 const VersionSelector = ({
@@ -18,10 +19,15 @@ const VersionSelector = ({
   }
   return (
     <FormControl sx={{ m: 1, minWidth: 120, margin: 0, ...sx }} size="small">
-      <Select defaultValue={selection} onChange={handleVersionChange}>
+      <Select
+        defaultValue={selection}
+        onChange={handleVersionChange}
+      >
         {versions.map(version => 
           <MenuItem key={version.id} value={version.id}>
-            {version.name}
+            <MenuItemHover>
+              {version.name}
+            </MenuItemHover>
           </MenuItem>
         )}
       </Select>
