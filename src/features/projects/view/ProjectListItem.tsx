@@ -1,4 +1,4 @@
-import { ListItem, ListItemButton, ListItemText, Typography } from "@mui/material"
+import { ListItem, ListItemButton, ListItemText, Stack, Typography } from "@mui/material"
 import Project from "../domain/Project"
 import ProjectAvatar from "./ProjectAvatar"
 
@@ -26,21 +26,20 @@ const ProjectListItem = (
         }}
         disableGutters
       >
-        <ProjectAvatar
-          project={project}
-          sx={{
-            width: 40,
-            height: 40,
-            marginRight: "12px"
-          }}
-        />
-        <ListItemText
-          primary={
-            <Typography variant="h6" style={{ fontWeight: isSelected ? "bold" : "normal" }}>
-              {project.displayName}
-            </Typography>
-          }
-        /> 
+        <Stack direction="row" alignItems="center" spacing={1}>
+          <ProjectAvatar
+            project={project}
+            width={40}
+            height={40}
+          />
+          <ListItemText
+            primary={
+              <Typography variant="h6" style={{ fontWeight: isSelected ? "bold" : "normal" }}>
+                {project.displayName}
+              </Typography>
+            }
+          /> 
+        </Stack>
       </ListItemButton>
     </ListItem>
   )
