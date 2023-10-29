@@ -1,5 +1,11 @@
 import { createTheme } from "@mui/material/styles"
 
+export const softPaperSx = {
+  boxShadow: "0px 5px 15px rgba(0, 0, 0, 0.1)",
+  border: "1px solid rgba(0, 0, 0, 0.05)",
+  borderRadius: "12px"
+}
+
 const theme = () => createTheme({
   palette: {
     mode: "light",
@@ -26,6 +32,13 @@ const theme = () => createTheme({
         root: () => ({
           borderRadius: "20px"
         })
+      },
+      defaultProps: {
+        MenuProps: {
+          PaperProps: {
+            sx: softPaperSx
+          }
+        }
       }
     },
     MuiMenu: {
@@ -71,11 +84,7 @@ const theme = () => createTheme({
       defaultProps: {
         PaperProps: {
           elevation: 0,
-          sx: {
-            boxShadow: "0px 5px 15px rgba(0, 0, 0, 0.1)",
-            border: "1px solid rgba(0, 0, 0, 0.05)",
-            borderRadius: "12px"
-          }
+          sx: softPaperSx
         }
       }
     },

@@ -1,6 +1,7 @@
 import { SxProps } from "@mui/system"
 import { FormControl, Select, MenuItem, SelectChangeEvent } from "@mui/material"
 import MenuItemHover from "@/common/ui/MenuItemHover"
+import { softPaperSx } from "@/common/theme/theme"
 import DocumentationVisualizer from "@/features/settings/domain/DocumentationVisualizer"
 import useDocumentationVisualizer from "@/features/settings/data/useDocumentationVisualizer"
 
@@ -30,6 +31,9 @@ const DocumentationVisualizationPicker = ({
           transformOrigin: {
             vertical: "top",
             horizontal: "left"
+          },
+          PaperProps: {
+            sx: softPaperSx
           }
         }}
       >
