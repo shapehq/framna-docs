@@ -1,5 +1,5 @@
 import { SxProps } from "@mui/system"
-import { Box, Select, MenuItem, SelectChangeEvent, FormControl } from "@mui/material"
+import {  Select, MenuItem, SelectChangeEvent, FormControl } from "@mui/material"
 import MenuItemHover from "@/common/ui/MenuItemHover"
 import Version from "../../domain/Version"
 
