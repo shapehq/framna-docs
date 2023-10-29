@@ -19,10 +19,10 @@ const ProjectListItem = (
         onClick={() => onSelectProject(project)}
         selected={isSelected}
         sx={{
-          paddingLeft: "15px",
-          paddingRight: "15px",
-          paddingTop: "15px",
-          paddingBottom: "15px"
+          paddingLeft: 2,
+          paddingRight: 2,
+          paddingTop: 1.75,
+          paddingBottom: 1.75
         }}
         disableGutters
       >
