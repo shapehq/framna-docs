@@ -24,13 +24,9 @@ const ProjectListItem = ({
         onClick={() => onSelectProject(project)}
         selected={isSelected}
         disableGutters
-        sx={{
-          padding: 0,
-          marginTop: 0.5,
-          marginBottom: 0.5
-        }}
+        sx={{ padding: 0 }}
       >
-        <MenuItemHover>
+        <MenuItemHover sx={{ marginTop: 0.5, marginBottom: 0.5 }}>
           <Stack direction="row" alignItems="center" spacing={1}>
             <ProjectAvatar project={project} width={40} height={40} />
             <ListItemText

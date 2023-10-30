@@ -1,13 +1,16 @@
 import { ReactNode } from "react"
+import { SxProps } from "@mui/system"
 import { Box } from "@mui/material"
 import useMediaQuery from "@mui/material/useMediaQuery"
 
 const MenuItemHover = ({
   disabled,
-  children
+  children,
+  sx
 }: {
   disabled?: boolean
   children: ReactNode
+  sx?: SxProps
 }) => {
   const isHoverSupported = useMediaQuery("(hover: hover)")
   const classNames = ["menu-item-highlight"]
@@ -23,7 +26,7 @@ const MenuItemHover = ({
     }
   }
   return (
-    <Box className={classNames.join(" ")} sx={{ width: "100%" }}>
+    <Box className={classNames.join(" ")} sx={{ ...sx, width: "100%" }}>
       {children}
     </Box>
   )
