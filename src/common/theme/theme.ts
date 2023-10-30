@@ -67,13 +67,21 @@ const theme = () => createTheme({
           "& li:hover, & li.Mui-selected.Mui-focusVisible, & li.Mui-selected:hover, && .Mui-selected, && .Mui-selected:hover, & .MuiListItemButton-root:hover": { 
             background: "transparent"
           },
-          "& li:hover .hover-highlight, & li.Mui-selected:hover .hover-highlight": { 
+          "& li:hover .hover-highlight, & li.Mui-selected:hover .hover-highlight": {
             background: "rgba(0, 0, 0, 0.05)"
           },
           "& li:hover .hover-highlight-disabled, & li.Mui-selected:hover .hover-highlight-disabled": { 
             background: "transparent"
           },
-          "& li .hover-highlight": {
+          // Used on mobile where we do not want hovering.
+          "& li:active .active-highlight, & li.Mui-selected:active .active-highlight": {
+            background: "rgba(0, 0, 0, 0.05)"
+          },
+          // Used on mobile where we do not want hovering.
+          "& li:active .active-highlight-disabled, & li.Mui-selected:active .active-highlight-disabled": { 
+            background: "transparent"
+          },
+          "& li .menu-item-highlight, & li .menu-item-highlight": {
             paddingLeft: theme.spacing(1.25),
             paddingRight: theme.spacing(1.25),
             paddingTop: theme.spacing(1),
