@@ -2,19 +2,22 @@ import { ReactNode } from "react"
 import { SxProps } from "@mui/system"
 import { Box, IconButton, Stack, Collapse } from "@mui/material"
 import SecondaryHeader from "../SecondaryHeader"
-import ExpandCircleDownIcon from "@mui/icons-material/ExpandCircleDown"
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
+import { faChevronDown } from "@fortawesome/free-solid-svg-icons"
 
 export default function ResponsiveSecondaryHeader({
-  isOpenSidebarEnabled,
-  onOpenSidebar,
+  showOpenSidebar,
+  showCloseSidebar,
+  onToggleSidebarOpen,
   showMobileToolbar,
   onToggleMobileToolbar,
   trailingItem,
   mobileToolbar,
   sx
 }: {
-  isOpenSidebarEnabled: boolean
-  onOpenSidebar: () => void
+  showOpenSidebar: boolean
+  showCloseSidebar: boolean
+  onToggleSidebarOpen: (isOpen: boolean) => void
   showMobileToolbar: boolean
   onToggleMobileToolbar: (showMobileToolbar: boolean) => void
   trailingItem?: ReactNode
@@ -24,19 +27,27 @@ export default function ResponsiveSecondaryHeader({
   return (
     <SecondaryHeader
       sx={sx}
-      isOpenSidebarEnabled={isOpenSidebarEnabled}
-      onOpenSidebar={onOpenSidebar}
+      showOpenSidebar={showOpenSidebar}
+      showCloseSidebar={showCloseSidebar}
+      onToggleSidebarOpen={onToggleSidebarOpen}
       trailingItem={
         <Stack direction="row" alignItems="center">
           {trailingItem}
           {mobileToolbar &&
             <IconButton
+              color="primary"
               edge="end"
               onClick={() => onToggleMobileToolbar(!showMobileToolbar) }
               sx={{ display: { sm: "flex", md: "none" } }}
             >
-              <ExpandCircleDownIcon sx={{
-                transform: showMobileToolbar ? "rotate(180deg)" : "none" }}
+              <FontAwesomeIcon
+                icon={faChevronDown}
+                size="2xs"
+                style={{
+                  aspectRatio: 1,
+                  padding: 2,
+                  transform: showMobileToolbar ? "rotate(180deg)" : "none"
+                }}
               />
             </IconButton>
           }

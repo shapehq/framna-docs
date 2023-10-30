@@ -1,38 +1,60 @@
-import { alpha, useTheme } from "@mui/material/styles"
 import { SxProps } from "@mui/system"
-import { Avatar } from "@mui/material"
+import { Avatar, Box } from "@mui/material"
+import { alpha, useTheme } from "@mui/material/styles"
 import Project from "../domain/Project"
+import ProjectAvatarSquircleClip from "./ProjectAvatarSquircleClip"
 
 function ProjectAvatar({
   project,
-  sx
+  width,
+  height
 }: {
   project: Project,
-  sx?: SxProps
+  width: number,
+  height: number
 }) {
   const theme = useTheme()
-  if (project.imageURL) {
-    return (
-      <Avatar
-        src={project.imageURL}
+  const borderRadius = 1
+  return (
+    <Box sx={{
+      width: width + borderRadius * 2,
+      height: height + borderRadius * 2,
+      position: "relative"
+    }}>
+      <ProjectAvatarSquircleClip
+        width={width + borderRadius * 2}
+        height={height + borderRadius * 2}
         sx={{
-          ...sx,
-          bgcolor: theme.palette.divider,
-          border: `1px solid ${alpha(theme.palette.divider, 0.02)}`
+          position: "absolute",
+          left: borderRadius * -1,
+          top: borderRadius * -1,
+          background: alpha(theme.palette.divider, 0.07)
         }}
-        alt={project.displayName}
-        variant="rounded"
-      >
-        {Array.from(project.displayName)[0]}
-      </Avatar>
-    )
-  } else {
-    return (
-      <Avatar sx={sx} alt={project.displayName} variant="rounded">
-        {Array.from(project.displayName)[0]}
-      </Avatar>
-    )
-  }
+      />
+      <ProjectAvatarSquircleClip width={width} height={height} sx={{ position: "relative" }}>
+        <PlaceholderAvatar
+          text={project.displayName}
+          sx={{ position: "absolute", zIndex: 500 }}
+        />
+        {project.imageURL &&
+          /* eslint-disable-next-line @next/next/no-img-element */
+          <img 
+            src={project.imageURL}
+            alt={project.displayName}
+            style={{ position: "absolute", zIndex: 1000 }}
+          />
+        }
+      </ProjectAvatarSquircleClip>
+    </Box>
+  )
 }
 
 export default ProjectAvatar
+
+const PlaceholderAvatar = ({ text, sx }: { text: string, sx?: SxProps }) => {
+  return (
+    <Avatar sx={sx} alt={text} variant="square">
+      {Array.from(text)[0]}
+    </Avatar>
+  )
+}

@@ -2,17 +2,20 @@ import { ReactNode } from "react"
 import { SxProps } from "@mui/system"
 import { Box, Divider, IconButton } from "@mui/material"
 import { useTheme } from "@mui/material/styles"
-import MenuIcon from "@mui/icons-material/Menu"
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
+import { faBars, faChevronLeft } from "@fortawesome/free-solid-svg-icons"
 
 export default function SecondaryHeader({
-  isOpenSidebarEnabled,
-  onOpenSidebar,
+  showOpenSidebar,
+  showCloseSidebar,
+  onToggleSidebarOpen,
   trailingItem,
   children,
   sx
 }: {
-  isOpenSidebarEnabled: boolean
-  onOpenSidebar: () => void
+  showOpenSidebar: boolean
+  showCloseSidebar: boolean
+  onToggleSidebarOpen: (isOpen: boolean) => void
   trailingItem?: ReactNode
   children?: ReactNode
   sx?: SxProps
@@ -27,18 +30,24 @@ export default function SecondaryHeader({
       }}
     >
       <Box sx={{ display: "flex", alignItems: "center", padding: 2 }}>
-        <IconButton
-          color="inherit"
-          onClick={onOpenSidebar}
-          edge="start"
-          sx={{
-            mr: 2,
-            color: theme.palette.text.primary,
-            ...(!isOpenSidebarEnabled && { visibility: "hidden" })
-          }}
-        >
-          <MenuIcon/>
-        </IconButton>
+        {showOpenSidebar &&
+          <IconButton
+            color="primary"
+            onClick={() => onToggleSidebarOpen(true)}
+            edge="start"
+          >
+            <FontAwesomeIcon icon={faBars} size="sm" style={{ aspectRatio: 1 }} />
+          </IconButton>
+        }
+        {showCloseSidebar &&
+          <IconButton
+            color="primary"
+            onClick={() => onToggleSidebarOpen(false)}
+            edge="start"
+          >
+            <FontAwesomeIcon icon={faChevronLeft} size="sm" style={{ aspectRatio: 1 }} />
+          </IconButton>
+        }
         <Box sx={{ display: "flex", flexGrow: 1, justifyContent: "end" }}> 
           {trailingItem}
         </Box>

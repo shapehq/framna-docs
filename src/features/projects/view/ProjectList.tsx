@@ -21,10 +21,7 @@ const ProjectList = (
   const loadingItemCount = 6
   if (isLoading || projects.length > 0) {
     return (
-      <List
-        disablePadding
-        sx={{ width: "100%", height: "100%" }}
-      >
+      <List disablePadding sx={{ margin: 0 }}>
         {isLoading && 
           [...new Array(loadingItemCount)].map((_, index) => (
             <ProjectListItemPlaceholder key={index}/>
