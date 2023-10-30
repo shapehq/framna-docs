@@ -1,22 +1,17 @@
 import { ReactNode } from "react"
 import { Stack } from "@mui/material"
 import Drawer from "./Drawer"
-import PrimaryHeader from "../PrimaryHeader"
 import SecondaryWrapper from "./SecondaryWrapper"
 
 const SidebarContainer = ({
   isSidebarOpen,
-  isCloseSidebarEnabled,
   onToggleSidebarOpen,
-  sidebarHeader,
   sidebar,
   header,
   children
 }: {
   isSidebarOpen: boolean,
-  isCloseSidebarEnabled: boolean,
   onToggleSidebarOpen: (isSidebarOpen: boolean) => void
-  sidebarHeader?: ReactNode
   sidebar: ReactNode
   header?: ReactNode
   children?: ReactNode
@@ -29,13 +24,6 @@ const SidebarContainer = ({
         isOpen={isSidebarOpen}
         onClose={() => onToggleSidebarOpen(false)}
       >
-        <PrimaryHeader
-          width={sidebarWidth}
-          isCloseEnabled={isCloseSidebarEnabled}
-          onClose={() => onToggleSidebarOpen(false)}
-        >
-          {sidebarHeader}
-        </PrimaryHeader>
         {sidebar}
       </Drawer>
       <SecondaryWrapper sidebarWidth={sidebarWidth} offsetContent={isSidebarOpen}>

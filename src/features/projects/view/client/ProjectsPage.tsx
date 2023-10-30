@@ -78,11 +78,19 @@ export default function ProjectsPage({
   const selectSpecification = (specificationId: string) => {
     projectNavigator.navigate(router, projectId!, versionId!, specificationId)
   }
+  const canCloseSidebar = projectId !== undefined
+  const toggleSidebar = (isOpen: boolean) => {
+    if (!isOpen && canCloseSidebar) {
+      setSidebarOpen(false)
+    } else if (isOpen) {
+      setSidebarOpen(true)
+    }
+  }
   return (
     <SidebarContainer
-      isCloseSidebarEnabled={projectId !== undefined}
+      showHeader={canCloseSidebar}
       isSidebarOpen={isSidebarOpen}
-      onToggleSidebarOpen={setSidebarOpen}
+      onToggleSidebarOpen={toggleSidebar}
       sidebar={
         <ProjectList
           isLoading={serverProjects === undefined && isClientLoading}

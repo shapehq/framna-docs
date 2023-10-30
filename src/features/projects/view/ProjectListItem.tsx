@@ -37,7 +37,13 @@ const ProjectListItem = (
             <ProjectAvatar project={project} width={40} height={40} />
             <ListItemText
               primary={
-                <Typography variant="h6" style={{ fontWeight: isSelected ? "bold" : "normal" }}>
+                <Typography
+                  style={{
+                    fontSize: "1.1em",
+                    fontWeight: isSelected ? 800 : 500,
+                    letterSpacing: 0.3
+                  }}
+                >
                   {project.displayName}
                 </Typography>
               }
