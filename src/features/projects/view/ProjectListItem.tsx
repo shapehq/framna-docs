@@ -9,17 +9,15 @@ import MenuItemHover from "@/common/ui/MenuItemHover"
 import Project from "../domain/Project"
 import ProjectAvatar from "./ProjectAvatar"
 
-const ProjectListItem = (
-  {
-    project,
-    isSelected,
-    onSelectProject
-  }: {
-    project: Project
-    isSelected: boolean
-    onSelectProject: (project: Project) => void
-  }
-) => {
+const ProjectListItem = ({
+  project,
+  isSelected,
+  onSelectProject
+}: {
+  project: Project
+  isSelected: boolean
+  onSelectProject: (project: Project) => void
+}) => {
   return (
     <ListItem disablePadding>
       <ListItemButton
