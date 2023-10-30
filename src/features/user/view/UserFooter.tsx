@@ -10,10 +10,6 @@ const UserFooter = () => {
       <ListItem disablePadding>
         {!isLoading && user && <UserButton user={user}/> }
         {isLoading && <UserSkeleton/>}
-        
-      </ListItem>
-      <ListItem>
-        <UserSkeleton/>
       </ListItem>
     </List>
   )
