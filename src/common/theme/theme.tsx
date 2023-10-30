@@ -32,7 +32,17 @@ const theme = () => createTheme({
     MuiSelect: {
       styleOverrides: {
         root: () => ({
-          borderRadius: "20px"
+          borderRadius: "20px",
+          "&:hover": {
+            background: "rgba(0, 0, 0, 0.05)"
+          },
+          ".MuiOutlinedInput-notchedOutline": {
+            borderColor: "black"
+          },
+          "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+            borderColor: "black",
+            borderWidth: "1px"
+          }
         })
       },
       defaultProps: {
@@ -47,7 +57,8 @@ const theme = () => createTheme({
               icon={faCaretDown}
               className={props.className}
               style={{
-                marginRight: "5px"
+                marginRight: "5px",
+                color: "black"
               }}
             />
           )
