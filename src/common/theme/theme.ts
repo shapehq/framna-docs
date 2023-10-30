@@ -87,7 +87,7 @@ const theme = () => createTheme({
             paddingTop: theme.spacing(1),
             paddingBottom: theme.spacing(1),
             borderRadius: "12px"
-          },
+          }
         })
       }
     },
@@ -96,13 +96,6 @@ const theme = () => createTheme({
         PaperProps: {
           elevation: 0,
           sx: softPaperSx
-        }
-      }
-    },
-    MuiPaper: {
-      styleOverrides: {
-        root: {
-          borderRadius: "12px"
         }
       }
     }
