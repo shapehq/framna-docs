@@ -70,6 +70,9 @@ const theme = () => createTheme({
           "& li:hover .hover-highlight, & li.Mui-selected:hover .hover-highlight": { 
             background: "rgba(0, 0, 0, 0.05)"
           },
+          "& li:hover .hover-highlight-disabled, & li.Mui-selected:hover .hover-highlight-disabled": { 
+            background: "transparent"
+          },
           "& li .hover-highlight": {
             paddingLeft: theme.spacing(1.25),
             paddingRight: theme.spacing(1.25),
