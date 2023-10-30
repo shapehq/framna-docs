@@ -19,6 +19,15 @@ const theme = () => createTheme({
     }
   },
   typography: {
+    fontFamily: [
+      "-apple-system",
+      "BlinkMacSystemFont",
+      "\"Segoe UI\"",
+      "Roboto",
+      "\"Helvetica Neue\"",
+      "Arial",
+      "sans-serif"
+    ].join(","),
     button: {
       textTransform: "none"
     }
