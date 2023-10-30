@@ -1,9 +1,8 @@
-import { ReactNode } from "react"
 import { SxProps } from "@mui/system"
 import { Avatar, Box } from "@mui/material"
 import { alpha, useTheme } from "@mui/material/styles"
-import { getSvgPath } from "figma-squircle"
 import Project from "../domain/Project"
+import ProjectAvatarSquircleClip from "./ProjectAvatarSquircleClip"
 
 function ProjectAvatar({
   project,
@@ -22,14 +21,17 @@ function ProjectAvatar({
       height: height + borderRadius * 2,
       position: "relative"
     }}>
-      <SquircleClip width={width + borderRadius * 2} height={height + borderRadius * 2} sx={{
-        position: "absolute",
-        left: borderRadius * -1,
-        top: borderRadius * -1,
-        background: alpha(theme.palette.divider, 0.07)
-      }}
+      <ProjectAvatarSquircleClip
+        width={width + borderRadius * 2}
+        height={height + borderRadius * 2}
+        sx={{
+          position: "absolute",
+          left: borderRadius * -1,
+          top: borderRadius * -1,
+          background: alpha(theme.palette.divider, 0.07)
+        }}
       />
-      <SquircleClip width={width} height={height} sx={{ position: "relative" }}>
+      <ProjectAvatarSquircleClip width={width} height={height} sx={{ position: "relative" }}>
         <PlaceholderAvatar
           text={project.displayName}
           sx={{ position: "absolute", zIndex: 500 }}
@@ -42,7 +44,7 @@ function ProjectAvatar({
             style={{ position: "absolute", zIndex: 1000 }}
           />
         }
-      </SquircleClip>
+      </ProjectAvatarSquircleClip>
     </Box>
   )
 }
@@ -54,29 +56,5 @@ const PlaceholderAvatar = ({ text, sx }: { text: string, sx?: SxProps }) => {
     <Avatar sx={sx} alt={text} variant="square">
       {Array.from(text)[0]}
     </Avatar>
-  )
-}
-
-const SquircleClip = ({
-  width,
-  height,
-  children,
-  sx
-}: {
-  width: number,
-  height: number,
-  children?: ReactNode,
-  sx?: SxProps
-}) => {
-  const svgPath = getSvgPath({
-    width,
-    height,
-    cornerRadius: 10,
-    cornerSmoothing: 0.8
-  })
-  return (
-    <Box sx={{ ...sx, width, height, clipPath: `path('${svgPath}')` }}>
-      {children}
-    </Box>
   )
 }

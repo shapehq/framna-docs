@@ -5,7 +5,6 @@ import UserSkeleton from "./UserSkeleton"
 
 const UserFooter = () => {
   const { user, isLoading } = useUser()
-  
   return (
     <List disablePadding>
       <ListItem disablePadding>
