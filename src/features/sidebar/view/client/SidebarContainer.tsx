@@ -6,41 +6,40 @@ import { useSessionStorage } from "usehooks-ts"
 import ResponsiveSidebarContainer from "../base/responsive/SidebarContainer"
 import ResponsiveSecondaryHeader from "../base/responsive/SecondaryHeader"
 import Sidebar from "../Sidebar"
-import SidebarHeader from "../SidebarHeader"
 
 const SidebarContainer = ({
   isSidebarOpen,
-  isCloseSidebarEnabled,
   onToggleSidebarOpen,
+  showHeader: _showHeader,
   sidebar,
   children,
   toolbarTrailingItem,
   mobileToolbar
 }: {
   isSidebarOpen: boolean,
-  isCloseSidebarEnabled: boolean,
   onToggleSidebarOpen: (isSidebarOpen: boolean) => void,
+  showHeader?: boolean,
   sidebar?: ReactNode
   children?: ReactNode
   toolbarTrailingItem?: ReactNode
   mobileToolbar?: ReactNode
 }) => {
   const [showMobileToolbar, setShowMobileToolbar] = useSessionStorage("isMobileToolbarVisible", true)
+  const showHeader = _showHeader || _showHeader === undefined
   return (
     <ResponsiveSidebarContainer
-      isCloseSidebarEnabled={isCloseSidebarEnabled}
       isSidebarOpen={isSidebarOpen}
       onToggleSidebarOpen={onToggleSidebarOpen}
-      sidebarHeader={<SidebarHeader/>}
       sidebar={
         <Sidebar>
           {sidebar}
         </Sidebar>
       }
-      header={
+      header={showHeader &&
         <ResponsiveSecondaryHeader
-          isOpenSidebarEnabled={!isSidebarOpen}
-          onOpenSidebar={() => onToggleSidebarOpen(true)}
+          showOpenSidebar={!isSidebarOpen}
+          showCloseSidebar={isSidebarOpen}
+          onToggleSidebarOpen={onToggleSidebarOpen}
           showMobileToolbar={showMobileToolbar}
           onToggleMobileToolbar={setShowMobileToolbar}
           trailingItem={toolbarTrailingItem}

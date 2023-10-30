@@ -54,7 +54,7 @@ const UserButton = ({ user }: { user: UserProfile }) => {
             }
             <Box sx={{ marginLeft: "10px" }}>
               {user &&
-                <Typography sx={{ fontWeight: "bold" }}>
+                <Typography sx={{ fontWeight: 600 }}>
                   {user.name}
                 </Typography>
               }
