@@ -1,6 +1,7 @@
 import { ReactNode } from "react"
 import { Box, IconButton } from "@mui/material"
-import ChevronLeftIcon from "@mui/icons-material/ChevronLeft"
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
+import { faChevronLeft } from "@fortawesome/free-solid-svg-icons"
 
 export default function PrimaryHeader({
   isCloseEnabled,
@@ -16,15 +17,16 @@ export default function PrimaryHeader({
   return (
     <Box sx={{ display: "flex", alignItems: "center", padding: 2 }}>
       <IconButton
-        onClick={onClose}
-        edge="start"
         disabled={!isCloseEnabled}
+        onClick={onClose}
+        color="primary"
+        edge="start"
         sx={{
           zIndex: 1000,
           opacity: isCloseEnabled ? 1 : 0
         }}
       >
-        <ChevronLeftIcon/>
+        <FontAwesomeIcon icon={faChevronLeft} size="xs" style={{ aspectRatio: 1 }} />
       </IconButton>
       <Box
         sx={{ 

@@ -5,7 +5,8 @@ import Version from "../../domain/Version"
 import OpenApiSpecification from "../../domain/OpenApiSpecification"
 import VersionSelector from "./VersionSelector"
 import SpecificationSelector from "./SpecificationSelector"
-import EditIcon from "@mui/icons-material/Edit"
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
+import { faPen } from "@fortawesome/free-solid-svg-icons"
 
 const TrailingToolbarItem = ({
   project,
@@ -47,15 +48,16 @@ const TrailingToolbarItem = ({
           specifications={version.specifications}
           selection={specification.id}
           onSelect={onSelectSpecification}
-          sx={{ marginRight: 1 }}
+          sx={{ marginRight: 0.5 }}
         />
         {specification.editURL &&
           <IconButton
             href={specification.editURL}
             target="_blank"
+            color="primary"
             edge="end"
           >
-            <EditIcon/>
+            <FontAwesomeIcon icon={faPen} size="xs" style={{ aspectRatio: 1, padding: 2 }} />
           </IconButton>
         }
       </Stack>

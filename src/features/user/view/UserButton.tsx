@@ -8,7 +8,8 @@ import {
   Popover,
   Typography
 } from "@mui/material"
-import MoreHorizIcon from "@mui/icons-material/MoreHoriz"
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
+import { faEllipsis } from "@fortawesome/free-solid-svg-icons"
 import MenuItemHover from "@/common/ui/MenuItemHover"
 import SettingsList from "./SettingsList"
 
@@ -61,7 +62,7 @@ const UserButton = ({ user }: { user: UserProfile }) => {
             {user &&
               <>
                 <Box sx={{flex: 1}} />
-                <MoreHorizIcon />
+                <FontAwesomeIcon icon={faEllipsis}/>
               </>
             }
           </Stack>
