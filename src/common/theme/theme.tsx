@@ -1,4 +1,6 @@
 import { createTheme } from "@mui/material/styles"
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
+import { faCaretDown } from "@fortawesome/free-solid-svg-icons"
 
 export const softPaperSx = {
   boxShadow: "0px 5px 15px rgba(0, 0, 0, 0.1)",
@@ -38,6 +40,17 @@ const theme = () => createTheme({
           PaperProps: {
             sx: softPaperSx
           }
+        },
+        IconComponent: (props) => {
+          return (
+            <FontAwesomeIcon
+              icon={faCaretDown}
+              className={props.className}
+              style={{
+                marginRight: "5px"
+              }}
+            />
+          )
         }
       }
     },

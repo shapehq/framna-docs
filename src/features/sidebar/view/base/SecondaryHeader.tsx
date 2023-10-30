@@ -2,7 +2,8 @@ import { ReactNode } from "react"
 import { SxProps } from "@mui/system"
 import { Box, Divider, IconButton } from "@mui/material"
 import { useTheme } from "@mui/material/styles"
-import MenuIcon from "@mui/icons-material/Menu"
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
+import { faBars } from "@fortawesome/free-solid-svg-icons"
 
 export default function SecondaryHeader({
   isOpenSidebarEnabled,
@@ -28,16 +29,12 @@ export default function SecondaryHeader({
     >
       <Box sx={{ display: "flex", alignItems: "center", padding: 2 }}>
         <IconButton
-          color="inherit"
+          color="primary"
           onClick={onOpenSidebar}
           edge="start"
-          sx={{
-            mr: 2,
-            color: theme.palette.text.primary,
-            ...(!isOpenSidebarEnabled && { visibility: "hidden" })
-          }}
+          sx={{ ...(!isOpenSidebarEnabled && { visibility: "hidden" }) }}
         >
-          <MenuIcon/>
+          <FontAwesomeIcon icon={faBars} size="sm" style={{ aspectRatio: 1 }} />
         </IconButton>
         <Box sx={{ display: "flex", flexGrow: 1, justifyContent: "end" }}> 
           {trailingItem}
