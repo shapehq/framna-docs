@@ -1,8 +1,9 @@
+import IAccessTokenService from "./IAccessTokenService"
 import ISessionOAuthTokenRepository from "./ISessionOAuthTokenRepository"
 import IOAuthTokenRefresher from "./IOAuthTokenRefresher"
 import { UnauthorizedError } from "./AuthError"
 
-export default class AccessTokenService {
+export default class AccessTokenService implements IAccessTokenService {
   private readonly tokenRepository: ISessionOAuthTokenRepository
   private readonly tokenRefresher: IOAuthTokenRefresher
   private readonly tokenExpirationThreshold = 5 * 60 * 1000
