@@ -14,8 +14,8 @@ export default class GitHubOAuthTokenRefresher implements IOAuthTokenRefresher {
     this.config = config
   }
   
-  async refreshAccessToken(refreshToken: string): Promise<OAuthToken> {
-    const url = this.getAccessTokenURL(refreshToken)
+  async refreshOAuthToken(oldRefreshToken: string): Promise<OAuthToken> {
+    const url = this.getAccessTokenURL(oldRefreshToken)
     const response = await fetch(url, { method: "POST" })
     if (response.status != 200) {
       throw new UnauthorizedError(
@@ -33,18 +33,13 @@ export default class GitHubOAuthTokenRefresher implements IOAuthTokenRefresher {
         throw new UnauthorizedError(error)
       }
     }
-    const newAccessToken = params.get("access_token")
-    const newRefreshToken = params.get("refresh_token")
-    if (
-      !newAccessToken || newAccessToken.length <= 0 ||
-      !newRefreshToken || newRefreshToken.length <= 0
-    ) {
+    const accessToken = params.get("access_token")
+    const refreshToken = params.get("refresh_token")
+    if (!accessToken || accessToken.length <= 0 || !refreshToken || refreshToken.length <= 0) {
       throw new UnauthorizedError("Refreshing access token did not produce a valid access token")
     }
-    return {
-      accessToken: newAccessToken,
-      refreshToken: newRefreshToken
-    }
+    console.log("Did refresh token")
+    return { accessToken, refreshToken }
   }
   
   private getAccessTokenURL(refreshToken: string): URL {
