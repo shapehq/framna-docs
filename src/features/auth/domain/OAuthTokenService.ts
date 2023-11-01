@@ -25,7 +25,7 @@ export default class OAuthTokenService implements IOAuthTokenService {
   }
   
   async refreshOAuthToken(refreshToken: string): Promise<OAuthToken> {
-    return this.ensureExlusiveAccess(async () => {
+    return this.ensureExclusiveAccess(async () => {
       const authToken = await this.tokenRepository.getOAuthToken()
       if (refreshToken != authToken.refreshToken) {
         // Given refresh token is outdated so we use our current access token.
@@ -37,7 +37,7 @@ export default class OAuthTokenService implements IOAuthTokenService {
     })
   }
   
-  private async ensureExlusiveAccess<T>(fn: () => Promise<T>): Promise<T> {
+  private async ensureExclusiveAccess<T>(fn: () => Promise<T>): Promise<T> {
     const mutex = await this.mutexFactory.makeMutex()
     return await withMutex(mutex, fn)
   }
