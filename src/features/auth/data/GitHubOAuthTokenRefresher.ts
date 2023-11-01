@@ -35,27 +35,15 @@ export default class GitHubOAuthTokenRefresher implements IOAuthTokenRefresher {
     }
     const newAccessToken = params.get("access_token")
     const newRefreshToken = params.get("refresh_token")
-    const newRawAccessTokenExpiryDate = params.get("expires_in")
-    const newRawRefreshTokenExpiryDate = params.get("refresh_token_expires_in")
     if (
       !newAccessToken || newAccessToken.length <= 0 ||
-      !newRefreshToken || newRefreshToken.length <= 0 ||
-      !newRawAccessTokenExpiryDate || newRawAccessTokenExpiryDate.length <= 0 ||
-      !newRawRefreshTokenExpiryDate || newRawRefreshTokenExpiryDate.length <= 0
+      !newRefreshToken || newRefreshToken.length <= 0
     ) {
       throw new UnauthorizedError("Refreshing access token did not produce a valid access token")
     }
-    const accessTokenExpiryDate = new Date(
-      new Date().getTime() + parseInt(newRawAccessTokenExpiryDate) * 1000
-    )
-    const refreshTokenExpiryDate = new Date(
-      new Date().getTime() + parseInt(newRawRefreshTokenExpiryDate) * 1000
-    )
     return {
       accessToken: newAccessToken,
-      refreshToken: newRefreshToken,
-      accessTokenExpiryDate: accessTokenExpiryDate,
-      refreshTokenExpiryDate: refreshTokenExpiryDate
+      refreshToken: newRefreshToken
     }
   }
   
