@@ -1,3 +1,4 @@
+import AccessTokenRefreshingGitHubClient from "@/common/github/AccessTokenRefreshingGitHubClient"
 import AccessTokenService from "@/features/auth/domain/AccessTokenService"
 import Auth0RefreshTokenReader from "@/features/auth/data/Auth0RefreshTokenReader"
 import Auth0Session from "@/common/session/Auth0Session"
@@ -7,10 +8,10 @@ import GitHubOAuthTokenRefresher from "@/features/auth/data/GitHubOAuthTokenRefr
 import GitHubProjectDataSource from "@/features/projects/data/GitHubProjectDataSource"
 import InitialOAuthTokenService from "@/features/auth/domain/InitialOAuthTokenService"
 import KeyValueUserDataRepository from "@/common/userData/KeyValueUserDataRepository"
-import RedisMutexFactory from "@/common/mutex/RedisMutexFactory"
+import RedisKeyedMutexFactory from "@/common/mutex/RedisKeyedMutexFactory"
 import RedisKeyValueStore from "@/common/keyValueStore/RedisKeyValueStore"
 import SessionDataRepository from "@/common/userData/SessionDataRepository"
-import SessionLockingAccessTokenService from "@/features/auth/domain/SessionLockingAccessTokenService"
+import SessionMutexFactory from "@/common/mutex/SessionMutexFactory"
 import SessionOAuthTokenRepository from "@/features/auth/domain/SessionOAuthTokenRepository"
 import SessionProjectRepository from "@/features/projects/domain/SessionProjectRepository"
 import UserDataOAuthTokenRepository from "@/features/auth/domain/UserDataOAuthTokenRepository"
@@ -44,20 +45,26 @@ const gitHubOAuthTokenRefresher = new GitHubOAuthTokenRefresher({
   clientSecret: GITHUB_CLIENT_SECRET
 })
 
-export const gitHubClient = new GitHubClient({
-  appId: GITHUB_APP_ID,
-  clientId: GITHUB_CLIENT_ID,
-  clientSecret: GITHUB_CLIENT_SECRET,
-  privateKey: gitHubPrivateKey,
-  accessTokenReader: new SessionLockingAccessTokenService(
+const accessTokensService = new AccessTokenService(
+  new SessionMutexFactory(
+    new RedisKeyedMutexFactory(REDIS_URL),
     new Auth0Session(),
-    new RedisMutexFactory(REDIS_URL),
-    new AccessTokenService(
-      sessionOAuthTokenRepository,
-      gitHubOAuthTokenRefresher
-    )
-  )
-})
+    "mutexAccessToken"
+  ),
+  sessionOAuthTokenRepository,
+  gitHubOAuthTokenRefresher
+)
+
+export const gitHubClient = new AccessTokenRefreshingGitHubClient(
+  accessTokensService,
+  new GitHubClient({
+    appId: GITHUB_APP_ID,
+    clientId: GITHUB_CLIENT_ID,
+    clientSecret: GITHUB_CLIENT_SECRET,
+    privateKey: gitHubPrivateKey,
+    accessTokenReader: accessTokensService
+  })
+)
 
 export const sessionProjectRepository = new SessionProjectRepository(
   new SessionDataRepository(

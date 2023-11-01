@@ -1,42 +1,43 @@
+import IMutexFactory from "@/common/mutex/IMutexFactory"
 import IAccessTokenService from "./IAccessTokenService"
-import ISessionOAuthTokenRepository from "./ISessionOAuthTokenRepository"
 import IOAuthTokenRefresher from "./IOAuthTokenRefresher"
-import { UnauthorizedError } from "./AuthError"
+import ISessionOAuthTokenRepository from "./ISessionOAuthTokenRepository"
+import withMutex from "@/common/mutex/withMutex"
 
 export default class AccessTokenService implements IAccessTokenService {
+  private readonly mutexFactory: IMutexFactory
   private readonly tokenRepository: ISessionOAuthTokenRepository
   private readonly tokenRefresher: IOAuthTokenRefresher
-  private readonly tokenExpirationThreshold = 5 * 60 * 1000
   
   constructor(
+    mutexFactory: IMutexFactory,
     tokenRepository: ISessionOAuthTokenRepository,
     tokenRefresher: IOAuthTokenRefresher
   ) {
+    this.mutexFactory = mutexFactory
     this.tokenRepository = tokenRepository
     this.tokenRefresher = tokenRefresher
   }
   
   async getAccessToken(): Promise<string> {
-    const authToken = await this.tokenRepository.getOAuthToken()
-    const accessTokenExpiryDate = new Date(
-      authToken.accessTokenExpiryDate.getTime() - this.tokenExpirationThreshold
-    )
-    const refreshTokenExpiryDate = new Date(
-      authToken.refreshTokenExpiryDate.getTime() - this.tokenExpirationThreshold
-    )
-    const now = new Date()
-    if (accessTokenExpiryDate.getTime() > now.getTime()) {
+    return this.ensureExlusiveAccess(async () => {
+      const authToken = await this.tokenRepository.getOAuthToken()
       return authToken.accessToken
-    } else if (refreshTokenExpiryDate.getTime() > now.getTime()) {
-      return await this.refreshSpecifiedAccessToken(authToken.refreshToken)
-    } else {
-      throw new UnauthorizedError("Both the access token and refresh token have expired.")
-    }
+    })
   }
   
-  private async refreshSpecifiedAccessToken(refreshToken: string): Promise<string> {
-    const refreshResult = await this.tokenRefresher.refreshAccessToken(refreshToken)
-    await this.tokenRepository.storeOAuthToken(refreshResult)
-    return refreshResult.accessToken
+  async refreshAccessToken(): Promise<string> {
+    return this.ensureExlusiveAccess(async () => {
+      const authToken = await this.tokenRepository.getOAuthToken()
+      const refreshResult = await this.tokenRefresher.refreshAccessToken(authToken.refreshToken)
+      await this.tokenRepository.storeOAuthToken(refreshResult)
+      console.log("💾 Access token saved")
+      return refreshResult.accessToken
+    })
+  }
+  
+  private async ensureExlusiveAccess<T>(fn: () => Promise<T>): Promise<T> {
+    const mutex = await this.mutexFactory.makeMutex()
+    return await withMutex(mutex, fn)
   }
 }
