@@ -38,7 +38,6 @@ export default class GitHubOAuthTokenRefresher implements IOAuthTokenRefresher {
     if (!accessToken || accessToken.length <= 0 || !refreshToken || refreshToken.length <= 0) {
       throw new UnauthorizedError("Refreshing access token did not produce a valid access token")
     }
-    console.log("Did refresh token")
     return { accessToken, refreshToken }
   }
   
