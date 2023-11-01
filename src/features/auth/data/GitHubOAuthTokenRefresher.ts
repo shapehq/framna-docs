@@ -15,7 +15,6 @@ export default class GitHubOAuthTokenRefresher implements IOAuthTokenRefresher {
   }
   
   async refreshAccessToken(refreshToken: string): Promise<OAuthToken> {
-    console.log("♻️ Will refresh access token...")
     const url = this.getAccessTokenURL(refreshToken)
     const response = await fetch(url, { method: "POST" })
     if (response.status != 200) {
@@ -52,7 +51,6 @@ export default class GitHubOAuthTokenRefresher implements IOAuthTokenRefresher {
     const refreshTokenExpiryDate = new Date(
       new Date().getTime() + parseInt(newRawRefreshTokenExpiryDate) * 1000
     )
-    console.log("✅ Did refresh access token")
     return {
       accessToken: newAccessToken,
       refreshToken: newRefreshToken,

@@ -59,7 +59,6 @@ export default class AccessTokenRefreshingGitHubClient implements IGitHubClient 
         const error = HttpErrorSchema.parse(e)
         if (error.status == 401) {
           // Refresh access token and try the request one last time.
-          console.log("🚫 Received authentication error")
           await this.oAuthTokenService.refreshOAuthToken(authToken.refreshToken)
           return await fn()
         } else {
