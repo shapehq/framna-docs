@@ -1,11 +1,11 @@
 import IRefreshTokenReader from "./IRefreshTokenReader"
 import IOAuthTokenRefresher from "./IOAuthTokenRefresher"
-import IUserDataOAuthTokenRepository from "./IUserDataOAuthTokenRepository"
+import IOAuthTokenRepository from "./IOAuthTokenRepository"
 
 type InitialOAuthTokenServiceConfig = {
   readonly refreshTokenReader: IRefreshTokenReader
   readonly oAuthTokenRefresher: IOAuthTokenRefresher
-  readonly oAuthTokenRepository: IUserDataOAuthTokenRepository
+  readonly oAuthTokenRepository: IOAuthTokenRepository
 }
 
 export default class InitialOAuthTokenService {

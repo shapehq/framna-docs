@@ -15,7 +15,7 @@ import SessionDataRepository from "@/common/userData/SessionDataRepository"
 import SessionMutexFactory from "@/common/mutex/SessionMutexFactory"
 import SessionOAuthTokenRepository from "@/features/auth/domain/SessionOAuthTokenRepository"
 import SessionProjectRepository from "@/features/projects/domain/SessionProjectRepository"
-import UserDataOAuthTokenRepository from "@/features/auth/domain/UserDataOAuthTokenRepository"
+import OAuthTokenRepository from "@/features/auth/domain/OAuthTokenRepository"
 import authLogoutHandler from "@/common/authHandler/logout"
 
 const {
@@ -96,7 +96,7 @@ export const initialOAuthTokenService = new InitialOAuthTokenService({
     connection: "github"
   }),
   oAuthTokenRefresher: gitHubOAuthTokenRefresher,
-  oAuthTokenRepository: new UserDataOAuthTokenRepository(oAuthTokenRepository)
+  oAuthTokenRepository: new OAuthTokenRepository(oAuthTokenRepository)
 })
 
 export const logoutHandler = async () => {
