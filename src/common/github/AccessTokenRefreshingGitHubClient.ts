@@ -1,5 +1,5 @@
 import { z } from "zod"
-import IAccessTokenService from "@/features/auth/domain/IAccessTokenService"
+import IOAuthTokenService from "@/features/auth/domain/IOAuthTokenService"
 import IGitHubClient, {
   GraphQLQueryRequest,
   GraphQlQueryResponse,
@@ -15,14 +15,14 @@ const HttpErrorSchema = z.object({
 })
 
 export default class AccessTokenRefreshingGitHubClient implements IGitHubClient {
-  private readonly accessTokenService: IAccessTokenService
+  private readonly oAuthTokenService: IOAuthTokenService
   private readonly gitHubClient: IGitHubClient
   
   constructor(
-    accessTokenService: IAccessTokenService,
+    oAuthTokenService: IOAuthTokenService,
     gitHubClient: IGitHubClient
   ) {
-    this.accessTokenService = accessTokenService
+    this.oAuthTokenService = oAuthTokenService
     this.gitHubClient = gitHubClient
   }
   
@@ -51,6 +51,7 @@ export default class AccessTokenRefreshingGitHubClient implements IGitHubClient 
   }
   
   private async send<T>(fn: () => Promise<T>): Promise<T> {
+    const authToken = await this.oAuthTokenService.getOAuthToken()
     try {
       return await fn()
     } catch (e) {
@@ -59,7 +60,7 @@ export default class AccessTokenRefreshingGitHubClient implements IGitHubClient 
         if (error.status == 401) {
           // Refresh access token and try the request one last time.
           console.log("🚫 Received authentication error")
-          await this.accessTokenService.refreshAccessToken()
+          await this.oAuthTokenService.refreshOAuthToken(authToken.refreshToken)
           return await fn()
         } else {
           // Not an error we can handle so forward it.
