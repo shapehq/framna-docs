@@ -33,7 +33,6 @@ export default class OAuthTokenService implements IOAuthTokenService {
       }
       const refreshResult = await this.tokenRefresher.refreshAccessToken(authToken.refreshToken)
       await this.tokenRepository.storeOAuthToken(refreshResult)
-      console.log("💾 Access token saved")
       return refreshResult
     })
   }
