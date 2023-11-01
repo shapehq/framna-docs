@@ -11,23 +11,13 @@ test("It fetches refresh token for specified user", async () => {
       }
     },
     oAuthTokenRefresher: {
-      async refreshAccessToken() {
-        return {
-          accessToken: "foo",
-          refreshToken: "bar",
-          accessTokenExpiryDate: new Date(),
-          refreshTokenExpiryDate: new Date()
-        }
+      async refreshOAuthToken() {
+        return { accessToken: "foo", refreshToken: "bar" }
       }
     },
     oAuthTokenRepository: {
       async getOAuthToken() {
-        return {
-          accessToken: "foo",
-          refreshToken: "bar",
-          accessTokenExpiryDate: new Date(),
-          refreshTokenExpiryDate: new Date()
-        }
+        return { accessToken: "foo", refreshToken: "bar" }
       },
       async storeOAuthToken() {},
       async deleteOAuthToken() {}
@@ -46,24 +36,14 @@ test("It refreshes the fetched refresh token", async () => {
       }
     },
     oAuthTokenRefresher: {
-      async refreshAccessToken(refreshToken) {
+      async refreshOAuthToken(refreshToken) {
         refreshedRefreshToken = refreshToken
-        return {
-          accessToken: "foo",
-          refreshToken: "bar",
-          accessTokenExpiryDate: new Date(),
-          refreshTokenExpiryDate: new Date()
-        }
+        return { accessToken: "foo", refreshToken: "bar" }
       }
     },
     oAuthTokenRepository: {
       async getOAuthToken() {
-        return {
-          accessToken: "foo",
-          refreshToken: "bar",
-          accessTokenExpiryDate: new Date(),
-          refreshTokenExpiryDate: new Date()
-        }
+        return { accessToken: "foo", refreshToken: "bar" }
       },
       async storeOAuthToken() {},
       async deleteOAuthToken() {}
@@ -76,8 +56,6 @@ test("It refreshes the fetched refresh token", async () => {
 test("It stores the refreshed auth token for the correct user ID", async () => {
   let storedAuthToken: OAuthToken | undefined
   let storedUserId: string | undefined
-  const accessTokenExpiryDate = new Date(new Date().getTime() + 3600 * 1000)
-  const refreshTokenExpiryDate = new Date(new Date().getTime() + 24 * 3600 * 1000)
   const sut = new InitialOAuthTokenService({
     refreshTokenReader: {
       async getRefreshToken() {
@@ -85,23 +63,13 @@ test("It stores the refreshed auth token for the correct user ID", async () => {
       }
     },
     oAuthTokenRefresher: {
-      async refreshAccessToken() {
-        return {
-          accessToken: "foo",
-          refreshToken: "bar",
-          accessTokenExpiryDate: accessTokenExpiryDate,
-          refreshTokenExpiryDate: refreshTokenExpiryDate
-        }
+      async refreshOAuthToken() {
+        return { accessToken: "foo", refreshToken: "bar" }
       }
     },
     oAuthTokenRepository: {
       async getOAuthToken() {
-        return {
-          accessToken: "foo",
-          refreshToken: "bar",
-          accessTokenExpiryDate: new Date(),
-          refreshTokenExpiryDate: new Date()
-        }
+        return { accessToken: "foo", refreshToken: "bar" }
       },
       async storeOAuthToken(userId, token) {
         storedAuthToken = token
@@ -113,7 +81,5 @@ test("It stores the refreshed auth token for the correct user ID", async () => {
   await sut.fetchInitialAuthTokenForUser("123")
   expect(storedAuthToken?.accessToken).toBe("foo")
   expect(storedAuthToken?.refreshToken).toBe("bar")
-  expect(storedAuthToken?.accessTokenExpiryDate).toBe(accessTokenExpiryDate)
-  expect(storedAuthToken?.refreshTokenExpiryDate).toBe(refreshTokenExpiryDate)
   expect(storedUserId).toBe("123")
 })

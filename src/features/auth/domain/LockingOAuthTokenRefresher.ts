@@ -2,7 +2,7 @@ import IMutexFactory from "@/common/mutex/IMutexFactory"
 import IOAuthTokenRefresher from "./IOAuthTokenRefresher"
 import ISessionOAuthTokenRepository from "./ISessionOAuthTokenRepository"
 import OAuthToken from "./OAuthToken"
-import withMutex from "@/common/mutex/withMutex"
+import withMutex from "../../../common/mutex/withMutex"
 
 export default class LockingOAuthTokenRefresher implements IOAuthTokenRefresher {
   private readonly mutexFactory: IMutexFactory
