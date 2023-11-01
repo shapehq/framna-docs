@@ -1,6 +1,4 @@
 import { z } from "zod"
-import IOAuthTokenRepository from "@/features/auth/domain/IOAuthTokenRepository"
-import IOAuthTokenRefresher from "@/features/auth/domain/IOAuthTokenRefresher"
 import IGitHubClient, {
   GraphQLQueryRequest,
   GraphQlQueryResponse,
@@ -15,18 +13,26 @@ const HttpErrorSchema = z.object({
   status: z.number()
 })
 
+interface IGitHubAccessTokenReader {
+  getAccessToken(): Promise<string>
+}
+
+interface IGitHubAccessTokenRefresher {
+  refreshAccessToken(accessToken: string): Promise<string>
+}
+
 export default class AccessTokenRefreshingGitHubClient implements IGitHubClient {
-  private readonly oAuthTokenRepository: IOAuthTokenRepository
-  private readonly oAuthTokenRefresher: IOAuthTokenRefresher
+  private readonly accessTokenReader: IGitHubAccessTokenReader
+  private readonly accessTokenRefresher: IGitHubAccessTokenRefresher
   private readonly gitHubClient: IGitHubClient
   
   constructor(
-    oAuthTokenRepository: IOAuthTokenRepository,
-    oAuthTokenRefresher: IOAuthTokenRefresher,
+    accessTokenReader: IGitHubAccessTokenReader,
+    accessTokenRefresher: IGitHubAccessTokenRefresher,
     gitHubClient: IGitHubClient
   ) {
-    this.oAuthTokenRepository = oAuthTokenRepository
-    this.oAuthTokenRefresher = oAuthTokenRefresher
+    this.accessTokenReader = accessTokenReader
+    this.accessTokenRefresher = accessTokenRefresher
     this.gitHubClient = gitHubClient
   }
   
@@ -55,7 +61,7 @@ export default class AccessTokenRefreshingGitHubClient implements IGitHubClient 
   }
   
   private async send<T>(fn: () => Promise<T>): Promise<T> {
-    const authToken = await this.oAuthTokenRepository.getOAuthToken()
+    const accessToken = await this.accessTokenReader.getAccessToken()
     try {
       return await fn()
     } catch (e) {
@@ -63,7 +69,7 @@ export default class AccessTokenRefreshingGitHubClient implements IGitHubClient 
         const error = HttpErrorSchema.parse(e)
         if (error.status == 401) {
           // Refresh access token and try the request one last time.
-          await this.oAuthTokenRefresher.refreshOAuthToken(authToken.refreshToken)
+          await this.accessTokenRefresher.refreshAccessToken(accessToken)
           return await fn()
         } else {
           // Not an error we can handle so forward it.

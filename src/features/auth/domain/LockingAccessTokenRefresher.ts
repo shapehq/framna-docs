@@ -1,10 +1,10 @@
 import IMutexFactory from "@/common/mutex/IMutexFactory"
+import IAccessTokenRefresher from "./IAccessTokenRefresher"
 import IOAuthTokenRefresher from "./IOAuthTokenRefresher"
 import ISessionOAuthTokenRepository from "./ISessionOAuthTokenRepository"
-import OAuthToken from "./OAuthToken"
 import withMutex from "../../../common/mutex/withMutex"
 
-export default class LockingOAuthTokenRefresher implements IOAuthTokenRefresher {
+export default class LockingAccessTokenRefresher implements IAccessTokenRefresher {
   private readonly mutexFactory: IMutexFactory
   private readonly tokenRepository: ISessionOAuthTokenRepository
   private readonly tokenRefresher: IOAuthTokenRefresher
@@ -19,17 +19,17 @@ export default class LockingOAuthTokenRefresher implements IOAuthTokenRefresher 
     this.tokenRefresher = tokenRefresher
   }
   
-  async refreshOAuthToken(refreshToken: string): Promise<OAuthToken> {
+  async refreshAccessToken(accessToken: string): Promise<string> {
     const mutex = await this.mutexFactory.makeMutex()
     return await withMutex(mutex, async () => {
       const authToken = await this.tokenRepository.getOAuthToken()
-      if (refreshToken != authToken.refreshToken) {
+      if (accessToken != authToken.accessToken) {
         // Given refresh token is outdated so we use our current access token.
-        return authToken
+        return authToken.accessToken
       }
       const refreshResult = await this.tokenRefresher.refreshOAuthToken(authToken.refreshToken)
       await this.tokenRepository.storeOAuthToken(refreshResult)
-      return refreshResult
+      return refreshResult.accessToken
     })
   }
 }

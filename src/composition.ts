@@ -7,9 +7,10 @@ import GitHubOAuthTokenRefresher from "@/features/auth/data/GitHubOAuthTokenRefr
 import GitHubProjectDataSource from "@/features/projects/data/GitHubProjectDataSource"
 import InitialOAuthTokenService from "@/features/auth/domain/InitialOAuthTokenService"
 import KeyValueUserDataRepository from "@/common/userData/KeyValueUserDataRepository"
-import LockingOAuthTokenRefresher from "@/features/auth/domain/LockingOAuthTokenRefresher"
+import LockingAccessTokenRefresher from "@/features/auth/domain/LockingAccessTokenRefresher"
 import RedisKeyedMutexFactory from "@/common/mutex/RedisKeyedMutexFactory"
 import RedisKeyValueStore from "@/common/keyValueStore/RedisKeyValueStore"
+import SessionAccessTokenReader from "@/features/auth/domain/SessionAccessTokenReader"
 import SessionDataRepository from "@/common/userData/SessionDataRepository"
 import SessionMutexFactory from "@/common/mutex/SessionMutexFactory"
 import SessionOAuthTokenRepository from "@/features/auth/domain/SessionOAuthTokenRepository"
@@ -46,8 +47,10 @@ const gitHubOAuthTokenRefresher = new GitHubOAuthTokenRefresher({
 })
 
 export const gitHubClient = new AccessTokenRefreshingGitHubClient(
-  sessionOAuthTokenRepository,
-  new LockingOAuthTokenRefresher(
+  new SessionAccessTokenReader(
+    sessionOAuthTokenRepository
+  ),
+  new LockingAccessTokenRefresher(
     new SessionMutexFactory(
       new RedisKeyedMutexFactory(REDIS_URL),
       new Auth0Session(),
@@ -61,12 +64,9 @@ export const gitHubClient = new AccessTokenRefreshingGitHubClient(
     clientId: GITHUB_CLIENT_ID,
     clientSecret: GITHUB_CLIENT_SECRET,
     privateKey: gitHubPrivateKey,
-    accessTokenReader: {
-      async getAccessToken() {
-        const authToken = await sessionOAuthTokenRepository.getOAuthToken()
-        return authToken.accessToken
-      }
-    }
+    accessTokenReader: new SessionAccessTokenReader(
+      sessionOAuthTokenRepository
+    )
   })
 )
 
