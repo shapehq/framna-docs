@@ -22,10 +22,9 @@ export async function GET(req: NextRequest, { params }: { params: GetBlobParams 
     const file = await fetch(url).then(r => r.blob());
     const headers = new Headers();
     const cacheExpirationInSeconds = 60 * 60 // 1 hour
-    const staleWhileRevalidateInSeconds = 60 * 15 // 15 minutes
   
     headers.set("Content-Type", "image/*");
-    headers.set("Cache-Control", `max-age=${cacheExpirationInSeconds}, stale-while-revalidate=${staleWhileRevalidateInSeconds}`);
+    headers.set("Cache-Control", `max-age=${cacheExpirationInSeconds}`);
 
     return new NextResponse(file, { status: 200, headers })
   } else {
