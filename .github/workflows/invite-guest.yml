@@ -30,17 +30,11 @@ jobs:
       - name: Configure for Production
         if: "${{ github.event.inputs.environment == 'production' }}"
         run: |
-          echo "AUTH0_TENANT=shape-docs" >> $GITHUB_ENV
-          echo "AUTH0_REGION=eu" >> $GITHUB_ENV
-          echo "REDIRECT_URL=https://docs.shapetools.io" >> $GITHUB_ENV
           echo "AUTH0_MANAGEMENT_CLIENT_ID_OP_KEY=op://Shape Docs GitHub Actions/Auth0 Management API Client ID/password" >> $GITHUB_ENV
           echo "AUTH0_MANAGEMENT_CLIENT_SECRET_OP_KEY=op://Shape Docs GitHub Actions/Auth0 Management API Client Secret/password" >> $GITHUB_ENV
       - name: Configure for Staging
         if: "${{ github.event.inputs.environment == 'staging' }}"
         run: |
-          echo "AUTH0_TENANT=shape-docs-dev" >> $GITHUB_ENV
-          echo "AUTH0_REGION=eu" >> $GITHUB_ENV
-          echo "REDIRECT_URL=https://staging.docs.shapetools.io" >> $GITHUB_ENV
           echo "AUTH0_MANAGEMENT_CLIENT_ID_OP_KEY=op://Shape Docs GitHub Actions/Auth0 Management API Client ID Staging/password" >> $GITHUB_ENV
           echo "AUTH0_MANAGEMENT_CLIENT_SECRET_OP_KEY=op://Shape Docs GitHub Actions/Auth0 Management API Client Secret Staging/password" >> $GITHUB_ENV
       - name: Install Secrets
@@ -52,110 +46,8 @@ jobs:
           echo "::add-mask::${AUTH0_MANAGEMENT_CLIENT_ID}"
           echo "::add-mask::${AUTH0_MANAGEMENT_CLIENT_SECRET}"
       - name: Send Invitation
-        run: |
-          AUTH0_MANAGEMENT_DOMAIN="${AUTH0_TENANT}.${AUTH0_REGION}.auth0.com"
-          USER_NAME="${{ github.event.inputs.name }}"
-          USER_EMAIL="${{ github.event.inputs.email }}"
-          USER_PASSWORD=$(openssl rand -base64 18)
-          STR_ROLES="${{ github.event.inputs.roles }}"
-          
-          # Get a token to use when authorizing against Auth0's Management API.
-          TOKEN_RESPONSE=$(
-            curl --silent --request POST\
-              --url "https://${AUTH0_MANAGEMENT_DOMAIN}/oauth/token"\
-              --header "Content-Type: application/x-www-form-urlencoded"\
-              --data grant_type=client_credentials\
-              --data "client_id=${AUTH0_MANAGEMENT_CLIENT_ID}"\
-              --data "client_secret=${AUTH0_MANAGEMENT_CLIENT_SECRET}"\
-              --data "audience=https://${AUTH0_MANAGEMENT_DOMAIN}/api/v2/"
-          )
-          TOKEN=$(echo $TOKEN_RESPONSE | jq -r .access_token)
-          
-          # Get existing user with the email.
-          URLENCODED_USER_EMAIL=$(jq -rn --arg USER_EMAIL "${USER_EMAIL}" '$USER_EMAIL|@uri')
-          GET_USER_RESPONSE=$(
-            curl --silent --request GET\
-              --url "https://${AUTH0_MANAGEMENT_DOMAIN}/api/v2/users-by-email?email=${URLENCODED_USER_EMAIL}"\
-              --header "Authorization: Bearer ${TOKEN}"
-          )
-          EXISTING_USER_ID=$(echo $GET_USER_RESPONSE | jq -r ".[] | .user_id")
-          USER_ID=$EXISTING_USER_ID
-          
-          if [ -z "$EXISTING_USER_ID" ]; then
-            # User does not exist so we create it with the random password.
-            CREATE_USER_REQUEST_BODY=$(
-              jq -n '{"connection":"Username-Password-Authentication","name":$USER_NAME,"email":$USER_EMAIL,"email_verified":true,"password":$USER_PASSWORD,"app_metadata":{"has_pending_invitation":true}}'\
-                --arg "USER_NAME" "${USER_NAME}"\
-                --arg "USER_EMAIL" "${USER_EMAIL}"\
-                --arg "USER_PASSWORD" "${USER_PASSWORD}"
-            )
-            CREATE_USER_RESPONSE=$(
-              curl --silent --request POST\
-                --url "https://${AUTH0_MANAGEMENT_DOMAIN}/api/v2/users"\
-                --header "Authorization: Bearer ${TOKEN}"\
-                --header "Content-Type: application/json"\
-                --data "${CREATE_USER_REQUEST_BODY}"
-            )
-            USER_ID=$(echo $CREATE_USER_RESPONSE | jq -r ".user_id")
-          fi
-          
-          # Create all the roles.
-          IFS=',' read -ra UNTRIMMED_ROLES <<< "$STR_ROLES"
-          for role in "${UNTRIMMED_ROLES[@]}"; do
-            trimmed_role=$(echo "$role" | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//')
-            lowercase_role=$(echo "${trimmed_role}" | awk '{print tolower($0)}')
-            ROLES+=("$lowercase_role")
-          done
-          for role in "${ROLES[@]}"; do
-            body=$(jq -n '{"name":$ROLE,"description":$ROLE}' --arg "ROLE" "${role}")
-            curl --silent --request POST\
-              --url "https://${AUTH0_MANAGEMENT_DOMAIN}/api/v2/roles"\
-              --header "Authorization: Bearer ${TOKEN}"\
-              --header "Content-Type: application/json"\
-              --data "${body}"\
-              -o /dev/null
-          done
-          
-          # Find IDs of roles to assign
-          ROLES_RESPONSE=$(
-            curl --silent --request GET\
-              --url "https://${AUTH0_MANAGEMENT_DOMAIN}/api/v2/roles"\
-              --header "Authorization: Bearer ${TOKEN}"\
-          )
-          JSON_ROLES=$(printf '%s\n' "${ROLES[@]}" | jq -R . | jq -s .)
-          ROLE_LIST=$(echo $JSON_ROLES | jq -r 'map("\"\(.)\"") | join(",")')
-          ROLE_IDS=$(echo "${ROLES_RESPONSE}" | jq 'map(select(.name | IN('"${ROLE_LIST}"')).id)')
-          
-          # Assign roles using IDs
-          ASSIGN_ROLES_REQUEST_BODY=$(jq -n '{"roles":$ROLE_IDS}' --argjson "ROLE_IDS" "${ROLE_IDS}")
-          curl --silent --request POST\
-            --url "https://${AUTH0_MANAGEMENT_DOMAIN}/api/v2/users/${USER_ID}/roles"\
-            --header "Authorization: Bearer ${TOKEN}"\
-            --header "Content-Type: application/json"\
-            --data "${ASSIGN_ROLES_REQUEST_BODY}"
-
-          URLENCODED_USER_ID=$(jq -rn --arg USER_ID "${USER_ID}" '$USER_ID|@uri')
-          USER_MANAGEMENT_URL="https://manage.auth0.com/dashboard/${AUTH0_REGION}/${AUTH0_TENANT}/users/${URLENCODED_USER_ID}"
-          if [ -z "$EXISTING_USER_ID" ]; then
-            # Send the user an e-mail asking to change their password.
-            PASSWORD_CHANGE_REQUEST_BODY=$(
-              jq -n '{"email": $USER_EMAIL,"connection": "Username-Password-Authentication"}'\
-                --arg "USER_EMAIL" "${USER_EMAIL}"
-            )
-            curl --silent --request POST\
-              --url "https://${AUTH0_MANAGEMENT_DOMAIN}/dbconnections/change_password"\
-              --header "Authorization: Bearer ${TOKEN}"\
-              --header "Content-Type: application/json"\
-              --data "${PASSWORD_CHANGE_REQUEST_BODY}"\
-              -o /dev/null
-
-            echo "::group::Created User"
-            echo "${USER_NAME} (${USER_EMAIL}) has been invited and can be managed by visiting:"
-            echo $USER_MANAGEMENT_URL
-            echo "::endgroup::"
-          else
-            echo "::group::Updated User"
-            echo "${USER_NAME} (${USER_EMAIL}) was already invited but has been updated and can be managed by visiting:"
-            echo $USER_MANAGEMENT_URL
-            echo "::endgroup::"
-          fi
+        uses: ../actions/invite-user
+        with:
+          name: ${{ github.event.inputs.name }}
+          email: ${{ github.event.inputs.email }}
+          roles: ${{ github.event.inputs.roles }}
