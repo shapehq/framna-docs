@@ -25,6 +25,8 @@ jobs:
     name: Invite Guest
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
       - name: Install 1Password CLI
         uses: 1password/install-cli-action@v1
       - name: Configure for Production
