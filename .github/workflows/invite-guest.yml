@@ -99,7 +99,7 @@ jobs:
             USER_ID=$(echo $CREATE_USER_RESPONSE | jq -r ".user_id")
           fi
           
-          # Assign roles to the user.
+          # Create all the roles.
           IFS=',' read -ra UNTRIMMED_ROLES <<< "$STR_ROLES"
           for role in "${UNTRIMMED_ROLES[@]}"; do
             trimmed_role=$(echo "$role" | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//')
