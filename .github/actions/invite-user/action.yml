@@ -11,5 +11,5 @@ inputs:
     description: Comma-separated list of roles to assign to the user.
     required: true  
 runs:
-  using: node16
+  using: node20
   main: dist/index.js
