@@ -34,11 +34,13 @@ jobs:
         run: |
           echo "AUTH0_MANAGEMENT_CLIENT_ID_OP_KEY=op://Shape Docs GitHub Actions/Auth0 Management API Client ID/password" >> $GITHUB_ENV
           echo "AUTH0_MANAGEMENT_CLIENT_SECRET_OP_KEY=op://Shape Docs GitHub Actions/Auth0 Management API Client Secret/password" >> $GITHUB_ENV
+          echo "AUTH0_MANAGEMENT_CLIENT_DOMAIN=shape-docs-dev.eu.auth0.com" >> $GITHUB_ENV
       - name: Configure for Staging
         if: "${{ github.event.inputs.environment == 'staging' }}"
         run: |
           echo "AUTH0_MANAGEMENT_CLIENT_ID_OP_KEY=op://Shape Docs GitHub Actions/Auth0 Management API Client ID Staging/password" >> $GITHUB_ENV
           echo "AUTH0_MANAGEMENT_CLIENT_SECRET_OP_KEY=op://Shape Docs GitHub Actions/Auth0 Management API Client Secret Staging/password" >> $GITHUB_ENV
+          echo "AUTH0_MANAGEMENT_CLIENT_DOMAIN=shape-docs.eu.auth0.com" >> $GITHUB_ENV
       - name: Install Secrets
         run: |
           AUTH0_MANAGEMENT_CLIENT_ID=$(op read "${AUTH0_MANAGEMENT_CLIENT_ID_OP_KEY}")
