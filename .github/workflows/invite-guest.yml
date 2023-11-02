@@ -36,7 +36,7 @@ jobs:
           AUTH0_MANAGEMENT_DOMAIN="${AUTH0_TENANT}.${AUTH0_REGION}.auth0.com"
           USER_NAME="${{ github.event.inputs.name }}"
           USER_EMAIL="${{ github.event.inputs.email }}"
-          USER_PASSWORD=$(LC_ALL=C tr -dc A-Za-z0-9 </dev/urandom | head -c 18 ; echo '')
+          USER_PASSWORD=$(openssl rand -base64 18)
           STR_ROLES="${{ github.event.inputs.roles }}"
           
           # Get a token to use when authorizing against Auth0's Management API.
