@@ -83,7 +83,8 @@ jobs:
           IFS=',' read -ra UNTRIMMED_ROLES <<< "$STR_ROLES"
           for role in "${UNTRIMMED_ROLES[@]}"; do
             trimmed_role=$(echo "$role" | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//')
-            ROLES+=("$trimmed_role")
+            lowercase_role=$(echo "${trimmed_role}" | awk '{print tolower($0)}')
+            ROLES+=("$lowercase_role")
           done
           for role in "${ROLES[@]}"; do
             body=$(jq -n '{"name":$ROLE,"description":$ROLE}' --arg "ROLE" "${role}")
