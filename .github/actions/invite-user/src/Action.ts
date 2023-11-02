@@ -77,7 +77,7 @@ export default class Action {
       userID: user.id,
       roleIDs: roleIDs
     })
-    if (existingUser) {
+    if (!existingUser) {
       await this.userClient.sendChangePasswordEmail({ email: user.email })
       this.logger.log(`${user.id} (${user.email}) has been invited.`)
     } else {
