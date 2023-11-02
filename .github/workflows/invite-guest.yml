@@ -112,7 +112,9 @@ jobs:
             --header "Authorization: Bearer ${TOKEN}"\
             --header "Content-Type: application/json"\
             --data "${ASSIGN_ROLES_REQUEST_BODY}"
-          
+
+          URLENCODED_USER_ID=$(jq -rn --arg USER_ID "${USER_ID}" '$USER_ID|@uri')
+          USER_MANAGEMENT_URL="https://manage.auth0.com/dashboard/${AUTH0_REGION}/${AUTH0_TENANT}/users/${URLENCODED_USER_ID}"
           if [ -z "$EXISTING_USER_ID" ]; then
             # Send the user an e-mail asking to change their password.
             PASSWORD_CHANGE_REQUEST_BODY=$(
@@ -127,8 +129,8 @@ jobs:
               -o /dev/null
               
             echo "${USER_NAME} (${USER_EMAIL}) has been invited and can be managed by visiting:"
-            echo "https://manage.auth0.com/dashboard/${AUTH0_REGION}/${AUTH0_TENANT}/users/${USER_ID}"
+            echo $USER_MANAGEMENT_URL
           else
             echo "${USER_NAME} (${USER_EMAIL}) was already invited but has been updated and can be managed by visiting:"
-            echo "https://manage.auth0.com/dashboard/${AUTH0_REGION}/${AUTH0_TENANT}/users/${USER_ID}"
+            echo $USER_MANAGEMENT_URL
           fi
