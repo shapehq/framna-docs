@@ -1,7 +1,11 @@
 import { Octokit } from "octokit"
 import { createAppAuth } from "@octokit/auth-app"
 import IGitHubClient, {
+  GraphQLQueryRequest,
   GraphQlQueryResponse,
+  GetRepositoryContentRequest,
+  GetPullRequestCommentsRequest,
+  AddCommentToPullRequestRequest,
   RepositoryContent,
   PullRequestComment
 } from "./IGitHubClient"
@@ -39,21 +43,13 @@ export default class GitHubClient implements IGitHubClient {
     }
   }
   
-  /* eslint-disable-next-line  @typescript-eslint/no-explicit-any */
-  async graphql(query: string, variables: { [key: string]: any }): Promise<GraphQlQueryResponse> {
+  async graphql(request: GraphQLQueryRequest): Promise<GraphQlQueryResponse> {
     const accessToken = await this.accessTokenReader.getAccessToken()
     const octokit = new Octokit({ auth: accessToken })
-    return await octokit.graphql(query, variables)
+    return await octokit.graphql(request.query, request.variables)
   }
   
-  async getRepositoryContent(
-    request: {
-      repositoryOwner: string
-      repositoryName: string
-      path: string
-      ref: string | undefined
-    }
-  ): Promise<RepositoryContent> {
+  async getRepositoryContent(request: GetRepositoryContentRequest): Promise<RepositoryContent> {
     const accessToken = await this.accessTokenReader.getAccessToken()
     const octokit = new Octokit({ auth: accessToken })
     const response = await octokit.rest.repos.getContent({
@@ -66,14 +62,7 @@ export default class GitHubClient implements IGitHubClient {
     return { downloadURL: item.download_url }
   }
   
-  async getPullRequestComments(
-    request: {
-      appInstallationId: number
-      repositoryOwner: string
-      repositoryName: string
-      pullRequestNumber: number
-    }
-  ): Promise<PullRequestComment[]> {
+  async getPullRequestComments(request: GetPullRequestCommentsRequest): Promise<PullRequestComment[]> {
     const auth = await this.installationAuthenticator(request.appInstallationId)
     const octokit = new Octokit({ auth: auth.token })
     const comments = await octokit.paginate(octokit.rest.issues.listComments, {
@@ -91,15 +80,7 @@ export default class GitHubClient implements IGitHubClient {
     return result
   }
   
-  async addCommentToPullRequest(
-    request: {
-      appInstallationId: number
-      repositoryOwner: string
-      repositoryName: string
-      pullRequestNumber: number
-      body: string
-    }
-  ): Promise<void> {
+  async addCommentToPullRequest(request: AddCommentToPullRequestRequest): Promise<void> {
     const auth = await this.installationAuthenticator(request.appInstallationId)
     const octokit = new Octokit({ auth: auth.token })
     await octokit.rest.issues.createComment({

@@ -12,6 +12,9 @@ type SearchResult = {
   }
   readonly defaultBranchRef: {
     readonly name: string
+    readonly target: {
+      readonly oid: string
+    }
   }
   readonly configYml?: {
     readonly text: string
@@ -19,17 +22,22 @@ type SearchResult = {
   readonly configYaml?: {
     readonly text: string
   }
-  readonly branches: NodesContainer<Ref>
-  readonly tags: NodesContainer<Ref>
+  readonly branches: EdgesContainer<Ref>
+  readonly tags: EdgesContainer<Ref>
 }
 
-type NodesContainer<T> = {
-  readonly nodes: T[]
+type EdgesContainer<T> = {
+  readonly edges: Edge<T>[]
+}
+
+type Edge<T> = {
+  readonly node: T
 }
 
 type Ref = {
   readonly name: string
   readonly target: {
+    readonly oid: string
     readonly tree: {
       readonly entries: File[]
     }
@@ -50,7 +58,8 @@ export default class GitHubProjectDataSource implements IProjectDataSource {
   }
   
   async getProjects(): Promise<Project[]> {
-    const response = await this.gitHubClient.graphql(`
+    const request = {
+      query: `
       query Repositories($searchQuery: String!) {
         search(query: $searchQuery, type: REPOSITORY, first: 100) {
           results: nodes {
@@ -61,6 +70,11 @@ export default class GitHubProjectDataSource implements IProjectDataSource {
               }
               defaultBranchRef {
                 name
+                target {
+                  ...on Commit {
+                    oid
+                  }
+                }
               }
               configYml: object(expression: "HEAD:.shape-docs.yml") {
                 ...ConfigParts
@@ -80,13 +94,19 @@ export default class GitHubProjectDataSource implements IProjectDataSource {
       }
       
       fragment RefConnectionParts on RefConnection {
-        nodes {
-          name
-          target {
-            ... on Commit {
-              tree {
-                entries {
-                  name
+        edges {
+          node {
+            name
+            ... on Ref {
+              name
+              target {
+                ... on Commit {
+                  oid
+                  tree {
+                    entries {
+                      name
+                    }
+                  }
                 }
               }
             }
@@ -100,10 +120,11 @@ export default class GitHubProjectDataSource implements IProjectDataSource {
         }
       }
       `,
-      {
+      variables: {
         searchQuery: `org:${this.organizationName} openapi in:name`
       }
-    )
+    }
+    const response = await this.gitHubClient.graphql(request)
     return response.search.results.map((searchResult: SearchResult) => {
       return this.mapProject(searchResult)
     })
@@ -123,7 +144,7 @@ export default class GitHubProjectDataSource implements IProjectDataSource {
         searchResult.owner.login,
         searchResult.name,
         config.image,
-        searchResult.defaultBranchRef.name
+        searchResult.defaultBranchRef.target.oid
       )
     }
     const defaultName = searchResult.name.replace(/-openapi$/, "")
@@ -148,12 +169,12 @@ export default class GitHubProjectDataSource implements IProjectDataSource {
   }
   
   private getVersions(searchResult: SearchResult): Version[] {
-    const branchVersions = searchResult.branches.nodes.map((ref: Ref) => {
-      const isDefaultRef = ref.name == searchResult.defaultBranchRef.name
-      return this.mapVersionFromRef(searchResult.owner.login, searchResult.name, ref, isDefaultRef)
+    const branchVersions = searchResult.branches.edges.map((edge: Edge<Ref>) => {
+      const isDefaultRef = edge.node.target.oid == searchResult.defaultBranchRef.target.oid
+      return this.mapVersionFromRef(searchResult.owner.login, searchResult.name, edge.node, isDefaultRef)
     })
-    const tagVersions = searchResult.tags.nodes.map((ref: Ref) => {
-      return this.mapVersionFromRef(searchResult.owner.login, searchResult.name, ref)
+    const tagVersions = searchResult.tags.edges.map((edge: Edge<Ref>) => {
+      return this.mapVersionFromRef(searchResult.owner.login, searchResult.name, edge.node)
     })
     const defaultBranchName = searchResult.defaultBranchRef.name
     const candidateDefaultBranches = [
@@ -194,7 +215,7 @@ export default class GitHubProjectDataSource implements IProjectDataSource {
           owner,
           repository,
           file.name,
-          ref.name
+          ref.target.oid
         ),
         editURL: `https://github.com/${owner}/${repository}/edit/${ref.name}/${file.name}`
       }

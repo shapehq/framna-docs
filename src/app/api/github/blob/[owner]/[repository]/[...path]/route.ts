@@ -21,12 +21,12 @@ export async function GET(req: NextRequest, { params }: { params: GetBlobParams 
   if (new RegExp(imageRegex).exec(path)) {
     const file = await fetch(url).then(r => r.blob());
     const headers = new Headers();
-    const cacheExpirationInSeconds = 60 * 60 * 24 * 30; // 30 days
+    const cacheExpirationInSeconds = 60 * 60 * 24 * 30 // 30 days
   
     headers.set("Content-Type", "image/*");
-    headers.set("cache-control", `stale-while-revalidate=${cacheExpirationInSeconds}`);
+    headers.set("Cache-Control", `max-age=${cacheExpirationInSeconds}`);
 
-    return new NextResponse(file, { status: 200, statusText: "OK", headers })
+    return new NextResponse(file, { status: 200, headers })
   } else {
     return NextResponse.redirect(url)
   }

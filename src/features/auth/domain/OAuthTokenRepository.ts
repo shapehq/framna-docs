@@ -1,10 +1,10 @@
 import ZodJSONCoder from "@/common/utils/ZodJSONCoder"
 import IUserDataRepository from "@/common/userData/IUserDataRepository"
-import IUserDataOAuthTokenRepository from ".//UserDataOAuthTokenRepository"
+import IOAuthTokenRepository from "./IOAuthTokenRepository"
 import { UnauthorizedError } from "./AuthError"
 import OAuthToken, { OAuthTokenSchema } from "./OAuthToken"
 
-export default class UserDataOAuthTokenRepository implements IUserDataOAuthTokenRepository {
+export default class OAuthTokenRepository implements IOAuthTokenRepository {
   private readonly repository: IUserDataRepository<string>
   
   constructor(repository: IUserDataRepository<string>) {

@@ -7,9 +7,7 @@ test("It reads the auth token", async () => {
       didRead = true
       return JSON.stringify({
         accessToken: "foo",
-        refreshToken: "bar",
-        accessTokenExpiryDate: new Date(new Date().getTime() + 3600 * 1000),
-        refreshTokenExpiryDate: new Date(new Date().getTime() + 24 * 3600 * 1000)
+        refreshToken: "bar"
       })
     },
     async set() {},
@@ -32,16 +30,12 @@ test("It stores the auth token", async () => {
   })
   const authToken = {
     accessToken: "foo",
-    refreshToken: "bar",
-    accessTokenExpiryDate: new Date(new Date().getTime() + 3600 * 1000),
-    refreshTokenExpiryDate: new Date(new Date().getTime() + 24 * 3600 * 1000)
+    refreshToken: "bar"
   }
   await sut.storeOAuthToken(authToken)
   const storedObj = JSON.parse(storedJSON)
   expect(storedObj.accessToken).toBe(authToken.accessToken)
   expect(storedObj.refreshToken).toBe(authToken.refreshToken)
-  expect(new Date(storedObj.accessTokenExpiryDate)).toStrictEqual(authToken.accessTokenExpiryDate)
-  expect(new Date(storedObj.refreshTokenExpiryDate)).toStrictEqual(authToken.refreshTokenExpiryDate)
 })
 
 test("It deletes the auth token", async () => {
