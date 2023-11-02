@@ -25,6 +25,8 @@ jobs:
     name: Invite Guest
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
       - name: Install 1Password CLI
         uses: 1password/install-cli-action@v1
       - name: Configure for Production
@@ -46,7 +48,7 @@ jobs:
           echo "::add-mask::${AUTH0_MANAGEMENT_CLIENT_ID}"
           echo "::add-mask::${AUTH0_MANAGEMENT_CLIENT_SECRET}"
       - name: Send Invitation
-        uses: ../actions/invite-user
+        uses: ./.github/actions/invite-user
         with:
           name: ${{ github.event.inputs.name }}
           email: ${{ github.event.inputs.email }}
