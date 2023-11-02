@@ -21,7 +21,7 @@ export async function GET(req: NextRequest, { params }: { params: GetBlobParams 
   if (new RegExp(imageRegex).exec(path)) {
     const file = await fetch(url).then(r => r.blob());
     const headers = new Headers();
-    const cacheExpirationInSeconds = 60 * 60 // 1 hour
+    const cacheExpirationInSeconds = 60 * 60 * 24 * 30 // 30 days
   
     headers.set("Content-Type", "image/*");
     headers.set("Cache-Control", `max-age=${cacheExpirationInSeconds}`);
