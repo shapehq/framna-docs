@@ -58,7 +58,8 @@ export default class GitHubProjectDataSource implements IProjectDataSource {
   }
   
   async getProjects(): Promise<Project[]> {
-    const response = await this.gitHubClient.graphql(`
+    const request = {
+      query: `
       query Repositories($searchQuery: String!) {
         search(query: $searchQuery, type: REPOSITORY, first: 100) {
           results: nodes {
@@ -119,10 +120,11 @@ export default class GitHubProjectDataSource implements IProjectDataSource {
         }
       }
       `,
-      {
+      variables: {
         searchQuery: `org:${this.organizationName} openapi in:name`
       }
-    )
+    }
+    const response = await this.gitHubClient.graphql(request)
     return response.search.results.map((searchResult: SearchResult) => {
       return this.mapProject(searchResult)
     })
