@@ -12,6 +12,9 @@ type SearchResult = {
   }
   readonly defaultBranchRef: {
     readonly name: string
+    readonly target: {
+      readonly oid: string
+    }
   }
   readonly configYml?: {
     readonly text: string
@@ -61,6 +64,11 @@ export default class GitHubProjectDataSource implements IProjectDataSource {
               }
               defaultBranchRef {
                 name
+                target {
+                  ...on Commit {
+                    oid
+                  }
+                }
               }
               configYml: object(expression: "HEAD:.shape-docs.yml") {
                 ...ConfigParts
@@ -123,7 +131,7 @@ export default class GitHubProjectDataSource implements IProjectDataSource {
         searchResult.owner.login,
         searchResult.name,
         config.image,
-        searchResult.defaultBranchRef.name
+        searchResult.defaultBranchRef.target.oid
       )
     }
     const defaultName = searchResult.name.replace(/-openapi$/, "")
