@@ -24,7 +24,7 @@ export default class LockingAccessTokenRefresher implements IAccessTokenRefreshe
     return await withMutex(mutex, async () => {
       const authToken = await this.tokenRepository.getOAuthToken()
       if (accessToken != authToken.accessToken) {
-        // Given refresh token is outdated so we use our current access token.
+        // Given access token is outdated so we use our current access token.
         return authToken.accessToken
       }
       const refreshResult = await this.tokenRefresher.refreshOAuthToken(authToken.refreshToken)
