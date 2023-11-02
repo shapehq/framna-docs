@@ -1,0 +1,20 @@
+{
+  "name": "invite-user",
+  "version": "1.0.0",
+  "description": "Invite a user to Shape Docs",
+  "main": "lib/index.js",
+  "author": "Shape",
+  "scripts": {
+    "build": "tsc && ncc build --minify",
+    "test": "jest"
+  },
+  "dependencies": {
+    "@actions/core": "^1.10.0",
+    "@vercel/ncc": "^0.34.0",
+    "auth0": "^4.1.0",
+    "axios": "^1.6.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.2.2"
+  }
+}
