@@ -79,9 +79,9 @@ export default class Action {
     })
     if (!existingUser) {
       await this.userClient.sendChangePasswordEmail({ email: user.email })
-      this.logger.log(`${user.id} (${user.email}) has been invited.`)
+      this.logger.log(`${options.name} (${user.email}) has been invited.`)
     } else {
-      this.logger.log(`${user.id} (${user.email}) has been updated.`)
+      this.logger.log(`${options.name} (${user.email}) has been updated.`)
     }
   }
 }
