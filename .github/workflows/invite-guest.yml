@@ -113,7 +113,7 @@ jobs:
             --header "Content-Type: application/json"\
             --data "${ASSIGN_ROLES_REQUEST_BODY}"
           
-          if [ -z "EXISTING_USER_ID" ]; then
+          if [ -z "$EXISTING_USER_ID" ]; then
             # Send the user an e-mail asking to change their password.
             PASSWORD_CHANGE_REQUEST_BODY=$(
               jq -n '{"email": $USER_EMAIL,"connection": "Username-Password-Authentication"}'\
