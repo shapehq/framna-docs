@@ -1,6 +1,6 @@
 import Redis from "ioredis"
 import IMutex from "./IMutex"
-import IMutexFactory from "./IMutexFactory"
+import IKeyedMutexFactory from "./IKeyedMutexFactory"
 import { Mutex } from "redis-semaphore"
 
 class RedisMutex implements IMutex {
@@ -19,7 +19,7 @@ class RedisMutex implements IMutex {
   }
 }
 
-export default class RedisMutexFactory implements IMutexFactory {
+export default class RedisKeyedMutexFactory implements IKeyedMutexFactory {
   private readonly redis: Redis
   
   constructor(url: string) {

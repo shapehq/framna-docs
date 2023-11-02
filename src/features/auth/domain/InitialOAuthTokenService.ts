@@ -1,11 +1,11 @@
 import IRefreshTokenReader from "./IRefreshTokenReader"
 import IOAuthTokenRefresher from "./IOAuthTokenRefresher"
-import IUserDataOAuthTokenRepository from "./IUserDataOAuthTokenRepository"
+import IOAuthTokenRepository from "./IOAuthTokenRepository"
 
 type InitialOAuthTokenServiceConfig = {
   readonly refreshTokenReader: IRefreshTokenReader
   readonly oAuthTokenRefresher: IOAuthTokenRefresher
-  readonly oAuthTokenRepository: IUserDataOAuthTokenRepository
+  readonly oAuthTokenRepository: IOAuthTokenRepository
 }
 
 export default class InitialOAuthTokenService {
@@ -17,7 +17,7 @@ export default class InitialOAuthTokenService {
   
   async fetchInitialAuthTokenForUser(userId: string): Promise<void> {
     const refreshToken = await this.config.refreshTokenReader.getRefreshToken(userId)
-    const authToken = await this.config.oAuthTokenRefresher.refreshAccessToken(refreshToken)
+    const authToken = await this.config.oAuthTokenRefresher.refreshOAuthToken(refreshToken)
     this.config.oAuthTokenRepository.storeOAuthToken(userId, authToken)
   }
 }
