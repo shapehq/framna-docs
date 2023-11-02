@@ -15,6 +15,7 @@ env:
   AUTH0_TENANT: shape-docs-dev
   AUTH0_REGION: eu
   REDIRECT_URL: https://staging.docs.shapetools.io
+  OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN_SHAPE_DOCS }}
 jobs:
   build:
     name: Invite Guest
