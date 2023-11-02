@@ -128,10 +128,14 @@ jobs:
               --header "Content-Type: application/json"\
               --data "${PASSWORD_CHANGE_REQUEST_BODY}"\
               -o /dev/null
-              
+
+            echo "::group::Created User"
             echo "${USER_NAME} (${USER_EMAIL}) has been invited and can be managed by visiting:"
             echo $USER_MANAGEMENT_URL
+            echo "::endgroup::"
           else
+            echo "::group::Updated User"
             echo "${USER_NAME} (${USER_EMAIL}) was already invited but has been updated and can be managed by visiting:"
             echo $USER_MANAGEMENT_URL
+            echo "::endgroup::"
           fi
