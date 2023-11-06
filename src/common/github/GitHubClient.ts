@@ -109,6 +109,7 @@ export default class GitHubClient implements IGitHubClient {
       } else {
         return OrganizationMembershipStatus.UNKNOWN
       }
+    /* eslint-disable-next-line  @typescript-eslint/no-explicit-any */
     } catch (error: any) {
       if (error.status) {
         if (error.status == 404) {
