@@ -6,9 +6,9 @@ import GitHubClient from "@/common/github/GitHubClient"
 import GitHubOAuthTokenRefresher from "@/features/auth/data/GitHubOAuthTokenRefresher"
 import GitHubOrganizationSessionValidator from "@/common/session/GitHubOrganizationSessionValidator"
 import GitHubProjectDataSource from "@/features/projects/data/GitHubProjectDataSource"
-import InitialOAuthTokenService from "@/features/auth/domain/InitialOAuthTokenService"
 import KeyValueUserDataRepository from "@/common/userData/KeyValueUserDataRepository"
 import LockingAccessTokenRefresher from "@/features/auth/domain/LockingAccessTokenRefresher"
+import OAuthTokenTransferer from "@/features/auth/domain/OAuthTokenTransferer"
 import RedisKeyedMutexFactory from "@/common/mutex/RedisKeyedMutexFactory"
 import RedisKeyValueStore from "@/common/keyValueStore/RedisKeyValueStore"
 import SessionAccessTokenReader from "@/features/auth/domain/SessionAccessTokenReader"
@@ -98,7 +98,7 @@ export const projectDataSource = new CachingProjectDataSource(
   sessionProjectRepository
 )
 
-export const initialOAuthTokenService = new InitialOAuthTokenService({
+export const oAuthTokenTransferer = new OAuthTokenTransferer({
   refreshTokenReader: new Auth0RefreshTokenReader({
     domain: AUTH0_MANAGEMENT_DOMAIN,
     clientId: AUTH0_MANAGEMENT_CLIENT_ID,

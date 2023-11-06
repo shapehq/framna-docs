@@ -1,9 +1,9 @@
-import InitialOAuthTokenService from "../../src/features/auth/domain/InitialOAuthTokenService"
+import OAuthTokenTransferer from "../../src/features/auth/domain/OAuthTokenTransferer"
 import OAuthToken from "../../src/features/auth/domain/OAuthToken"
 
 test("It fetches refresh token for specified user", async () => {
   let fetchedUserId: string | undefined
-  const sut = new InitialOAuthTokenService({
+  const sut = new OAuthTokenTransferer({
     refreshTokenReader: {
       async getRefreshToken(userId) {
         fetchedUserId = userId
@@ -23,13 +23,13 @@ test("It fetches refresh token for specified user", async () => {
       async deleteOAuthToken() {}
     }
   })
-  await sut.fetchInitialAuthTokenForUser("123")
+  await sut.transferAuthTokenForUser("123")
   expect(fetchedUserId).toBe("123")
 })
 
 test("It refreshes the fetched refresh token", async () => {
   let refreshedRefreshToken: string | undefined
-  const sut = new InitialOAuthTokenService({
+  const sut = new OAuthTokenTransferer({
     refreshTokenReader: {
       async getRefreshToken() {
         return "helloworld"
@@ -49,14 +49,14 @@ test("It refreshes the fetched refresh token", async () => {
       async deleteOAuthToken() {}
     }
   })
-  await sut.fetchInitialAuthTokenForUser("123")
+  await sut.transferAuthTokenForUser("123")
   expect(refreshedRefreshToken).toBe("helloworld")
 })
 
 test("It stores the refreshed auth token for the correct user ID", async () => {
   let storedAuthToken: OAuthToken | undefined
   let storedUserId: string | undefined
-  const sut = new InitialOAuthTokenService({
+  const sut = new OAuthTokenTransferer({
     refreshTokenReader: {
       async getRefreshToken() {
         return "helloworld"
@@ -78,7 +78,7 @@ test("It stores the refreshed auth token for the correct user ID", async () => {
       async deleteOAuthToken() {}
     }
   })
-  await sut.fetchInitialAuthTokenForUser("123")
+  await sut.transferAuthTokenForUser("123")
   expect(storedAuthToken?.accessToken).toBe("foo")
   expect(storedAuthToken?.refreshToken).toBe("bar")
   expect(storedUserId).toBe("123")
