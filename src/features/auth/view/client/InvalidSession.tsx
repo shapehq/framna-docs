@@ -1,30 +1,32 @@
 "use client"
 
-import { Box, Button, Typography } from "@mui/material"
+import { Box, Button, Stack, Typography } from "@mui/material"
 
-export default function InvalidSession() {
+export default function InvalidSession({
+  siteName,
+  organizationName
+}: {
+  siteName: string
+  organizationName: string
+}) {
   const navigateToFrontPage = () => {
     if (typeof window !== "undefined") {
       window.location.href = "/api/auth/logout"
     }
   }
-  const siteName = process.env.NEXT_PUBLIC_SHAPE_DOCS_TITLE
   return (
-    <Box sx={{
-      display: "flex",
-      width: "100%",
-      height: "100%",
-      alignItems: "center",
-      justifyContent: "center",
-      flexDirection: "column",
-      gap: 2
-    }}>
-      <Typography variant="h6">
-        {`Your account does not have access to ${siteName}.`}
-      </Typography>
-      <Button variant="contained" onClick={navigateToFrontPage}>
-        Log out
-      </Button>
-    </Box>
+    <Stack alignItems="center" justifyContent="center" sx={{ width: "100%", height: "100%" }}>
+      <Stack direction="column" spacing={3} alignItems="center" sx={{ margin: 2, maxWidth: "500px" }}>
+        <Typography variant="h6" align="center">
+          Your account does not have access to {siteName}
+        </Typography>
+        <Typography align="center">
+          Access to {siteName} requires that your account is an active member of the <strong>{organizationName}</strong> organization on GitHub.
+        </Typography>
+        <Button variant="contained" onClick={navigateToFrontPage}>
+          Log out
+        </Button>
+      </Stack>
+    </Stack>
   )
 }
