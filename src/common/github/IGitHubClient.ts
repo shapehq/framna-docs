@@ -40,9 +40,22 @@ export type AddCommentToPullRequestRequest = {
   readonly body: string
 }
 
+export type GetOrganizationMembershipStatusRequest = {
+  readonly organizationName: string
+}
+
+export enum OrganizationMembershipStatus {
+  NOT_A_MEMBER = "not_a_member",
+  ACTIVE = "active",
+  PENDING = "pending",
+  GITHUB_APP_BLOCKED = "github_app_blocked",
+  UNKNOWN = "unknown"
+}
+
 export default interface IGitHubClient {
   graphql(request: GraphQLQueryRequest): Promise<GraphQlQueryResponse>
   getRepositoryContent(request: GetRepositoryContentRequest): Promise<RepositoryContent>
   getPullRequestComments(request: GetPullRequestCommentsRequest): Promise<PullRequestComment[]>
   addCommentToPullRequest(request: AddCommentToPullRequestRequest): Promise<void>
+  getOrganizationMembershipStatus(request: GetOrganizationMembershipStatusRequest): Promise<OrganizationMembershipStatus>
 }

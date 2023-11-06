@@ -6,8 +6,10 @@ import IGitHubClient, {
   GetRepositoryContentRequest,
   GetPullRequestCommentsRequest,
   AddCommentToPullRequestRequest,
+  GetOrganizationMembershipStatusRequest,
   RepositoryContent,
-  PullRequestComment
+  PullRequestComment,
+  OrganizationMembershipStatus
 } from "./IGitHubClient"
 
 type GitHubClientConfig = {
@@ -89,5 +91,38 @@ export default class GitHubClient implements IGitHubClient {
       issue_number: request.pullRequestNumber,
       body: request.body
     })
+  }
+  
+  async getOrganizationMembershipStatus(
+    request: GetOrganizationMembershipStatusRequest
+  ): Promise<OrganizationMembershipStatus> {
+    const accessToken = await this.accessTokenReader.getAccessToken()
+    const octokit = new Octokit({ auth: accessToken })
+    try {
+      const response = await octokit.rest.orgs.getMembershipForAuthenticatedUser({
+        org: request.organizationName
+      })
+      console.log(response)
+      if (response.data.state == "active") {
+        return OrganizationMembershipStatus.ACTIVE
+      } else if (response.data.state == "pending") {
+        return OrganizationMembershipStatus.PENDING
+      } else {
+        return OrganizationMembershipStatus.UNKNOWN
+      }
+    } catch (error: any) {
+      console.log(error)
+      if (error.status) {
+        if (error.status == 404) {
+          return OrganizationMembershipStatus.NOT_A_MEMBER
+        } else if (error.status == 403) {
+          return OrganizationMembershipStatus.GITHUB_APP_BLOCKED
+        } else  {
+          throw error
+        }
+      } else {
+        throw error
+      }
+    }
   }
 }

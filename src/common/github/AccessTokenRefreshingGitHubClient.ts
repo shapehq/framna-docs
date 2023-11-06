@@ -4,9 +4,11 @@ import IGitHubClient, {
   GraphQlQueryResponse,
   GetRepositoryContentRequest,
   GetPullRequestCommentsRequest,
+  GetOrganizationMembershipStatusRequest,
   AddCommentToPullRequestRequest,
   RepositoryContent,
-  PullRequestComment
+  PullRequestComment,
+  OrganizationMembershipStatus
 } from "./IGitHubClient"
 
 const HttpErrorSchema = z.object({
@@ -57,6 +59,14 @@ export default class AccessTokenRefreshingGitHubClient implements IGitHubClient 
   async addCommentToPullRequest(request: AddCommentToPullRequestRequest): Promise<void> {
     return await this.send(async () => {
       return await this.gitHubClient.addCommentToPullRequest(request)
+    })
+  }
+  
+  async getOrganizationMembershipStatus(
+    request: GetOrganizationMembershipStatusRequest
+  ): Promise<OrganizationMembershipStatus> {
+    return await this.send(async () => {
+      return await this.gitHubClient.getOrganizationMembershipStatus(request)
     })
   }
   
