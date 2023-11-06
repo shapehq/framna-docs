@@ -6,6 +6,8 @@ import IGitHubClient, {
   GetRepositoryContentRequest,
   GetPullRequestCommentsRequest,
   AddCommentToPullRequestRequest,
+  GetOrganizationMembershipStatusRequest,
+  GetOrganizationMembershipStatusRequestResponse,
   RepositoryContent,
   PullRequestComment
 } from "./IGitHubClient"
@@ -89,5 +91,16 @@ export default class GitHubClient implements IGitHubClient {
       issue_number: request.pullRequestNumber,
       body: request.body
     })
+  }
+  
+  async getOrganizationMembershipStatus(
+    request: GetOrganizationMembershipStatusRequest
+  ): Promise<GetOrganizationMembershipStatusRequestResponse> {
+    const accessToken = await this.accessTokenReader.getAccessToken()
+    const octokit = new Octokit({ auth: accessToken })
+    const response = await octokit.rest.orgs.getMembershipForAuthenticatedUser({
+      org: request.organizationName
+    })
+    return { state: response.data.state }
   }
 }

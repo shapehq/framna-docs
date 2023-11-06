@@ -9,10 +9,13 @@ export default function ErrorHandler({
   children: React.ReactNode
 }) {
   const onSWRError = (error: FetcherError) => {
+    if (typeof window === "undefined") {
+      return
+    }
     if (error.status == 401) {
-      if (typeof window !== "undefined") {
-        window.location.href = "/api/auth/logout"
-      }
+      window.location.href = "/api/auth/logout"
+    } else if (error.status == 403) {
+      window.location.href = "/invalid-session"
     }
   }
   return (

@@ -1,6 +1,6 @@
 import { getSession } from "@auth0/nextjs-auth0"
+import { UnauthorizedError } from "@/common/errors"
 import ISession from "./ISession"
-import { UnauthorizedError } from "@/features/auth/domain/AuthError"
 
 export default class Auth0Session implements ISession {
   async getUserId(): Promise<string> {
