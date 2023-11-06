@@ -1,6 +1,5 @@
 import {
-  GetOrganizationMembershipStatusRequest,
-  OrganizationMembershipStatus
+  GetOrganizationMembershipStatusRequest
 } from "../../../src/common/github/IGitHubClient"
 import GitHubOrganizationSessionValidator from "../../../src/common/session/GitHubOrganizationSessionValidator"
 
@@ -20,7 +19,7 @@ test("It requests organization membership status for the specified organization"
       async addCommentToPullRequest() {},
       async getOrganizationMembershipStatus(request: GetOrganizationMembershipStatusRequest) {
         queriedOrganizationName = request.organizationName
-        return OrganizationMembershipStatus.UNKNOWN
+        return { state: "active" }
       }
     },
     "foo"
@@ -29,7 +28,7 @@ test("It requests organization membership status for the specified organization"
   expect(queriedOrganizationName).toBe("foo")
 })
 
-test("It considers session valid when membership status is \"Active\"", async () => {
+test("It considers session valid when membership state is \"active\"", async () => {
   const sut = new GitHubOrganizationSessionValidator(
     {
       async graphql() {
@@ -43,7 +42,7 @@ test("It considers session valid when membership status is \"Active\"", async ()
       },
       async addCommentToPullRequest() {},
       async getOrganizationMembershipStatus() {
-        return OrganizationMembershipStatus.ACTIVE
+        return { state: "active" }
       }
     },
     "foo"
@@ -52,7 +51,7 @@ test("It considers session valid when membership status is \"Active\"", async ()
   expect(isSessionValid).toBeTruthy()
 })
 
-test("It considers session invalid when membership status is \"Not a member\"", async () => {
+test("It considers session invalid when membership state is \"pending\"", async () => {
   const sut = new GitHubOrganizationSessionValidator(
     {
       async graphql() {
@@ -66,7 +65,7 @@ test("It considers session invalid when membership status is \"Not a member\"", 
       },
       async addCommentToPullRequest() {},
       async getOrganizationMembershipStatus() {
-        return OrganizationMembershipStatus.NOT_A_MEMBER
+        return { state: "pending" }
       }
     },
     "foo"
@@ -75,7 +74,7 @@ test("It considers session invalid when membership status is \"Not a member\"", 
   expect(isSessionValid).toBeFalsy()
 })
 
-test("It considers session invalid when membership status is \"Pending\"", async () => {
+test("It considers session invalid when receiving HTTP 404, indicating user is not member of the organization", async () => {
   const sut = new GitHubOrganizationSessionValidator(
     {
       async graphql() {
@@ -89,7 +88,7 @@ test("It considers session invalid when membership status is \"Pending\"", async
       },
       async addCommentToPullRequest() {},
       async getOrganizationMembershipStatus() {
-        return OrganizationMembershipStatus.PENDING
+        throw { status: 404, message: "User is not member of organization"}
       }
     },
     "foo"
@@ -98,7 +97,7 @@ test("It considers session invalid when membership status is \"Pending\"", async
   expect(isSessionValid).toBeFalsy()
 })
 
-test("It considers session invalid when membership status is \"GitHub App Blocked\"", async () => {
+test("It considers session invalid when receiving HTTP 404, indicating that the organization has blocked the GitHub app", async () => {
   const sut = new GitHubOrganizationSessionValidator(
     {
       async graphql() {
@@ -112,7 +111,7 @@ test("It considers session invalid when membership status is \"GitHub App Blocke
       },
       async addCommentToPullRequest() {},
       async getOrganizationMembershipStatus() {
-        return OrganizationMembershipStatus.GITHUB_APP_BLOCKED
+        throw { status: 403, message: "Organization has blocked GitHub app"}
       }
     },
     "foo"
@@ -121,7 +120,7 @@ test("It considers session invalid when membership status is \"GitHub App Blocke
   expect(isSessionValid).toBeFalsy()
 })
 
-test("It considers session invalid when membership status is \"Unknown\"", async () => {
+test("It forwards error when getting membership status throws unknown error", async () => {
   const sut = new GitHubOrganizationSessionValidator(
     {
       async graphql() {
@@ -135,11 +134,10 @@ test("It considers session invalid when membership status is \"Unknown\"", async
       },
       async addCommentToPullRequest() {},
       async getOrganizationMembershipStatus() {
-        return OrganizationMembershipStatus.UNKNOWN
+        throw { status: 500 }
       }
     },
     "foo"
   )
-  const isSessionValid = await sut.validateSession()
-  expect(isSessionValid).toBeFalsy()
+  await expect(sut.validateSession()).rejects.toEqual({ status: 500 })
 })

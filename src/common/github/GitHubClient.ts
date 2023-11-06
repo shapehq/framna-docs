@@ -7,9 +7,9 @@ import IGitHubClient, {
   GetPullRequestCommentsRequest,
   AddCommentToPullRequestRequest,
   GetOrganizationMembershipStatusRequest,
+  GetOrganizationMembershipStatusRequestResponse,
   RepositoryContent,
-  PullRequestComment,
-  OrganizationMembershipStatus
+  PullRequestComment
 } from "./IGitHubClient"
 
 type GitHubClientConfig = {
@@ -95,33 +95,12 @@ export default class GitHubClient implements IGitHubClient {
   
   async getOrganizationMembershipStatus(
     request: GetOrganizationMembershipStatusRequest
-  ): Promise<OrganizationMembershipStatus> {
+  ): Promise<GetOrganizationMembershipStatusRequestResponse> {
     const accessToken = await this.accessTokenReader.getAccessToken()
     const octokit = new Octokit({ auth: accessToken })
-    try {
-      const response = await octokit.rest.orgs.getMembershipForAuthenticatedUser({
-        org: request.organizationName
-      })
-      if (response.data.state == "active") {
-        return OrganizationMembershipStatus.ACTIVE
-      } else if (response.data.state == "pending") {
-        return OrganizationMembershipStatus.PENDING
-      } else {
-        return OrganizationMembershipStatus.UNKNOWN
-      }
-    /* eslint-disable-next-line  @typescript-eslint/no-explicit-any */
-    } catch (error: any) {
-      if (error.status) {
-        if (error.status == 404) {
-          return OrganizationMembershipStatus.NOT_A_MEMBER
-        } else if (error.status == 403) {
-          return OrganizationMembershipStatus.GITHUB_APP_BLOCKED
-        } else  {
-          throw error
-        }
-      } else {
-        throw error
-      }
-    }
+    const response = await octokit.rest.orgs.getMembershipForAuthenticatedUser({
+      org: request.organizationName
+    })
+    return { state: response.data.state }
   }
 }

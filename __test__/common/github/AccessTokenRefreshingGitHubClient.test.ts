@@ -3,8 +3,7 @@ import {
   GraphQLQueryRequest,
   GetRepositoryContentRequest,
   GetPullRequestCommentsRequest,
-  AddCommentToPullRequestRequest,
-  OrganizationMembershipStatus
+  AddCommentToPullRequestRequest
 } from "../../../src/common/github/IGitHubClient"
 
 test("It forwards a GraphQL request", async () => {
@@ -30,7 +29,7 @@ test("It forwards a GraphQL request", async () => {
     },
     async addCommentToPullRequest() {},
     async getOrganizationMembershipStatus() {
-      return OrganizationMembershipStatus.UNKNOWN
+      return { state: "active" }
     }
   })
   const request: GraphQLQueryRequest = {
@@ -64,7 +63,7 @@ test("It forwards a request to get the repository content", async () => {
     },
     async addCommentToPullRequest() {},
     async getOrganizationMembershipStatus() {
-      return OrganizationMembershipStatus.UNKNOWN
+      return { state: "active" }
     }
   })
   const request: GetRepositoryContentRequest = {
@@ -100,7 +99,7 @@ test("It forwards a request to get comments to a pull request", async () => {
     },
     async addCommentToPullRequest() {},
     async getOrganizationMembershipStatus() {
-      return OrganizationMembershipStatus.UNKNOWN
+      return { state: "active" }
     }
   })
   const request: GetPullRequestCommentsRequest = {
@@ -137,7 +136,7 @@ test("It forwards a request to add a comment to a pull request", async () => {
       forwardedRequest = request
     },
     async getOrganizationMembershipStatus() {
-      return OrganizationMembershipStatus.UNKNOWN
+      return { state: "active" }
     }
   })
   const request: AddCommentToPullRequestRequest = {
@@ -179,7 +178,7 @@ test("It retries with a refreshed access token when receiving HTTP 401", async (
     },
     async addCommentToPullRequest() {},
     async getOrganizationMembershipStatus() {
-      return OrganizationMembershipStatus.UNKNOWN
+      return { state: "active" }
     }
   })
   const request: GraphQLQueryRequest = {
@@ -213,7 +212,7 @@ test("It only retries a request once when receiving HTTP 401", async () => {
     },
     async addCommentToPullRequest() {},
     async getOrganizationMembershipStatus() {
-      return OrganizationMembershipStatus.UNKNOWN
+      return { state: "active" }
     }
   })
   const request: GraphQLQueryRequest = {
@@ -250,7 +249,7 @@ test("It does not refresh an access token when the initial request was successfu
     },
     async addCommentToPullRequest() {},
     async getOrganizationMembershipStatus() {
-      return OrganizationMembershipStatus.UNKNOWN
+      return { state: "active" }
     }
   })
   const request: GraphQLQueryRequest = {
