@@ -4,6 +4,7 @@ import Auth0Session from "@/common/session/Auth0Session"
 import CachingProjectDataSource from "@/features/projects/domain/CachingProjectDataSource"
 import GitHubClient from "@/common/github/GitHubClient"
 import GitHubOAuthTokenRefresher from "@/features/auth/data/GitHubOAuthTokenRefresher"
+import GitHubOrganizationSessionValidator from "@/common/session/GitHubOrganizationSessionValidator"
 import GitHubProjectDataSource from "@/features/projects/data/GitHubProjectDataSource"
 import InitialOAuthTokenService from "@/features/auth/domain/InitialOAuthTokenService"
 import KeyValueUserDataRepository from "@/common/userData/KeyValueUserDataRepository"
@@ -15,6 +16,7 @@ import SessionDataRepository from "@/common/userData/SessionDataRepository"
 import SessionMutexFactory from "@/common/mutex/SessionMutexFactory"
 import SessionOAuthTokenRepository from "@/features/auth/domain/SessionOAuthTokenRepository"
 import SessionProjectRepository from "@/features/projects/domain/SessionProjectRepository"
+import SessionValidatingProjectDataSource from "@/features/projects/domain/SessionValidatingProjectDataSource"
 import OAuthTokenRepository from "@/features/auth/domain/OAuthTokenRepository"
 import authLogoutHandler from "@/common/authHandler/logout"
 
@@ -70,6 +72,11 @@ export const gitHubClient = new AccessTokenRefreshingGitHubClient(
   })
 )
 
+export const sessionValidator = new GitHubOrganizationSessionValidator(
+  gitHubClient,
+  GITHUB_ORGANIZATION_NAME
+)
+
 export const sessionProjectRepository = new SessionProjectRepository(
   new SessionDataRepository(
     new Auth0Session(),
@@ -81,9 +88,12 @@ export const sessionProjectRepository = new SessionProjectRepository(
 )
 
 export const projectDataSource = new CachingProjectDataSource(
-  new GitHubProjectDataSource(
-    gitHubClient,
-    GITHUB_ORGANIZATION_NAME
+  new SessionValidatingProjectDataSource(
+    sessionValidator,
+    new GitHubProjectDataSource(
+      gitHubClient,
+      GITHUB_ORGANIZATION_NAME
+    )
   ),
   sessionProjectRepository
 )
