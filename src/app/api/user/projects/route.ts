@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server"
 import { projectDataSource } from "@/composition"
-import { UnauthorizedError } from "@/common/errors"
+import { UnauthorizedError, InvalidSessionError } from "@/common/errors"
 
 export async function GET() {
   try {
@@ -8,20 +8,17 @@ export async function GET() {
     return NextResponse.json({projects})
   } catch (error) {
     if (error instanceof UnauthorizedError) {
-      return NextResponse.json({
-        status: 401,
-        message: error.message
-      }, { status: 401 })
+      return errorResponse(401, error.message)
+    } else if (error instanceof InvalidSessionError) {
+      return errorResponse(403, error.message)
     } else if (error instanceof Error) {
-      return NextResponse.json({
-        status: 500,
-        message: error.message
-      }, { status: 500 })
+      return errorResponse(500, error.message)
     } else {
-      return NextResponse.json({
-        status: 500,
-        message: "Unknown error"
-      }, { status: 500 })
+      return errorResponse(500, "Unknown error")
     }
   }
+}
+
+function errorResponse(status: number, message: string): NextResponse {
+  return NextResponse.json({ status, message }, { status })
 }
