@@ -1,6 +1,6 @@
 "use client"
 
-import { Box, Button, Stack, Typography } from "@mui/material"
+import { Button, Stack, Typography } from "@mui/material"
 
 export default function InvalidSession({
   siteName,
