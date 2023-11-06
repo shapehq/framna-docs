@@ -18,20 +18,16 @@ import {
 const { SHAPE_DOCS_BASE_URL } = process.env
 
 const afterCallback: AfterCallbackAppRoute = async (_req, session) => {
-  console.log("After callback")
-  console.log(session)
   await oAuthTokenTransferer.transferAuthTokenForUser(session.user.sub)
   return session
 }
 
 const onError: AppRouterOnError = async (error: any) => {
-  console.log(error)
   const url = new URL(SHAPE_DOCS_BASE_URL + "/api/auth/forceLogout")
   return NextResponse.redirect(url)
 }
 
 const onLogout: NextAppRouterHandler = async (req: NextRequest, ctx: AppRouteHandlerFnContext) => {
-  console.log("Log out")
   await Promise.all([
     sessionOAuthTokenRepository.deleteOAuthToken().catch(() => null),
     sessionProjectRepository.deleteProjects().catch(() => null)
