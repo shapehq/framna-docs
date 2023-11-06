@@ -1,4 +1,4 @@
-import { UnauthorizedError } from "@/common/errors"
+import { UnauthorizedError } from "../../../common/errors"
 import ZodJSONCoder from "../../../common/utils/ZodJSONCoder"
 import ISessionDataRepository from "@/common/userData/ISessionDataRepository"
 import ISessionOAuthTokenRepository from "./SessionOAuthTokenRepository"
