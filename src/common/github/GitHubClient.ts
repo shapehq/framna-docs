@@ -102,7 +102,6 @@ export default class GitHubClient implements IGitHubClient {
       const response = await octokit.rest.orgs.getMembershipForAuthenticatedUser({
         org: request.organizationName
       })
-      console.log(response)
       if (response.data.state == "active") {
         return OrganizationMembershipStatus.ACTIVE
       } else if (response.data.state == "pending") {
@@ -111,7 +110,6 @@ export default class GitHubClient implements IGitHubClient {
         return OrganizationMembershipStatus.UNKNOWN
       }
     } catch (error: any) {
-      console.log(error)
       if (error.status) {
         if (error.status == 404) {
           return OrganizationMembershipStatus.NOT_A_MEMBER
