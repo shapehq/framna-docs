@@ -1,6 +1,6 @@
+import { UnauthorizedError } from "@/common/errors"
 import OAuthToken from "../domain/OAuthToken"
 import IOAuthTokenRefresher from "../domain/IOAuthTokenRefresher"
-import { UnauthorizedError } from "../domain/AuthError"
 
 export interface GitHubOAuthTokenRefresherConfig {
   readonly clientId: string

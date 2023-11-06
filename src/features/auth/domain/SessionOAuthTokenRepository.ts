@@ -1,7 +1,7 @@
+import { UnauthorizedError } from "@/common/errors"
 import ZodJSONCoder from "../../../common/utils/ZodJSONCoder"
 import ISessionDataRepository from "@/common/userData/ISessionDataRepository"
 import ISessionOAuthTokenRepository from "./SessionOAuthTokenRepository"
-import { UnauthorizedError } from "./AuthError"
 import OAuthToken, { OAuthTokenSchema } from "./OAuthToken"
 
 export default class SessionOAuthTokenRepository implements ISessionOAuthTokenRepository {

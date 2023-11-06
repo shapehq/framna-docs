@@ -1,6 +1,6 @@
 import { ManagementClient } from "auth0"
+import { UnauthorizedError } from "@/common/errors"
 import IRefreshTokenReader from "../domain/IRefreshTokenReader"
-import { UnauthorizedError } from "../domain/AuthError"
 
 interface Auth0RefreshTokenReaderConfig {
   domain: string

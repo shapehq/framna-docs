@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server"
 import { projectDataSource } from "@/composition"
-import { UnauthorizedError } from "@/features/auth/domain/AuthError"
+import { UnauthorizedError } from "@/common/errors"
 
 export async function GET() {
   try {
