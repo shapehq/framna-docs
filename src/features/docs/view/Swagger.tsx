@@ -7,7 +7,7 @@ const Swagger = ({ url }: { url: string }) => {
   const [isLoading, setLoading] = useState(true)
   return (
     <LoadingWrapper showLoadingIndicator={isLoading}>
-      <SwaggerUI url={url} onComplete={() => setLoading(false)} />
+      <SwaggerUI url={url} onComplete={() => setLoading(false)} deepLinking />
     </LoadingWrapper>
   )
 }
