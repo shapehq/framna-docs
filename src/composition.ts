@@ -1,11 +1,12 @@
+import Auth0Session from "@/common/session/Auth0Session"
+import RedisKeyedMutexFactory from "@/common/mutex/RedisKeyedMutexFactory"
+import RedisKeyValueStore from "@/common/keyValueStore/RedisKeyValueStore"
+
 import {
   AccessTokenRefreshingGitHubClient,
-  Auth0Session,
   GitHubClient,
   GitHubOrganizationSessionValidator,
   KeyValueUserDataRepository,
-  RedisKeyedMutexFactory,
-  RedisKeyValueStore,
   SessionMutexFactory
 } from "@/common"
 import {
