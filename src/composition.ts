@@ -12,6 +12,7 @@ import CompositeLogInHandler from "@/features/auth/domain/logIn/CompositeLogInHa
 import CompositeLogOutHandler from "@/features/auth/domain/logOut/CompositeLogOutHandler"
 import CredentialsTransferringLogInHandler from "@/features/auth/domain/logIn/CredentialsTransferringLogInHandler"
 import ErrorIgnoringLogOutHandler from "@/features/auth/domain/logOut/ErrorIgnoringLogOutHandler"
+import ForgivingProjectDataSource from "./features/projects/domain/ForgivingProjectDataSource"
 import GitHubClient from "@/common/github/GitHubClient"
 import GitHubOAuthTokenRefresher from "@/features/auth/data/GitHubOAuthTokenRefresher"
 import GitHubOrganizationSessionValidator from "@/common/session/GitHubOrganizationSessionValidator"
@@ -168,10 +169,13 @@ export const projectRepository = new ProjectRepository(
 export const projectDataSource = new CachingProjectDataSource(
   new SessionValidatingProjectDataSource(
     sessionValidator,
-    new GitHubProjectDataSource(
-      userGitHubClient,
-      GITHUB_ORGANIZATION_NAME
-    )
+    new ForgivingProjectDataSource({
+      accessTokenReader: accessTokenService,
+      projectDataSource: new GitHubProjectDataSource(
+        userGitHubClient,
+        GITHUB_ORGANIZATION_NAME
+      )
+    })
   ),
   projectRepository
 )
