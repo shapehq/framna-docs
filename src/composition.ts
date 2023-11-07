@@ -10,7 +10,6 @@ import GitHubOrganizationSessionValidator from "@/common/session/GitHubOrganizat
 import GitHubProjectDataSource from "@/features/projects/data/GitHubProjectDataSource"
 import KeyValueUserDataRepository from "@/common/userData/KeyValueUserDataRepository"
 import LockingAccessTokenRefresher from "@/features/auth/domain/LockingAccessTokenRefresher"
-import OAuthTokenTransferer from "@/features/auth/domain/OAuthTokenTransferer"
 import ProjectRepository from "@/features/projects/domain/ProjectRepository"
 import RedisKeyedMutexFactory from "@/common/mutex/RedisKeyedMutexFactory"
 import RedisKeyValueStore from "@/common/keyValueStore/RedisKeyValueStore"
@@ -20,7 +19,6 @@ import SessionMutexFactory from "@/common/mutex/SessionMutexFactory"
 import SessionOAuthTokenRepository from "@/features/auth/domain/SessionOAuthTokenRepository"
 import SessionValidatingProjectDataSource from "@/features/projects/domain/SessionValidatingProjectDataSource"
 import OAuthTokenRepository from "@/features/auth/domain/OAuthTokenRepository"
-import authLogoutHandler from "@/common/authHandler/logout"
 import UserDataCleanUpLogOutHandler from "@/features/auth/domain/logOut/UserDataCleanUpLogOutHandler"
 
 const {
@@ -37,13 +35,15 @@ const {
 
 const gitHubPrivateKey = Buffer.from(GITHUB_PRIVATE_KEY_BASE_64, "base64").toString("utf-8")
 
+const session = new Auth0Session()
+
 const oAuthTokenRepository = new KeyValueUserDataRepository(
   new RedisKeyValueStore(REDIS_URL),
   "authToken"
 )
 
 export const sessionOAuthTokenRepository = new SessionOAuthTokenRepository(
-  new SessionDataRepository(new Auth0Session(), oAuthTokenRepository)
+  new SessionDataRepository(session, oAuthTokenRepository)
 )
 
 const gitHubOAuthTokenRefresher = new GitHubOAuthTokenRefresher({
@@ -58,7 +58,7 @@ export const gitHubClient = new AccessTokenRefreshingGitHubClient(
   new LockingAccessTokenRefresher(
     new SessionMutexFactory(
       new RedisKeyedMutexFactory(REDIS_URL),
-      new Auth0Session(),
+      session,
       "mutexAccessToken"
     ),
     sessionOAuthTokenRepository,
@@ -115,6 +115,6 @@ export const oAuthTokenTransferer = new OAuthTokenTransferer({
 export const logOutHandler = new ErrorIgnoringLogOutHandler(
   new CompositeLogOutHandler([
     new UserDataCleanUpLogOutHandler(session, projectUserDataRepository),
-    new UserDataCleanUpLogOutHandler(session, oAuthTokenRepository),
+    new UserDataCleanUpLogOutHandler(session, oAuthTokenRepository)
   ])
 )

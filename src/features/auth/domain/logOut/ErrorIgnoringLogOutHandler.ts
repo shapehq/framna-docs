@@ -10,6 +10,8 @@ export default class ErrorIgnoringLogOutHandler implements ILogOutHandler {
   async handleLogOut(): Promise<void> {
     try {
       await this.handler.handleLogOut()
-    } catch {}
+    } catch {
+      // We intentionally do not handle errors.
+    }
   }
 }
