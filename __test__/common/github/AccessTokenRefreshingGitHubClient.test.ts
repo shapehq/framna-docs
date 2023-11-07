@@ -11,8 +11,7 @@ test("It forwards a GraphQL request", async () => {
   const sut = new AccessTokenRefreshingGitHubClient({
     async getAccessToken() {
       return "foo"
-    }
-  }, {
+    },
     async refreshAccessToken() {
       return "foo"
     }
@@ -45,8 +44,7 @@ test("It forwards a request to get the repository content", async () => {
   const sut = new AccessTokenRefreshingGitHubClient({
     async getAccessToken() {
       return "foo"
-    }
-  }, {
+    },
     async refreshAccessToken() {
       return "foo"
     }
@@ -81,8 +79,7 @@ test("It forwards a request to get comments to a pull request", async () => {
   const sut = new AccessTokenRefreshingGitHubClient({
     async getAccessToken() {
       return "foo"
-    }
-  }, {
+    },
     async refreshAccessToken() {
       return "foo"
     }
@@ -117,8 +114,7 @@ test("It forwards a request to add a comment to a pull request", async () => {
   const sut = new AccessTokenRefreshingGitHubClient({
     async getAccessToken() {
       return "foo"
-    }
-  }, {
+    },
     async refreshAccessToken() {
       return "foo"
     }
@@ -156,8 +152,7 @@ test("It retries with a refreshed access token when receiving HTTP 401", async (
   const sut = new AccessTokenRefreshingGitHubClient({
     async getAccessToken() {
       return "foo"
-    }
-  }, {
+    },
     async refreshAccessToken() {
       didRefreshAccessToken = true
       return "foo"
@@ -194,8 +189,7 @@ test("It only retries a request once when receiving HTTP 401", async () => {
   const sut = new AccessTokenRefreshingGitHubClient({
     async getAccessToken() {
       return "foo"
-    }
-  }, {
+    },
     async refreshAccessToken() {
       return "foo"
     }
@@ -232,8 +226,7 @@ test("It does not refresh an access token when the initial request was successfu
   const sut = new AccessTokenRefreshingGitHubClient({
     async getAccessToken() {
       return "foo"
-    }
-  }, {
+    },
     async refreshAccessToken() {
       return "foo"
     }

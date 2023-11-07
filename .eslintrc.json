@@ -16,7 +16,8 @@
     "no-unmodified-loop-condition": ["error"],
     "no-unreachable-loop": ["error"],
     "no-unused-private-class-members": ["error"],
-    "require-atomic-updates": ["error"]
+    "require-atomic-updates": ["error"],
+    "@typescript-eslint/no-unused-vars": ["error", { "argsIgnorePattern": "^_" }]
   },
   "parser": "@typescript-eslint/parser",
   "plugins": [

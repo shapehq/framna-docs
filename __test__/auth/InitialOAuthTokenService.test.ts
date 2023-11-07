@@ -1,5 +1,5 @@
-import InitialOAuthTokenService from "../../src/features/auth/domain/InitialOAuthTokenService"
-import OAuthToken from "../../src/features/auth/domain/OAuthToken"
+import InitialOAuthTokenService from "../../src/features/auth/domain/oAuthToken/InitialOAuthTokenService"
+import OAuthToken from "../../src/features/auth/domain/oAuthToken/OAuthToken"
 
 test("It fetches refresh token for specified user", async () => {
   let fetchedUserId: string | undefined
@@ -16,11 +16,11 @@ test("It fetches refresh token for specified user", async () => {
       }
     },
     oAuthTokenRepository: {
-      async getOAuthToken() {
+      async get() {
         return { accessToken: "foo", refreshToken: "bar" }
       },
-      async storeOAuthToken() {},
-      async deleteOAuthToken() {}
+      async set() {},
+      async delete() {}
     }
   })
   await sut.fetchInitialAuthTokenForUser("123")
@@ -42,11 +42,11 @@ test("It refreshes the fetched refresh token", async () => {
       }
     },
     oAuthTokenRepository: {
-      async getOAuthToken() {
+      async get() {
         return { accessToken: "foo", refreshToken: "bar" }
       },
-      async storeOAuthToken() {},
-      async deleteOAuthToken() {}
+      async set() {},
+      async delete() {}
     }
   })
   await sut.fetchInitialAuthTokenForUser("123")
@@ -68,14 +68,14 @@ test("It stores the refreshed auth token for the correct user ID", async () => {
       }
     },
     oAuthTokenRepository: {
-      async getOAuthToken() {
+      async get() {
         return { accessToken: "foo", refreshToken: "bar" }
       },
-      async storeOAuthToken(userId, token) {
+      async set(userId, token) {
         storedAuthToken = token
         storedUserId = userId
       },
-      async deleteOAuthToken() {}
+      async delete() {}
     }
   })
   await sut.fetchInitialAuthTokenForUser("123")

@@ -1,6 +1,9 @@
-import IRefreshTokenReader from "./IRefreshTokenReader"
 import IOAuthTokenRefresher from "./IOAuthTokenRefresher"
 import IOAuthTokenRepository from "./IOAuthTokenRepository"
+
+interface IRefreshTokenReader {
+  getRefreshToken(userId: string): Promise<string>
+}
 
 type InitialOAuthTokenServiceConfig = {
   readonly refreshTokenReader: IRefreshTokenReader
@@ -18,6 +21,6 @@ export default class InitialOAuthTokenService {
   async fetchInitialAuthTokenForUser(userId: string): Promise<void> {
     const refreshToken = await this.config.refreshTokenReader.getRefreshToken(userId)
     const authToken = await this.config.oAuthTokenRefresher.refreshOAuthToken(refreshToken)
-    this.config.oAuthTokenRepository.storeOAuthToken(userId, authToken)
+    this.config.oAuthTokenRepository.set(userId, authToken)
   }
 }
