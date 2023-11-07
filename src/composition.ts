@@ -1,4 +1,5 @@
 import AccessTokenRefreshingGitHubClient from "@/common/github/AccessTokenRefreshingGitHubClient"
+import AlwaysValidSessionValidator from "@/common/session/AlwaysValidSessionValidator"
 import Auth0RefreshTokenReader from "@/features/auth/data/Auth0RefreshTokenReader"
 import Auth0UserIdentityProviderReader from "./features/auth/data/Auth0UserIdentityProviderReader"
 import Auth0Session from "@/common/session/Auth0Session"
@@ -27,6 +28,7 @@ import RedisKeyValueStore from "@/common/keyValueStore/RedisKeyValueStore"
 import SessionAccessTokenService from "@/features/auth/domain/accessToken/SessionAccessTokenService"
 import SessionMutexFactory from "@/common/mutex/SessionMutexFactory"
 import SessionValidatingProjectDataSource from "@/features/projects/domain/SessionValidatingProjectDataSource"
+import SessionValidator from "@/common/session/SessionValidator"
 import UserDataCleanUpLogOutHandler from "@/features/auth/domain/logOut/UserDataCleanUpLogOutHandler"
 
 const {
@@ -121,10 +123,14 @@ export const gitHubClient = new AccessTokenRefreshingGitHubClient(
   })
 )
 
-export const sessionValidator = new GitHubOrganizationSessionValidator(
-  gitHubClient,
-  GITHUB_ORGANIZATION_NAME
-)
+export const sessionValidator = new SessionValidator({
+  session,
+  guestSessionValidator: new AlwaysValidSessionValidator(),
+  hostSessionValidator: new GitHubOrganizationSessionValidator(
+    gitHubClient,
+    GITHUB_ORGANIZATION_NAME
+  )
+})
 
 const projectUserDataRepository = new KeyValueUserDataRepository(
   new RedisKeyValueStore(REDIS_URL),
