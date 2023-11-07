@@ -35,12 +35,17 @@ export default class GuestAccessTokenService implements IAccessTokenService {
     const userId = await this.userIdReader.getUserId()
     const accessToken = await this.repository.get(userId)
     if (!accessToken) {
-      throw new UnauthorizedError(`No access token found for user with ID ${userId}`)
+      // We fetch the access token for guests on demand.
+      return await this.getNewAccessToken()
     }
     return accessToken
   }
   
   async refreshAccessToken(_accessToken: string): Promise<string> {
+    return await this.getNewAccessToken()
+  }
+  
+  private async getNewAccessToken(): Promise<string> {
     const userId = await this.userIdReader.getUserId()
     const newAccessToken = await this.dataSource.getAccessToken(userId)
     await this.repository.set(userId, newAccessToken)
