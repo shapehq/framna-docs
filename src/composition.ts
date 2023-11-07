@@ -72,7 +72,7 @@ export const session = new Auth0Session({
   isUserGuestReader: new IsUserGuestReader(userIdentityProviderReader)
 })
 
-export const oAuthTokenRepository = new OAuthTokenRepository(
+const oAuthTokenRepository = new OAuthTokenRepository(
   new KeyValueUserDataRepository(
     new RedisKeyValueStore(REDIS_URL),
     "authToken"
@@ -89,7 +89,7 @@ const accessTokenRepository = new KeyValueUserDataRepository(
   "accessToken"
 )
 
-const accessTokenService = new LockingAccessTokenService(
+export const accessTokenService = new LockingAccessTokenService(
   new SessionMutexFactory(
     new RedisKeyedMutexFactory(REDIS_URL),
     session,
