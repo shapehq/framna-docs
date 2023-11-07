@@ -29,11 +29,22 @@ export default class GitHubInstallationAccessTokenRefresher {
       org: this.config.organization
     })
     const installation = response.data
-    const installationAuth = await auth({
-      type: "installation",
-      installationId: installation.id,
-      repositoryNames: repositoryNames
-    })
-    return installationAuth.token
+    try {
+      const installationAuth = await auth({
+        type: "installation",
+        installationId: installation.id,
+        repositoryNames: repositoryNames
+      })
+      return installationAuth.token
+    /* eslint-disable-next-line  @typescript-eslint/no-explicit-any */
+    } catch (error: any) {
+      if (error.status && error.status == 422) {
+        // One or more of the repositories do not exist. We log the error
+        // and create an access token with access to know repositories.
+        console.error("Cannot log in user as one or more repositories do not exist: " + repositoryNames.join(", "))
+        console.error(error)
+      }
+      throw error
+    }
   }
 }
