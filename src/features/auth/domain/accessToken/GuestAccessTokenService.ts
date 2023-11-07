@@ -1,4 +1,3 @@
-import { UnauthorizedError } from "../../../../common/errors"
 import IAccessTokenService from "./IAccessTokenService"
 
 export interface IUserIDReader {

@@ -39,8 +39,7 @@ export default class CachingRepositoryAccessReader {
     }
     try {
       return ZodJSONCoder.decode(RepositoryNamesContainerSchema, str)
-    /* eslint-disable-next-line no-empty */
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error(error)
       return null
     }
@@ -51,8 +50,7 @@ export default class CachingRepositoryAccessReader {
     try {
       const str = ZodJSONCoder.encode(RepositoryNamesContainerSchema, repositoryNames)
       await this.repository.set(userId, str)
-    /* eslint-disable-next-line no-empty */
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error(error)
     }
     return repositoryNames
