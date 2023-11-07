@@ -11,11 +11,11 @@ test("It deletes the user's auth token", async () => {
       didDeleteAuthToken = true
     }
   }, {
-    async getProjects() {
+    async get() {
       return []
     },
-    async storeProjects() {},
-    async deleteProjects() {}
+    async set() {},
+    async delete() {}
   })
   expect(didDeleteAuthToken).toBeTruthy()
 })
@@ -29,11 +29,11 @@ test("It deletes the cached projects", async () => {
     async storeOAuthToken() {},
     async deleteOAuthToken() {}
   }, {
-    async getProjects() {
+    async get() {
       return []
     },
-    async storeProjects() {},
-    async deleteProjects() {
+    async set() {},
+    async delete() {
       didDeleteProjects = true
     }
   })

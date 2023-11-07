@@ -11,7 +11,7 @@ import {
 import {
   initialOAuthTokenService,
   sessionOAuthTokenRepository,
-  sessionProjectRepository,
+  projectRepository,
   logoutHandler
 } from "@/composition"
 
@@ -30,7 +30,7 @@ const onError: AppRouterOnError = async () => {
 const onLogout: NextAppRouterHandler = async (req: NextRequest, ctx: AppRouteHandlerFnContext) => {
   await Promise.all([
     sessionOAuthTokenRepository.deleteOAuthToken().catch(() => null),
-    sessionProjectRepository.deleteProjects().catch(() => null)
+    projectRepository.delete().catch(() => null)
   ])
   await logoutHandler()
   return await handleLogout(req, ctx)

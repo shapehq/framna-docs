@@ -1,7 +1,7 @@
 import { getProjectId, getSpecificationId, getVersionId } from "@/common/utils/url"
 import SessionOAuthTokenBarrier from "@/features/auth/view/SessionOAuthTokenBarrier"
 import ProjectsPage from "@/features/projects/view/ProjectsPage"
-import { sessionProjectRepository } from "@/composition"
+import { projectRepository } from "@/composition"
 
 type PageParams = { slug: string | string[] }
 
@@ -10,7 +10,7 @@ export default async function Page({ params }: { params: PageParams }) {
   return (
     <SessionOAuthTokenBarrier>
       <ProjectsPage
-        sessionProjectRepository={sessionProjectRepository}
+        projectRepository={projectRepository}
         projectId={getProjectId(url)}
         versionId={getVersionId(url)}
         specificationId={getSpecificationId(url)}
