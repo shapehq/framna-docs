@@ -7,7 +7,7 @@ import {
   NextAppRouterHandler,
   AppRouterOnError
 } from "@auth0/nextjs-auth0"
-import { logOutHandler } from "@/composition"
+import { initialOAuthTokenService, logOutHandler } from "@/composition"
 
 const { SHAPE_DOCS_BASE_URL } = process.env
 

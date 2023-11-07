@@ -36,13 +36,15 @@ const {
 
 const gitHubPrivateKey = Buffer.from(GITHUB_PRIVATE_KEY_BASE_64, "base64").toString("utf-8")
 
+const session = new Auth0Session()
+
 const oAuthTokenRepository = new KeyValueUserDataRepository(
   new RedisKeyValueStore(REDIS_URL),
   "authToken"
 )
 
 export const sessionOAuthTokenRepository = new SessionOAuthTokenRepository(
-  new SessionDataRepository(new Auth0Session(), oAuthTokenRepository)
+  new SessionDataRepository(session, oAuthTokenRepository)
 )
 
 const gitHubOAuthTokenRefresher = new GitHubOAuthTokenRefresher({
@@ -57,7 +59,7 @@ export const gitHubClient = new AccessTokenRefreshingGitHubClient(
   new LockingAccessTokenRefresher(
     new SessionMutexFactory(
       new RedisKeyedMutexFactory(REDIS_URL),
-      new Auth0Session(),
+      session,
       "mutexAccessToken"
     ),
     sessionOAuthTokenRepository,
