@@ -1,0 +1,15 @@
+name: Invites User
+description: Invites a user to Shape Docs.
+inputs:
+  name:
+    description: The name of the user.
+    required: true
+  email:
+    description: The e-mail of the user to invite.
+    required: true
+  roles:
+    description: Comma-separated list of roles to assign to the user.
+    required: true  
+runs:
+  using: node20
+  main: dist/index.js

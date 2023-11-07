@@ -1,6 +1,6 @@
 import { ReactNode } from "react"
 import { redirect } from "next/navigation"
-import { sessionOAuthTokenRepository } from "@/composition"
+import { session, oAuthTokenRepository } from "@/composition"
 
 export default async function SessionOAuthTokenBarrier({
   children
@@ -8,7 +8,8 @@ export default async function SessionOAuthTokenBarrier({
   children: ReactNode
 }) {
   try {
-    await sessionOAuthTokenRepository.getOAuthToken()
+    const userId = await session.getUserId()
+    await oAuthTokenRepository.get(userId)
     return <>{children}</>
   } catch {
     redirect("/api/auth/logout")

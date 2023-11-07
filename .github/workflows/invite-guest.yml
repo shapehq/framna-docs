@@ -1,0 +1,57 @@
+name: Invite Guest
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        type: choice
+        description: Environment
+        options: 
+        - production
+        - staging
+        required: true
+      name:
+        description: Name of user
+        required: true
+      email:
+        description: E-mail address to send invitation to
+        required: true
+      roles:
+        description: Comma-separated list of roles
+        required: true
+env:
+  OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN_SHAPE_DOCS }}
+jobs:
+  build:
+    name: Invite Guest
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+      - name: Install 1Password CLI
+        uses: 1password/install-cli-action@v1
+      - name: Configure for Production
+        if: "${{ github.event.inputs.environment == 'production' }}"
+        run: |
+          echo "AUTH0_MANAGEMENT_CLIENT_ID_OP_KEY=op://Shape Docs GitHub Actions/Auth0 Management API Client ID/password" >> $GITHUB_ENV
+          echo "AUTH0_MANAGEMENT_CLIENT_SECRET_OP_KEY=op://Shape Docs GitHub Actions/Auth0 Management API Client Secret/password" >> $GITHUB_ENV
+          echo "AUTH0_MANAGEMENT_CLIENT_DOMAIN=shape-docs.eu.auth0.com" >> $GITHUB_ENV
+      - name: Configure for Staging
+        if: "${{ github.event.inputs.environment == 'staging' }}"
+        run: |
+          echo "AUTH0_MANAGEMENT_CLIENT_ID_OP_KEY=op://Shape Docs GitHub Actions/Auth0 Management API Client ID Staging/password" >> $GITHUB_ENV
+          echo "AUTH0_MANAGEMENT_CLIENT_SECRET_OP_KEY=op://Shape Docs GitHub Actions/Auth0 Management API Client Secret Staging/password" >> $GITHUB_ENV
+          echo "AUTH0_MANAGEMENT_CLIENT_DOMAIN=shape-docs-dev.eu.auth0.com" >> $GITHUB_ENV
+      - name: Install Secrets
+        run: |
+          AUTH0_MANAGEMENT_CLIENT_ID=$(op read "${AUTH0_MANAGEMENT_CLIENT_ID_OP_KEY}")
+          AUTH0_MANAGEMENT_CLIENT_SECRET=$(op read "${AUTH0_MANAGEMENT_CLIENT_SECRET_OP_KEY}")
+          echo "AUTH0_MANAGEMENT_CLIENT_ID=${AUTH0_MANAGEMENT_CLIENT_ID}" >> $GITHUB_ENV
+          echo "AUTH0_MANAGEMENT_CLIENT_SECRET=${AUTH0_MANAGEMENT_CLIENT_SECRET}" >> $GITHUB_ENV
+          echo "::add-mask::${AUTH0_MANAGEMENT_CLIENT_ID}"
+          echo "::add-mask::${AUTH0_MANAGEMENT_CLIENT_SECRET}"
+      - name: Send Invitation
+        uses: ./.github/actions/invite-user
+        with:
+          name: ${{ github.event.inputs.name }}
+          email: ${{ github.event.inputs.email }}
+          roles: ${{ github.event.inputs.roles }}

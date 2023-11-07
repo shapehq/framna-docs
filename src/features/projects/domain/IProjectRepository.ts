@@ -1,6 +1,7 @@
 import Project from "./Project"
 
 export default interface IProjectRepository {
-  getProjects(): Promise<Project[]>
-  storeProjects(projects: Project[]): Promise<void>
+  get(): Promise<Project[] | undefined>
+  set(projects: Project[]): Promise<void>
+  delete(): Promise<void>
 }

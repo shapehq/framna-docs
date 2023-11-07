@@ -4,6 +4,8 @@ import IGitHubClient, {
   GraphQlQueryResponse,
   GetRepositoryContentRequest,
   GetPullRequestCommentsRequest,
+  GetOrganizationMembershipStatusRequest,
+  GetOrganizationMembershipStatusRequestResponse,
   AddCommentToPullRequestRequest,
   RepositoryContent,
   PullRequestComment
@@ -13,26 +15,20 @@ const HttpErrorSchema = z.object({
   status: z.number()
 })
 
-interface IGitHubAccessTokenReader {
+interface IGitHubAccessTokenService {
   getAccessToken(): Promise<string>
-}
-
-interface IGitHubAccessTokenRefresher {
   refreshAccessToken(accessToken: string): Promise<string>
 }
 
 export default class AccessTokenRefreshingGitHubClient implements IGitHubClient {
-  private readonly accessTokenReader: IGitHubAccessTokenReader
-  private readonly accessTokenRefresher: IGitHubAccessTokenRefresher
+  private readonly accessTokenService: IGitHubAccessTokenService
   private readonly gitHubClient: IGitHubClient
   
   constructor(
-    accessTokenReader: IGitHubAccessTokenReader,
-    accessTokenRefresher: IGitHubAccessTokenRefresher,
+    accessTokenService: IGitHubAccessTokenService,
     gitHubClient: IGitHubClient
   ) {
-    this.accessTokenReader = accessTokenReader
-    this.accessTokenRefresher = accessTokenRefresher
+    this.accessTokenService = accessTokenService
     this.gitHubClient = gitHubClient
   }
   
@@ -60,8 +56,16 @@ export default class AccessTokenRefreshingGitHubClient implements IGitHubClient 
     })
   }
   
+  async getOrganizationMembershipStatus(
+    request: GetOrganizationMembershipStatusRequest
+  ): Promise<GetOrganizationMembershipStatusRequestResponse> {
+    return await this.send(async () => {
+      return await this.gitHubClient.getOrganizationMembershipStatus(request)
+    })
+  }
+  
   private async send<T>(fn: () => Promise<T>): Promise<T> {
-    const accessToken = await this.accessTokenReader.getAccessToken()
+    const accessToken = await this.accessTokenService.getAccessToken()
     try {
       return await fn()
     } catch (e) {
@@ -69,7 +73,7 @@ export default class AccessTokenRefreshingGitHubClient implements IGitHubClient 
         const error = HttpErrorSchema.parse(e)
         if (error.status == 401) {
           // Refresh access token and try the request one last time.
-          await this.accessTokenRefresher.refreshAccessToken(accessToken)
+          await this.accessTokenService.refreshAccessToken(accessToken)
           return await fn()
         } else {
           // Not an error we can handle so forward it.

@@ -1,24 +1,18 @@
-import { NextRequest, NextResponse } from "next/server"
+import { NextResponse } from "next/server"
 import {
   handleAuth,
   handleCallback,
   handleLogout,
   AfterCallbackAppRoute,
   NextAppRouterHandler,
-  AppRouteHandlerFnContext,
   AppRouterOnError
 } from "@auth0/nextjs-auth0"
-import {
-  initialOAuthTokenService,
-  sessionOAuthTokenRepository,
-  sessionProjectRepository,
-  logoutHandler
-} from "@/composition"
+import { logInHandler, logOutHandler } from "@/composition"
 
 const { SHAPE_DOCS_BASE_URL } = process.env
 
 const afterCallback: AfterCallbackAppRoute = async (_req, session) => {
-  await initialOAuthTokenService.fetchInitialAuthTokenForUser(session.user.sub)
+  await logInHandler.handleLogIn(session.user.sub)
   return session
 }
 
@@ -27,12 +21,8 @@ const onError: AppRouterOnError = async () => {
   return NextResponse.redirect(url)
 }
 
-const onLogout: NextAppRouterHandler = async (req: NextRequest, ctx: AppRouteHandlerFnContext) => {
-  await Promise.all([
-    sessionOAuthTokenRepository.deleteOAuthToken().catch(() => null),
-    sessionProjectRepository.deleteProjects().catch(() => null)
-  ])
-  await logoutHandler()
+const onLogout: NextAppRouterHandler = async (req, ctx) => {
+  await logOutHandler.handleLogOut()
   return await handleLogout(req, ctx)
 }
 
