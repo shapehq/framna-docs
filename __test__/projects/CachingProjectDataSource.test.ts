@@ -32,13 +32,13 @@ test("It caches projects read from the data source", async () => {
       return projects
     }
   }, {
-    async getProjects() {
+    async get() {
       return []
     },
-    async storeProjects(projects) {
+    async set(projects) {
       cachedProjects = projects
     },
-    async deleteProjects() {}
+    async delete() {}
   })
   await sut.getProjects()
   expect(cachedProjects).toEqual(projects)

@@ -1,22 +1,22 @@
 import Project from "./Project"
 import IProjectDataSource from "./IProjectDataSource"
-import ISessionProjectRepository from "./ISessionProjectRepository"
+import IProjectRepository from "./IProjectRepository"
 
 export default class CachingProjectDataSource implements IProjectDataSource {
   private dataSource: IProjectDataSource
-  private sessionProjectRepository: ISessionProjectRepository
+  private repository: IProjectRepository
   
   constructor(
     dataSource: IProjectDataSource,
-    sessionProjectRepository: ISessionProjectRepository
+    repository: IProjectRepository
   ) {
     this.dataSource = dataSource
-    this.sessionProjectRepository = sessionProjectRepository
+    this.repository = repository
   }
   
   async getProjects(): Promise<Project[]> {
     const projects = await this.dataSource.getProjects()
-    await this.sessionProjectRepository.storeProjects(projects)
+    await this.repository.set(projects)
     return projects
   }
 }
