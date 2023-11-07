@@ -2,7 +2,7 @@ import ICredentialsTransferrer from "./ICredentialsTransferrer"
 import IUserDataRepository from "@/common/userData/IUserDataRepository"
 
 interface DataSource {
-  getAccessToken(): Promise<string>
+  getAccessToken(userId: string): Promise<string>
 }
 
 type Repository = IUserDataRepository<string>
@@ -22,7 +22,7 @@ export default class GuestCredentialsTransferrer implements ICredentialsTransfer
   }
   
   async transferCredentials(userId: string): Promise<void> {
-    const accessToken = await this.dataSource.getAccessToken()
+    const accessToken = await this.dataSource.getAccessToken(userId)
     await this.repository.set(userId, accessToken)
   }
 }

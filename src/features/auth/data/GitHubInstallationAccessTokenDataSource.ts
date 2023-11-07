@@ -16,7 +16,7 @@ export default class GitHubInstallationAccessTokenRefresher {
     this.config = config
   }
   
-  async getAccessToken(): Promise<string> {
+  async getAccessToken(repositoryNames: string[]): Promise<string> {
     const auth = createAppAuth({
       appId: this.config.appId,
       clientId: this.config.clientId,
@@ -31,7 +31,8 @@ export default class GitHubInstallationAccessTokenRefresher {
     const installation = response.data
     const installationAuth = await auth({
       type: "installation",
-      installationId: installation.id
+      installationId: installation.id,
+      repositoryNames: repositoryNames
     })
     return installationAuth.token
   }

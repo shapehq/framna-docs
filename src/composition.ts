@@ -1,9 +1,11 @@
 import AccessTokenRefreshingGitHubClient from "@/common/github/AccessTokenRefreshingGitHubClient"
 import AlwaysValidSessionValidator from "@/common/session/AlwaysValidSessionValidator"
 import Auth0RefreshTokenReader from "@/features/auth/data/Auth0RefreshTokenReader"
-import Auth0UserIdentityProviderReader from "./features/auth/data/Auth0UserIdentityProviderReader"
+import Auth0RepositoryAccessReader from "./features/auth/data/Auth0RepositoryAccessReader"
 import Auth0Session from "@/common/session/Auth0Session"
+import Auth0UserIdentityProviderReader from "./features/auth/data/Auth0UserIdentityProviderReader"
 import CachingProjectDataSource from "@/features/projects/domain/CachingProjectDataSource"
+import CachingRepositoryAccessReaderConfig from "./features/auth/domain/repositoryAccess/CachingRepositoryAccessReaderConfig"
 import CachingUserIdentityProviderReader from "./features/auth/domain/userIdentityProvider/CachingUserIdentityProviderReader"
 import CompositeLogOutHandler from "@/features/auth/domain/logOut/CompositeLogOutHandler"
 import CredentialsTransferringLogInHandler from "@/features/auth/domain/logIn/CredentialsTransferringLogInHandler"
@@ -25,6 +27,7 @@ import OnlyStaleRefreshingAccessTokenService from "@/features/auth/domain/access
 import ProjectRepository from "@/features/projects/domain/ProjectRepository"
 import RedisKeyedMutexFactory from "@/common/mutex/RedisKeyedMutexFactory"
 import RedisKeyValueStore from "@/common/keyValueStore/RedisKeyValueStore"
+import RepositoryRestrictingAccessTokenDataSource from "@/features/auth/domain/repositoryAccess/RepositoryRestrictingAccessTokenDataSource"
 import SessionAccessTokenService from "@/features/auth/domain/accessToken/SessionAccessTokenService"
 import SessionMutexFactory from "@/common/mutex/SessionMutexFactory"
 import SessionValidatingProjectDataSource from "@/features/projects/domain/SessionValidatingProjectDataSource"
@@ -89,6 +92,24 @@ const accessTokenRepository = new KeyValueUserDataRepository(
   "accessToken"
 )
 
+const guestRepositoryAccessRepository = new KeyValueUserDataRepository(
+  new RedisKeyValueStore(REDIS_URL),
+  "guestRepositoryAccess"
+)
+
+const guestAccessTokenDataSource = new RepositoryRestrictingAccessTokenDataSource({
+  repositoryAccessReader: new CachingRepositoryAccessReaderConfig({
+    repository: guestRepositoryAccessRepository,
+    repositoryAccessReader: new Auth0RepositoryAccessReader({
+      ...auth0ManagementCredentials
+    })
+  }),
+  dataSource: new GitHubInstallationAccessTokenDataSource({
+    ...gitHubAppCredentials,
+    organization: GITHUB_ORGANIZATION_NAME
+  })
+})
+
 export const accessTokenService = new LockingAccessTokenService(
   new SessionMutexFactory(
     new RedisKeyedMutexFactory(REDIS_URL),
@@ -101,10 +122,7 @@ export const accessTokenService = new LockingAccessTokenService(
       guestAccessTokenService: new GuestAccessTokenService({
         userIdReader: session,
         repository: accessTokenRepository,
-        dataSource: new GitHubInstallationAccessTokenDataSource({
-          ...gitHubAppCredentials,
-          organization: GITHUB_ORGANIZATION_NAME
-        })
+        dataSource: guestAccessTokenDataSource
       }),
       hostAccessTokenService: new HostAccessTokenService({
         userIdReader: session,
@@ -161,10 +179,7 @@ export const logInHandler = new CredentialsTransferringLogInHandler({
   ),
   guestCredentialsTransferrer: new GuestCredentialsTransferrer({
     repository: accessTokenRepository,
-    dataSource: new GitHubInstallationAccessTokenDataSource({
-      ...gitHubAppCredentials,
-      organization: GITHUB_ORGANIZATION_NAME
-    }),
+    dataSource: guestAccessTokenDataSource
   }),
   hostCredentialsTransferrer: new HostCredentialsTransferrer({
     refreshTokenReader: new Auth0RefreshTokenReader({
@@ -180,6 +195,7 @@ export const logOutHandler = new ErrorIgnoringLogOutHandler(
   new CompositeLogOutHandler([
     new UserDataCleanUpLogOutHandler(session, projectUserDataRepository),
     new UserDataCleanUpLogOutHandler(session, oAuthTokenRepository),
-    new UserDataCleanUpLogOutHandler(session, userIdentityProviderRepository)
+    new UserDataCleanUpLogOutHandler(session, userIdentityProviderRepository),
+    new UserDataCleanUpLogOutHandler(session, guestRepositoryAccessRepository) 
   ])
 )

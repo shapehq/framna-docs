@@ -11,7 +11,7 @@ export interface Repository {
 }
 
 export interface DataSource {
-  getAccessToken(): Promise<string>
+  getAccessToken(userId: string): Promise<string>
 }
 
 export type GuestAccessTokenServiceConfig = {
@@ -42,7 +42,7 @@ export default class GuestAccessTokenService implements IAccessTokenService {
   
   async refreshAccessToken(_accessToken: string): Promise<string> {
     const userId = await this.userIdReader.getUserId()
-    const newAccessToken = await this.dataSource.getAccessToken()
+    const newAccessToken = await this.dataSource.getAccessToken(userId)
     await this.repository.set(userId, newAccessToken)
     return newAccessToken
   }
