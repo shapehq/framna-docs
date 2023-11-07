@@ -2,6 +2,8 @@ import AccessTokenRefreshingGitHubClient from "@/common/github/AccessTokenRefres
 import Auth0RefreshTokenReader from "@/features/auth/data/Auth0RefreshTokenReader"
 import Auth0Session from "@/common/session/Auth0Session"
 import CachingProjectDataSource from "@/features/projects/domain/CachingProjectDataSource"
+import CompositeLogOutHandler from "@/features/auth/domain/logOut/CompositeLogOutHandler"
+import ErrorIgnoringLogOutHandler from "@/features/auth/domain/logOut/ErrorIgnoringLogOutHandler"
 import GitHubClient from "@/common/github/GitHubClient"
 import GitHubOAuthTokenRefresher from "@/features/auth/data/GitHubOAuthTokenRefresher"
 import GitHubOrganizationSessionValidator from "@/common/session/GitHubOrganizationSessionValidator"
@@ -18,7 +20,7 @@ import SessionMutexFactory from "@/common/mutex/SessionMutexFactory"
 import SessionOAuthTokenRepository from "@/features/auth/domain/SessionOAuthTokenRepository"
 import SessionValidatingProjectDataSource from "@/features/projects/domain/SessionValidatingProjectDataSource"
 import OAuthTokenRepository from "@/features/auth/domain/OAuthTokenRepository"
-import authLogoutHandler from "@/common/authHandler/logout"
+import UserDataCleanUpLogOutHandler from "@/features/auth/domain/logOut/UserDataCleanUpLogOutHandler"
 
 const {
   AUTH0_MANAGEMENT_DOMAIN,
@@ -77,12 +79,14 @@ export const sessionValidator = new GitHubOrganizationSessionValidator(
   GITHUB_ORGANIZATION_NAME
 )
 
+const projectUserDataRepository = new KeyValueUserDataRepository(
+  new RedisKeyValueStore(REDIS_URL),
+  "projects"
+)
+
 export const projectRepository = new ProjectRepository(
-  new Auth0Session(),
-  new KeyValueUserDataRepository(
-    new RedisKeyValueStore(REDIS_URL),
-    "projects"
-  )
+  session,
+  projectUserDataRepository
 )
 
 export const projectDataSource = new CachingProjectDataSource(
@@ -107,6 +111,9 @@ export const initialOAuthTokenService = new InitialOAuthTokenService({
   oAuthTokenRepository: new OAuthTokenRepository(oAuthTokenRepository)
 })
 
-export const logoutHandler = async () => {
-  await authLogoutHandler(sessionOAuthTokenRepository, projectRepository)
-}
+export const logOutHandler = new ErrorIgnoringLogOutHandler(
+  new CompositeLogOutHandler([
+    new UserDataCleanUpLogOutHandler(session, projectUserDataRepository),
+    new UserDataCleanUpLogOutHandler(session, oAuthTokenRepository)
+  ])
+)
