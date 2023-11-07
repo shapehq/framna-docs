@@ -63,19 +63,21 @@ const accessTokenService = new LockingAccessTokenService(
   )
 )
 
-export const gitHubClient = new AccessTokenRefreshingGitHubClient(
+export const gitHubClient = new GitHubClient({
+  appId: GITHUB_APP_ID,
+  clientId: GITHUB_CLIENT_ID,
+  clientSecret: GITHUB_CLIENT_SECRET,
+  privateKey: gitHubPrivateKey,
+  accessTokenReader: accessTokenService
+})
+
+const userGitHubClient = new AccessTokenRefreshingGitHubClient(
   accessTokenService,
-  new GitHubClient({
-    appId: GITHUB_APP_ID,
-    clientId: GITHUB_CLIENT_ID,
-    clientSecret: GITHUB_CLIENT_SECRET,
-    privateKey: gitHubPrivateKey,
-    accessTokenReader: accessTokenService
-  })
+  gitHubClient
 )
 
 export const sessionValidator = new GitHubOrganizationSessionValidator(
-  gitHubClient,
+  userGitHubClient,
   GITHUB_ORGANIZATION_NAME
 )
 
@@ -93,7 +95,7 @@ export const projectDataSource = new CachingProjectDataSource(
   new SessionValidatingProjectDataSource(
     sessionValidator,
     new GitHubProjectDataSource(
-      gitHubClient,
+      userGitHubClient,
       GITHUB_ORGANIZATION_NAME
     )
   ),
