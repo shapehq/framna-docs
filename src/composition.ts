@@ -202,8 +202,9 @@ export const logInHandler = new CompositeLogInHandler([
 export const logOutHandler = new ErrorIgnoringLogOutHandler(
   new CompositeLogOutHandler([
     new UserDataCleanUpLogOutHandler(session, projectUserDataRepository),
-    new UserDataCleanUpLogOutHandler(session, oAuthTokenRepository),
     new UserDataCleanUpLogOutHandler(session, userIdentityProviderRepository),
-    new UserDataCleanUpLogOutHandler(session, guestRepositoryAccessRepository) 
+    new UserDataCleanUpLogOutHandler(session, guestRepositoryAccessRepository),
+    new UserDataCleanUpLogOutHandler(session, oAuthTokenRepository),
+    new UserDataCleanUpLogOutHandler(session, accessTokenRepository)
   ])
 )
