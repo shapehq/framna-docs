@@ -1,5 +1,6 @@
 import AccessTokenRefreshingGitHubClient from "@/common/github/AccessTokenRefreshingGitHubClient"
 import AlwaysValidSessionValidator from "@/common/session/AlwaysValidSessionValidator"
+import Auth0MetadataUpdater from "./features/auth/data/Auth0MetadataUpdater"
 import Auth0RefreshTokenReader from "@/features/auth/data/Auth0RefreshTokenReader"
 import Auth0RepositoryAccessReader from "./features/auth/data/Auth0RepositoryAccessReader"
 import Auth0Session from "@/common/session/Auth0Session"
@@ -7,6 +8,7 @@ import Auth0UserIdentityProviderReader from "./features/auth/data/Auth0UserIdent
 import CachingProjectDataSource from "@/features/projects/domain/CachingProjectDataSource"
 import CachingRepositoryAccessReaderConfig from "./features/auth/domain/repositoryAccess/CachingRepositoryAccessReaderConfig"
 import CachingUserIdentityProviderReader from "./features/auth/domain/userIdentityProvider/CachingUserIdentityProviderReader"
+import CompositeLogInHandler from "@/features/auth/domain/logIn/CompositeLogInHandler"
 import CompositeLogOutHandler from "@/features/auth/domain/logOut/CompositeLogOutHandler"
 import CredentialsTransferringLogInHandler from "@/features/auth/domain/logIn/CredentialsTransferringLogInHandler"
 import ErrorIgnoringLogOutHandler from "@/features/auth/domain/logOut/ErrorIgnoringLogOutHandler"
@@ -27,6 +29,7 @@ import OnlyStaleRefreshingAccessTokenService from "@/features/auth/domain/access
 import ProjectRepository from "@/features/projects/domain/ProjectRepository"
 import RedisKeyedMutexFactory from "@/common/mutex/RedisKeyedMutexFactory"
 import RedisKeyValueStore from "@/common/keyValueStore/RedisKeyValueStore"
+import RemoveInvitedFlagLoginHandler from "./features/auth/domain/logIn/RemoveInvitedFlagLogInHandler"
 import RepositoryRestrictingAccessTokenDataSource from "@/features/auth/domain/repositoryAccess/RepositoryRestrictingAccessTokenDataSource"
 import SessionAccessTokenService from "@/features/auth/domain/accessToken/SessionAccessTokenService"
 import SessionMutexFactory from "@/common/mutex/SessionMutexFactory"
@@ -173,23 +176,28 @@ export const projectDataSource = new CachingProjectDataSource(
   projectRepository
 )
 
-export const logInHandler = new CredentialsTransferringLogInHandler({
-  isUserGuestReader: new IsUserGuestReader(
-    userIdentityProviderReader
-  ),
-  guestCredentialsTransferrer: new GuestCredentialsTransferrer({
-    repository: accessTokenRepository,
-    dataSource: guestAccessTokenDataSource
-  }),
-  hostCredentialsTransferrer: new HostCredentialsTransferrer({
-    refreshTokenReader: new Auth0RefreshTokenReader({
-      ...auth0ManagementCredentials,
-      connection: "github"
+export const logInHandler = new CompositeLogInHandler([
+  new CredentialsTransferringLogInHandler({
+    isUserGuestReader: new IsUserGuestReader(
+      userIdentityProviderReader
+    ),
+    guestCredentialsTransferrer: new GuestCredentialsTransferrer({
+      repository: accessTokenRepository,
+      dataSource: guestAccessTokenDataSource
     }),
-    oAuthTokenRefresher: gitHubOAuthTokenRefresher,
-    oAuthTokenRepository: oAuthTokenRepository
-  })
-})
+    hostCredentialsTransferrer: new HostCredentialsTransferrer({
+      refreshTokenReader: new Auth0RefreshTokenReader({
+        ...auth0ManagementCredentials,
+        connection: "github"
+      }),
+      oAuthTokenRefresher: gitHubOAuthTokenRefresher,
+      oAuthTokenRepository: oAuthTokenRepository
+    })
+  }),
+  new RemoveInvitedFlagLoginHandler(
+    new Auth0MetadataUpdater({ ...auth0ManagementCredentials })
+  )
+])
 
 export const logOutHandler = new ErrorIgnoringLogOutHandler(
   new CompositeLogOutHandler([
