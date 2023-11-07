@@ -4,12 +4,13 @@ import Auth0RefreshTokenReader from "@/features/auth/data/Auth0RefreshTokenReade
 import Auth0Session from "@/common/session/Auth0Session"
 import CachingProjectDataSource from "@/features/projects/domain/CachingProjectDataSource"
 import CompositeLogOutHandler from "@/features/auth/domain/logOut/CompositeLogOutHandler"
+import CredentialsTransferrer from "@/features/auth/domain/credentialsTransfer/CredentialsTransferrer"
+import CredentialsTransferringLogInHandler from "@/features/auth/domain/logIn/CredentialsTransferringLogInHandler"
 import ErrorIgnoringLogOutHandler from "@/features/auth/domain/logOut/ErrorIgnoringLogOutHandler"
 import GitHubClient from "@/common/github/GitHubClient"
 import GitHubOAuthTokenRefresher from "@/features/auth/data/GitHubOAuthTokenRefresher"
 import GitHubOrganizationSessionValidator from "@/common/session/GitHubOrganizationSessionValidator"
 import GitHubProjectDataSource from "@/features/projects/data/GitHubProjectDataSource"
-import InitialOAuthTokenService from "@/features/auth/domain/oAuthToken/InitialOAuthTokenService"
 import KeyValueUserDataRepository from "@/common/userData/KeyValueUserDataRepository"
 import LockingAccessTokenService from "@/features/auth/domain/accessToken/LockingAccessTokenService"
 import OnlyStaleRefreshingAccessTokenService from "@/features/auth/domain/accessToken/OnlyStaleRefreshingAccessTokenService"
@@ -99,19 +100,21 @@ export const projectDataSource = new CachingProjectDataSource(
   projectRepository
 )
 
-export const initialOAuthTokenService = new InitialOAuthTokenService({
-  refreshTokenReader: new Auth0RefreshTokenReader({
-    domain: AUTH0_MANAGEMENT_DOMAIN,
-    clientId: AUTH0_MANAGEMENT_CLIENT_ID,
-    clientSecret: AUTH0_MANAGEMENT_CLIENT_SECRET,
-    connection: "github"
-  }),
-  oAuthTokenRefresher: new GitHubOAuthTokenRefresher({
-    clientId: GITHUB_CLIENT_ID,
-    clientSecret: GITHUB_CLIENT_SECRET
-  }),
-  oAuthTokenRepository: oAuthTokenRepository
-})
+export const logInHandler = new CredentialsTransferringLogInHandler(
+  new CredentialsTransferrer({
+    refreshTokenReader: new Auth0RefreshTokenReader({
+      domain: AUTH0_MANAGEMENT_DOMAIN,
+      clientId: AUTH0_MANAGEMENT_CLIENT_ID,
+      clientSecret: AUTH0_MANAGEMENT_CLIENT_SECRET,
+      connection: "github"
+    }),
+    oAuthTokenRefresher: new GitHubOAuthTokenRefresher({
+      clientId: GITHUB_CLIENT_ID,
+      clientSecret: GITHUB_CLIENT_SECRET
+    }),
+    oAuthTokenRepository: oAuthTokenRepository
+  })
+)
 
 export const logOutHandler = new ErrorIgnoringLogOutHandler(
   new CompositeLogOutHandler([
