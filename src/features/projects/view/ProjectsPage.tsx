@@ -1,18 +1,18 @@
-import SessionProjectRepository from "../domain/SessionProjectRepository"
+import ProjectRepository from "../domain/ProjectRepository"
 import ClientProjectsPage from "./client/ProjectsPage"
 
 export default async function ProjectsPage({
-  sessionProjectRepository,
+  projectRepository,
   projectId,
   versionId,
   specificationId
 }: {
-  sessionProjectRepository: SessionProjectRepository
+  projectRepository: ProjectRepository
   projectId?: string
   versionId?: string
   specificationId?: string
 }) {
-  const projects = await sessionProjectRepository.getProjects()
+  const projects = await projectRepository.get()
   return (
     <ClientProjectsPage
       projects={projects}

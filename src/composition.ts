@@ -9,13 +9,13 @@ import GitHubProjectDataSource from "@/features/projects/data/GitHubProjectDataS
 import InitialOAuthTokenService from "@/features/auth/domain/InitialOAuthTokenService"
 import KeyValueUserDataRepository from "@/common/userData/KeyValueUserDataRepository"
 import LockingAccessTokenRefresher from "@/features/auth/domain/LockingAccessTokenRefresher"
+import ProjectRepository from "@/features/projects/domain/ProjectRepository"
 import RedisKeyedMutexFactory from "@/common/mutex/RedisKeyedMutexFactory"
 import RedisKeyValueStore from "@/common/keyValueStore/RedisKeyValueStore"
 import SessionAccessTokenReader from "@/features/auth/domain/SessionAccessTokenReader"
 import SessionDataRepository from "@/common/userData/SessionDataRepository"
 import SessionMutexFactory from "@/common/mutex/SessionMutexFactory"
 import SessionOAuthTokenRepository from "@/features/auth/domain/SessionOAuthTokenRepository"
-import SessionProjectRepository from "@/features/projects/domain/SessionProjectRepository"
 import SessionValidatingProjectDataSource from "@/features/projects/domain/SessionValidatingProjectDataSource"
 import OAuthTokenRepository from "@/features/auth/domain/OAuthTokenRepository"
 import authLogoutHandler from "@/common/authHandler/logout"
@@ -77,13 +77,11 @@ export const sessionValidator = new GitHubOrganizationSessionValidator(
   GITHUB_ORGANIZATION_NAME
 )
 
-export const sessionProjectRepository = new SessionProjectRepository(
-  new SessionDataRepository(
-    new Auth0Session(),
-    new KeyValueUserDataRepository(
-      new RedisKeyValueStore(REDIS_URL),
-      "projects"
-    )
+export const projectRepository = new ProjectRepository(
+  new Auth0Session(),
+  new KeyValueUserDataRepository(
+    new RedisKeyValueStore(REDIS_URL),
+    "projects"
   )
 )
 
@@ -95,7 +93,7 @@ export const projectDataSource = new CachingProjectDataSource(
       GITHUB_ORGANIZATION_NAME
     )
   ),
-  sessionProjectRepository
+  projectRepository
 )
 
 export const initialOAuthTokenService = new InitialOAuthTokenService({
@@ -110,5 +108,5 @@ export const initialOAuthTokenService = new InitialOAuthTokenService({
 })
 
 export const logoutHandler = async () => {
-  await authLogoutHandler(sessionOAuthTokenRepository, sessionProjectRepository)
+  await authLogoutHandler(sessionOAuthTokenRepository, projectRepository)
 }

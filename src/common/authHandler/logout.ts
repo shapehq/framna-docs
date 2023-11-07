@@ -1,12 +1,12 @@
 import ISessionOAuthTokenRepository from "@/features/auth/domain/ISessionOAuthTokenRepository"
-import ISessionProjectRepository from "@/features/projects/domain/ISessionProjectRepository"
+import IProjectRepository from "@/features/projects/domain/IProjectRepository"
 
 export default async function logoutHandler(
   sessionOAuthTokenRepository: ISessionOAuthTokenRepository,
-  sessionProjectRepository: ISessionProjectRepository
+  projectRepository: IProjectRepository
 ) {
   await Promise.all([
     sessionOAuthTokenRepository.deleteOAuthToken().catch(() => null),
-    sessionProjectRepository.deleteProjects().catch(() => null)
+    projectRepository.delete().catch(() => null)
   ])
 }
