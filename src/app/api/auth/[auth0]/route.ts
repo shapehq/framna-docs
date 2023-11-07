@@ -7,12 +7,12 @@ import {
   NextAppRouterHandler,
   AppRouterOnError
 } from "@auth0/nextjs-auth0"
-import { initialOAuthTokenService, logOutHandler } from "@/composition"
+import { logInHandler, logOutHandler } from "@/composition"
 
 const { SHAPE_DOCS_BASE_URL } = process.env
 
 const afterCallback: AfterCallbackAppRoute = async (_req, session) => {
-  await initialOAuthTokenService.fetchInitialAuthTokenForUser(session.user.sub)
+  await logInHandler.handleLogIn(session.user.sub)
   return session
 }
 
