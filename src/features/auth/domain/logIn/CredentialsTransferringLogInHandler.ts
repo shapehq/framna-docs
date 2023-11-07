@@ -26,9 +26,9 @@ export default class CredentialsTransferringLogInHandler implements ILogInHandle
   async handleLogIn(userId: string): Promise<void> {
     const isGuest = await this.isUserGuestReader.getIsUserGuest(userId)
     if (isGuest) {
-      this.guestCredentialsTransferrer.transferCredentials(userId)
+      await this.guestCredentialsTransferrer.transferCredentials(userId)
     } else {
-      this.hostCredentialsTransferrer.transferCredentials(userId)
+      await this.hostCredentialsTransferrer.transferCredentials(userId)
     }
   }
 }
