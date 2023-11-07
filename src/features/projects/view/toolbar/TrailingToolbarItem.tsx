@@ -7,14 +7,14 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faPen } from "@fortawesome/free-solid-svg-icons"
 
 const TrailingToolbarItem = ({
-  showEditButton,
+  enableGitHubLinks,
   project,
   version,
   specification,
   onSelectVersion,
   onSelectSpecification
 }: {
-  showEditButton: boolean,
+  enableGitHubLinks: boolean,
   project: Project
   version: Version
   specification: OpenApiSpecification
@@ -35,7 +35,11 @@ const TrailingToolbarItem = ({
         alignItems="center"
         sx={{ display: { xs: "none", sm: "none", md: "flex" } }}
       >
-        <ProjectName text={project.name} url={version.url} sx={{ marginRight: 1 }} /> 
+        <ProjectName
+          text={project.name}
+          url={enableGitHubLinks ? version.url : undefined}
+          sx={{ marginRight: 1 }}
+        /> 
         <Typography variant="h6" sx={{ marginRight: 1 }}>/</Typography>
         <VersionSelector
           versions={project.versions}
@@ -50,7 +54,7 @@ const TrailingToolbarItem = ({
           onSelect={onSelectSpecification}
           sx={{ marginRight: 0.5 }}
         />
-        {showEditButton && specification.editURL &&
+        {enableGitHubLinks && specification.editURL &&
           <IconButton
             href={specification.editURL}
             target="_blank"

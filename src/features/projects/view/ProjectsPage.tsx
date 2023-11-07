@@ -17,7 +17,7 @@ export default async function ProjectsPage({
   const projects = await projectRepository.get()
   return (
     <ClientProjectsPage
-      showEditButton={!isGuest}
+      enableGitHubLinks={!isGuest}
       projects={projects}
       projectId={projectId}
       versionId={versionId}
