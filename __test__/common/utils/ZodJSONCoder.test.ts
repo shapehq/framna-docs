@@ -1,5 +1,5 @@
 import { z } from "zod"
-import ZodJSONCoder from "../../../src/common/utils/ZodJSONCoder"
+import { ZodJSONCoder } from "../../../src/common"
 
 const SampleAuthTokenSchema = z.object({
   accessToken: z.string(),

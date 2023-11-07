@@ -1,7 +1,7 @@
 import { SxProps } from "@mui/system"
 import { Avatar, Box } from "@mui/material"
 import { alpha, useTheme } from "@mui/material/styles"
-import Project from "../domain/Project"
+import { Project } from "../domain"
 import ProjectAvatarSquircleClip from "./ProjectAvatarSquircleClip"
 
 function ProjectAvatar({

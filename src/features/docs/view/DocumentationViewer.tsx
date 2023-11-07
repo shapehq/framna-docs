@@ -2,7 +2,7 @@
 
 import Redocly from "./Redocly"
 import Swagger from "./Swagger"
-import DocumentationVisualizer from "@/features/settings/domain/DocumentationVisualizer"
+import { DocumentationVisualizer } from "@/features/settings/domain"
 
 const DocumentationViewer = ({
   visualizer,

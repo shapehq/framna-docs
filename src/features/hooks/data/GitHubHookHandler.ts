@@ -1,6 +1,6 @@
 import { NextRequest } from "next/server"
 import { Webhooks, EmitterWebhookEventName } from "@octokit/webhooks"
-import IPullRequestEventHandler from "../domain/IPullRequestEventHandler"
+import { IPullRequestEventHandler } from "../domain"
 
 interface GitHubHookHandlerConfig {
   readonly secret: string

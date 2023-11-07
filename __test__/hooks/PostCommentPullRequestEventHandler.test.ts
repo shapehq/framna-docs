@@ -1,4 +1,4 @@
-import PostCommentPullRequestEventHandler from "../../src/features/hooks/domain/PostCommentPullRequestEventHandler"
+import { PostCommentPullRequestEventHandler } from "../../src/features/hooks/domain"
 
 test("It adds a comment to the repository", async () => {
   let didAddComment = false

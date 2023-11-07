@@ -1,6 +1,6 @@
 import { Box } from "@mui/material"
 import DelayedLoadingIndicator from "@/common/loading/DelayedLoadingIndicator"
-import DocumentationVisualizer from "@/features/settings/domain/DocumentationVisualizer"
+import { DocumentationVisualizer } from "@/features/settings/domain"
 
 const DocumentationIframe = ({
   visualizer,

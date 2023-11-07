@@ -1,7 +1,7 @@
 import { List, Box, Typography } from "@mui/material"
 import ProjectListItem from "./ProjectListItem"
 import ProjectListItemPlaceholder from "./ProjectListItemPlaceholder"
-import Project from "../domain/Project"
+import { Project } from "../domain"
 
 interface ProjectListProps {
   readonly isLoading: boolean

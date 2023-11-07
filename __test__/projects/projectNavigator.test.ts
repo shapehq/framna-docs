@@ -1,4 +1,4 @@
-import projectNavigator from "../../src/features/projects/domain/projectNavigator"
+import { projectNavigator } from "../../src/features/projects/domain"
 
 test("It navigates to the correct path", async () => {
   let pushedPath: string | undefined

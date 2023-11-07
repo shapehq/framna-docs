@@ -1,4 +1,4 @@
-import ProjectConfigParser from "../../src/features/projects/domain/ProjectConfigParser"
+import { ProjectConfigParser } from "../../src/features/projects/domain"
 
 test("It parses an empty string", async () => {
   const sut = new ProjectConfigParser()

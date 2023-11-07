@@ -1,5 +1,5 @@
-import CredentialsTransferrer from "../../src/features/auth/domain/credentialsTransfer/CredentialsTransferrer"
-import OAuthToken from "../../src/features/auth/domain/oAuthToken/OAuthToken"
+import { CredentialsTransferrer } from "../../src/features/auth/domain"
+import { OAuthToken } from "../../src/features/auth/domain"
 
 test("It fetches refresh token for specified user", async () => {
   let fetchedUserId: string | undefined
