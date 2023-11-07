@@ -26,7 +26,8 @@ test("It gets the access token for the user", async () => {
   expect(accessToken).toBe("foo")
 })
 
-test("It throws an error when the access token is null", async () => {
+test("It refreshes access token on demand when there is no cached access token", async () => {
+  let didRefreshAccessToken = false
   const sut = new GuestAccessTokenService({
     userIdReader: {
       async getUserId() {
@@ -41,9 +42,11 @@ test("It throws an error when the access token is null", async () => {
     },
     dataSource: {
       async getAccessToken() {
+        didRefreshAccessToken = true
         return "foo"
       }
     }
   })
-  expect(sut.getAccessToken()).rejects.toThrow()
+  await sut.getAccessToken()
+  expect(didRefreshAccessToken).toBeTruthy()
 })
