@@ -1,5 +1,5 @@
 import { getSession } from "@auth0/nextjs-auth0"
-import { UnauthorizedError } from "@/common/errors"
+import { UnauthorizedError } from "../../common"
 import ISession from "./ISession"
 import IIsUserGuestReader from "@/features/auth/domain/userIdentityProvider/IsUserGuestReader"
 

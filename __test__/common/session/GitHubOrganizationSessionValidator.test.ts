@@ -1,7 +1,7 @@
 import {
   GetOrganizationMembershipStatusRequest
 } from "../../../src/common/github/IGitHubClient"
-import GitHubOrganizationSessionValidator from "../../../src/common/session/GitHubOrganizationSessionValidator"
+import { GitHubOrganizationSessionValidator } from "../../../src/common"
 
 test("It requests organization membership status for the specified organization", async () => {
   let queriedOrganizationName: string | undefined

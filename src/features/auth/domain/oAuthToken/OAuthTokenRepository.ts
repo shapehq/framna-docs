@@ -1,6 +1,4 @@
-import ZodJSONCoder from "../../../../common/utils/ZodJSONCoder"
-import IUserDataRepository from "@/common/userData/IUserDataRepository"
-import { UnauthorizedError } from "../../../../common/errors"
+import { IUserDataRepository, UnauthorizedError, ZodJSONCoder } from "../../../../common"
 import IOAuthTokenRepository from "./IOAuthTokenRepository"
 import OAuthToken, { OAuthTokenSchema } from "./OAuthToken"
 

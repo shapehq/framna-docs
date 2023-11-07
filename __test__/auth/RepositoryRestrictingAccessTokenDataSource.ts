@@ -1,4 +1,4 @@
-import RepositoryRestrictingAccessTokenDataSource from "../../src/features/auth/domain/repositoryAccess/RepositoryRestrictingAccessTokenDataSource"
+import { RepositoryRestrictingAccessTokenDataSource } from "../../src/features/auth/domain"
 
 test("It limits access to the fetched repositories", async () => {
   let restrictingRepositoryNames: string[] | undefined

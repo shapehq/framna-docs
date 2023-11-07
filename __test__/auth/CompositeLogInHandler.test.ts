@@ -1,4 +1,4 @@
-import CompositeLogInHandler from "../../src/features/auth/domain/logIn/CompositeLogInHandler"
+import { CompositeLogInHandler } from "../../src/features/auth/domain"
 
 test("It invokes all log in handlers for user", async () => {
   let userId1: string | undefined

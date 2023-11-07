@@ -1,5 +1,5 @@
-import IsUserGuestReader from "../../src/features/auth/domain/userIdentityProvider/IsUserGuestReader"
-import UserIdentityProvider from "../../src/features/auth/domain/userIdentityProvider/UserIdentityProvider"
+import { IsUserGuestReader } from "../../src/features/auth/domain"
+import { UserIdentityProvider } from "../../src/features/auth/domain"
 
 test("It does not consider a user to be a guest if they are logged in with GitHub", async () => {
   const sut = new IsUserGuestReader({

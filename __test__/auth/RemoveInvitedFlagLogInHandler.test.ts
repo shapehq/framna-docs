@@ -1,4 +1,4 @@
-import RemoveInvitedFlagLogInHandler from "../../src/features/auth/domain/logIn/RemoveInvitedFlagLogInHandler"
+import { RemoveInvitedFlagLogInHandler } from "../../src/features/auth/domain"
 
 test("It removes invited flag from specified user", async () => {
   let updatedUserId: string | undefined

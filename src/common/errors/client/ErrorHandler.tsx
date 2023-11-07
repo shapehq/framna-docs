@@ -1,7 +1,7 @@
 "use client"
 
 import { SWRConfig } from "swr"
-import { FetcherError } from "@/common/utils/fetcher"
+import { FetcherError } from "@/common"
 
 export default function ErrorHandler({
   children

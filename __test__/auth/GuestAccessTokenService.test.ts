@@ -1,4 +1,4 @@
-import GuestAccessTokenService from "../../src/features/auth/domain/accessToken/GuestAccessTokenService"
+import { GuestAccessTokenService } from "../../src/features/auth/domain"
 
 test("It gets the access token for the user", async () => {
   let readUserId: string | undefined

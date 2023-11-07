@@ -1,4 +1,4 @@
-import SessionAccessTokenService from "../../src/features/auth/domain/accessToken/SessionAccessTokenService"
+import { SessionAccessTokenService } from "../../src/features/auth/domain"
 
 test("It reads the access token for a guest user", async () => {
   let didReadAccessToken = false

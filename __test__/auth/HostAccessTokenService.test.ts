@@ -1,5 +1,5 @@
-import HostAccessTokenService from "../../src/features/auth/domain/accessToken/HostAccessTokenService"
-import OAuthToken from "../../src/features/auth/domain/oAuthToken/OAuthToken"
+import { HostAccessTokenService } from "../../src/features/auth/domain"
+import { OAuthToken } from "../../src/features/auth/domain"
 
 test("It gets the access token for the user", async () => {
   let readUserID: string | undefined

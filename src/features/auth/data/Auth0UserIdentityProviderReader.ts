@@ -1,7 +1,7 @@
 import { ManagementClient } from "auth0"
 import UserIdentityProvider from "../domain/userIdentityProvider/UserIdentityProvider"
 import IUserIdentityProviderReader from "../domain/userIdentityProvider/IUserIdentityProviderReader"
-import { UnauthorizedError } from "@/common/errors"
+import { UnauthorizedError } from "@/common"
 
 interface Auth0UserIdentityProviderReaderConfig {
   readonly domain: string

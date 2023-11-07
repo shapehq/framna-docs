@@ -1,6 +1,5 @@
 import { z } from "zod"
-import ZodJSONCoder from "../../../../common/utils/ZodJSONCoder"
-import IUserDataRepository from "@/common/userData/IUserDataRepository"
+import { ZodJSONCoder, IUserDataRepository } from "../../../../common"
 
 export const RepositoryNamesContainerSchema = z.string().array()
 

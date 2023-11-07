@@ -1,5 +1,5 @@
-import CachingUserIdentityProviderReader from "../../src/features/auth/domain/userIdentityProvider/CachingUserIdentityProviderReader"
-import UserIdentityProvider from "../../src/features/auth/domain/userIdentityProvider/UserIdentityProvider"
+import { CachingUserIdentityProviderReader } from "../../src/features/auth/domain"
+import { UserIdentityProvider } from "../../src/features/auth/domain"
 
 test("It fetches user identity provider if it is not cached", async () => {
   let didFetchUserIdentityProvider = false

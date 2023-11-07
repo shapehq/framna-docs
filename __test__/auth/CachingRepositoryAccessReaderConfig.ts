@@ -1,4 +1,4 @@
-import CachingRepositoryAccessReaderConfig from "../../src/features/auth/domain/repositoryAccess/CachingRepositoryAccessReaderConfig"
+import { CachingRepositoryAccessReaderConfig } from "../../src/features/auth/domain"
 
 test("It fetches repository names for user if they are not cached", async () => {
   let didFetchRepositoryNames = false

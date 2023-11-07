@@ -1,4 +1,4 @@
-import { getProjectId, getSpecificationId, getVersionId } from "@/common/utils/url"
+import { getProjectId, getSpecificationId, getVersionId } from "../../common"
 import SessionAccessTokenBarrier from "@/features/auth/view/SessionAccessTokenBarrier"
 import ProjectsPage from "@/features/projects/view/ProjectsPage"
 import { projectRepository } from "@/composition"

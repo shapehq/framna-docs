@@ -1,5 +1,4 @@
-import { InvalidSessionError } from "../../../common/errors"
-import ISessionValidator from "@/common/session/ISessionValidator"
+import { ISessionValidator, InvalidSessionError } from "../../../common"
 import IProjectDataSource from "../domain/IProjectDataSource"
 import Project from "../domain/Project"
 

@@ -1,5 +1,5 @@
 import { ManagementClient } from "auth0"
-import { UnauthorizedError } from "@/common/errors"
+import { UnauthorizedError } from "@/common"
 
 interface Auth0RefreshTokenReaderConfig {
   readonly domain: string

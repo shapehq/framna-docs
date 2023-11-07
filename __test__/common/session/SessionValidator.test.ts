@@ -1,4 +1,4 @@
-import SessionValidator from "../../../src/common/session/SessionValidator"
+import { SessionValidator } from "../../../src/common"
 
 test("It validates a host user", async () => {
   let didValidateHostUser = false

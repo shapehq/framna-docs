@@ -1,4 +1,4 @@
-import IUserDataRepository from "@/common/userData/IUserDataRepository"
+import { IUserDataRepository } from "@/common"
 import IUserIdentityProviderReader from "./IUserIdentityProviderReader"
 import UserIdentityProvider from "./UserIdentityProvider"
 

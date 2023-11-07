@@ -1,4 +1,4 @@
-import { UnauthorizedError } from "@/common/errors"
+import { UnauthorizedError } from "@/common"
 import OAuthToken from "../domain/oAuthToken/OAuthToken"
 import IOAuthTokenRefresher from "../domain/oAuthToken/IOAuthTokenRefresher"
 
