@@ -6,18 +6,18 @@ export interface IUserIDReader {
   getUserId(): Promise<string>
 }
 
-type AccessTokenServiceConfig = {
+type HostAccessTokenServiceConfig = {
   readonly userIdReader: IUserIDReader
   readonly repository: IOAuthTokenRepository
   readonly refresher: IOAuthTokenRefresher
 }
 
-export default class AccessTokenService implements IAccessTokenService {
+export default class HostAccessTokenService implements IAccessTokenService {
   private readonly userIdReader: IUserIDReader
   private readonly repository: IOAuthTokenRepository
   private readonly refresher: IOAuthTokenRefresher
   
-  constructor(config: AccessTokenServiceConfig) {
+  constructor(config: HostAccessTokenServiceConfig) {
     this.userIdReader = config.userIdReader
     this.repository = config.repository
     this.refresher = config.refresher

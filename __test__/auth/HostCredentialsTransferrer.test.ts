@@ -1,9 +1,9 @@
-import CredentialsTransferrer from "../../src/features/auth/domain/credentialsTransfer/CredentialsTransferrer"
+import HostCredentialsTransferrer from "../../src/features/auth/domain/credentialsTransfer/HostCredentialsTransferrer"
 import OAuthToken from "../../src/features/auth/domain/oAuthToken/OAuthToken"
 
 test("It fetches refresh token for specified user", async () => {
   let fetchedUserId: string | undefined
-  const sut = new CredentialsTransferrer({
+  const sut = new HostCredentialsTransferrer({
     refreshTokenReader: {
       async getRefreshToken(userId) {
         fetchedUserId = userId
@@ -29,7 +29,7 @@ test("It fetches refresh token for specified user", async () => {
 
 test("It refreshes the fetched refresh token", async () => {
   let refreshedRefreshToken: string | undefined
-  const sut = new CredentialsTransferrer({
+  const sut = new HostCredentialsTransferrer({
     refreshTokenReader: {
       async getRefreshToken() {
         return "helloworld"
@@ -56,7 +56,7 @@ test("It refreshes the fetched refresh token", async () => {
 test("It stores the refreshed auth token for the user", async () => {
   let storedAuthToken: OAuthToken | undefined
   let storedUserId: string | undefined
-  const sut = new CredentialsTransferrer({
+  const sut = new HostCredentialsTransferrer({
     refreshTokenReader: {
       async getRefreshToken() {
         return "helloworld"

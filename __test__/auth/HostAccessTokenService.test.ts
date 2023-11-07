@@ -1,9 +1,9 @@
-import AccessTokenService from "../../src/features/auth/domain/accessToken/AccessTokenService"
+import HostAccessTokenService from "../../src/features/auth/domain/accessToken/HostAccessTokenService"
 import OAuthToken from "../../src/features/auth/domain/oAuthToken/OAuthToken"
 
 test("It gets the access token for the user", async () => {
   let readUserID: string | undefined
-  const sut = new AccessTokenService({
+  const sut = new HostAccessTokenService({
     userIdReader: {
       async getUserId() {
         return "1234"
@@ -30,7 +30,7 @@ test("It gets the access token for the user", async () => {
 
 test("It refreshes OAuth using stored refresh token", async () => {
   let usedRefreshToken: string | undefined
-  const sut = new AccessTokenService({
+  const sut = new HostAccessTokenService({
     userIdReader: {
       async getUserId() {
         return "1234"
@@ -57,7 +57,7 @@ test("It refreshes OAuth using stored refresh token", async () => {
 test("It stores the new OAuth token for the user", async () => {
   let storedUserId: string | undefined
   let storedOAuthToken: OAuthToken | undefined
-  const sut = new AccessTokenService({
+  const sut = new HostAccessTokenService({
     userIdReader: {
       async getUserId() {
         return "1234"
