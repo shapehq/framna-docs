@@ -1,4 +1,4 @@
-import IGitHubClient from "@/common"
+import { IGitHubClient } from "@/common"
 import {
   Project,
   IProjectConfig,
