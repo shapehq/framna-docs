@@ -14,11 +14,13 @@ import TrailingToolbarItem from "../toolbar/TrailingToolbarItem"
 import useSidebarOpen from "@/common/state/useSidebarOpen"
 
 export default function ProjectsPage({
+  showEditButton,
   projects: serverProjects,
   projectId,
   versionId,
   specificationId
 }: {
+  showEditButton: boolean,
   projects?: Project[]
   projectId?: string
   versionId?: string
@@ -98,6 +100,7 @@ export default function ProjectsPage({
       }
       toolbarTrailingItem={project && version && specification &&
         <TrailingToolbarItem
+          showEditButton={showEditButton}
           project={project}
           version={version}
           specification={specification}

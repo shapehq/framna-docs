@@ -7,12 +7,14 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faPen } from "@fortawesome/free-solid-svg-icons"
 
 const TrailingToolbarItem = ({
+  showEditButton,
   project,
   version,
   specification,
   onSelectVersion,
   onSelectSpecification
 }: {
+  showEditButton: boolean,
   project: Project
   version: Version
   specification: OpenApiSpecification
@@ -48,7 +50,7 @@ const TrailingToolbarItem = ({
           onSelect={onSelectSpecification}
           sx={{ marginRight: 0.5 }}
         />
-        {specification.editURL &&
+        {showEditButton && specification.editURL &&
           <IconButton
             href={specification.editURL}
             target="_blank"
