@@ -1,15 +1,14 @@
 import { ManagementClient } from "auth0"
 import { UnauthorizedError } from "@/common/errors"
-import IRefreshTokenReader from "../domain/IRefreshTokenReader"
 
 interface Auth0RefreshTokenReaderConfig {
-  domain: string
-  clientId: string
-  clientSecret: string
-  connection: string
+  readonly domain: string
+  readonly clientId: string
+  readonly clientSecret: string
+  readonly connection: string
 }
 
-export default class Auth0RefreshTokenReader implements IRefreshTokenReader {
+export default class Auth0RefreshTokenReader {
   private readonly managementClient: ManagementClient
   private readonly connection: string
   
