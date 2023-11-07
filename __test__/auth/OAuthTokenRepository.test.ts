@@ -1,4 +1,4 @@
-import OAuthTokenRepository from "../../src/features/auth/domain/oAuthToken/OAuthTokenRepository"
+import { OAuthTokenRepository } from "../../src/features/auth/domain"
 
 test("It reads the auth token for the specified user", async () => {
   let readUserId: string | undefined

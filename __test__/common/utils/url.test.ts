@@ -2,7 +2,7 @@ import {
   getProjectId,
   getVersionId,
   getSpecificationId
-} from "../../../src/common/utils/url"
+} from "../../../src/common"
 
 test("It reads path containing project only", async () => {
   const url = "/foo"

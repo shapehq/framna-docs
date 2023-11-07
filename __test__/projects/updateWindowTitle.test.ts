@@ -1,4 +1,4 @@
-import updateWindowTitle from "../../src/features/projects/domain/updateWindowTitle"
+import { updateWindowTitle } from "../../src/features/projects/domain"
 
 test("It uses default title when there is no selection", async () => {
   const store: { title: string } = { title: "" }

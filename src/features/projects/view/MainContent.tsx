@@ -1,6 +1,4 @@
-import Project from "../domain/Project"
-import Version from "../domain/Version"
-import OpenApiSpecification from "../domain/OpenApiSpecification"
+import { Project, Version, OpenApiSpecification } from "../domain"
 import DelayedLoadingIndicator from "@/common/loading/DelayedLoadingIndicator"
 import ErrorMessage from "./ErrorMessage"
 import Documentation from "./Documentation"

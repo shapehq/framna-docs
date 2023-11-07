@@ -1,4 +1,4 @@
-import RepositoryNameCheckingPullRequestEventHandler from "../../src/features/hooks/domain/RepositoryNameCheckingPullRequestEventHandler"
+import { RepositoryNameCheckingPullRequestEventHandler } from "../../src/features/hooks/domain"
 
 test("It does not call event handler when repository name does not have \"-openapi\" suffix", async () => {
   let didCallEventHandler = false

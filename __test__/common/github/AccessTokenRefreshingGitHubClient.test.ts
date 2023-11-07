@@ -1,4 +1,4 @@
-import AccessTokenRefreshingGitHubClient from "../../../src/common/github/AccessTokenRefreshingGitHubClient"
+import { AccessTokenRefreshingGitHubClient } from "../../../src/common"
 import {
   GraphQLQueryRequest,
   GetRepositoryContentRequest,

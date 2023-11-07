@@ -1,4 +1,4 @@
-import UserDataCleanUpLogOutHandler from "../../src/features/auth/domain/logOut/UserDataCleanUpLogOutHandler"
+import { UserDataCleanUpLogOutHandler } from "../../src/features/auth/domain"
 
 test("It deletes data for the read user ID", async () => {
   let deletedUserId: string | undefined

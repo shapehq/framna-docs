@@ -1,9 +1,13 @@
 import { NextRequest, NextResponse } from "next/server"
-import GitHubHookHandler from "@/features/hooks/data/GitHubHookHandler"
-import GitHubPullRequestCommentRepository from "@/features/hooks/data/GitHubPullRequestCommentRepository"
-import PostCommentPullRequestEventHandler from "@/features/hooks/domain/PostCommentPullRequestEventHandler"
-import RepositoryNameCheckingPullRequestEventHandler from "@/features/hooks/domain/RepositoryNameCheckingPullRequestEventHandler"
-import ExistingCommentCheckingPullRequestEventHandler from "@/features/hooks/domain/ExistingCommentCheckingPullRequestEventHandler"
+import {
+  GitHubHookHandler,
+  GitHubPullRequestCommentRepository
+} from "@/features/hooks/data"
+import {
+  PostCommentPullRequestEventHandler,
+  RepositoryNameCheckingPullRequestEventHandler,
+  ExistingCommentCheckingPullRequestEventHandler
+} from "@/features/hooks/domain"
 import { gitHubClient } from "@/composition"
 
 const {

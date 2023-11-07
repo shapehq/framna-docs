@@ -1,4 +1,4 @@
-import OnlyStaleRefreshingAccessTokenService from "../../src/features/auth/domain/accessToken/OnlyStaleRefreshingAccessTokenService"
+import { OnlyStaleRefreshingAccessTokenService } from "../../src/features/auth/domain"
 
 test("It refreshes the access token when the input access token is equal to the stored access token", async () => {
   let didRefreshAccessToken = false

@@ -1,4 +1,4 @@
-import CompositeLogOutHandler from "../../src/features/auth/domain/logOut/CompositeLogOutHandler"
+import { CompositeLogOutHandler } from "../../src/features/auth/domain"
 
 test("It invokes all log out handlers", async () => {
   let didCallLogOutHandler1 = false

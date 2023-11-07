@@ -1,5 +1,4 @@
-import Project from "../../src/features/projects/domain/Project"
-import CachingProjectDataSource from "../../src/features/projects/domain/CachingProjectDataSource"
+import { Project, CachingProjectDataSource } from "../../src/features/projects/domain"
 
 test("It caches projects read from the data source", async () => {
   const projects: Project[] = [{
