@@ -1,7 +1,7 @@
 import DocumentationViewer from "@/features/docs/view/DocumentationViewer"
 import DocumentationIframe from "./DocumentationIframe"
-import DocumentationVisualizer from "@/features/settings/domain/DocumentationVisualizer"
-import useDocumentationVisualizer from "@/features/settings/data/useDocumentationVisualizer"
+import { DocumentationVisualizer } from "@/features/settings/domain"
+import { useDocumentationVisualizer } from "@/features/settings/data"
 
 const Documentation = ({ url }: { url: string }) => {
   const [visualizer] = useDocumentationVisualizer()

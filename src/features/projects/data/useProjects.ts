@@ -1,6 +1,6 @@
 import useSWR from "swr"
 import { fetcher } from "@/common"
-import Project from "../domain/Project"
+import { Project } from "../domain"
 
 type ProjectContainer = { projects: Project[] }
 

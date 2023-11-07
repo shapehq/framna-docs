@@ -1,6 +1,5 @@
 import { ISessionValidator, InvalidSessionError } from "../../../common"
-import IProjectDataSource from "../domain/IProjectDataSource"
-import Project from "../domain/Project"
+import { IProjectDataSource ,Project } from "../domain"
 
 export default class SessionValidatingProjectDataSource implements IProjectDataSource {
   private readonly sessionValidator: ISessionValidator

@@ -6,7 +6,7 @@ import {
   Typography
 } from "@mui/material"
 import MenuItemHover from "@/common/ui/MenuItemHover"
-import Project from "../domain/Project"
+import { Project } from "../domain"
 import ProjectAvatar from "./ProjectAvatar"
 
 const ProjectListItem = ({
