@@ -124,7 +124,7 @@ export const gitHubClient = new AccessTokenRefreshingGitHubClient(
 )
 
 export const sessionValidator = new SessionValidator({
-  session,
+  isGuestReader: session,
   guestSessionValidator: new AlwaysValidSessionValidator(),
   hostSessionValidator: new GitHubOrganizationSessionValidator(
     gitHubClient,
