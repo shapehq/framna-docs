@@ -5,7 +5,7 @@ export interface IMetadataUpdater {
   updateMetadata(userId: string, metadata: {[key: string]: any}): Promise<void>
 }
 
-export default class RemoveInvitedFlagLoginHandler implements ILogInHandler {
+export default class RemoveInvitedFlagLogInHandler implements ILogInHandler {
   private readonly metadataUpdater: IMetadataUpdater
   
   constructor(metadataUpdater: IMetadataUpdater) {

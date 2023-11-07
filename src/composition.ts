@@ -1,42 +1,52 @@
-import AccessTokenRefreshingGitHubClient from "@/common/github/AccessTokenRefreshingGitHubClient"
-import AlwaysValidSessionValidator from "@/common/session/AlwaysValidSessionValidator"
-import Auth0MetadataUpdater from "./features/auth/data/Auth0MetadataUpdater"
-import Auth0RefreshTokenReader from "@/features/auth/data/Auth0RefreshTokenReader"
-import Auth0RepositoryAccessReader from "./features/auth/data/Auth0RepositoryAccessReader"
-import Auth0Session from "@/common/session/Auth0Session"
-import Auth0UserIdentityProviderReader from "./features/auth/data/Auth0UserIdentityProviderReader"
-import CachingProjectDataSource from "@/features/projects/domain/CachingProjectDataSource"
-import CachingRepositoryAccessReaderConfig from "./features/auth/domain/repositoryAccess/CachingRepositoryAccessReaderConfig"
-import CachingUserIdentityProviderReader from "./features/auth/domain/userIdentityProvider/CachingUserIdentityProviderReader"
-import CompositeLogInHandler from "@/features/auth/domain/logIn/CompositeLogInHandler"
-import CompositeLogOutHandler from "@/features/auth/domain/logOut/CompositeLogOutHandler"
-import CredentialsTransferringLogInHandler from "@/features/auth/domain/logIn/CredentialsTransferringLogInHandler"
-import ErrorIgnoringLogOutHandler from "@/features/auth/domain/logOut/ErrorIgnoringLogOutHandler"
-import ForgivingProjectDataSource from "./features/projects/domain/ForgivingProjectDataSource"
-import GitHubClient from "@/common/github/GitHubClient"
-import GitHubOAuthTokenRefresher from "@/features/auth/data/GitHubOAuthTokenRefresher"
-import GitHubOrganizationSessionValidator from "@/common/session/GitHubOrganizationSessionValidator"
-import GitHubProjectDataSource from "@/features/projects/data/GitHubProjectDataSource"
-import GitHubInstallationAccessTokenDataSource from "@/features/auth/data/GitHubInstallationAccessTokenDataSource"
-import GuestAccessTokenService from "@/features/auth/domain/accessToken/GuestAccessTokenService"
-import NullObjectCredentialsTransferrer from "@/features/auth/domain/credentialsTransfer/NullObjectCredentialsTransferrer"
-import HostAccessTokenService from "@/features/auth/domain/accessToken/HostAccessTokenService"
-import HostCredentialsTransferrer from "@/features/auth/domain/credentialsTransfer/HostCredentialsTransferrer"
-import IsUserGuestReader from "@/features/auth/domain/userIdentityProvider/IsUserGuestReader"
-import KeyValueUserDataRepository from "@/common/userData/KeyValueUserDataRepository"
-import LockingAccessTokenService from "@/features/auth/domain/accessToken/LockingAccessTokenService"
-import OAuthTokenRepository from "@/features/auth/domain/oAuthToken/OAuthTokenRepository"
-import OnlyStaleRefreshingAccessTokenService from "@/features/auth/domain/accessToken/OnlyStaleRefreshingAccessTokenService"
-import ProjectRepository from "@/features/projects/domain/ProjectRepository"
-import RedisKeyedMutexFactory from "@/common/mutex/RedisKeyedMutexFactory"
-import RedisKeyValueStore from "@/common/keyValueStore/RedisKeyValueStore"
-import RemoveInvitedFlagLoginHandler from "./features/auth/domain/logIn/RemoveInvitedFlagLogInHandler"
-import RepositoryRestrictingAccessTokenDataSource from "@/features/auth/domain/repositoryAccess/RepositoryRestrictingAccessTokenDataSource"
-import SessionAccessTokenService from "@/features/auth/domain/accessToken/SessionAccessTokenService"
-import SessionMutexFactory from "@/common/mutex/SessionMutexFactory"
-import SessionValidatingProjectDataSource from "@/features/projects/domain/SessionValidatingProjectDataSource"
-import SessionValidator from "@/common/session/SessionValidator"
-import UserDataCleanUpLogOutHandler from "@/features/auth/domain/logOut/UserDataCleanUpLogOutHandler"
+import {
+  AccessTokenRefreshingGitHubClient,
+  AlwaysValidSessionValidator,
+  Auth0Session,
+  GitHubClient,
+  GitHubOrganizationSessionValidator,  
+  KeyValueUserDataRepository,
+  RedisKeyedMutexFactory,
+  RedisKeyValueStore,
+  SessionMutexFactory,
+  SessionValidator
+} from "@/common"
+import {
+  GitHubProjectDataSource
+} from "@/features/projects/data"
+import {
+  CachingProjectDataSource,
+  ForgivingProjectDataSource,
+  ProjectRepository,
+  SessionValidatingProjectDataSource
+} from "@/features/projects/domain"
+import {
+  GitHubOAuthTokenRefresher,
+  GitHubInstallationAccessTokenDataSource,
+  Auth0MetadataUpdater,
+  Auth0RefreshTokenReader,
+  Auth0RepositoryAccessReader,
+  Auth0UserIdentityProviderReader
+} from "@/features/auth/data"
+import {
+  CachingRepositoryAccessReaderConfig,
+  CachingUserIdentityProviderReader,
+  CompositeLogInHandler,
+  CompositeLogOutHandler,
+  CredentialsTransferringLogInHandler,
+  ErrorIgnoringLogOutHandler,
+  GuestAccessTokenService,
+  NullObjectCredentialsTransferrer,
+  HostAccessTokenService,
+  HostCredentialsTransferrer,
+  IsUserGuestReader,
+  LockingAccessTokenService,
+  OAuthTokenRepository,
+  OnlyStaleRefreshingAccessTokenService,
+  RemoveInvitedFlagLogInHandler,
+  RepositoryRestrictingAccessTokenDataSource,
+  SessionAccessTokenService,
+  UserDataCleanUpLogOutHandler
+} from "@/features/auth/domain"
 
 const {
   AUTH0_MANAGEMENT_DOMAIN,
@@ -195,7 +205,7 @@ export const logInHandler = new CompositeLogInHandler([
       oAuthTokenRepository: oAuthTokenRepository
     })
   }),
-  new RemoveInvitedFlagLoginHandler(
+  new RemoveInvitedFlagLogInHandler(
     new Auth0MetadataUpdater({ ...auth0ManagementCredentials })
   )
 ])
