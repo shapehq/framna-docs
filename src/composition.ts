@@ -18,7 +18,7 @@ import GitHubOrganizationSessionValidator from "@/common/session/GitHubOrganizat
 import GitHubProjectDataSource from "@/features/projects/data/GitHubProjectDataSource"
 import GitHubInstallationAccessTokenDataSource from "@/features/auth/data/GitHubInstallationAccessTokenDataSource"
 import GuestAccessTokenService from "@/features/auth/domain/accessToken/GuestAccessTokenService"
-import GuestCredentialsTransferrer from "@/features/auth/domain/credentialsTransfer/GuestCredentialsTransferrer"
+import NullObjectCredentialsTransferrer from "@/features/auth/domain/credentialsTransfer/NullObjectCredentialsTransferrer"
 import HostAccessTokenService from "@/features/auth/domain/accessToken/HostAccessTokenService"
 import HostCredentialsTransferrer from "@/features/auth/domain/credentialsTransfer/HostCredentialsTransferrer"
 import IsUserGuestReader from "@/features/auth/domain/userIdentityProvider/IsUserGuestReader"
@@ -181,10 +181,7 @@ export const logInHandler = new CompositeLogInHandler([
     isUserGuestReader: new IsUserGuestReader(
       userIdentityProviderReader
     ),
-    guestCredentialsTransferrer: new GuestCredentialsTransferrer({
-      repository: accessTokenRepository,
-      dataSource: guestAccessTokenDataSource
-    }),
+    guestCredentialsTransferrer: new NullObjectCredentialsTransferrer(),
     hostCredentialsTransferrer: new HostCredentialsTransferrer({
       refreshTokenReader: new Auth0RefreshTokenReader({
         ...auth0ManagementCredentials,
