@@ -95,7 +95,7 @@ const ProjectName = ({
     )
   } else {
     return (
-      <Typography variant="body1">
+      <Typography variant="body1" sx={sx}>
         {text}
       </Typography>
     )
