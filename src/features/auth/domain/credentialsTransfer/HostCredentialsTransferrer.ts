@@ -26,6 +26,6 @@ export default class HostCredentialsTransferrer implements ICredentialsTransferr
   async transferCredentials(userId: string): Promise<void> {
     const refreshToken = await this.refreshTokenReader.getRefreshToken(userId)
     const authToken = await this.oAuthTokenRefresher.refreshOAuthToken(refreshToken)
-    this.oAuthTokenRepository.set(userId, authToken)
+    await this.oAuthTokenRepository.set(userId, authToken)
   }
 }
