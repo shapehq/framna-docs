@@ -28,6 +28,7 @@ import {
   Auth0UserIdentityProviderReader
 } from "@/features/auth/data"
 import {
+  AccessTokenService,
   CachingRepositoryAccessReaderConfig,
   CachingUserIdentityProviderReader,
   CompositeLogInHandler,
@@ -44,7 +45,6 @@ import {
   OnlyStaleRefreshingAccessTokenService,
   RemoveInvitedFlagLogInHandler,
   RepositoryRestrictingAccessTokenDataSource,
-  SessionAccessTokenService,
   UserDataCleanUpLogOutHandler
 } from "@/features/auth/domain"
 
@@ -131,7 +131,7 @@ export const accessTokenService = new LockingAccessTokenService(
     "mutexAccessToken"
   ),
   new OnlyStaleRefreshingAccessTokenService(
-    new SessionAccessTokenService({
+    new AccessTokenService({
       isGuestReader: session,
       guestAccessTokenService: new GuestAccessTokenService({
         userIdReader: session,

@@ -4,18 +4,18 @@ export interface IIsGuestReader {
   getIsGuest(): Promise<boolean>
 }
 
-interface SessionAccessTokenServiceConfig {
+interface AccessTokenServiceConfig {
   readonly isGuestReader: IIsGuestReader
   readonly guestAccessTokenService: IAccessTokenService
   readonly hostAccessTokenService: IAccessTokenService
 }
 
-export default class SessionAccessTokenService implements IAccessTokenService {
+export default class AccessTokenService implements IAccessTokenService {
   private readonly isGuestReader: IIsGuestReader
   private readonly guestAccessTokenService: IAccessTokenService
   private readonly hostAccessTokenService: IAccessTokenService
   
-  constructor(config: SessionAccessTokenServiceConfig) {
+  constructor(config: AccessTokenServiceConfig) {
     this.isGuestReader = config.isGuestReader
     this.guestAccessTokenService = config.guestAccessTokenService
     this.hostAccessTokenService = config.hostAccessTokenService
