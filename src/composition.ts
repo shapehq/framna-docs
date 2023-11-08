@@ -15,12 +15,14 @@ import {
 } from "@/features/projects/data"
 import {
   CachingProjectDataSource,
+  ForgivingProjectDataSource,
   ProjectRepository,
   SessionValidatingProjectDataSource
 } from "@/features/projects/domain"
 import {
   GitHubOAuthTokenRefresher,
   GitHubInstallationAccessTokenDataSource,
+  Auth0MetadataUpdater,
   Auth0RefreshTokenReader,
   Auth0RepositoryAccessReader,
   Auth0UserIdentityProviderReader
@@ -29,6 +31,7 @@ import {
   AccessTokenService,
   CachingRepositoryAccessReaderConfig,
   CachingUserIdentityProviderReader,
+  CompositeLogInHandler,
   CompositeLogOutHandler,
   CredentialsTransferringLogInHandler,
   ErrorIgnoringLogOutHandler,
@@ -40,6 +43,7 @@ import {
   LockingAccessTokenService,
   OAuthTokenRepository,
   OnlyStaleRefreshingAccessTokenService,
+  RemoveInvitedFlagLogInHandler,
   RepositoryRestrictingAccessTokenDataSource,
   UserDataCleanUpLogOutHandler
 } from "@/features/auth/domain"
@@ -175,28 +179,36 @@ export const projectRepository = new ProjectRepository(
 export const projectDataSource = new CachingProjectDataSource(
   new SessionValidatingProjectDataSource(
     sessionValidator,
-    new GitHubProjectDataSource(
-      userGitHubClient,
-      GITHUB_ORGANIZATION_NAME
-    )
+    new ForgivingProjectDataSource({
+      accessTokenReader: accessTokenService,
+      projectDataSource: new GitHubProjectDataSource(
+        userGitHubClient,
+        GITHUB_ORGANIZATION_NAME
+      )
+    })
   ),
   projectRepository
 )
 
-export const logInHandler = new CredentialsTransferringLogInHandler({
-  isUserGuestReader: new IsUserGuestReader(
-    userIdentityProviderReader
-  ),
-  guestCredentialsTransferrer: new NullObjectCredentialsTransferrer(),
-  hostCredentialsTransferrer: new HostCredentialsTransferrer({
-    refreshTokenReader: new Auth0RefreshTokenReader({
-      ...auth0ManagementCredentials,
-      connection: "github"
-    }),
-    oAuthTokenRefresher: gitHubOAuthTokenRefresher,
-    oAuthTokenRepository: oAuthTokenRepository
-  })
-})
+export const logInHandler = new CompositeLogInHandler([
+  new CredentialsTransferringLogInHandler({
+    isUserGuestReader: new IsUserGuestReader(
+      userIdentityProviderReader
+    ),
+    guestCredentialsTransferrer: new NullObjectCredentialsTransferrer(),
+    hostCredentialsTransferrer: new HostCredentialsTransferrer({
+      refreshTokenReader: new Auth0RefreshTokenReader({
+        ...auth0ManagementCredentials,
+        connection: "github"
+      }),
+      oAuthTokenRefresher: gitHubOAuthTokenRefresher,
+      oAuthTokenRepository: oAuthTokenRepository
+    })
+  }),
+  new RemoveInvitedFlagLogInHandler(
+    new Auth0MetadataUpdater({ ...auth0ManagementCredentials })
+  )
+])
 
 export const logOutHandler = new ErrorIgnoringLogOutHandler(
   new CompositeLogOutHandler([
