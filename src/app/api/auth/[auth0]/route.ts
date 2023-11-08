@@ -16,7 +16,8 @@ const afterCallback: AfterCallbackAppRoute = async (_req, session) => {
   return session
 }
 
-const onError: AppRouterOnError = async () => {
+const onError: AppRouterOnError = async (_req, error) => {
+  console.error(error)
   const url = new URL(SHAPE_DOCS_BASE_URL + "/api/auth/forceLogout")
   return NextResponse.redirect(url)
 }
