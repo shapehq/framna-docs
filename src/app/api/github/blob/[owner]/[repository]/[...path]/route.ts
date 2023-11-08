@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server"
-import { gitHubClient } from "@/composition"
+import { userGitHubClient } from "@/composition"
 
 interface GetBlobParams {
   owner: string
@@ -9,7 +9,7 @@ interface GetBlobParams {
 
 export async function GET(req: NextRequest, { params }: { params: GetBlobParams }) {
   const path = params.path.join("/")
-  const item = await gitHubClient.getRepositoryContent({
+  const item = await userGitHubClient.getRepositoryContent({
     repositoryOwner: params.owner,
     repositoryName: params.repository,
     path: path,
