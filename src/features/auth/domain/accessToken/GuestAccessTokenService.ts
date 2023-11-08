@@ -6,7 +6,7 @@ export interface IUserIDReader {
 
 export interface Repository {
   get(userId: string): Promise<string | null>
-  set(userId: string, token: string): Promise<void>
+  setExpiring(userId: string, token: string, timeToLive: number): Promise<void>
 }
 
 export interface DataSource {
@@ -47,7 +47,7 @@ export default class GuestAccessTokenService implements IAccessTokenService {
   private async getNewAccessToken(): Promise<string> {
     const userId = await this.userIdReader.getUserId()
     const newAccessToken = await this.dataSource.getAccessToken(userId)
-    await this.repository.set(userId, newAccessToken)
+    await this.repository.setExpiring(userId, newAccessToken, 7 * 24 * 3600)
     return newAccessToken
   }
 }
