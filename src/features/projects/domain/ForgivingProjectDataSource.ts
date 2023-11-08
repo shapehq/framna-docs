@@ -23,10 +23,9 @@ export default class ForgivingProjectDataSource implements IProjectDataSource {
     try {
       await this.accessTokenReader.getAccessToken()
     } catch {
-      // If we cannot get an access token for, we show an empty list
-      // of projects. It is common for guest users that we cannot get
-      // an access token because they have been incorrectly configured
-      // to have access to non-existing repositories.
+      // If we cannot get an access token, we show an empty list of projects.
+      // It is common for guest users that we cannot get an access token because they
+      // have been incorrectly configured to have access to non-existing repositories.
       return []
     }
     return this.projectDataSource.getProjects()
