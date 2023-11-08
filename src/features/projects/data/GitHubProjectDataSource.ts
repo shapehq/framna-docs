@@ -238,6 +238,6 @@ export default class GitHubProjectDataSource implements IProjectDataSource {
   }
   
   private getGitHubBlobURL(owner: string, repository: string, path: string, ref: string): string {
-    return `/api/github/blob/${owner}/${repository}/${path}?ref=${ref}`
+    return `/api/blob/${owner}/${repository}/${path}?ref=${ref}`
   }
 }
