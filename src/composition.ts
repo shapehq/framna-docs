@@ -15,6 +15,7 @@ import {
 } from "@/features/projects/data"
 import {
   CachingProjectDataSource,
+  ForgivingProjectDataSource,
   ProjectRepository,
   SessionValidatingProjectDataSource
 } from "@/features/projects/domain"
@@ -175,10 +176,13 @@ export const projectRepository = new ProjectRepository(
 export const projectDataSource = new CachingProjectDataSource(
   new SessionValidatingProjectDataSource(
     sessionValidator,
-    new GitHubProjectDataSource(
-      userGitHubClient,
-      GITHUB_ORGANIZATION_NAME
-    )
+    new ForgivingProjectDataSource({
+      accessTokenReader: accessTokenService,
+      projectDataSource: new GitHubProjectDataSource(
+        userGitHubClient,
+        GITHUB_ORGANIZATION_NAME
+      )
+    })
   ),
   projectRepository
 )
