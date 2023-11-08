@@ -1,8 +1,8 @@
-import { SessionAccessTokenService } from "../../src/features/auth/domain"
+import { AccessTokenService } from "../../src/features/auth/domain"
 
 test("It reads the access token for a guest user", async () => {
   let didReadAccessToken = false
-  const sut = new SessionAccessTokenService({
+  const sut = new AccessTokenService({
     isGuestReader: {
       async getIsGuest() {
         return true
@@ -32,7 +32,7 @@ test("It reads the access token for a guest user", async () => {
 
 test("It refreshes the access token for a guest user", async () => {
   let didRefreshAccessToken = false
-  const sut = new SessionAccessTokenService({
+  const sut = new AccessTokenService({
     isGuestReader: {
       async getIsGuest() {
         return true
@@ -62,7 +62,7 @@ test("It refreshes the access token for a guest user", async () => {
 
 test("It reads the access token for a host user", async () => {
   let didReadAccessToken = false
-  const sut = new SessionAccessTokenService({
+  const sut = new AccessTokenService({
     isGuestReader: {
       async getIsGuest() {
         return false
@@ -92,7 +92,7 @@ test("It reads the access token for a host user", async () => {
 
 test("It refreshes the access token for a host user", async () => {
   let didRefreshAccessToken = false
-  const sut = new SessionAccessTokenService({
+  const sut = new AccessTokenService({
     isGuestReader: {
       async getIsGuest() {
         return false

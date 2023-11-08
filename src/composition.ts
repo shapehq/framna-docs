@@ -15,22 +15,20 @@ import {
 } from "@/features/projects/data"
 import {
   CachingProjectDataSource,
-  ForgivingProjectDataSource,
   ProjectRepository,
   SessionValidatingProjectDataSource
 } from "@/features/projects/domain"
 import {
   GitHubOAuthTokenRefresher,
   GitHubInstallationAccessTokenDataSource,
-  Auth0MetadataUpdater,
   Auth0RefreshTokenReader,
   Auth0RepositoryAccessReader,
   Auth0UserIdentityProviderReader
 } from "@/features/auth/data"
 import {
+  AccessTokenService,
   CachingRepositoryAccessReaderConfig,
   CachingUserIdentityProviderReader,
-  CompositeLogInHandler,
   CompositeLogOutHandler,
   CredentialsTransferringLogInHandler,
   ErrorIgnoringLogOutHandler,
@@ -42,9 +40,7 @@ import {
   LockingAccessTokenService,
   OAuthTokenRepository,
   OnlyStaleRefreshingAccessTokenService,
-  RemoveInvitedFlagLogInHandler,
   RepositoryRestrictingAccessTokenDataSource,
-  SessionAccessTokenService,
   UserDataCleanUpLogOutHandler
 } from "@/features/auth/domain"
 
@@ -131,7 +127,7 @@ export const accessTokenService = new LockingAccessTokenService(
     "mutexAccessToken"
   ),
   new OnlyStaleRefreshingAccessTokenService(
-    new SessionAccessTokenService({
+    new AccessTokenService({
       isGuestReader: session,
       guestAccessTokenService: new GuestAccessTokenService({
         userIdReader: session,
@@ -152,7 +148,7 @@ export const gitHubClient = new GitHubClient({
   accessTokenReader: accessTokenService
 })
 
-const userGitHubClient = new AccessTokenRefreshingGitHubClient(
+export const userGitHubClient = new AccessTokenRefreshingGitHubClient(
   accessTokenService,
   gitHubClient
 )
@@ -179,36 +175,28 @@ export const projectRepository = new ProjectRepository(
 export const projectDataSource = new CachingProjectDataSource(
   new SessionValidatingProjectDataSource(
     sessionValidator,
-    new ForgivingProjectDataSource({
-      accessTokenReader: accessTokenService,
-      projectDataSource: new GitHubProjectDataSource(
-        userGitHubClient,
-        GITHUB_ORGANIZATION_NAME
-      )
-    })
+    new GitHubProjectDataSource(
+      userGitHubClient,
+      GITHUB_ORGANIZATION_NAME
+    )
   ),
   projectRepository
 )
 
-export const logInHandler = new CompositeLogInHandler([
-  new CredentialsTransferringLogInHandler({
-    isUserGuestReader: new IsUserGuestReader(
-      userIdentityProviderReader
-    ),
-    guestCredentialsTransferrer: new NullObjectCredentialsTransferrer(),
-    hostCredentialsTransferrer: new HostCredentialsTransferrer({
-      refreshTokenReader: new Auth0RefreshTokenReader({
-        ...auth0ManagementCredentials,
-        connection: "github"
-      }),
-      oAuthTokenRefresher: gitHubOAuthTokenRefresher,
-      oAuthTokenRepository: oAuthTokenRepository
-    })
-  }),
-  new RemoveInvitedFlagLogInHandler(
-    new Auth0MetadataUpdater({ ...auth0ManagementCredentials })
-  )
-])
+export const logInHandler = new CredentialsTransferringLogInHandler({
+  isUserGuestReader: new IsUserGuestReader(
+    userIdentityProviderReader
+  ),
+  guestCredentialsTransferrer: new NullObjectCredentialsTransferrer(),
+  hostCredentialsTransferrer: new HostCredentialsTransferrer({
+    refreshTokenReader: new Auth0RefreshTokenReader({
+      ...auth0ManagementCredentials,
+      connection: "github"
+    }),
+    oAuthTokenRefresher: gitHubOAuthTokenRefresher,
+    oAuthTokenRepository: oAuthTokenRepository
+  })
+})
 
 export const logOutHandler = new ErrorIgnoringLogOutHandler(
   new CompositeLogOutHandler([

@@ -16,7 +16,7 @@ on:
         description: E-mail address to send invitation to
         required: true
       roles:
-        description: Comma-separated list of roles
+        description: Comma-separated list of repositories user needs access to
         required: true
 env:
   OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN_SHAPE_DOCS }}
