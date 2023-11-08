@@ -29,7 +29,7 @@ export default class ProjectRepository implements IProjectRepository {
   async set(projects: Project[]): Promise<void> {
     const userId = await this.userIDReader.getUserId()
     const string = ZodJSONCoder.encode(ProjectSchema.array(), projects)
-    await this.repository.set(userId, string)
+    await this.repository.setExpiring(userId, string, 30 * 24 * 3600)
   }
   
   async delete(): Promise<void> {

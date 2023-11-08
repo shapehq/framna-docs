@@ -19,7 +19,7 @@ export default class CachingUserIdentityProviderReader implements IUserIdentityP
       return cachedValue as UserIdentityProvider
     } else {
       const userIdentity = await this.reader.getUserIdentityProvider(userId)
-      await this.repository.set(userId, userIdentity.toString())
+      await this.repository.setExpiring(userId, userIdentity.toString(), 7 * 24 * 3600)
       return userIdentity
     }
   }

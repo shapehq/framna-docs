@@ -48,7 +48,7 @@ export default class CachingRepositoryAccessReader {
     const repositoryNames = await this.repositoryAccessReader.getRepositoryNames(userId)
     try {
       const str = ZodJSONCoder.encode(RepositoryNamesContainerSchema, repositoryNames)
-      await this.repository.set(userId, str)
+      await this.repository.setExpiring(userId, str, 7 * 24 * 3600)
     } catch (error: unknown) {
       console.error(error)
     }

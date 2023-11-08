@@ -9,6 +9,7 @@ test("It fetches repository names for user if they are not cached", async () => 
         return null
       },
       async set() {},
+      async setExpiring() {},
       async delete() {}
     },
     repositoryAccessReader: {
@@ -32,6 +33,7 @@ test("It does not fetch repository names if they are cached", async () => {
         return "[\"foo\"]"
       },
       async set() {},
+      async setExpiring() {},
       async delete() {}
     },
     repositoryAccessReader: {
@@ -57,6 +59,7 @@ test("It caches fetched repository names for user", async () => {
         cachedUserId = userId
         cachedRepositoryNames = value
       },
+      async setExpiring() {},
       async delete() {}
     },
     repositoryAccessReader: {
@@ -77,6 +80,7 @@ test("It decodes cached repository names", async () => {
         return "[\"foo\",\"bar\"]"
       },
       async set() {},
+      async setExpiring() {},
       async delete() {}
     },
     repositoryAccessReader: {

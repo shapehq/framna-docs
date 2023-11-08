@@ -8,6 +8,7 @@ test("It fetches user identity provider if it is not cached", async () => {
       return null
     },
     async set() {},
+    async setExpiring() {},
     async delete() {}
   }, {
     async getUserIdentityProvider() {
@@ -26,6 +27,7 @@ test("It does not fetch user identity provider if it is cached", async () => {
       return UserIdentityProvider.GITHUB
     },
     async set() {},
+    async setExpiring() {},
     async delete() {}
   }, {
     async getUserIdentityProvider() {
@@ -44,7 +46,8 @@ test("It caches fetched user identity provider for user", async () => {
     async get() {
       return null
     },
-    async set(userId, userIdentityProvider) {
+    async set() {},
+    async setExpiring(userId, userIdentityProvider) {
       cachedUserId = userId
       cachedUserIdentityProvider = userIdentityProvider
     },

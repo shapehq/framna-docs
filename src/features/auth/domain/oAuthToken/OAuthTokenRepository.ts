@@ -19,7 +19,7 @@ export default class OAuthTokenRepository implements IOAuthTokenRepository {
   
   async set(userId: string, token: OAuthToken): Promise<void> {
     const string = ZodJSONCoder.encode(OAuthTokenSchema, token)
-    await this.repository.set(userId, string)
+    await this.repository.setExpiring(userId, string, 6 * 30 * 24 * 3600)
   }
   
   async delete(userId: string): Promise<void> {
