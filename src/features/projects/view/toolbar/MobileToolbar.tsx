@@ -1,7 +1,5 @@
 import { Stack } from "@mui/material"
-import Project from "../../domain/Project"
-import Version from "../../domain/Version"
-import OpenApiSpecification from "../../domain/OpenApiSpecification"
+import { Project, Version, OpenApiSpecification } from "../../domain"
 import VersionSelector from "./VersionSelector"
 import SpecificationSelector from "./SpecificationSelector"
 

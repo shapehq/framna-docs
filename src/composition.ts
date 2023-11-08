@@ -1,26 +1,37 @@
-import AccessTokenRefreshingGitHubClient from "@/common/github/AccessTokenRefreshingGitHubClient"
-import AccessTokenService from "@/features/auth/domain/accessToken/AccessTokenService"
-import Auth0RefreshTokenReader from "@/features/auth/data/Auth0RefreshTokenReader"
 import Auth0Session from "@/common/session/Auth0Session"
-import CachingProjectDataSource from "@/features/projects/domain/CachingProjectDataSource"
-import CompositeLogOutHandler from "@/features/auth/domain/logOut/CompositeLogOutHandler"
-import CredentialsTransferrer from "@/features/auth/domain/credentialsTransfer/CredentialsTransferrer"
-import CredentialsTransferringLogInHandler from "@/features/auth/domain/logIn/CredentialsTransferringLogInHandler"
-import ErrorIgnoringLogOutHandler from "@/features/auth/domain/logOut/ErrorIgnoringLogOutHandler"
-import GitHubClient from "@/common/github/GitHubClient"
-import GitHubOAuthTokenRefresher from "@/features/auth/data/GitHubOAuthTokenRefresher"
-import GitHubOrganizationSessionValidator from "@/common/session/GitHubOrganizationSessionValidator"
-import GitHubProjectDataSource from "@/features/projects/data/GitHubProjectDataSource"
-import KeyValueUserDataRepository from "@/common/userData/KeyValueUserDataRepository"
-import LockingAccessTokenService from "@/features/auth/domain/accessToken/LockingAccessTokenService"
-import OnlyStaleRefreshingAccessTokenService from "@/features/auth/domain/accessToken/OnlyStaleRefreshingAccessTokenService"
-import ProjectRepository from "@/features/projects/domain/ProjectRepository"
 import RedisKeyedMutexFactory from "@/common/mutex/RedisKeyedMutexFactory"
 import RedisKeyValueStore from "@/common/keyValueStore/RedisKeyValueStore"
-import SessionMutexFactory from "@/common/mutex/SessionMutexFactory"
-import SessionValidatingProjectDataSource from "@/features/projects/domain/SessionValidatingProjectDataSource"
-import OAuthTokenRepository from "@/features/auth/domain/oAuthToken/OAuthTokenRepository"
-import UserDataCleanUpLogOutHandler from "@/features/auth/domain/logOut/UserDataCleanUpLogOutHandler"
+
+import {
+  AccessTokenRefreshingGitHubClient,
+  GitHubClient,
+  GitHubOrganizationSessionValidator,
+  KeyValueUserDataRepository,
+  SessionMutexFactory
+} from "@/common"
+import {
+  Auth0RefreshTokenReader,
+  GitHubOAuthTokenRefresher
+} from "@/features/auth/data"
+import {
+  AccessTokenService,
+  CompositeLogOutHandler,
+  CredentialsTransferrer,
+  CredentialsTransferringLogInHandler,
+  ErrorIgnoringLogOutHandler,
+  LockingAccessTokenService,
+  OnlyStaleRefreshingAccessTokenService,
+  OAuthTokenRepository,
+  UserDataCleanUpLogOutHandler
+} from "@/features/auth/domain"
+import {
+  GitHubProjectDataSource
+} from "@/features/projects/data"
+import {
+  CachingProjectDataSource,
+  ProjectRepository,
+  SessionValidatingProjectDataSource
+} from "@/features/projects/domain"
 
 const {
   AUTH0_MANAGEMENT_DOMAIN,
@@ -71,7 +82,7 @@ export const gitHubClient = new GitHubClient({
   accessTokenReader: accessTokenService
 })
 
-const userGitHubClient = new AccessTokenRefreshingGitHubClient(
+export const userGitHubClient = new AccessTokenRefreshingGitHubClient(
   accessTokenService,
   gitHubClient
 )

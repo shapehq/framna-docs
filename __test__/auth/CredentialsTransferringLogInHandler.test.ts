@@ -1,4 +1,4 @@
-import CredentialsTransferringLogInHandler from "../../src/features/auth/domain/logIn/CredentialsTransferringLogInHandler"
+import { CredentialsTransferringLogInHandler } from "../../src/features/auth/domain"
 
 test("It transfers credentials", async () => {
   let didTransferCredentials = false

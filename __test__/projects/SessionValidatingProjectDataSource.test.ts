@@ -1,4 +1,4 @@
-import SessionValidatingProjectDataSource from "../../src/features/projects/domain/SessionValidatingProjectDataSource"
+import { SessionValidatingProjectDataSource } from "../../src/features/projects/domain"
 
 test("It validates the session", async () => {
   let didValidateSession = false

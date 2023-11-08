@@ -1,4 +1,4 @@
-import ProjectRepository from "../domain/ProjectRepository"
+import { ProjectRepository } from "../domain"
 import ClientProjectsPage from "./client/ProjectsPage"
 
 export default async function ProjectsPage({

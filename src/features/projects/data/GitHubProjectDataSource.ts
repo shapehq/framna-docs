@@ -1,9 +1,11 @@
 import IGitHubClient from "@/common/github/IGitHubClient"
-import Project from "../domain/Project"
-import IProjectConfig from "../domain/IProjectConfig"
-import IProjectDataSource from "../domain/IProjectDataSource"
-import Version from "../domain/Version"
-import ProjectConfigParser from "../domain/ProjectConfigParser"
+import {
+  Project,
+  IProjectConfig,
+  IProjectDataSource,
+  Version, 
+  ProjectConfigParser
+} from "../domain"
 
 type SearchResult = {
   readonly name: string

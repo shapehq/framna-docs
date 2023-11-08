@@ -1,4 +1,4 @@
-import LockingAccessTokenService from "../../src/features/auth/domain/accessToken/LockingAccessTokenService"
+import { LockingAccessTokenService } from "../../src/features/auth/domain"
 
 test("It reads access token", async () => {
   let didReadAccessToken = false

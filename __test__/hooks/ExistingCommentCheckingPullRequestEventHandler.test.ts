@@ -1,4 +1,4 @@
-import ExistingCommentCheckingPullRequestEventHandler from "../../src/features/hooks/domain/ExistingCommentCheckingPullRequestEventHandler"
+import { ExistingCommentCheckingPullRequestEventHandler } from "../../src/features/hooks/domain"
 
 test("It fetches comments from the repository", async () => {
   let didFetchComments = false

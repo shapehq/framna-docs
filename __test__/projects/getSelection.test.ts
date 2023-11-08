@@ -1,4 +1,4 @@
-import getSelection from "../../src/features/projects/domain/getSelection"
+import { getSelection } from "../../src/features/projects/domain"
 
 test("It selects the first project when there is only one project", () => {
   const sut = getSelection({

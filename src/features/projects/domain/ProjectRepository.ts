@@ -1,6 +1,4 @@
-import ZodJSONCoder from "@/common/utils/ZodJSONCoder"
-import ISession from "@/common/session/ISession"
-import IUserDataRepository from "@/common/userData/IUserDataRepository"
+import { ZodJSONCoder, ISession, IUserDataRepository } from "../../../common"
 import IProjectRepository from "./IProjectRepository"
 import Project, { ProjectSchema } from "./Project"
 
