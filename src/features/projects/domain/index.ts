@@ -1,5 +1,4 @@
 export { default as CachingProjectDataSource } from "./CachingProjectDataSource"
-export { default as ForgivingProjectDataSource } from "./ForgivingProjectDataSource"
 export { default as getSelection } from "./getSelection"
 export type { default as IProjectConfig } from "./IProjectConfig"
 export type { default as IProjectDataSource } from "./IProjectDataSource"
