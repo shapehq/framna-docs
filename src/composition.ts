@@ -152,7 +152,7 @@ export const gitHubClient = new GitHubClient({
   accessTokenReader: accessTokenService
 })
 
-const userGitHubClient = new AccessTokenRefreshingGitHubClient(
+export const userGitHubClient = new AccessTokenRefreshingGitHubClient(
   accessTokenService,
   gitHubClient
 )
