@@ -1,7 +1,7 @@
 import IKeyedMutexFactory from "./IKeyedMutexFactory"
 import IMutex from "./IMutex"
 import IMutexFactory from "./IMutexFactory"
-import ISession from "@/common/session/ISession"
+import { ISession } from "@/common"
 
 export default class SessionMutexFactory implements IMutexFactory {
   private readonly mutexFactory: IKeyedMutexFactory
