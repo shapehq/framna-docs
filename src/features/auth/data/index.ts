@@ -1,3 +1,4 @@
+export { default as Auth0MetadataUpdater } from "./Auth0MetadataUpdater"
 export { default as Auth0RefreshTokenReader } from "./Auth0RefreshTokenReader"
 export { default as Auth0RepositoryAccessReader } from "./Auth0RepositoryAccessReader"
 export { default as Auth0UserIdentityProviderReader } from "./Auth0UserIdentityProviderReader"
