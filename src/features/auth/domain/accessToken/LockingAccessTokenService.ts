@@ -1,4 +1,4 @@
-import IMutexFactory from "@/common/mutex/IMutexFactory"
+import { IMutexFactory } from "@/common"
 import IAccessTokenService from "./IAccessTokenService"
 import withMutex from "../../../../common/mutex/withMutex"
 

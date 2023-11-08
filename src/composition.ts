@@ -1,29 +1,15 @@
 import Auth0Session from "@/common/session/Auth0Session"
 import RedisKeyedMutexFactory from "@/common/mutex/RedisKeyedMutexFactory"
 import RedisKeyValueStore from "@/common/keyValueStore/RedisKeyValueStore"
-
 import {
   AccessTokenRefreshingGitHubClient,
+  AlwaysValidSessionValidator,
   GitHubClient,
-  GitHubOrganizationSessionValidator,
+  GitHubOrganizationSessionValidator,  
   KeyValueUserDataRepository,
-  SessionMutexFactory
+  SessionMutexFactory,
+  SessionValidator
 } from "@/common"
-import {
-  Auth0RefreshTokenReader,
-  GitHubOAuthTokenRefresher
-} from "@/features/auth/data"
-import {
-  AccessTokenService,
-  CompositeLogOutHandler,
-  CredentialsTransferrer,
-  CredentialsTransferringLogInHandler,
-  ErrorIgnoringLogOutHandler,
-  LockingAccessTokenService,
-  OnlyStaleRefreshingAccessTokenService,
-  OAuthTokenRepository,
-  UserDataCleanUpLogOutHandler
-} from "@/features/auth/domain"
 import {
   GitHubProjectDataSource
 } from "@/features/projects/data"
@@ -32,6 +18,31 @@ import {
   ProjectRepository,
   SessionValidatingProjectDataSource
 } from "@/features/projects/domain"
+import {
+  GitHubOAuthTokenRefresher,
+  GitHubInstallationAccessTokenDataSource,
+  Auth0RefreshTokenReader,
+  Auth0RepositoryAccessReader,
+  Auth0UserIdentityProviderReader
+} from "@/features/auth/data"
+import {
+  AccessTokenService,
+  CachingRepositoryAccessReaderConfig,
+  CachingUserIdentityProviderReader,
+  CompositeLogOutHandler,
+  CredentialsTransferringLogInHandler,
+  ErrorIgnoringLogOutHandler,
+  GuestAccessTokenService,
+  NullObjectCredentialsTransferrer,
+  HostAccessTokenService,
+  HostCredentialsTransferrer,
+  IsUserGuestReader,
+  LockingAccessTokenService,
+  OAuthTokenRepository,
+  OnlyStaleRefreshingAccessTokenService,
+  RepositoryRestrictingAccessTokenDataSource,
+  UserDataCleanUpLogOutHandler
+} from "@/features/auth/domain"
 
 const {
   AUTH0_MANAGEMENT_DOMAIN,
@@ -45,18 +56,71 @@ const {
   REDIS_URL
 } = process.env
 
-const gitHubPrivateKey = Buffer.from(GITHUB_PRIVATE_KEY_BASE_64, "base64").toString("utf-8")
+const auth0ManagementCredentials = {
+  domain: AUTH0_MANAGEMENT_DOMAIN,
+  clientId: AUTH0_MANAGEMENT_CLIENT_ID,
+  clientSecret: AUTH0_MANAGEMENT_CLIENT_SECRET
+}
 
-export const session = new Auth0Session()
+const gitHubAppCredentials = {
+  appId: GITHUB_APP_ID,
+  clientId: GITHUB_CLIENT_ID,
+  clientSecret: GITHUB_CLIENT_SECRET,
+  privateKey: Buffer
+    .from(GITHUB_PRIVATE_KEY_BASE_64, "base64")
+    .toString("utf-8")
+}
 
-export const oAuthTokenRepository = new OAuthTokenRepository(
+const userIdentityProviderRepository = new KeyValueUserDataRepository(
+  new RedisKeyValueStore(REDIS_URL),
+  "userIdentityProvider"
+)
+
+export const userIdentityProviderReader = new CachingUserIdentityProviderReader(
+  userIdentityProviderRepository,
+  new Auth0UserIdentityProviderReader(auth0ManagementCredentials)
+)
+
+export const session = new Auth0Session({
+  isUserGuestReader: new IsUserGuestReader(userIdentityProviderReader)
+})
+
+const oAuthTokenRepository = new OAuthTokenRepository(
   new KeyValueUserDataRepository(
     new RedisKeyValueStore(REDIS_URL),
     "authToken"
   )
 )
 
-const accessTokenService = new LockingAccessTokenService(
+const gitHubOAuthTokenRefresher = new GitHubOAuthTokenRefresher({
+  clientId: gitHubAppCredentials.clientId,
+  clientSecret: gitHubAppCredentials.clientSecret
+})
+
+const accessTokenRepository = new KeyValueUserDataRepository(
+  new RedisKeyValueStore(REDIS_URL),
+  "accessToken"
+)
+
+const guestRepositoryAccessRepository = new KeyValueUserDataRepository(
+  new RedisKeyValueStore(REDIS_URL),
+  "guestRepositoryAccess"
+)
+
+const guestAccessTokenDataSource = new RepositoryRestrictingAccessTokenDataSource({
+  repositoryAccessReader: new CachingRepositoryAccessReaderConfig({
+    repository: guestRepositoryAccessRepository,
+    repositoryAccessReader: new Auth0RepositoryAccessReader({
+      ...auth0ManagementCredentials
+    })
+  }),
+  dataSource: new GitHubInstallationAccessTokenDataSource({
+    ...gitHubAppCredentials,
+    organization: GITHUB_ORGANIZATION_NAME
+  })
+})
+
+export const accessTokenService = new LockingAccessTokenService(
   new SessionMutexFactory(
     new RedisKeyedMutexFactory(REDIS_URL),
     session,
@@ -64,21 +128,23 @@ const accessTokenService = new LockingAccessTokenService(
   ),
   new OnlyStaleRefreshingAccessTokenService(
     new AccessTokenService({
-      userIdReader: session,
-      repository: oAuthTokenRepository,
-      refresher: new GitHubOAuthTokenRefresher({
-        clientId: GITHUB_CLIENT_ID,
-        clientSecret: GITHUB_CLIENT_SECRET
+      isGuestReader: session,
+      guestAccessTokenService: new GuestAccessTokenService({
+        userIdReader: session,
+        repository: accessTokenRepository,
+        dataSource: guestAccessTokenDataSource
+      }),
+      hostAccessTokenService: new HostAccessTokenService({
+        userIdReader: session,
+        repository: oAuthTokenRepository,
+        refresher: gitHubOAuthTokenRefresher
       })
     })
   )
 )
 
 export const gitHubClient = new GitHubClient({
-  appId: GITHUB_APP_ID,
-  clientId: GITHUB_CLIENT_ID,
-  clientSecret: GITHUB_CLIENT_SECRET,
-  privateKey: gitHubPrivateKey,
+  ...gitHubAppCredentials,
   accessTokenReader: accessTokenService
 })
 
@@ -87,10 +153,14 @@ export const userGitHubClient = new AccessTokenRefreshingGitHubClient(
   gitHubClient
 )
 
-export const sessionValidator = new GitHubOrganizationSessionValidator(
-  userGitHubClient,
-  GITHUB_ORGANIZATION_NAME
-)
+export const sessionValidator = new SessionValidator({
+  isGuestReader: session,
+  guestSessionValidator: new AlwaysValidSessionValidator(),
+  hostSessionValidator: new GitHubOrganizationSessionValidator(
+    userGitHubClient,
+    GITHUB_ORGANIZATION_NAME
+  )
+})
 
 const projectUserDataRepository = new KeyValueUserDataRepository(
   new RedisKeyValueStore(REDIS_URL),
@@ -113,25 +183,27 @@ export const projectDataSource = new CachingProjectDataSource(
   projectRepository
 )
 
-export const logInHandler = new CredentialsTransferringLogInHandler(
-  new CredentialsTransferrer({
+export const logInHandler = new CredentialsTransferringLogInHandler({
+  isUserGuestReader: new IsUserGuestReader(
+    userIdentityProviderReader
+  ),
+  guestCredentialsTransferrer: new NullObjectCredentialsTransferrer(),
+  hostCredentialsTransferrer: new HostCredentialsTransferrer({
     refreshTokenReader: new Auth0RefreshTokenReader({
-      domain: AUTH0_MANAGEMENT_DOMAIN,
-      clientId: AUTH0_MANAGEMENT_CLIENT_ID,
-      clientSecret: AUTH0_MANAGEMENT_CLIENT_SECRET,
+      ...auth0ManagementCredentials,
       connection: "github"
     }),
-    oAuthTokenRefresher: new GitHubOAuthTokenRefresher({
-      clientId: GITHUB_CLIENT_ID,
-      clientSecret: GITHUB_CLIENT_SECRET
-    }),
+    oAuthTokenRefresher: gitHubOAuthTokenRefresher,
     oAuthTokenRepository: oAuthTokenRepository
   })
-)
+})
 
 export const logOutHandler = new ErrorIgnoringLogOutHandler(
   new CompositeLogOutHandler([
     new UserDataCleanUpLogOutHandler(session, projectUserDataRepository),
-    new UserDataCleanUpLogOutHandler(session, oAuthTokenRepository)
+    new UserDataCleanUpLogOutHandler(session, userIdentityProviderRepository),
+    new UserDataCleanUpLogOutHandler(session, guestRepositoryAccessRepository),
+    new UserDataCleanUpLogOutHandler(session, oAuthTokenRepository),
+    new UserDataCleanUpLogOutHandler(session, accessTokenRepository)
   ])
 )

@@ -1,2 +1,2 @@
-export { default as CredentialsTransferrer } from "./CredentialsTransferrer"
-export type { default as ICredentialsTransferrer } from "./ICredentialsTransferrer"
+export { default as HostCredentialsTransferrer } from "./HostCredentialsTransferrer"
+export { default as NullObjectCredentialsTransferrer } from "./NullObjectCredentialsTransferrer"
