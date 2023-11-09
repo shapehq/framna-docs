@@ -1,11 +1,11 @@
-import SessionAccessTokenBarrier from "@/features/auth/view/SessionAccessTokenBarrier"
+import SessionBarrier from "@/features/auth/view/SessionBarrier"
 import ProjectsPage from "@/features/projects/view/ProjectsPage"
 import { projectRepository } from "@/composition"
 
 export default async function Page() {
   return (
-    <SessionAccessTokenBarrier>
+    <SessionBarrier>
       <ProjectsPage projectRepository={projectRepository} />
-    </SessionAccessTokenBarrier>
+    </SessionBarrier>
   )
 }

@@ -1,2 +1,2 @@
+export { default as makeAPIErrorResponse } from "./makeAPIErrorResponse"
 export class UnauthorizedError extends Error {}
-export class InvalidSessionError extends Error {}

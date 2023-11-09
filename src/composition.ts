@@ -3,21 +3,16 @@ import RedisKeyedMutexFactory from "@/common/mutex/RedisKeyedMutexFactory"
 import RedisKeyValueStore from "@/common/keyValueStore/RedisKeyValueStore"
 import {
   AccessTokenRefreshingGitHubClient,
-  AlwaysValidSessionValidator,
   GitHubClient,
-  GitHubOrganizationSessionValidator,  
   KeyValueUserDataRepository,
-  SessionMutexFactory,
-  SessionValidator
+  SessionMutexFactory
 } from "@/common"
 import {
   GitHubProjectDataSource
 } from "@/features/projects/data"
 import {
   CachingProjectDataSource,
-  ForgivingProjectDataSource,
-  ProjectRepository,
-  SessionValidatingProjectDataSource
+  ProjectRepository
 } from "@/features/projects/domain"
 import {
   GitHubOAuthTokenRefresher,
@@ -29,16 +24,20 @@ import {
 } from "@/features/auth/data"
 import {
   AccessTokenService,
-  CachingRepositoryAccessReaderConfig,
+  AccessTokenSessionValidator,
+  CachingRepositoryAccessReader,
   CachingUserIdentityProviderReader,
   CompositeLogInHandler,
   CompositeLogOutHandler,
   CredentialsTransferringLogInHandler,
   ErrorIgnoringLogOutHandler,
+  GitHubOrganizationSessionValidator,
+  GuestAccessTokenRepository,
   GuestAccessTokenService,
-  NullObjectCredentialsTransferrer,
+  GuestCredentialsTransferrer,
   HostAccessTokenService,
   HostCredentialsTransferrer,
+  HostOnlySessionValidator,
   IsUserGuestReader,
   LockingAccessTokenService,
   OAuthTokenRepository,
@@ -101,9 +100,11 @@ const gitHubOAuthTokenRefresher = new GitHubOAuthTokenRefresher({
   clientSecret: gitHubAppCredentials.clientSecret
 })
 
-const accessTokenRepository = new KeyValueUserDataRepository(
-  new RedisKeyValueStore(REDIS_URL),
-  "accessToken"
+const guestAccessTokenRepository = new GuestAccessTokenRepository(
+  new KeyValueUserDataRepository(
+    new RedisKeyValueStore(REDIS_URL),
+    "accessToken"
+  )
 )
 
 const guestRepositoryAccessRepository = new KeyValueUserDataRepository(
@@ -111,13 +112,15 @@ const guestRepositoryAccessRepository = new KeyValueUserDataRepository(
   "guestRepositoryAccess"
 )
 
+export const guestRepositoryAccessReader = new CachingRepositoryAccessReader({
+  repository: guestRepositoryAccessRepository,
+  repositoryAccessReader: new Auth0RepositoryAccessReader({
+    ...auth0ManagementCredentials
+  })
+})
+
 const guestAccessTokenDataSource = new RepositoryRestrictingAccessTokenDataSource({
-  repositoryAccessReader: new CachingRepositoryAccessReaderConfig({
-    repository: guestRepositoryAccessRepository,
-    repositoryAccessReader: new Auth0RepositoryAccessReader({
-      ...auth0ManagementCredentials
-    })
-  }),
+  repositoryAccessReader: guestRepositoryAccessReader,
   dataSource: new GitHubInstallationAccessTokenDataSource({
     ...gitHubAppCredentials,
     organization: GITHUB_ORGANIZATION_NAME
@@ -135,7 +138,7 @@ export const accessTokenService = new LockingAccessTokenService(
       isGuestReader: session,
       guestAccessTokenService: new GuestAccessTokenService({
         userIdReader: session,
-        repository: accessTokenRepository,
+        repository: guestAccessTokenRepository,
         dataSource: guestAccessTokenDataSource
       }),
       hostAccessTokenService: new HostAccessTokenService({
@@ -157,13 +160,15 @@ export const userGitHubClient = new AccessTokenRefreshingGitHubClient(
   gitHubClient
 )
 
-export const sessionValidator = new SessionValidator({
+export const fastSessionValidator = new AccessTokenSessionValidator({
+  accessTokenService: accessTokenService
+})
+export const delayedSessionValidator = new HostOnlySessionValidator({
   isGuestReader: session,
-  guestSessionValidator: new AlwaysValidSessionValidator(),
-  hostSessionValidator: new GitHubOrganizationSessionValidator(
-    userGitHubClient,
-    GITHUB_ORGANIZATION_NAME
-  )
+  sessionValidator: new GitHubOrganizationSessionValidator({
+    acceptedOrganization: GITHUB_ORGANIZATION_NAME,
+    organizationMembershipStatusReader: userGitHubClient
+  })
 })
 
 const projectUserDataRepository = new KeyValueUserDataRepository(
@@ -177,15 +182,9 @@ export const projectRepository = new ProjectRepository(
 )
 
 export const projectDataSource = new CachingProjectDataSource(
-  new SessionValidatingProjectDataSource(
-    sessionValidator,
-    new ForgivingProjectDataSource({
-      accessTokenReader: accessTokenService,
-      projectDataSource: new GitHubProjectDataSource(
-        userGitHubClient,
-        GITHUB_ORGANIZATION_NAME
-      )
-    })
+  new GitHubProjectDataSource(
+    userGitHubClient,
+    GITHUB_ORGANIZATION_NAME
   ),
   projectRepository
 )
@@ -195,7 +194,10 @@ export const logInHandler = new CompositeLogInHandler([
     isUserGuestReader: new IsUserGuestReader(
       userIdentityProviderReader
     ),
-    guestCredentialsTransferrer: new NullObjectCredentialsTransferrer(),
+    guestCredentialsTransferrer: new GuestCredentialsTransferrer({
+      dataSource: guestAccessTokenDataSource,
+      repository: guestAccessTokenRepository
+    }),
     hostCredentialsTransferrer: new HostCredentialsTransferrer({
       refreshTokenReader: new Auth0RefreshTokenReader({
         ...auth0ManagementCredentials,
@@ -216,6 +218,6 @@ export const logOutHandler = new ErrorIgnoringLogOutHandler(
     new UserDataCleanUpLogOutHandler(session, userIdentityProviderRepository),
     new UserDataCleanUpLogOutHandler(session, guestRepositoryAccessRepository),
     new UserDataCleanUpLogOutHandler(session, oAuthTokenRepository),
-    new UserDataCleanUpLogOutHandler(session, accessTokenRepository)
+    new UserDataCleanUpLogOutHandler(session, guestAccessTokenRepository)
   ])
 )

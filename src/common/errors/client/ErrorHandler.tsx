@@ -14,8 +14,6 @@ export default function ErrorHandler({
     }
     if (error.status == 401) {
       window.location.href = "/api/auth/logout"
-    } else if (error.status == 403) {
-      window.location.href = "/invalid-session"
     }
   }
   return (
