@@ -11,6 +11,7 @@ test("It reads the auth token for the specified user", async () => {
       })
     },
     async set() {},
+    async setExpiring() {},
     async delete() {}
   })
   await sut.get("1234")
@@ -24,7 +25,8 @@ test("It stores the auth token for the specified user", async () => {
     async get() {
       return ""
     },
-    async set(userId, data) {
+    async set() {},
+    async setExpiring(userId, data) {
       storedUserId = userId
       storedJSON = data
     },
@@ -48,6 +50,7 @@ test("It deletes the auth token for the specified user", async () => {
       return ""
     },
     async set() {},
+    async setExpiring() {},
     async delete(userId) {
       deletedUserId = userId
     }

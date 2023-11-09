@@ -18,6 +18,10 @@ export default class KeyValueUserDataRepository implements IUserDataRepository<s
     await this.store.set(this.getKey(userId), value)
   }
   
+  async setExpiring(userId: string, value: string, timeToLive: number): Promise<void> {
+    await this.store.setExpiring(this.getKey(userId), value, timeToLive)
+  }
+  
   async delete(userId: string): Promise<void> {
     await this.store.delete(this.getKey(userId))
   }

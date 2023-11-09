@@ -1,86 +1,121 @@
 import { AccessTokenService } from "../../src/features/auth/domain"
-import { OAuthToken } from "../../src/features/auth/domain"
 
-test("It gets the access token for the user", async () => {
-  let readUserID: string | undefined
+test("It reads the access token for a guest user", async () => {
+  let didReadAccessToken = false
   const sut = new AccessTokenService({
-    userIdReader: {
-      async getUserId() {
-        return "1234"
+    isGuestReader: {
+      async getIsGuest() {
+        return true
       }
     },
-    repository: {
-      async get(userId) {
-        readUserID = userId
-        return { accessToken: "foo", refreshToken: "bar" }
+    guestAccessTokenService: {
+      async getAccessToken() {
+        didReadAccessToken = true
+        return "oldAccessToken"
       },
-      async set() {},
-      async delete() {},
+      async refreshAccessToken() {
+        return "newAccessToken"
+      }
     },
-    refresher: {
-      async refreshOAuthToken() {
-        return { accessToken: "foo", refreshToken: "bar" }
+    hostAccessTokenService: {
+      async getAccessToken() {
+        return "oldAccessToken"
+      },
+      async refreshAccessToken() {
+        return "newAccessToken"
       }
     }
   })
-  const accessToken = await sut.getAccessToken()
-  expect(readUserID).toBe("1234")
-  expect(accessToken).toBe("foo")
+  await sut.getAccessToken()
+  expect(didReadAccessToken).toBeTruthy()
 })
 
-test("It refreshes OAuth using stored refresh token", async () => {
-  let usedRefreshToken: string | undefined
+test("It refreshes the access token for a guest user", async () => {
+  let didRefreshAccessToken = false
   const sut = new AccessTokenService({
-    userIdReader: {
-      async getUserId() {
-        return "1234"
+    isGuestReader: {
+      async getIsGuest() {
+        return true
       }
     },
-    repository: {
-      async get() {
-        return { accessToken: "oldAccessToken", refreshToken: "oldRefreshToken" }
+    guestAccessTokenService: {
+      async getAccessToken() {
+        return "oldAccessToken"
       },
-      async set() {},
-      async delete() {},
+      async refreshAccessToken() {
+        didRefreshAccessToken = true
+        return "newAccessToken"
+      }
     },
-    refresher: {
-      async refreshOAuthToken(refreshToken) {
-        usedRefreshToken = refreshToken
-        return { accessToken: "newAccessToken", refreshToken: "newRefreshToken" }
+    hostAccessTokenService: {
+      async getAccessToken() {
+        return "oldAccessToken"
+      },
+      async refreshAccessToken() {
+        return "newAccessToken"
       }
     }
   })
   await sut.refreshAccessToken("oldAccessToken")
-  expect(usedRefreshToken).toBe("oldRefreshToken")
+  expect(didRefreshAccessToken).toBeTruthy()
 })
 
-test("It stores the new OAuth token for the user", async () => {
-  let storedUserId: string | undefined
-  let storedOAuthToken: OAuthToken | undefined
+test("It reads the access token for a host user", async () => {
+  let didReadAccessToken = false
   const sut = new AccessTokenService({
-    userIdReader: {
-      async getUserId() {
-        return "1234"
+    isGuestReader: {
+      async getIsGuest() {
+        return false
       }
     },
-    repository: {
-      async get() {
-        return { accessToken: "oldAccessToken", refreshToken: "oldRefreshToken" }
+    guestAccessTokenService: {
+      async getAccessToken() {
+        return "oldAccessToken"
       },
-      async set(userId, oAuthToken) {
-        storedUserId = userId
-        storedOAuthToken = oAuthToken
-      },
-      async delete() {},
+      async refreshAccessToken() {
+        return "newAccessToken"
+      }
     },
-    refresher: {
-      async refreshOAuthToken() {
-        return { accessToken: "newAccessToken", refreshToken: "newRefreshToken" }
+    hostAccessTokenService: {
+      async getAccessToken() {
+        didReadAccessToken = true
+        return "oldAccessToken"
+      },
+      async refreshAccessToken() {
+        return "newAccessToken"
       }
     }
   })
-  await sut.refreshAccessToken("foo")
-  expect(storedUserId).toBe("1234")
-  expect(storedOAuthToken?.accessToken).toBe("newAccessToken")
-  expect(storedOAuthToken?.refreshToken).toBe("newRefreshToken")
+  await sut.getAccessToken()
+  expect(didReadAccessToken).toBeTruthy()
+})
+
+test("It refreshes the access token for a host user", async () => {
+  let didRefreshAccessToken = false
+  const sut = new AccessTokenService({
+    isGuestReader: {
+      async getIsGuest() {
+        return false
+      }
+    },
+    guestAccessTokenService: {
+      async getAccessToken() {
+        return "oldAccessToken"
+      },
+      async refreshAccessToken() {
+        return "newAccessToken"
+      }
+    },
+    hostAccessTokenService: {
+      async getAccessToken() {
+        return "oldAccessToken"
+      },
+      async refreshAccessToken() {
+        didRefreshAccessToken = true
+        return "newAccessToken"
+      }
+    }
+  })
+  await sut.refreshAccessToken("oldAccessToken")
+  expect(didRefreshAccessToken).toBeTruthy()
 })

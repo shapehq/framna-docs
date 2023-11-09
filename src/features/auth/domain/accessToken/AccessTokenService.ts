@@ -1,39 +1,42 @@
 import IAccessTokenService from "./IAccessTokenService"
-import IOAuthTokenRepository from "../oAuthToken/IOAuthTokenRepository"
-import IOAuthTokenRefresher from "../oAuthToken/IOAuthTokenRefresher"
 
-export interface IUserIDReader {
-  getUserId(): Promise<string>
+export interface IIsGuestReader {
+  getIsGuest(): Promise<boolean>
 }
 
-type AccessTokenServiceConfig = {
-  readonly userIdReader: IUserIDReader
-  readonly repository: IOAuthTokenRepository
-  readonly refresher: IOAuthTokenRefresher
+interface AccessTokenServiceConfig {
+  readonly isGuestReader: IIsGuestReader
+  readonly guestAccessTokenService: IAccessTokenService
+  readonly hostAccessTokenService: IAccessTokenService
 }
 
 export default class AccessTokenService implements IAccessTokenService {
-  private readonly userIdReader: IUserIDReader
-  private readonly repository: IOAuthTokenRepository
-  private readonly refresher: IOAuthTokenRefresher
+  private readonly isGuestReader: IIsGuestReader
+  private readonly guestAccessTokenService: IAccessTokenService
+  private readonly hostAccessTokenService: IAccessTokenService
   
   constructor(config: AccessTokenServiceConfig) {
-    this.userIdReader = config.userIdReader
-    this.repository = config.repository
-    this.refresher = config.refresher
+    this.isGuestReader = config.isGuestReader
+    this.guestAccessTokenService = config.guestAccessTokenService
+    this.hostAccessTokenService = config.hostAccessTokenService
   }
   
   async getAccessToken(): Promise<string> {
-    const userId = await this.userIdReader.getUserId()
-    const oAuthToken = await this.repository.get(userId)
-    return oAuthToken.accessToken
+    const service = await this.getService()
+    return await service.getAccessToken()
   }
   
-  async refreshAccessToken(_accessToken: string): Promise<string> {
-    const userId = await this.userIdReader.getUserId()
-    const oAuthToken = await this.repository.get(userId)
-    const newOAuthToken = await this.refresher.refreshOAuthToken(oAuthToken.refreshToken)
-    await this.repository.set(userId, newOAuthToken)
-    return newOAuthToken.accessToken
+  async refreshAccessToken(accessToken: string): Promise<string> {
+    const service = await this.getService()
+    return await service.refreshAccessToken(accessToken)
+  }
+  
+  private async getService() {
+    const isGuest = await this.isGuestReader.getIsGuest()
+    if (isGuest) {
+      return this.guestAccessTokenService
+    } else {
+      return this.hostAccessTokenService
+    }
   }
 }

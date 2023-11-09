@@ -3,8 +3,8 @@ import type { Metadata } from "next"
 import { UserProvider } from "@auth0/nextjs-auth0/client"
 import { config as fontAwesomeConfig } from "@fortawesome/fontawesome-svg-core"
 import { CssBaseline } from "@mui/material"
-import ThemeRegistry from "@/common/theme/ThemeRegistry"
-import ErrorHandler from "@/common/errors/client/ErrorHandler"
+import ThemeRegistry from "../common/theme/ThemeRegistry"
+import ErrorHandler from "../common/errors/client/ErrorHandler"
 import "@fortawesome/fontawesome-svg-core/styles.css"
 
 fontAwesomeConfig.autoAddCss = false

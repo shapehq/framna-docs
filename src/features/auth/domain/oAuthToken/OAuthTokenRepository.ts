@@ -1,6 +1,4 @@
-import ZodJSONCoder from "../../../../common/utils/ZodJSONCoder"
-import IUserDataRepository from "@/common/userData/IUserDataRepository"
-import { UnauthorizedError } from "../../../../common/errors"
+import { IUserDataRepository, UnauthorizedError, ZodJSONCoder } from "../../../../common"
 import IOAuthTokenRepository from "./IOAuthTokenRepository"
 import OAuthToken, { OAuthTokenSchema } from "./OAuthToken"
 
@@ -21,7 +19,7 @@ export default class OAuthTokenRepository implements IOAuthTokenRepository {
   
   async set(userId: string, token: OAuthToken): Promise<void> {
     const string = ZodJSONCoder.encode(OAuthTokenSchema, token)
-    await this.repository.set(userId, string)
+    await this.repository.setExpiring(userId, string, 6 * 30 * 24 * 3600)
   }
   
   async delete(userId: string): Promise<void> {

@@ -16,6 +16,14 @@ export default class RedisKeyValueStore implements IKeyValueStore {
     await this.redis.set(key, data)
   }
   
+  async setExpiring(
+    key: string,
+    data: string | number | Buffer,
+    timeToLive: number
+  ): Promise<void> {
+    await this.redis.setex(key, timeToLive, data)
+  }
+  
   async delete(key: string): Promise<void> {
     await this.redis.del(key)
   }
