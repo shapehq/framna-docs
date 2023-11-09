@@ -13,7 +13,7 @@ test("It gets the access token for the user", async () => {
         readUserId = userId
         return "foo"
       },
-      async setExpiring() {}
+      async set() {}
     },
     dataSource: {
       async getAccessToken() {
@@ -38,7 +38,7 @@ test("It refreshes access token on demand when there is no cached access token",
       async get() {
         return null
       },
-      async setExpiring() {}
+      async set() {}
     },
     dataSource: {
       async getAccessToken() {
