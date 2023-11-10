@@ -160,7 +160,7 @@ export const userGitHubClient = new AccessTokenRefreshingGitHubClient(
   gitHubClient
 )
 
-export const fastSessionValidator = new AccessTokenSessionValidator({
+export const blockingSessionValidator = new AccessTokenSessionValidator({
   accessTokenService: accessTokenService
 })
 export const delayedSessionValidator = new HostOnlySessionValidator({
