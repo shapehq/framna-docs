@@ -1,3 +1,4 @@
+import { UnauthorizedError } from "../../../../common"
 import IAccessTokenService from "./IAccessTokenService"
 
 export interface IUserIDReader {
@@ -34,17 +35,12 @@ export default class GuestAccessTokenService implements IAccessTokenService {
     const userId = await this.userIdReader.getUserId()
     const accessToken = await this.repository.get(userId)
     if (!accessToken) {
-      // We fetch the access token for guests on demand.
-      return await this.getNewAccessToken()
+      throw new UnauthorizedError(`No access token stored for user with ID ${userId}.`)
     }
     return accessToken
   }
   
   async refreshAccessToken(_accessToken: string): Promise<string> {
-    return await this.getNewAccessToken()
-  }
-  
-  private async getNewAccessToken(): Promise<string> {
     const userId = await this.userIdReader.getUserId()
     const newAccessToken = await this.dataSource.getAccessToken(userId)
     await this.repository.set(userId, newAccessToken)

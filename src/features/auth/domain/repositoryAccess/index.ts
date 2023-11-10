@@ -1,2 +1,2 @@
-export { default as CachingRepositoryAccessReaderConfig } from "./CachingRepositoryAccessReaderConfig"
+export { default as CachingRepositoryAccessReader } from "./CachingRepositoryAccessReaderConfig"
 export { default as RepositoryRestrictingAccessTokenDataSource } from "./RepositoryRestrictingAccessTokenDataSource"

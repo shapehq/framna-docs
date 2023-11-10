@@ -24,11 +24,19 @@ export default class CredentialsTransferringLogInHandler implements ILogInHandle
   }
   
   async handleLogIn(userId: string): Promise<void> {
-    const isGuest = await this.isUserGuestReader.getIsUserGuest(userId)
-    if (isGuest) {
-      await this.guestCredentialsTransferrer.transferCredentials(userId)
-    } else {
-      await this.hostCredentialsTransferrer.transferCredentials(userId)
+    try {
+      const isGuest = await this.isUserGuestReader.getIsUserGuest(userId)
+      if (isGuest) {
+        await this.guestCredentialsTransferrer.transferCredentials(userId)
+      } else {
+        await this.hostCredentialsTransferrer.transferCredentials(userId)
+      }
+    } catch {
+      // It is safe to ignore the error. Transferring credentials is a
+      // "best-case scenario" that will always succeed unless the user
+      // is not a member of the GitHub organization or a guest user has
+      // been incorrectly configured. Either way, we allow the user to
+      // login an rely on the SessionBarrier to show an error later.
     }
   }
 }
