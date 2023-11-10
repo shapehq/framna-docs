@@ -1,9 +1,9 @@
-import { CachingRepositoryAccessReaderConfig } from "../../src/features/auth/domain"
+import { CachingRepositoryAccessReader } from "../../src/features/auth/domain"
 
 test("It fetches repository names for user if they are not cached", async () => {
   let didFetchRepositoryNames = false
   let requestedUserId: string | undefined
-  const sut = new CachingRepositoryAccessReaderConfig({
+  const sut = new CachingRepositoryAccessReader({
     repository: {
       async get() {
         return null
@@ -27,7 +27,7 @@ test("It fetches repository names for user if they are not cached", async () => 
 
 test("It does not fetch repository names if they are cached", async () => {
   let didFetchRepositoryNames = false
-  const sut = new CachingRepositoryAccessReaderConfig({
+  const sut = new CachingRepositoryAccessReader({
     repository: {
       async get() {
         return "[\"foo\"]"
@@ -50,16 +50,16 @@ test("It does not fetch repository names if they are cached", async () => {
 test("It caches fetched repository names for user", async () => {
   let cachedUserId: string | undefined
   let cachedRepositoryNames: string | undefined
-  const sut = new CachingRepositoryAccessReaderConfig({
+  const sut = new CachingRepositoryAccessReader({
     repository: {
       async get() {
         return null
       },
-      async set(userId, value) {
+      async set() {},
+      async setExpiring(userId: string, value: string) {
         cachedUserId = userId
         cachedRepositoryNames = value
       },
-      async setExpiring() {},
       async delete() {}
     },
     repositoryAccessReader: {
@@ -74,7 +74,7 @@ test("It caches fetched repository names for user", async () => {
 })
 
 test("It decodes cached repository names", async () => {
-  const sut = new CachingRepositoryAccessReaderConfig({
+  const sut = new CachingRepositoryAccessReader({
     repository: {
       async get() {
         return "[\"foo\",\"bar\"]"
