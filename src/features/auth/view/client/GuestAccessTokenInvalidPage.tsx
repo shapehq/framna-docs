@@ -10,7 +10,6 @@ export default function GuestAccessTokenInvalidPage({
   organizationName: string
 }) {
   const {repositories, isLoading, error} = useRepositoryAccess()
-  const title = "Could not obtain access"
   if (isLoading) {
     return (
       <InvalidSessionPage>
@@ -20,15 +19,22 @@ export default function GuestAccessTokenInvalidPage({
   }
   if (error) {
     return (
-      <InvalidSessionPage title={title}>
+      <InvalidSessionPage title="Could not obtain access">
         It was not possible to obtain access to the projects on the <strong>{organizationName}</strong> organization on GitHub.
+      </InvalidSessionPage>
+    )
+  }
+  if (repositories.length == 0) {
+    return (
+      <InvalidSessionPage title="No projects">
+        Your account does not have access to any projects.
       </InvalidSessionPage>
     )
   }
   const repositoryNamesHTML = makeRepositoryNamesHTML(repositories)
   const html = `It was not possible to obtain access to all the projects: ${repositoryNamesHTML}.`
   return (
-    <InvalidSessionPage title={title}>
+    <InvalidSessionPage title="Could not obtain access">
       <div dangerouslySetInnerHTML={{ __html: html }} />
     </InvalidSessionPage>
   )

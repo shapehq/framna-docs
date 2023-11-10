@@ -17,6 +17,9 @@ export default class GitHubInstallationAccessTokenRefresher {
   }
   
   async getAccessToken(repositoryNames: string[]): Promise<string> {
+    if (repositoryNames.length == 0) {
+      throw new Error("Must provide at least one repository name when creating a GitHub installation access token.")
+    }
     const auth = createAppAuth({
       appId: this.config.appId,
       clientId: this.config.clientId,
