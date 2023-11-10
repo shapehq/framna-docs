@@ -55,11 +55,11 @@ test("It caches fetched repository names for user", async () => {
       async get() {
         return null
       },
-      async set(userId, value) {
+      async set() {},
+      async setExpiring(userId: string, value: string) {
         cachedUserId = userId
         cachedRepositoryNames = value
       },
-      async setExpiring() {},
       async delete() {}
     },
     repositoryAccessReader: {
