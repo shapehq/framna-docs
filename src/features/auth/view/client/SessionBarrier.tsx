@@ -9,7 +9,7 @@ import {
   useSessionValidity
 } from "../../domain"
 
-export default ({
+export default function SessionBarrier({
   isGuest,
   siteName,
   organizationName,
@@ -21,7 +21,7 @@ export default ({
   organizationName: string
   sessionValidity: SessionValidity
   children: ReactNode
-}) => {
+}) {
   const { sessionValidity: delayedSessionValidity } = useSessionValidity()
   const sessionValidity = mergeSessionValidity(
     fastSessionValidity,

@@ -12,6 +12,7 @@ export async function GET() {
   try {
     const repositoryNames = await guestRepositoryAccessReader.getRepositoryNames(userId)
     return NextResponse.json({repositories: repositoryNames})
+  /* eslint-disable-next-line  @typescript-eslint/no-explicit-any */
   } catch (error: any) {
     if (error.message) {
       return makeAPIErrorResponse(500, error.message)

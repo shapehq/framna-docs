@@ -1,15 +1,14 @@
 "use client"
 
-import { ReactNode } from "react"
 import InvalidSessionPage from "./InvalidSessionPage"
 import LoadingIndicator from "@/common/loading/DelayedLoadingIndicator"
 import { useRepositoryAccess } from "../../domain"
 
-export default ({
+export default function GuestAccessTokenInvalidPage({
   organizationName
 }: {
   organizationName: string
-}) => {
+}) {
   const {repositories, isLoading, error} = useRepositoryAccess()
   const title = "Could not obtain access"
   if (isLoading) {
@@ -35,7 +34,7 @@ export default ({
   )
 }
 
-function makeRepositoryNamesHTML(repositories: string[]): String {
+function makeRepositoryNamesHTML(repositories: string[]): string {
   const copiedRepositories = [...repositories]
   if (copiedRepositories.length == 1) {
     return `<strong>${copiedRepositories[0]}</strong>`
