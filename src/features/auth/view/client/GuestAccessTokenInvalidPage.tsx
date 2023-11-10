@@ -32,7 +32,7 @@ export default function GuestAccessTokenInvalidPage({
     )
   }
   const repositoryNamesHTML = makeRepositoryNamesHTML(repositories)
-  const html = `It was not possible to obtain access to all the projects: ${repositoryNamesHTML}.`
+  const html = `It was not possible to obtain access to ${repositoryNamesHTML}.`
   return (
     <InvalidSessionPage title="Could not obtain access">
       <div dangerouslySetInnerHTML={{ __html: html }} />
