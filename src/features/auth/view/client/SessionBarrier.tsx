@@ -43,7 +43,7 @@ export default function SessionBarrier({
   case SessionValidity.OUTSIDE_GITHUB_ORGANIZATION:
   case SessionValidity.GITHUB_APP_BLOCKED:
     return (
-      <InvalidSessionPage title={`Your account is not part of the ${siteName} organization`}>
+      <InvalidSessionPage title={`Your account is not part of the ${organizationName} organization`}>
         Access to {siteName} requires that your account is an active member of the <strong>{organizationName}</strong> organization on GitHub.
       </InvalidSessionPage>
     )
