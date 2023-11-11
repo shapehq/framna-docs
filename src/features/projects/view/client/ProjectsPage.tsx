@@ -6,12 +6,18 @@ import { useTheme } from "@mui/material/styles"
 import useMediaQuery from "@mui/material/useMediaQuery"
 import SidebarContainer from "@/features/sidebar/view/client/SidebarContainer"
 import { useProjects } from "../../data"
-import { Project, getSelection, projectNavigator, updateWindowTitle } from "../../domain"
 import ProjectList from "../ProjectList"
 import MainContent from "../MainContent"
 import MobileToolbar from "../toolbar/MobileToolbar"
 import TrailingToolbarItem from "../toolbar/TrailingToolbarItem"
 import useSidebarOpen from "@/common/state/useSidebarOpen"
+import {
+  Project,
+  ProjectNavigator,
+  WindowPathnameReader,
+  getSelection,
+  updateWindowTitle,
+} from "../../domain"
 
 export default function ProjectsPage({
   enableGitHubLinks,
@@ -28,16 +34,13 @@ export default function ProjectsPage({
 }) {
   const router = useRouter()
   const theme = useTheme()
+  const pathnameReader = new WindowPathnameReader()
   const [isSidebarOpen, setSidebarOpen] = useSidebarOpen()
   const isDesktopLayout = useMediaQuery(theme.breakpoints.up("sm"))
   const { projects: clientProjects, error, isLoading: isClientLoading } = useProjects()
   const projects = isClientLoading ? (serverProjects || []) : clientProjects
-  const { project, version, specification } = getSelection({
-    projects,
-    projectId,
-    versionId,
-    specificationId
-  })
+  const { project, version, specification } = getSelection({ projects, path })
+  const projectNavigator = new ProjectNavigator({ router, pathnameReader })
   useEffect(() => {
     updateWindowTitle({
       storage: document,
@@ -49,14 +52,12 @@ export default function ProjectsPage({
   }, [project, version, specification])
   useEffect(() => {
     // Ensure the URL reflects the current selection of project, version, and specification.
-    const urlSelection = { projectId, versionId, specificationId }
-    const selection = {
+    projectNavigator.navigateIfNeeded({
       projectId: project?.id,
       versionId: version?.id,
       specificationId: specification?.id
-    }
-    projectNavigator.navigateIfNeeded(router, urlSelection, selection)
-  }, [router, projectId, versionId, specificationId, project, version, specification])
+    })
+  }, [project, version, specification])
   useEffect(() => {
     // Show the sidebar if no project is selected.
     if (projectId === undefined) {
@@ -69,13 +70,13 @@ export default function ProjectsPage({
     }
     const version = project.versions[0]
     const specification = version.specifications[0]
-    projectNavigator.navigate(router, project.id, version.id, specification.id)
+    projectNavigator.navigate(project.id, version.id, specification.id)
   }
   const selectVersion = (versionId: string) => {
-    projectNavigator.navigateToVersion(router, project!, versionId, specification!.name)
+    projectNavigator.navigateToVersion(project!, versionId, specification!.name)
   }
   const selectSpecification = (specificationId: string) => {
-    projectNavigator.navigate(router, projectId!, versionId!, specificationId)
+    projectNavigator.navigate(project!.id, version!.id, specificationId)
   }
   const canCloseSidebar = projectId !== undefined
   const toggleSidebar = (isOpen: boolean) => {
