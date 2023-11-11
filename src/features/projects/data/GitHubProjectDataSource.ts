@@ -208,6 +208,8 @@ export default class GitHubProjectDataSource implements IProjectDataSource {
   }
   
   private makeURLSafeID(str: string): string {
-    return str.replace(/\s/g, "")
+    return str
+      .replace(/ /g, "-")
+      .replace(/[^A-Za-z0-9-]/g, "")
   }
 }
