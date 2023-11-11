@@ -4,19 +4,19 @@ import OpenApiSpecification from "./OpenApiSpecification"
 
 export default function getSelection({
   projects,
-  projectId,
-  versionId,
-  specificationId,
+  path
 }: {
   projects: Project[],
-  projectId?: string,
-  versionId?: string,
-  specificationId?: string
+  path: string
 }): {
   project?: Project,
   version?: Version,
   specification?: OpenApiSpecification
 } {
+  if (path.startsWith("/")) {
+    path = path.substring(1)
+  }
+  let { projectId, versionId, specificationId } = guessSelection(path)
   // If no project is selected and the user only has a single project then we select that.
   if (!projectId && projects.length == 1) {
     projectId = projects[0].id
@@ -60,6 +60,25 @@ export default function getSelection({
     specification = version.specifications[0]
   }
   return { project, version, specification }
+}
+
+function guessSelection(pathname: string) {
+  const comps = pathname.split("/")
+  if (comps.length == 0) {
+    return {}
+  } else if (comps.length == 1) {
+    return { projectId: comps[0] }
+  } else if (comps.length == 2) {
+    return {
+      projectId: comps[0],
+      versionId: comps[1]
+    }
+  } else {
+    const projectId = comps[0]
+    const versionId = comps.slice(1, -1).join("/")
+    const specificationId = comps[comps.length - 1]
+    return { projectId, versionId, specificationId }
+  }
 }
 
 function isSpecificationIdFilename(specificationId: string): boolean {

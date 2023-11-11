@@ -39,26 +39,20 @@ const projectNavigator = {
   },
   navigateIfNeeded(
     router: IProjectRouter,
-    urlComponents: {
-      projectId?: string,
-      versionId?: string,
-      specificationId?: string
-    },
     selection: {
       projectId?: string,
       versionId?: string,
       specificationId?: string
     }
   ) {
+    if (typeof window === "undefined") {
+      return
+    }
     if (!selection.projectId || !selection.versionId || !selection.specificationId) {
       return
     }
-    if (
-      urlComponents.projectId != selection.projectId ||
-      urlComponents.versionId != selection.versionId ||
-      urlComponents.specificationId != selection.specificationId
-    ) {
-      const path = `/${selection.projectId}/${selection.versionId}/${selection.specificationId}`
+    const path = `/${selection.projectId}/${selection.versionId}/${selection.specificationId}`
+    if (path !== window.location.pathname) {
       router.replace(path)
     }
   }
