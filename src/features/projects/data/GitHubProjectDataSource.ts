@@ -72,7 +72,6 @@ export default class GitHubProjectDataSource implements IProjectDataSource {
   private getVersions(repository: GitHubProjectRepository): Version[] {
     const branchVersions = repository.branches.edges.map(edge => {
       const isDefaultRef = edge.node.name == repository.defaultBranchRef.name
-      console.log(repository.defaultBranchRef)
       return this.mapVersionFromRef({
         ownerName: repository.owner.login,
         repositoryName: repository.name,
