@@ -1,7 +1,6 @@
 "use client"
 
 import { useEffect } from "react"
-import { useRouter } from "next/navigation"
 import { useTheme } from "@mui/material/styles"
 import useMediaQuery from "@mui/material/useMediaQuery"
 import SidebarContainer from "@/features/sidebar/view/client/SidebarContainer"
@@ -13,10 +12,9 @@ import TrailingToolbarItem from "../toolbar/TrailingToolbarItem"
 import useSidebarOpen from "@/common/state/useSidebarOpen"
 import {
   Project,
-  ProjectNavigator,
-  WindowPathnameReader,
   getSelection,
   updateWindowTitle,
+  useProjectNavigator
 } from "../../domain"
 
 export default function ProjectsPage({
@@ -28,15 +26,13 @@ export default function ProjectsPage({
   projects?: Project[]
   path: string
 }) {
-  const router = useRouter()
   const theme = useTheme()
-  const pathnameReader = new WindowPathnameReader()
+  const projectNavigator = useProjectNavigator()
   const [isSidebarOpen, setSidebarOpen] = useSidebarOpen()
   const isDesktopLayout = useMediaQuery(theme.breakpoints.up("sm"))
   const { projects: clientProjects, error, isLoading: isClientLoading } = useProjects()
   const projects = isClientLoading ? (serverProjects || []) : clientProjects
   const { project, version, specification } = getSelection({ projects, path })
-  const projectNavigator = new ProjectNavigator({ router, pathnameReader })
   useEffect(() => {
     updateWindowTitle({
       storage: document,
@@ -48,12 +44,13 @@ export default function ProjectsPage({
   }, [project, version, specification])
   useEffect(() => {
     // Ensure the URL reflects the current selection of project, version, and specification.
+    console.log("NAVIGATE IF NEEDED")
     projectNavigator.navigateIfNeeded({
       projectId: project?.id,
       versionId: version?.id,
       specificationId: specification?.id
     })
-  }, [project, version, specification])
+  }, [projectNavigator, project, version, specification])
   useEffect(() => {
     // Show the sidebar if no project is selected.
     if (project === undefined) {
