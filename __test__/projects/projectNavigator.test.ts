@@ -3,6 +3,7 @@ import { projectNavigator } from "../../src/features/projects/domain"
 test("It navigates to the correct path", async () => {
   let pushedPath: string | undefined
   const router = {
+    pathname: "/",
     push: (path: string) => {
       pushedPath = path
     },
@@ -39,6 +40,7 @@ test("It navigates to first specification when changing version", async () => {
   }
   let pushedPath: string | undefined
   const router = {
+    pathname: "/",
     push: (path: string) => {
       pushedPath = path
     },
@@ -91,6 +93,7 @@ test("It finds a specification with the same name when changing version", async 
   }
   let pushedPath: string | undefined
   const router = {
+    pathname: "/",
     push: (path: string) => {
       pushedPath = path
     },
@@ -103,16 +106,13 @@ test("It finds a specification with the same name when changing version", async 
 test("It skips navigating when URL matches selection", async () => {
   let didNavigate = false
   const router = {
+    pathname: "/foo/bar/baz",
     push: () => {},
     replace: () => {
       didNavigate = true
     }
   }
   projectNavigator.navigateIfNeeded(router, {
-    projectId: "foo",
-    versionId: "bar",
-    specificationId: "baz"
-  }, {
     projectId: "foo",
     versionId: "bar",
     specificationId: "baz"
@@ -123,6 +123,7 @@ test("It skips navigating when URL matches selection", async () => {
 test("It navigates when project ID in URL does not match ID of selected project", async () => {
   let didNavigate = false
   const router = {
+    pathname: "/hello/bar/baz",
     push: () => {},
     replace: () => {
       didNavigate = true
@@ -130,10 +131,6 @@ test("It navigates when project ID in URL does not match ID of selected project"
   }
   projectNavigator.navigateIfNeeded(router, {
     projectId: "foo",
-    versionId: "bar",
-    specificationId: "baz"
-  }, {
-    projectId: "hello",
     versionId: "bar",
     specificationId: "baz"
   })
@@ -143,6 +140,7 @@ test("It navigates when project ID in URL does not match ID of selected project"
 test("It navigates when version ID in URL does not match ID of selected version", async () => {
   let didNavigate = false
   const router = {
+    pathname: "/foo/hello/baz",
     push: () => {},
     replace: () => {
       didNavigate = true
@@ -151,10 +149,6 @@ test("It navigates when version ID in URL does not match ID of selected version"
   projectNavigator.navigateIfNeeded(router, {
     projectId: "foo",
     versionId: "bar",
-    specificationId: "baz"
-  }, {
-    projectId: "foo",
-    versionId: "hello",
     specificationId: "baz"
   })
   expect(didNavigate).toBeTruthy()
@@ -163,6 +157,7 @@ test("It navigates when version ID in URL does not match ID of selected version"
 test("It navigates when specification ID in URL does not match ID of selected specification", async () => {
   let didNavigate = false
   const router = {
+    pathname: "/foo/bar/hello",
     push: () => {},
     replace: () => {
       didNavigate = true
@@ -172,10 +167,6 @@ test("It navigates when specification ID in URL does not match ID of selected sp
     projectId: "foo",
     versionId: "bar",
     specificationId: "baz"
-  }, {
-    projectId: "foo",
-    versionId: "bar",
-    specificationId: "hello"
   })
   expect(didNavigate).toBeTruthy()
 })

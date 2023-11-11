@@ -23,6 +23,13 @@ export default function ProjectsPage({
   path: string
 }) {
   const router = useRouter()
+  const projectNavigatorRouter = {
+    get pathname() {
+      return window.location.pathname
+    },
+    push: router.push,
+    replace: router.replace
+  }
   const theme = useTheme()
   const [isSidebarOpen, setSidebarOpen] = useSidebarOpen()
   const isDesktopLayout = useMediaQuery(theme.breakpoints.up("sm"))
@@ -40,7 +47,7 @@ export default function ProjectsPage({
   }, [project, version, specification])
   useEffect(() => {
     // Ensure the URL reflects the current selection of project, version, and specification.
-    projectNavigator.navigateIfNeeded(router, {
+    projectNavigator.navigateIfNeeded(projectNavigatorRouter, {
       projectId: project?.id,
       versionId: version?.id,
       specificationId: specification?.id
@@ -58,13 +65,13 @@ export default function ProjectsPage({
     }
     const version = project.versions[0]
     const specification = version.specifications[0]
-    projectNavigator.navigate(router, project.id, version.id, specification.id)
+    projectNavigator.navigate(projectNavigatorRouter, project.id, version.id, specification.id)
   }
   const selectVersion = (versionId: string) => {
-    projectNavigator.navigateToVersion(router, project!, versionId, specification!.name)
+    projectNavigator.navigateToVersion(projectNavigatorRouter, project!, versionId, specification!.name)
   }
   const selectSpecification = (specificationId: string) => {
-    projectNavigator.navigate(router, project!.id, version!.id, specificationId)
+    projectNavigator.navigate(projectNavigatorRouter, project!.id, version!.id, specificationId)
   }
   const canCloseSidebar = project?.id !== undefined
   const toggleSidebar = (isOpen: boolean) => {

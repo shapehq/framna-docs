@@ -1,6 +1,7 @@
 import Project from "./Project"
 
 export interface IProjectRouter {
+  readonly pathname: string
   push(path: string): void
   replace(path: string): void
 }
@@ -45,14 +46,11 @@ const projectNavigator = {
       specificationId?: string
     }
   ) {
-    if (typeof window === "undefined") {
-      return
-    }
     if (!selection.projectId || !selection.versionId || !selection.specificationId) {
       return
     }
     const path = `/${selection.projectId}/${selection.versionId}/${selection.specificationId}`
-    if (path !== window.location.pathname) {
+    if (path !== router.pathname) {
       router.replace(path)
     }
   }
