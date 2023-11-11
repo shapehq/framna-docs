@@ -1,4 +1,6 @@
-import { IGitHubClient } from "@/common"
+import GitHubProjectRepository, {
+  GitHubProjectRepositoryRef
+} from "./GitHubProjectRepository"
 import {
   Project,
   IProjectConfig,
@@ -7,128 +9,25 @@ import {
   ProjectConfigParser
 } from "../domain"
 
-type SearchResult = {
-  readonly name: string
-  readonly owner: {
-    readonly login: string
-  }
-  readonly defaultBranchRef: {
-    readonly name: string
-    readonly target: {
-      readonly oid: string
-    }
-  }
-  readonly configYml?: {
-    readonly text: string
-  }
-  readonly configYaml?: {
-    readonly text: string
-  }
-  readonly branches: EdgesContainer<Ref>
-  readonly tags: EdgesContainer<Ref>
+interface IGitHubProjectRepositoryDataSource {
+  getRepositories(): Promise<GitHubProjectRepository[]>
 }
 
-type EdgesContainer<T> = {
-  readonly edges: Edge<T>[]
-}
-
-type Edge<T> = {
-  readonly node: T
-}
-
-type Ref = {
-  readonly name: string
-  readonly target: {
-    readonly oid: string
-    readonly tree: {
-      readonly entries: File[]
-    }
-  }
-}
-
-type File = {
-  readonly name: string
+type GitHubProjectDataSourceConfig = {
+  readonly dataSource: IGitHubProjectRepositoryDataSource
 }
 
 export default class GitHubProjectDataSource implements IProjectDataSource {
-  private gitHubClient: IGitHubClient
-  private organizationName: string
+  private dataSource: IGitHubProjectRepositoryDataSource
   
-  constructor(gitHubClient: IGitHubClient, organizationName: string) {
-    this.gitHubClient = gitHubClient
-    this.organizationName = organizationName
+  constructor(config: GitHubProjectDataSourceConfig) {
+    this.dataSource = config.dataSource
   }
   
   async getProjects(): Promise<Project[]> {
-    const request = {
-      query: `
-      query Repositories($searchQuery: String!) {
-        search(query: $searchQuery, type: REPOSITORY, first: 100) {
-          results: nodes {
-            ... on Repository {
-              name
-              owner {
-                login
-              }
-              defaultBranchRef {
-                name
-                target {
-                  ...on Commit {
-                    oid
-                  }
-                }
-              }
-              configYml: object(expression: "HEAD:.shape-docs.yml") {
-                ...ConfigParts
-              }
-              configYaml: object(expression: "HEAD:.shape-docs.yaml") {
-                ...ConfigParts
-              }
-              branches: refs(refPrefix: "refs/heads/", first: 100) {
-                ...RefConnectionParts
-              }
-              tags: refs(refPrefix: "refs/tags/", first: 100) {
-                ...RefConnectionParts
-              }
-            }
-          }
-        }
-      }
-      
-      fragment RefConnectionParts on RefConnection {
-        edges {
-          node {
-            name
-            ... on Ref {
-              name
-              target {
-                ... on Commit {
-                  oid
-                  tree {
-                    entries {
-                      name
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-      
-      fragment ConfigParts on GitObject {
-        ... on Blob {
-          text
-        }
-      }
-      `,
-      variables: {
-        searchQuery: `org:${this.organizationName} openapi in:name`
-      }
-    }
-    const response = await this.gitHubClient.graphql(request)
-    return response.search.results.map((searchResult: SearchResult) => {
-      return this.mapProject(searchResult)
+    const repositories = await this.dataSource.getRepositories()
+    return repositories.map(repository => {
+      return this.mapProject(repository)
     })
     .filter((project: Project) => {
       return project.versions.length > 0
@@ -138,31 +37,31 @@ export default class GitHubProjectDataSource implements IProjectDataSource {
     })
   }
   
-  private mapProject(searchResult: SearchResult): Project {
-    const config = this.getConfig(searchResult)
+  private mapProject(repository: GitHubProjectRepository): Project {
+    const config = this.getConfig(repository)
     let imageURL: string | undefined
     if (config && config.image) {
-      imageURL = this.getGitHubBlobURL(
-        searchResult.owner.login,
-        searchResult.name,
-        config.image,
-        searchResult.defaultBranchRef.target.oid
-      )
+      imageURL = this.getGitHubBlobURL({
+        ownerName: repository.owner.login,
+        repositoryName: repository.name,
+        path: config.image,
+        ref: repository.defaultBranchRef.target.oid
+      })
     }
-    const defaultName = searchResult.name.replace(/-openapi$/, "")
+    const defaultName = repository.name.replace(/-openapi$/, "")
     return {
       id: defaultName,
       name: defaultName,
       displayName: config?.name || defaultName,
-      versions: this.getVersions(searchResult).filter(version => {
+      versions: this.getVersions(repository).filter(version => {
         return version.specifications.length > 0
       }),
       imageURL: imageURL
     }
   }
   
-  private getConfig(searchResult: SearchResult): IProjectConfig | null {
-    const yml = searchResult.configYml || searchResult.configYaml
+  private getConfig(repository: GitHubProjectRepository): IProjectConfig | null {
+    const yml = repository.configYml || repository.configYaml
     if (!yml || !yml.text || yml.text.length == 0) {
       return null
     }
@@ -170,15 +69,25 @@ export default class GitHubProjectDataSource implements IProjectDataSource {
     return parser.parse(yml.text)
   }
   
-  private getVersions(searchResult: SearchResult): Version[] {
-    const branchVersions = searchResult.branches.edges.map((edge: Edge<Ref>) => {
-      const isDefaultRef = edge.node.target.oid == searchResult.defaultBranchRef.target.oid
-      return this.mapVersionFromRef(searchResult.owner.login, searchResult.name, edge.node, isDefaultRef)
+  private getVersions(repository: GitHubProjectRepository): Version[] {
+    const branchVersions = repository.branches.edges.map(edge => {
+      const isDefaultRef = edge.node.name == repository.defaultBranchRef.name
+      console.log(repository.defaultBranchRef)
+      return this.mapVersionFromRef({
+        ownerName: repository.owner.login,
+        repositoryName: repository.name,
+        ref: edge.node,
+        isDefaultRef
+      })
     })
-    const tagVersions = searchResult.tags.edges.map((edge: Edge<Ref>) => {
-      return this.mapVersionFromRef(searchResult.owner.login, searchResult.name, edge.node)
+    const tagVersions = repository.tags.edges.map(edge => {
+      return this.mapVersionFromRef({
+        ownerName: repository.owner.login,
+        repositoryName: repository.name,
+        ref: edge.node
+      })
     })
-    const defaultBranchName = searchResult.defaultBranchRef.name
+    const defaultBranchName = repository.defaultBranchRef.name
     const candidateDefaultBranches = [
       defaultBranchName, "main", "master", "develop", "development"
     ]
@@ -201,33 +110,38 @@ export default class GitHubProjectDataSource implements IProjectDataSource {
     return allVersions
   }
   
-  private mapVersionFromRef(
-    owner: string,
-    repository: string,
-    ref: Ref,
-    isDefaultRef: boolean = false
-  ): Version {
+  private mapVersionFromRef({
+    ownerName,
+    repositoryName,
+    ref,
+    isDefaultRef
+  }: {
+    ownerName: string
+    repositoryName: string
+    ref: GitHubProjectRepositoryRef
+    isDefaultRef?: boolean
+  }): Version {
     const specifications = ref.target.tree.entries.filter(file => {
       return this.isOpenAPISpecification(file.name)
     }).map(file => {
       return {
         id: file.name,
         name: file.name,
-        url: this.getGitHubBlobURL(
-          owner,
-          repository,
-          file.name,
-          ref.target.oid
-        ),
-        editURL: `https://github.com/${owner}/${repository}/edit/${ref.name}/${file.name}`
+        url: this.getGitHubBlobURL({
+          ownerName,
+          repositoryName,
+          path: file.name,
+          ref: ref.target.oid
+        }),
+        editURL: `https://github.com/${ownerName}/${repositoryName}/edit/${ref.name}/${file.name}`
       }
     })
     return {
       id: ref.name,
       name: ref.name,
       specifications: specifications,
-      url: `https://github.com/${owner}/${repository}/tree/${ref.name}`,
-      isDefault: isDefaultRef
+      url: `https://github.com/${ownerName}/${repositoryName}/tree/${ref.name}`,
+      isDefault: isDefaultRef || false
     }
   }
 
@@ -237,7 +151,17 @@ export default class GitHubProjectDataSource implements IProjectDataSource {
     )
   }
   
-  private getGitHubBlobURL(owner: string, repository: string, path: string, ref: string): string {
-    return `/api/blob/${owner}/${repository}/${path}?ref=${ref}`
+  private getGitHubBlobURL({
+    ownerName,
+    repositoryName,
+    path,
+    ref
+  }: {
+    ownerName: string
+    repositoryName: string
+    path: string
+    ref: string
+  }): string {
+    return `/api/blob/${ownerName}/${repositoryName}/${path}?ref=${ref}`
   }
 }
