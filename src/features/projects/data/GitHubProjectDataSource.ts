@@ -160,7 +160,7 @@ export default class GitHubProjectDataSource implements IProjectDataSource {
     const versionIds = versions.map(e => e.id)
     for (const remoteVersion of remoteVersions) {
       const baseVersionId = this.makeURLSafeID(
-        remoteVersion.id?.toLowerCase() || remoteVersion.name.toLowerCase()
+        (remoteVersion.id || remoteVersion.name).toLowerCase()
       )
       // If the version ID exists then we suffix it with a number to ensure unique versions.
       // E.g. if "foo" already exists, we make it "foo1".
@@ -168,7 +168,7 @@ export default class GitHubProjectDataSource implements IProjectDataSource {
       const versionId = baseVersionId + (existingVersionIdCount > 0 ? existingVersionIdCount : "")
       const specifications = remoteVersion.specifications.map(e => {
         return {
-          id: this.makeURLSafeID(e.name.toLowerCase()),
+          id: this.makeURLSafeID((e.id || e.name).toLowerCase()),
           name: e.name,
           url: `/api/proxy?url=${encodeURIComponent(e.url)}`
         }

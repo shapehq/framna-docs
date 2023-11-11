@@ -1242,3 +1242,101 @@ test("It modifies ID of remote version if the ID already exists", async () => {
     }]
   }])
 })
+
+test("It lets users specify the ID of a remote version", async () => {
+  const rawProjectConfig = `
+  remoteVersions:
+    - id: some-version
+      name: Bar
+      specifications:
+      - name: Baz
+        url: https://example.com/baz.yml
+  `
+  const sut = new GitHubProjectDataSource({
+    dataSource: {
+      async getRepositories() {
+        return [{
+          name: "foo",
+          owner: {
+            login: "acme"
+          },
+          defaultBranchRef: {
+            name: "bar",
+            target: {
+              oid: "12345678"
+            }
+          },
+          configYml: {
+            text: rawProjectConfig
+          },
+          branches: {
+            edges: []
+          },
+          tags: {
+            edges: []
+          }
+        }]
+      }
+    }
+  })
+  const projects = await sut.getProjects()
+  expect(projects[0].versions).toEqual([{
+    id: "some-version",
+    name: "Bar",
+    isDefault: false,
+    specifications: [{
+      id: "baz",
+      name: "Baz",
+      url: `/api/proxy?url=${encodeURIComponent("https://example.com/baz.yml")}`
+    }]
+  }])
+})
+
+test("It lets users specify the ID of a remote specification", async () => {
+  const rawProjectConfig = `
+  remoteVersions:
+    - name: Bar
+      specifications:
+      - id: some-spec
+        name: Baz
+        url: https://example.com/baz.yml
+  `
+  const sut = new GitHubProjectDataSource({
+    dataSource: {
+      async getRepositories() {
+        return [{
+          name: "foo",
+          owner: {
+            login: "acme"
+          },
+          defaultBranchRef: {
+            name: "bar",
+            target: {
+              oid: "12345678"
+            }
+          },
+          configYml: {
+            text: rawProjectConfig
+          },
+          branches: {
+            edges: []
+          },
+          tags: {
+            edges: []
+          }
+        }]
+      }
+    }
+  })
+  const projects = await sut.getProjects()
+  expect(projects[0].versions).toEqual([{
+    id: "bar",
+    name: "Bar",
+    isDefault: false,
+    specifications: [{
+      id: "some-spec",
+      name: "Baz",
+      url: `/api/proxy?url=${encodeURIComponent("https://example.com/baz.yml")}`
+    }]
+  }])
+})
