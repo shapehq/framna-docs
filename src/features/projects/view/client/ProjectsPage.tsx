@@ -1,43 +1,38 @@
 "use client"
 
 import { useEffect } from "react"
-import { useRouter } from "next/navigation"
 import { useTheme } from "@mui/material/styles"
 import useMediaQuery from "@mui/material/useMediaQuery"
 import SidebarContainer from "@/features/sidebar/view/client/SidebarContainer"
 import { useProjects } from "../../data"
-import { Project, getSelection, projectNavigator, updateWindowTitle } from "../../domain"
 import ProjectList from "../ProjectList"
 import MainContent from "../MainContent"
 import MobileToolbar from "../toolbar/MobileToolbar"
 import TrailingToolbarItem from "../toolbar/TrailingToolbarItem"
 import useSidebarOpen from "@/common/state/useSidebarOpen"
+import {
+  Project,
+  getSelection,
+  updateWindowTitle,
+  useProjectNavigator
+} from "../../domain"
 
 export default function ProjectsPage({
   enableGitHubLinks,
   projects: serverProjects,
-  projectId,
-  versionId,
-  specificationId
+  path
 }: {
-  enableGitHubLinks: boolean,
+  enableGitHubLinks: boolean
   projects?: Project[]
-  projectId?: string
-  versionId?: string
-  specificationId?: string
+  path: string
 }) {
-  const router = useRouter()
   const theme = useTheme()
+  const projectNavigator = useProjectNavigator()
   const [isSidebarOpen, setSidebarOpen] = useSidebarOpen()
   const isDesktopLayout = useMediaQuery(theme.breakpoints.up("sm"))
   const { projects: clientProjects, error, isLoading: isClientLoading } = useProjects()
   const projects = isClientLoading ? (serverProjects || []) : clientProjects
-  const { project, version, specification } = getSelection({
-    projects,
-    projectId,
-    versionId,
-    specificationId
-  })
+  const { project, version, specification } = getSelection({ projects, path })
   useEffect(() => {
     updateWindowTitle({
       storage: document,
@@ -49,35 +44,33 @@ export default function ProjectsPage({
   }, [project, version, specification])
   useEffect(() => {
     // Ensure the URL reflects the current selection of project, version, and specification.
-    const urlSelection = { projectId, versionId, specificationId }
-    const selection = {
+    projectNavigator.navigateIfNeeded({
       projectId: project?.id,
       versionId: version?.id,
       specificationId: specification?.id
-    }
-    projectNavigator.navigateIfNeeded(router, urlSelection, selection)
-  }, [router, projectId, versionId, specificationId, project, version, specification])
+    })
+  }, [projectNavigator, project, version, specification])
   useEffect(() => {
     // Show the sidebar if no project is selected.
-    if (projectId === undefined) {
+    if (project === undefined) {
       setSidebarOpen(true)
     }
-  }, [projectId, setSidebarOpen])
+  }, [project, setSidebarOpen])
   const selectProject = (project: Project) => {
     if (!isDesktopLayout) {
       setSidebarOpen(false)
     }
     const version = project.versions[0]
     const specification = version.specifications[0]
-    projectNavigator.navigate(router, project.id, version.id, specification.id)
+    projectNavigator.navigate(project.id, version.id, specification.id)
   }
   const selectVersion = (versionId: string) => {
-    projectNavigator.navigateToVersion(router, project!, versionId, specification!.name)
+    projectNavigator.navigateToVersion(project!, versionId, specification!.name)
   }
   const selectSpecification = (specificationId: string) => {
-    projectNavigator.navigate(router, projectId!, versionId!, specificationId)
+    projectNavigator.navigate(project!.id, version!.id, specificationId)
   }
-  const canCloseSidebar = projectId !== undefined
+  const canCloseSidebar = project !== undefined
   const toggleSidebar = (isOpen: boolean) => {
     if (!isOpen && canCloseSidebar) {
       setSidebarOpen(false)
@@ -94,7 +87,7 @@ export default function ProjectsPage({
         <ProjectList
           isLoading={serverProjects === undefined && isClientLoading}
           projects={projects}
-          selectedProjectId={projectId}
+          selectedProjectId={project?.id}
           onSelectProject={selectProject}
         />
       }
@@ -119,7 +112,7 @@ export default function ProjectsPage({
       }
     >
       {/* If the user has not selected any project then we do not render any content */} 
-      {projectId &&
+      {project &&
         <MainContent
           isLoading={isClientLoading}
           error={error}

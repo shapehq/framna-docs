@@ -1,4 +1,3 @@
-import { getProjectId, getSpecificationId, getVersionId } from "../../common"
 import SessionBarrier from "@/features/auth/view/SessionBarrier"
 import ProjectsPage from "@/features/projects/view/ProjectsPage"
 import { projectRepository } from "@/composition"
@@ -6,26 +5,20 @@ import { projectRepository } from "@/composition"
 type PageParams = { slug: string | string[] }
 
 export default async function Page({ params }: { params: PageParams }) {
-  const url = getURL(params)
   return (
     <SessionBarrier>
       <ProjectsPage
         projectRepository={projectRepository}
-        projectId={getProjectId(url)}
-        versionId={getVersionId(url)}
-        specificationId={getSpecificationId(url)}
+        path={getPath(params.slug)}
       />
     </SessionBarrier>
   )
 }
 
-function getURL(params: PageParams) {
-  if (typeof params.slug === "string") {
-    return "/" + params.slug
+function getPath(slug: string | string[]) {
+  if (typeof slug === "string") {
+    return "/" + slug
   } else {
-    return params.slug.reduce(
-      (previousValue, currentValue) => `${previousValue}/${currentValue}`,
-      ""
-    )
+    return slug.reduce((e, acc) => `${e}/${acc}`, "")
   }
 }
