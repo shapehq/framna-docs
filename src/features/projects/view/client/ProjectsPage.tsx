@@ -44,7 +44,6 @@ export default function ProjectsPage({
   }, [project, version, specification])
   useEffect(() => {
     // Ensure the URL reflects the current selection of project, version, and specification.
-    console.log("NAVIGATE IF NEEDED")
     projectNavigator.navigateIfNeeded({
       projectId: project?.id,
       versionId: version?.id,
