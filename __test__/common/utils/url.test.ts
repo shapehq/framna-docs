@@ -44,14 +44,14 @@ test("It reads path containing project, version, and specification with .yaml ex
   expect(specificationId).toBe("openapi.yaml")
 })
 
-test("It reads version containing a slash", async () => {
+test("It parses specification without trailing file extension", async () => {
   const url = "/foo/bar/baz"
   const projectId = getProjectId(url)
   const versionId = getVersionId(url)
   const specificationId = getSpecificationId(url)
   expect(projectId).toEqual("foo")
-  expect(versionId).toEqual("bar/baz")
-  expect(specificationId).toBeUndefined()
+  expect(versionId).toEqual("bar")
+  expect(specificationId).toBe("baz")
 })
 
 test("It read specification when version contains a slash", async () => {

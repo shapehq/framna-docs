@@ -1,52 +1,47 @@
-export function getProjectId(url?: string) {
-    if (typeof window !== 'undefined') {
-        url = window.location.pathname;// remove first slash
-    }
-    url = url?.substring(1);// remove first slash
-    const firstSlash = url?.indexOf('/');
-    let project = url ? decodeURI(url) : undefined
-    if (firstSlash != -1 && url) {
-        project = decodeURI(url.substring(0, firstSlash));
-    }
-    return project
+function getPathname(url?: string) {
+  if (typeof window !== "undefined") {
+    url = window.location.pathname
+  }
+  if (!url) {
+    return undefined
+  }
+  if (!url.startsWith("/")) {
+    return url
+  }
+  return url.substring(1) 
 }
 
-function getVersionAndSpecification(url?: string) {
-    const project = getProjectId(url)
-    if (url && project) {
-        const versionAndSpecification = url.substring(project.length + 2)// remove first slash
-        let specification: string | undefined = undefined;
-        let version = versionAndSpecification;
-        if (versionAndSpecification) {
-            const lastSlash = versionAndSpecification?.lastIndexOf('/');
-            if (lastSlash != -1) {
-                const potentialSpecification = versionAndSpecification?.substring(lastSlash)
-                if (potentialSpecification?.endsWith('.yml') || potentialSpecification?.endsWith('.yaml')) {
-                    version = versionAndSpecification?.substring(0, lastSlash)
-                    specification = versionAndSpecification?.substring(lastSlash + 1)
-                }
-            }
-        }
-        return {
-            version,
-            specification
-        };
+function getProjectSelection(tmpPathname?: string) {
+  const pathname = getPathname(tmpPathname)
+  if (!pathname) {
+    return undefined
+  }
+  const comps = pathname.split("/")
+  if (comps.length == 0) {
+    return {}
+  } else if (comps.length == 1) {
+    return { projectId: comps[0] }
+  } else if (comps.length == 2) {
+    return {
+      projectId: comps[0],
+      versionId: comps[1]
     }
-    return {};
+  } else {
+    const projectId = comps[0]
+    const versionId = comps.slice(1, -1).join("/")
+    const specificationId = comps[comps.length - 1]
+    return { projectId, versionId, specificationId }
+  }
 }
 
-export function getVersionId(url?: string) {
-    if (typeof window !== 'undefined') {
-        url = window.location.pathname
-    }
-    const version = getVersionAndSpecification(url).version;
-    return version ? decodeURI(version) : undefined;
+export function getProjectId(tmpPathname?: string) {
+  return getProjectSelection(tmpPathname)?.projectId
 }
 
-export function getSpecificationId(url?: string) {
-    if (typeof window !== 'undefined') {
-        url = window.location.pathname
-    }
-    const specification = getVersionAndSpecification(url).specification;
-    return specification ? decodeURI(specification) : undefined;
+export function getVersionId(tmpPathname?: string) {
+  return getProjectSelection(tmpPathname)?.versionId
+}
+
+export function getSpecificationId(tmpPathname?: string) {
+  return getProjectSelection(tmpPathname)?.specificationId
 }
