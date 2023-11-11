@@ -22,15 +22,11 @@ import {
 export default function ProjectsPage({
   enableGitHubLinks,
   projects: serverProjects,
-  projectId,
-  versionId,
-  specificationId
+  path
 }: {
-  enableGitHubLinks: boolean,
+  enableGitHubLinks: boolean
   projects?: Project[]
-  projectId?: string
-  versionId?: string
-  specificationId?: string
+  path: string
 }) {
   const router = useRouter()
   const theme = useTheme()
@@ -60,10 +56,10 @@ export default function ProjectsPage({
   }, [project, version, specification])
   useEffect(() => {
     // Show the sidebar if no project is selected.
-    if (projectId === undefined) {
+    if (project === undefined) {
       setSidebarOpen(true)
     }
-  }, [projectId, setSidebarOpen])
+  }, [project, setSidebarOpen])
   const selectProject = (project: Project) => {
     if (!isDesktopLayout) {
       setSidebarOpen(false)
@@ -78,7 +74,7 @@ export default function ProjectsPage({
   const selectSpecification = (specificationId: string) => {
     projectNavigator.navigate(project!.id, version!.id, specificationId)
   }
-  const canCloseSidebar = projectId !== undefined
+  const canCloseSidebar = project !== undefined
   const toggleSidebar = (isOpen: boolean) => {
     if (!isOpen && canCloseSidebar) {
       setSidebarOpen(false)
@@ -95,7 +91,7 @@ export default function ProjectsPage({
         <ProjectList
           isLoading={serverProjects === undefined && isClientLoading}
           projects={projects}
-          selectedProjectId={projectId}
+          selectedProjectId={project?.id}
           onSelectProject={selectProject}
         />
       }
@@ -120,7 +116,7 @@ export default function ProjectsPage({
       }
     >
       {/* If the user has not selected any project then we do not render any content */} 
-      {projectId &&
+      {project &&
         <MainContent
           isLoading={isClientLoading}
           error={error}

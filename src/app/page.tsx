@@ -5,7 +5,7 @@ import { projectRepository } from "@/composition"
 export default async function Page() {
   return (
     <SessionBarrier>
-      <ProjectsPage projectRepository={projectRepository} />
+      <ProjectsPage projectRepository={projectRepository} path="/" />
     </SessionBarrier>
   )
 }

@@ -1,7 +1,8 @@
 import { getSelection } from "../../src/features/projects/domain"
 
-test("It selects the first project when there is only one project", () => {
+test("It selects the first project when there is only one project and path is empty", () => {
   const sut = getSelection({
+    path: "",
     projects: [{
       id: "foo",
       name: "foo",
@@ -25,7 +26,7 @@ test("It selects the first project when there is only one project", () => {
 
 test("It selects the first version and specification of the specified project", () => {
   const sut = getSelection({
-    projectId: "bar",
+    path: "/bar",
     projects: [{
       id: "foo",
       name: "foo",
@@ -63,8 +64,7 @@ test("It selects the first version and specification of the specified project", 
 
 test("It selects the first specification of the specified project and version", () => {
   const sut = getSelection({
-    projectId: "bar",
-    versionId: "baz2",
+    path: "/bar/baz2",
     projects: [{
       id: "foo",
       name: "foo",
@@ -98,8 +98,7 @@ test("It selects the first specification of the specified project and version", 
 
 test("It selects the specification of the specified version", () => {
   const sut = getSelection({
-    projectId: "bar",
-    versionId: "baz2",
+    path: "/bar/baz2",
     projects: [{
       id: "foo",
       name: "foo",
@@ -137,9 +136,7 @@ test("It selects the specification of the specified version", () => {
 
 test("It selects the specified project, version, and specification", () => {
   const sut = getSelection({
-    projectId: "bar",
-    versionId: "baz2",
-    specificationId: "hello2",
+    path: "/bar/baz2/hello2",
     projects: [{
       id: "foo",
       name: "foo",
@@ -177,7 +174,7 @@ test("It selects the specified project, version, and specification", () => {
 
 test("It returns a undefined project, version, and specification when the selected project cannot be found", () => {
   const sut = getSelection({
-    projectId: "foo",
+    path: "/foo",
     projects: [{
       id: "bar",
       name: "bar",
@@ -192,8 +189,7 @@ test("It returns a undefined project, version, and specification when the select
 
 test("It returns a undefined version and specification when the selected version cannot be found", () => {
   const sut = getSelection({
-    projectId: "foo",
-    versionId: "bar",
+    path: "/foo/bar",
     projects: [{
       id: "foo",
       name: "foo",
@@ -213,9 +209,7 @@ test("It returns a undefined version and specification when the selected version
 
 test("It returns a undefined specification when the selected specification cannot be found", () => {
   const sut = getSelection({
-    projectId: "foo",
-    versionId: "bar",
-    specificationId: "baz",
+    path: "/foo/bar/baz",
     projects: [{
       id: "foo",
       name: "foo",
@@ -235,4 +229,28 @@ test("It returns a undefined specification when the selected specification canno
   expect(sut.project!.id).toEqual("foo")
   expect(sut.version!.id).toEqual("bar")
   expect(sut.specification).toBeUndefined()
+})
+
+test("It moves specification ID to version ID if needed", () => {
+  const sut = getSelection({
+    path: "/foo/bar/baz",
+    projects: [{
+      id: "foo",
+      name: "foo",
+      displayName: "foo",
+      versions: [{
+        id: "bar/baz",
+        name: "bar",
+        isDefault: false,
+        specifications: [{
+          id: "hello",
+          name: "hello.yml",
+          url: "https://example.com/hello.yml"
+        }]
+      }]
+    }]
+  })
+  expect(sut.project!.id).toEqual("foo")
+  expect(sut.version!.id).toEqual("bar/baz")
+  expect(sut.specification!.id).toEqual("hello")
 })

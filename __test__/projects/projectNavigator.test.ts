@@ -140,10 +140,6 @@ test("It skips navigating when URL matches selection", async () => {
     projectId: "foo",
     versionId: "bar",
     specificationId: "baz"
-  }, {
-    projectId: "foo",
-    versionId: "bar",
-    specificationId: "baz"
   })
   expect(didNavigate).toBeFalsy()
 })
@@ -165,10 +161,6 @@ test("It navigates when project ID in URL does not match ID of selected project"
   })
   sut.navigateIfNeeded({
     projectId: "foo",
-    versionId: "bar",
-    specificationId: "baz"
-  }, {
-    projectId: "hello",
     versionId: "bar",
     specificationId: "baz"
   })
@@ -194,10 +186,6 @@ test("It navigates when version ID in URL does not match ID of selected version"
     projectId: "foo",
     versionId: "bar",
     specificationId: "baz"
-  }, {
-    projectId: "foo",
-    versionId: "hello",
-    specificationId: "baz"
   })
   expect(didNavigate).toBeTruthy()
 })
@@ -221,10 +209,6 @@ test("It navigates when specification ID in URL does not match ID of selected sp
     projectId: "foo",
     versionId: "bar",
     specificationId: "baz"
-  }, {
-    projectId: "foo",
-    versionId: "bar",
-    specificationId: "hello"
   })
   expect(didNavigate).toBeTruthy()
 })

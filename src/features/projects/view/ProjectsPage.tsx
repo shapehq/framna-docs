@@ -4,14 +4,10 @@ import ClientProjectsPage from "./client/ProjectsPage"
 
 export default async function ProjectsPage({
   projectRepository,
-  projectId,
-  versionId,
-  specificationId
+  path
 }: {
   projectRepository: ProjectRepository
-  projectId?: string
-  versionId?: string
-  specificationId?: string
+  path: string
 }) {
   const isGuest = await session.getIsGuest()
   const projects = await projectRepository.get()
@@ -19,9 +15,7 @@ export default async function ProjectsPage({
     <ClientProjectsPage
       enableGitHubLinks={!isGuest}
       projects={projects}
-      projectId={projectId}
-      versionId={versionId}
-      specificationId={specificationId}
+      path={path}
     />
   )
 }
