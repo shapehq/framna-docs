@@ -1141,11 +1141,11 @@ test("It adds remote versions from the project configuration", async () => {
     specifications: [{
       id: "huey",
       name: "Huey",
-      url: "https://example.com/huey.yml"
+      url: `/api/proxy?url=${encodeURIComponent("https://example.com/huey.yml")}`
     }, {
       id: "dewey",
       name: "Dewey",
-      url: "https://example.com/dewey.yml"
+      url: `/api/proxy?url=${encodeURIComponent("https://example.com/dewey.yml")}`
     }]
   }, {
     id: "bobby",
@@ -1154,7 +1154,7 @@ test("It adds remote versions from the project configuration", async () => {
     specifications: [{
       id: "louie",
       name: "Louie",
-      url: "https://example.com/louie.yml"
+      url: `/api/proxy?url=${encodeURIComponent("https://example.com/louie.yml")}`
     }]
   }])
 })
@@ -1229,7 +1229,7 @@ test("It modifies ID of remote version if the ID already exists", async () => {
     specifications: [{
       id: "baz",
       name: "Baz",
-      url: "https://example.com/baz.yml"
+      url: `/api/proxy?url=${encodeURIComponent("https://example.com/baz.yml")}`
     }]
   }, {
     id: "bar2",
@@ -1238,7 +1238,7 @@ test("It modifies ID of remote version if the ID already exists", async () => {
     specifications: [{
       id: "hello",
       name: "Hello",
-      url: "https://example.com/hello.yml"
+      url: `/api/proxy?url=${encodeURIComponent("https://example.com/hello.yml")}`
     }]
   }])
 })
