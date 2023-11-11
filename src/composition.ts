@@ -8,7 +8,8 @@ import {
   SessionMutexFactory
 } from "@/common"
 import {
-  GitHubProjectDataSource
+  GitHubProjectDataSource,
+  GitHubProjectRepositoryDataSource
 } from "@/features/projects/data"
 import {
   CachingProjectDataSource,
@@ -181,13 +182,15 @@ export const projectRepository = new ProjectRepository(
   projectUserDataRepository
 )
 
-export const projectDataSource = new CachingProjectDataSource(
-  new GitHubProjectDataSource(
-    userGitHubClient,
-    GITHUB_ORGANIZATION_NAME
-  ),
-  projectRepository
-)
+export const projectDataSource = new CachingProjectDataSource({
+  dataSource: new GitHubProjectDataSource({
+    dataSource: new GitHubProjectRepositoryDataSource({
+      graphQlClient: userGitHubClient,
+      organizationName: GITHUB_ORGANIZATION_NAME
+    })
+  }),
+  repository: projectRepository
+})
 
 export const logInHandler = new CompositeLogInHandler([
   new CredentialsTransferringLogInHandler({
