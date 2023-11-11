@@ -16,8 +16,9 @@ export default function getSelection({
   if (path.startsWith("/")) {
     path = path.substring(1)
   }
-  let { projectId, versionId, specificationId } = guessSelection(path)
+  const { projectId: _projectId, versionId, specificationId } = guessSelection(path)
   // If no project is selected and the user only has a single project then we select that.
+  let projectId = _projectId
   if (!projectId && projects.length == 1) {
     projectId = projects[0].id
   }

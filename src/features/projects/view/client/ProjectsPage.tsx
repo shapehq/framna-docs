@@ -6,12 +6,18 @@ import { useTheme } from "@mui/material/styles"
 import useMediaQuery from "@mui/material/useMediaQuery"
 import SidebarContainer from "@/features/sidebar/view/client/SidebarContainer"
 import { useProjects } from "../../data"
-import { Project, getSelection, projectNavigator, updateWindowTitle } from "../../domain"
 import ProjectList from "../ProjectList"
 import MainContent from "../MainContent"
 import MobileToolbar from "../toolbar/MobileToolbar"
 import TrailingToolbarItem from "../toolbar/TrailingToolbarItem"
 import useSidebarOpen from "@/common/state/useSidebarOpen"
+import {
+  Project,
+  ProjectNavigator,
+  WindowPathnameReader,
+  getSelection,
+  updateWindowTitle,
+} from "../../domain"
 
 export default function ProjectsPage({
   enableGitHubLinks,
@@ -23,19 +29,14 @@ export default function ProjectsPage({
   path: string
 }) {
   const router = useRouter()
-  const projectNavigatorRouter = {
-    get pathname() {
-      return window.location.pathname
-    },
-    push: router.push,
-    replace: router.replace
-  }
   const theme = useTheme()
+  const pathnameReader = new WindowPathnameReader()
   const [isSidebarOpen, setSidebarOpen] = useSidebarOpen()
   const isDesktopLayout = useMediaQuery(theme.breakpoints.up("sm"))
   const { projects: clientProjects, error, isLoading: isClientLoading } = useProjects()
   const projects = isClientLoading ? (serverProjects || []) : clientProjects
   const { project, version, specification } = getSelection({ projects, path })
+  const projectNavigator = new ProjectNavigator({ router, pathnameReader })
   useEffect(() => {
     updateWindowTitle({
       storage: document,
@@ -47,12 +48,12 @@ export default function ProjectsPage({
   }, [project, version, specification])
   useEffect(() => {
     // Ensure the URL reflects the current selection of project, version, and specification.
-    projectNavigator.navigateIfNeeded(projectNavigatorRouter, {
+    projectNavigator.navigateIfNeeded({
       projectId: project?.id,
       versionId: version?.id,
       specificationId: specification?.id
     })
-  }, [router, project, version, specification, project, version, specification])
+  }, [project, version, specification])
   useEffect(() => {
     // Show the sidebar if no project is selected.
     if (project?.id === undefined) {
@@ -65,13 +66,13 @@ export default function ProjectsPage({
     }
     const version = project.versions[0]
     const specification = version.specifications[0]
-    projectNavigator.navigate(projectNavigatorRouter, project.id, version.id, specification.id)
+    projectNavigator.navigate(project.id, version.id, specification.id)
   }
   const selectVersion = (versionId: string) => {
-    projectNavigator.navigateToVersion(projectNavigatorRouter, project!, versionId, specification!.name)
+    projectNavigator.navigateToVersion(project!, versionId, specification!.name)
   }
   const selectSpecification = (specificationId: string) => {
-    projectNavigator.navigate(projectNavigatorRouter, project!.id, version!.id, specificationId)
+    projectNavigator.navigate(project!.id, version!.id, specificationId)
   }
   const canCloseSidebar = project?.id !== undefined
   const toggleSidebar = (isOpen: boolean) => {
