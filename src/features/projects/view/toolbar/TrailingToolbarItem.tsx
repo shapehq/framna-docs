@@ -21,6 +21,7 @@ const TrailingToolbarItem = ({
   onSelectVersion: (versionId: string) => void,
   onSelectSpecification: (specificationId: string) => void
 }) => {
+  const projectNameURL = enableGitHubLinks ? version.url || project.url : undefined
   return (
     <>
       <Stack
@@ -28,7 +29,7 @@ const TrailingToolbarItem = ({
         alignItems="center"
         sx={{ display: { sm: "flex", md: "none" } }}
       >
-        <ProjectName text={project.name} url={version.url} />
+        <ProjectName text={project.name} url={projectNameURL} />
       </Stack>
       <Stack
         direction="row"
@@ -37,7 +38,7 @@ const TrailingToolbarItem = ({
       >
         <ProjectName
           text={project.name}
-          url={enableGitHubLinks ? version.url : undefined}
+          url={projectNameURL}
           sx={{ marginRight: 1 }}
         /> 
         <Typography variant="h6" sx={{ marginRight: 1 }}>/</Typography>
