@@ -70,6 +70,7 @@ test("It maps projects including branches and tags", async () => {
     id: "foo",
     name: "foo",
     displayName: "foo",
+    url: "https://github.com/acme/foo",
     versions: [{
       id: "main",
       name: "main",
@@ -209,6 +210,7 @@ test("It supports multiple OpenAPI specifications on a branch", async () => {
     id: "foo",
     name: "foo",
     displayName: "foo",
+    url: "https://github.com/acme/foo",
     versions: [{
       id: "main",
       name: "main",
