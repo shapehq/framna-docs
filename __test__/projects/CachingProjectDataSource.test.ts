@@ -27,17 +27,20 @@ test("It caches projects read from the data source", async () => {
   }]
   let cachedProjects: Project[] | undefined
   const sut = new CachingProjectDataSource({
-    async getProjects() {
-      return projects
+    dataSource: {
+      async getProjects() {
+        return projects
+      }
+    },
+    repository: {
+      async get() {
+        return []
+      },
+      async set(projects) {
+        cachedProjects = projects
+      },
+      async delete() {}
     }
-  }, {
-    async get() {
-      return []
-    },
-    async set(projects) {
-      cachedProjects = projects
-    },
-    async delete() {}
   })
   await sut.getProjects()
   expect(cachedProjects).toEqual(projects)

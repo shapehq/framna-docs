@@ -1,13 +1,29 @@
 import Project from "./Project"
 
-export interface IProjectRouter {
+interface IPathnameReader {
+  readonly pathname: string
+}
+
+export interface IRouter {
   push(path: string): void
   replace(path: string): void
 }
 
-const projectNavigator = {
+type ProjectNavigatorConfig = {
+  readonly pathnameReader: IPathnameReader
+  readonly router: IRouter
+}
+
+export default class ProjectNavigator {
+  private readonly pathnameReader: IPathnameReader
+  private readonly router: IRouter
+  
+  constructor(config: ProjectNavigatorConfig) {
+    this.pathnameReader = config.pathnameReader
+    this.router = config.router
+  }
+  
   navigateToVersion(
-    router: IProjectRouter,
     project: Project,
     versionId: string,
     preferredSpecificationName: string
@@ -23,27 +39,22 @@ const projectNavigator = {
       return e.name == preferredSpecificationName
     })
     if (candidateSpecification) {
-      router.push(`/${project.id}/${newVersion.id}/${candidateSpecification.id}`)
+      this.router.push(`/${project.id}/${newVersion.id}/${candidateSpecification.id}`)
     } else {
       const firstSpecification = newVersion.specifications[0]
-      router.push(`/${project.id}/${newVersion.id}/${firstSpecification.id}`)
+      this.router.push(`/${project.id}/${newVersion.id}/${firstSpecification.id}`)
     }
-  },
+  }
+  
   navigate(
-    router: IProjectRouter,
     projectId: string,
     versionId: string,
     specificationId: string
   ) {
-    router.push(`/${projectId}/${versionId}/${specificationId}`)
-  },
+    this.router.push(`/${projectId}/${versionId}/${specificationId}`)
+  }
+  
   navigateIfNeeded(
-    router: IProjectRouter,
-    urlComponents: {
-      projectId?: string,
-      versionId?: string,
-      specificationId?: string
-    },
     selection: {
       projectId?: string,
       versionId?: string,
@@ -53,15 +64,9 @@ const projectNavigator = {
     if (!selection.projectId || !selection.versionId || !selection.specificationId) {
       return
     }
-    if (
-      urlComponents.projectId != selection.projectId ||
-      urlComponents.versionId != selection.versionId ||
-      urlComponents.specificationId != selection.specificationId
-    ) {
-      const path = `/${selection.projectId}/${selection.versionId}/${selection.specificationId}`
-      router.replace(path)
+    const path = `/${selection.projectId}/${selection.versionId}/${selection.specificationId}`
+    if (path !== this.pathnameReader.pathname) {
+      this.router.replace(path)
     }
   }
 }
-
-export default projectNavigator
