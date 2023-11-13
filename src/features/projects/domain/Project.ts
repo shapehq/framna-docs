@@ -6,7 +6,8 @@ export const ProjectSchema = z.object({
   name: z.string(),
   displayName: z.string(),
   versions: VersionSchema.array(),
-  imageURL: z.string().optional()
+  imageURL: z.string().optional(),
+  url: z.string().optional()
 })
 
 type Project = z.infer<typeof ProjectSchema>

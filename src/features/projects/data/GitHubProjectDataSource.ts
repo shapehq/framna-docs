@@ -64,7 +64,8 @@ export default class GitHubProjectDataSource implements IProjectDataSource {
       name: defaultName,
       displayName: config?.name || defaultName,
       versions,
-      imageURL: imageURL
+      imageURL: imageURL,
+      url: `https://github.com/${repository.owner.login}/${repository.name}`
     }
   }
   
