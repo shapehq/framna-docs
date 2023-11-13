@@ -1091,3 +1091,252 @@ test("It identifies the default branch in returned versions", async () => {
     .map(e => e.name)
   expect(defaultVersionNames).toEqual(["development"])
 })
+
+test("It adds remote versions from the project configuration", async () => {
+  const rawProjectConfig = `
+  remoteVersions:
+    - name: Anne
+      specifications:
+      - name: Huey
+        url: https://example.com/huey.yml
+      - name: Dewey
+        url: https://example.com/dewey.yml
+    - name: Bobby
+      specifications:
+      - name: Louie
+        url: https://example.com/louie.yml
+  `
+  const sut = new GitHubProjectDataSource({
+    dataSource: {
+      async getRepositories() {
+        return [{
+          name: "foo",
+          owner: {
+            login: "acme"
+          },
+          defaultBranchRef: {
+            name: "main",
+            target: {
+              oid: "12345678"
+            }
+          },
+          configYml: {
+            text: rawProjectConfig
+          },
+          branches: {
+            edges: []
+          },
+          tags: {
+            edges: []
+          }
+        }]
+      }
+    }
+  })
+  const projects = await sut.getProjects()
+  expect(projects[0].versions).toEqual([{
+    id: "anne",
+    name: "Anne",
+    isDefault: false,
+    specifications: [{
+      id: "huey",
+      name: "Huey",
+      url: `/api/proxy?url=${encodeURIComponent("https://example.com/huey.yml")}`
+    }, {
+      id: "dewey",
+      name: "Dewey",
+      url: `/api/proxy?url=${encodeURIComponent("https://example.com/dewey.yml")}`
+    }]
+  }, {
+    id: "bobby",
+    name: "Bobby",
+    isDefault: false,
+    specifications: [{
+      id: "louie",
+      name: "Louie",
+      url: `/api/proxy?url=${encodeURIComponent("https://example.com/louie.yml")}`
+    }]
+  }])
+})
+
+test("It modifies ID of remote version if the ID already exists", async () => {
+  const rawProjectConfig = `
+  remoteVersions:
+    - name: Bar
+      specifications:
+      - name: Baz
+        url: https://example.com/baz.yml
+    - name: Bar
+      specifications:
+      - name: Hello
+        url: https://example.com/hello.yml
+  `
+  const sut = new GitHubProjectDataSource({
+    dataSource: {
+      async getRepositories() {
+        return [{
+          name: "foo",
+          owner: {
+            login: "acme"
+          },
+          defaultBranchRef: {
+            name: "bar",
+            target: {
+              oid: "12345678"
+            }
+          },
+          configYml: {
+            text: rawProjectConfig
+          },
+          branches: {
+            edges: [{
+              node: {
+                name: "bar",
+                target: {
+                  oid: "12345678",
+                  tree: {
+                    entries: [{
+                      name: "openapi.yml"
+                    }]
+                  }
+                }
+              }
+            }]
+          },
+          tags: {
+            edges: []
+          }
+        }]
+      }
+    }
+  })
+  const projects = await sut.getProjects()
+  expect(projects[0].versions).toEqual([{
+    id: "bar",
+    name: "bar",
+    url: "https://github.com/acme/foo/tree/bar",
+    isDefault: true,
+    specifications: [{
+      id: "openapi.yml",
+      name: "openapi.yml",
+      url: "/api/blob/acme/foo/openapi.yml?ref=12345678",
+      editURL: "https://github.com/acme/foo/edit/bar/openapi.yml"
+    }]
+  }, {
+    id: "bar1",
+    name: "Bar",
+    isDefault: false,
+    specifications: [{
+      id: "baz",
+      name: "Baz",
+      url: `/api/proxy?url=${encodeURIComponent("https://example.com/baz.yml")}`
+    }]
+  }, {
+    id: "bar2",
+    name: "Bar",
+    isDefault: false,
+    specifications: [{
+      id: "hello",
+      name: "Hello",
+      url: `/api/proxy?url=${encodeURIComponent("https://example.com/hello.yml")}`
+    }]
+  }])
+})
+
+test("It lets users specify the ID of a remote version", async () => {
+  const rawProjectConfig = `
+  remoteVersions:
+    - id: some-version
+      name: Bar
+      specifications:
+      - name: Baz
+        url: https://example.com/baz.yml
+  `
+  const sut = new GitHubProjectDataSource({
+    dataSource: {
+      async getRepositories() {
+        return [{
+          name: "foo",
+          owner: {
+            login: "acme"
+          },
+          defaultBranchRef: {
+            name: "bar",
+            target: {
+              oid: "12345678"
+            }
+          },
+          configYml: {
+            text: rawProjectConfig
+          },
+          branches: {
+            edges: []
+          },
+          tags: {
+            edges: []
+          }
+        }]
+      }
+    }
+  })
+  const projects = await sut.getProjects()
+  expect(projects[0].versions).toEqual([{
+    id: "some-version",
+    name: "Bar",
+    isDefault: false,
+    specifications: [{
+      id: "baz",
+      name: "Baz",
+      url: `/api/proxy?url=${encodeURIComponent("https://example.com/baz.yml")}`
+    }]
+  }])
+})
+
+test("It lets users specify the ID of a remote specification", async () => {
+  const rawProjectConfig = `
+  remoteVersions:
+    - name: Bar
+      specifications:
+      - id: some-spec
+        name: Baz
+        url: https://example.com/baz.yml
+  `
+  const sut = new GitHubProjectDataSource({
+    dataSource: {
+      async getRepositories() {
+        return [{
+          name: "foo",
+          owner: {
+            login: "acme"
+          },
+          defaultBranchRef: {
+            name: "bar",
+            target: {
+              oid: "12345678"
+            }
+          },
+          configYml: {
+            text: rawProjectConfig
+          },
+          branches: {
+            edges: []
+          },
+          tags: {
+            edges: []
+          }
+        }]
+      }
+    }
+  })
+  const projects = await sut.getProjects()
+  expect(projects[0].versions).toEqual([{
+    id: "bar",
+    name: "Bar",
+    isDefault: false,
+    specifications: [{
+      id: "some-spec",
+      name: "Baz",
+      url: `/api/proxy?url=${encodeURIComponent("https://example.com/baz.yml")}`
+    }]
+  }])
+})

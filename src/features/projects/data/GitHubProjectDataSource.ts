@@ -3,10 +3,11 @@ import GitHubProjectRepository, {
 } from "./GitHubProjectRepository"
 import {
   Project,
+  Version,
   IProjectConfig,
   IProjectDataSource,
-  Version, 
-  ProjectConfigParser
+  ProjectConfigParser,
+  ProjectConfigRemoteVersion,
 } from "../domain"
 
 interface IGitHubProjectRepositoryDataSource {
@@ -48,14 +49,21 @@ export default class GitHubProjectDataSource implements IProjectDataSource {
         ref: repository.defaultBranchRef.target.oid
       })
     }
+    const versions = this.sortVersions(
+      this.addRemoteVersions(
+        this.getVersions(repository),
+        config?.remoteVersions || []
+      ),
+      repository.defaultBranchRef.name
+    ).filter(version => {
+      return version.specifications.length > 0
+    })
     const defaultName = repository.name.replace(/-openapi$/, "")
     return {
       id: defaultName,
       name: defaultName,
       displayName: config?.name || defaultName,
-      versions: this.getVersions(repository).filter(version => {
-        return version.specifications.length > 0
-      }),
+      versions,
       imageURL: imageURL
     }
   }
@@ -86,27 +94,7 @@ export default class GitHubProjectDataSource implements IProjectDataSource {
         ref: edge.node
       })
     })
-    const defaultBranchName = repository.defaultBranchRef.name
-    const candidateDefaultBranches = [
-      defaultBranchName, "main", "master", "develop", "development"
-    ]
-    // Reverse them so the top-priority branches end up at the top of the list.
-    .reverse()
-    const allVersions = branchVersions.concat(tagVersions).sort((a: Version, b: Version) => {
-      return a.name.localeCompare(b.name)
-    })
-    // Move the top-priority branches to the top of the list.
-    for (const candidateDefaultBranch of candidateDefaultBranches) {
-      const defaultBranchIndex = allVersions.findIndex((version: Version) => {
-        return version.name === candidateDefaultBranch
-      })
-      if (defaultBranchIndex !== -1) {
-        const branchVersion = allVersions[defaultBranchIndex]
-        allVersions.splice(defaultBranchIndex, 1)
-        allVersions.splice(0, 0, branchVersion)
-      }
-    }
-    return allVersions
+    return branchVersions.concat(tagVersions)
   }
   
   private mapVersionFromRef({
@@ -162,5 +150,66 @@ export default class GitHubProjectDataSource implements IProjectDataSource {
     ref: string
   }): string {
     return `/api/blob/${ownerName}/${repositoryName}/${path}?ref=${ref}`
+  }
+  
+  private addRemoteVersions(
+    existingVersions: Version[],
+    remoteVersions: ProjectConfigRemoteVersion[]
+  ): Version[] {
+    const versions = [...existingVersions]
+    const versionIds = versions.map(e => e.id)
+    for (const remoteVersion of remoteVersions) {
+      const baseVersionId = this.makeURLSafeID(
+        (remoteVersion.id || remoteVersion.name).toLowerCase()
+      )
+      // If the version ID exists then we suffix it with a number to ensure unique versions.
+      // E.g. if "foo" already exists, we make it "foo1".
+      const existingVersionIdCount = versionIds.filter(e => e == baseVersionId).length
+      const versionId = baseVersionId + (existingVersionIdCount > 0 ? existingVersionIdCount : "")
+      const specifications = remoteVersion.specifications.map(e => {
+        return {
+          id: this.makeURLSafeID((e.id || e.name).toLowerCase()),
+          name: e.name,
+          url: `/api/proxy?url=${encodeURIComponent(e.url)}`
+        }
+      })
+      versions.push({
+        id: versionId,
+        name: remoteVersion.name,
+        specifications,
+        isDefault: false
+      })
+      versionIds.push(baseVersionId)
+    }
+    return versions
+  }
+  
+  private sortVersions(versions: Version[], defaultBranchName: string): Version[] {
+    const candidateDefaultBranches = [
+      defaultBranchName, "main", "master", "develop", "development", "trunk"
+    ]
+    // Reverse them so the top-priority branches end up at the top of the list.
+    .reverse()
+    const copiedVersions = [...versions].sort((a, b) => {
+      return a.name.localeCompare(b.name)
+    })
+    // Move the top-priority branches to the top of the list.
+    for (const candidateDefaultBranch of candidateDefaultBranches) {
+      const defaultBranchIndex = copiedVersions.findIndex(version => {
+        return version.name === candidateDefaultBranch
+      })
+      if (defaultBranchIndex !== -1) {
+        const branchVersion = copiedVersions[defaultBranchIndex]
+        copiedVersions.splice(defaultBranchIndex, 1)
+        copiedVersions.splice(0, 0, branchVersion)
+      }
+    }
+    return copiedVersions
+  }
+  
+  private makeURLSafeID(str: string): string {
+    return str
+      .replace(/ /g, "-")
+      .replace(/[^A-Za-z0-9-]/g, "")
   }
 }

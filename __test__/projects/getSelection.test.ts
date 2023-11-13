@@ -230,3 +230,27 @@ test("It returns a undefined specification when the selected specification canno
   expect(sut.version!.id).toEqual("bar")
   expect(sut.specification).toBeUndefined()
 })
+
+test("It moves specification ID to version ID if needed", () => {
+  const sut = getSelection({
+    path: "/foo/bar/baz",
+    projects: [{
+      id: "foo",
+      name: "foo",
+      displayName: "foo",
+      versions: [{
+        id: "bar/baz",
+        name: "bar",
+        isDefault: false,
+        specifications: [{
+          id: "hello",
+          name: "hello.yml",
+          url: "https://example.com/hello.yml"
+        }]
+      }]
+    }]
+  })
+  expect(sut.project!.id).toEqual("foo")
+  expect(sut.version!.id).toEqual("bar/baz")
+  expect(sut.specification!.id).toEqual("hello")
+})

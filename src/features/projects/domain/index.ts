@@ -1,6 +1,7 @@
 export { default as CachingProjectDataSource } from "./CachingProjectDataSource"
 export { default as getSelection } from "./getSelection"
 export type { default as IProjectConfig } from "./IProjectConfig"
+export * from "./IProjectConfig"
 export type { default as IProjectDataSource } from "./IProjectDataSource"
 export type { default as OpenApiSpecification } from "./OpenApiSpecification"
 export type { default as Project } from "./Project"
