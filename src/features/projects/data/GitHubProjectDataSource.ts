@@ -187,7 +187,7 @@ export default class GitHubProjectDataSource implements IProjectDataSource {
   
   private sortVersions(versions: Version[], defaultBranchName: string): Version[] {
     const candidateDefaultBranches = [
-      defaultBranchName, "main", "master", "develop", "development"
+      defaultBranchName, "main", "master", "develop", "development", "trunk"
     ]
     // Reverse them so the top-priority branches end up at the top of the list.
     .reverse()
