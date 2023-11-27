@@ -1,17 +1,25 @@
-export type ProjectConfigRemoteVersion = {
-  readonly id?: string
-  readonly name: string
-  readonly specifications: ProjectConfigRemoteSpecification[]
-}
+import { z } from "zod"
 
-export type ProjectConfigRemoteSpecification = {
-  readonly id?: string
-  readonly name: string
-  readonly url: string
-}
+export const ProjectConfigRemoteSpecificationSchema = z.object({
+  id: z.coerce.string().optional(),
+  name: z.coerce.string(),
+  url: z.string()
+})
 
-export default interface IProjectConfig {
-  readonly name?: string
-  readonly image?: string
-  readonly remoteVersions?: ProjectConfigRemoteVersion[]
-}
+export const ProjectConfigRemoteVersionSchema = z.object({
+  id: z.coerce.string().optional(),
+  name: z.coerce.string(),
+  specifications: ProjectConfigRemoteSpecificationSchema.array()
+})
+
+export const IProjectConfigSchema = z.object({
+  name: z.coerce.string().optional(),
+  image: z.string().optional(),
+  remoteVersions: ProjectConfigRemoteVersionSchema.array().optional()
+})
+
+export type ProjectConfigRemoteSpecification = z.infer<typeof ProjectConfigRemoteSpecificationSchema>
+export type ProjectConfigRemoteVersion = z.infer<typeof ProjectConfigRemoteVersionSchema>
+export type IProjectConfig = z.infer<typeof IProjectConfigSchema>
+
+export default IProjectConfig
