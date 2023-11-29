@@ -28,11 +28,12 @@ const Stoplight = ({ url }: { url: string }) => {
 }
 
 const ResponsiveStoplight = ({ document }: { document: string }) => {
-  
   return (
     <>
       <Box sx={{
         display: { xs: "block", sm: "none" },
+        width: "100%",
+        height: "100%",
         padding: 2 
       }}>
         <API
@@ -42,7 +43,9 @@ const ResponsiveStoplight = ({ document }: { document: string }) => {
         />
       </Box>
       <Box sx={{
-        display: { xs: "none", sm: "block" }
+        display: { xs: "none", sm: "block" },
+        width: "100%",
+        height: "100%",
       }}>
         <API
           apiDescriptionDocument={document}
