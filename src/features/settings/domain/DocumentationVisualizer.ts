@@ -1,6 +1,7 @@
 enum DocumentationVisualizer {
   SWAGGER,
-  REDOCLY
+  REDOCLY,
+  STOPLIGHT
 }
 
 export default DocumentationVisualizer
