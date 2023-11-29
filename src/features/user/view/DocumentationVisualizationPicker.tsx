@@ -46,6 +46,14 @@ const DocumentationVisualizationPicker = ({
           </MenuItemHover>
         </MenuItem>
         <MenuItem
+          key={DocumentationVisualizer.STOPLIGHT}
+          value={DocumentationVisualizer.STOPLIGHT.toString()}
+        >
+          <MenuItemHover>
+            Stoplight
+          </MenuItemHover>
+        </MenuItem>
+        <MenuItem
           key={DocumentationVisualizer.SWAGGER}
           value={DocumentationVisualizer.SWAGGER.toString()}
         >
