@@ -8,6 +8,7 @@ const Documentation = ({ url }: { url: string }) => {
   switch (visualizer) {
   case DocumentationVisualizer.REDOCLY:
     return <DocumentationIframe visualizer={visualizer} url={url} />
+  case DocumentationVisualizer.STOPLIGHT:
   case DocumentationVisualizer.SWAGGER:
     return <DocumentationViewer visualizer={visualizer} url={url} />
   }
