@@ -42,8 +42,9 @@ jobs:
         uses: aws-actions/amazon-ecr-login@v2.0.1
 
       - name: Fetch task definition
+        id: fetch-task-definition
         run: |
-          aws ecs describe-task-definition --task-definition ${{ env.ECS_TASK_DEFINITION_NAME }} --region ${{ env.AWS_REGION }} > task-definition.json
+          aws ecs describe-task-definition --task-definition ${{ env.ECS_TASK_DEFINITION_NAME }} --region ${{ env.AWS_REGION }} | jq .taskDefinition > task-definition.json
           jq . task-definition.json
 
       - name: Create .env.local
