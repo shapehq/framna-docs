@@ -1,6 +1,7 @@
 import { List, Button } from "@mui/material"
 import ThickDivider from "@/common/ui/ThickDivider"
 import DocumentationVisualizationPicker from "./DocumentationVisualizationPicker"
+import { signOut } from "next-auth/react"
 
 const SettingsList = () => {
   return (
@@ -17,8 +18,8 @@ const SettingsList = () => {
         variant="text"
         fullWidth={true}
         style={{justifyContent: "flex-start"}}
-        href="/api/auth/logout"
         sx={{ marginTop: 1.3 }}
+        onClick={() => signOut()}
       >
         Log out
       </Button>

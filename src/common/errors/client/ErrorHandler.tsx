@@ -13,7 +13,7 @@ export default function ErrorHandler({
       return
     }
     if (error.status == 401) {
-      window.location.href = "/api/auth/logout"
+      window.location.href = "/api/auth/signout"
     }
   }
   return (

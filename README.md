@@ -17,14 +17,8 @@ Create a file named `.env.local` in the root of the project with the following c
 ```
 NEXT_PUBLIC_SHAPE_DOCS_TITLE='Shape Docs'
 SHAPE_DOCS_BASE_URL='https://docs.shapetools.io'
-AUTH0_SECRET='use [openssl rand -hex 32] to generate a 32 bytes value'
-AUTH0_BASE_URL='http://dev.local:3000'
-AUTH0_ISSUER_BASE_URL='https://shape-docs-dev.eu.auth0.com'
-AUTH0_CLIENT_ID='Your client ID'
-AUTH0_CLIENT_SECRET='Your client secret'
-AUTH0_MANAGEMENT_DOMAIN='shape-docs-dev.eu.auth0.com'
-AUTH0_MANAGEMENT_CLIENT_ID='Your client ID'
-AUTH0_MANAGEMENT_CLIENT_SECRET='Your client secret'
+NEXTAUTH_URL='https://docs.shapetools.io'
+NEXTAUTH_SECRET='use [openssl rand -base64 32] to generate a 32 bytes value'
 GITHUB_CLIENT_ID='GitHub App client ID'
 GITHUB_CLIENT_SECRET='GitHub App client secret'
 GITHUB_APP_ID='the GitHub App id'
@@ -42,13 +36,8 @@ Each environment variable is described in the table below.
 |-|-|
 |NEXT_PUBLIC_SHAPE_DOCS_TITLE|Title of the portal. Displayed to the user in the browser.|
 |SHAPE_DOCS_BASE_URL|The URL where Shape Docs is hosted.|
-|AUTH0_SECRET|A long secret value used to encrypt the session cookie. Generate it using `openssl rand -hex 32`.|AUTH0_BASE_URL|The base URL of your Auth0 application. `http://dev.local:3000` during development.|
-|AUTH0_ISSUER_BASE_URL|The URL of your Auth0 tenant domain.|
-|AUTH0_CLIENT_ID|The client ID of your default Auth0 application.|
-|AUTH0_CLIENT_SECRET|The client secret of your default Auth0 application.|
-|AUTH0_MANAGEMENT_DOMAIN|The URL of your Auth0 tenant domain. It is key that this does not contain "http" or "https".|
-|AUTH0_MANAGEMENT_CLIENT_ID|The client ID of your Auth0 Machine to Machine application.|
-|AUTH0_MANAGEMENT_CLIENT_SECRET|The client secret of your Machine to Machine Auth0 application.|
+|NEXTAUTH_URL|The URL where Shape Docs is hosted.|
+|NEXTAUTH_SECRET|A long secret value used to encrypt the session cookie. Generate it using `openssl rand -base64 32`.|
 |GITHUB_CLIENT_ID|The client ID of your GitHub app.|
 |GITHUB_CLIENT_SECRET|The client secret of your GitHub app.|
 |GITHUB_APP_ID|The ID of your GitHub app.|
@@ -58,21 +47,6 @@ Each environment variable is described in the table below.
 |GITHUB_WEBHOK_REPOSITORY_DISALLOWLIST|Comma-separated list of repositories from which webhook calls should be ignored. The list of disallowed repositories takes precedence over the list of allowed repositories.|
 |GITHUB_ORGANIZATION_NAME|Name of the organization to show repositories for.|
 |REDIS_URL|The URL to the Redis store.|
-
-You need the following two Auth0 apps.
-
-| |Type|Description|
-|-|-|-|
-|Default|Generic|Used to authenticate the user when they log in.|
-|Management|Machine to Machine|Used for making requests to [Auth0's Management API](https://auth0.com/docs/api/management/v2) to retrieve the access token for the identity provider that the user authorized with.|
-
-Modify your `/etc/hosts` file to add the following entry:
-
-```
-127.0.0.1 dev.local
-```
-
-We visit our local website by opening https://dev.local:3000 instead of https://localhost:3000 as this ensures that Auth0's flow will work correctly. Auth0 does some extra checks when localhost is included in the URL and we are generally not interested in those as they give a false impression of the flow the user will see.
 
 Run the app using the following command:
 

@@ -1,6 +1,6 @@
 import "./globals.css"
 import type { Metadata } from "next"
-import { UserProvider } from "@auth0/nextjs-auth0/client"
+import SessionProvider from "@/features/auth/view/client/SessionProvider"
 import { config as fontAwesomeConfig } from "@fortawesome/fontawesome-svg-core"
 import { CssBaseline } from "@mui/material"
 import ThemeRegistry from "../common/theme/ThemeRegistry"
@@ -18,14 +18,14 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en">
       <ThemeRegistry options={{ key: "mui" }}>
-        <UserProvider>
+        <SessionProvider>
           <ErrorHandler>
             <body>
               <CssBaseline/>
               {children}
             </body>
           </ErrorHandler>
-        </UserProvider>
+        </SessionProvider>
       </ThemeRegistry>
     </html>
   )

@@ -1,4 +1,4 @@
-import Auth0Session from "@/common/session/Auth0Session"
+import AuthSession from "@/common/session/AuthSession"
 import RedisKeyedMutexFactory from "@/common/mutex/RedisKeyedMutexFactory"
 import RedisKeyValueStore from "@/common/keyValueStore/RedisKeyValueStore"
 import {
@@ -85,7 +85,7 @@ export const userIdentityProviderReader = new CachingUserIdentityProviderReader(
   new Auth0UserIdentityProviderReader(auth0ManagementCredentials)
 )
 
-export const session = new Auth0Session({
+export const session = new AuthSession({
   isUserGuestReader: new IsUserGuestReader(userIdentityProviderReader)
 })
 
