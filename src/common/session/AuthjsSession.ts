@@ -7,7 +7,7 @@ export type AuthSessionConfig = {
   readonly isUserGuestReader: IIsUserGuestReader
 }
 
-export default class AuthSession implements ISession {
+export default class AuthjsSession implements ISession {
   private readonly isUserGuestReader: IIsUserGuestReader
   
   constructor(config: AuthSessionConfig) {
