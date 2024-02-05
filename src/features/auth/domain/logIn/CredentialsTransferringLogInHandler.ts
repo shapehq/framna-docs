@@ -1,5 +1,5 @@
 import ICredentialsTransferrer from "../credentialsTransfer/ICredentialsTransferrer"
-import IIsUserGuestReader from "../userIdentityProvider/IIsUserGuestReader"
+import IIsUserGuestReader from "../guest/IIsUserGuestReader"
 import ILogInHandler from "./ILogInHandler"
 
 export interface IRefreshTokenReader {

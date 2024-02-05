@@ -1,7 +1,7 @@
 import { getServerSession } from "next-auth/next"
 import { UnauthorizedError } from "../../common"
 import ISession from "./ISession"
-import IIsUserGuestReader from "@/features/auth/domain/userIdentityProvider/IsUserGuestReader"
+import { IIsUserGuestReader } from "@/features/auth/domain"
 
 export type AuthSessionConfig = {
   readonly isUserGuestReader: IIsUserGuestReader
