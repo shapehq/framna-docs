@@ -7,14 +7,8 @@ concurrency:
   cancel-in-progress: true
 env:
   NEXT_TELEMETRY_DISABLED: 1
-  AUTH0_SECRET: 336f7a926310cff425cea29556dce2a98859b8d234aa27968696c2e6f1cb7d34
-  AUTH0_BASE_URL: http://dev.local:3000
-  AUTH0_ISSUER_BASE_URL: https://shape-docs-dev.eu.auth0.com
-  AUTH0_CLIENT_ID: this-is-our-client-id
-  AUTH0_CLIENT_SECRET: this-is-our-client-secret
-  AUTH0_MANAGEMENT_DOMAIN: shape-docs-dev.eu.auth0.com
-  AUTH0_MANAGEMENT_CLIENT_ID: this-is-our-management-client-id
-  AUTH0_MANAGEMENT_CLIENT_SECRET: this-is-our-management-client-secret
+  NEXTAUTH_URL: http://dev.local:3000
+  NEXTAUTH_SECRET: 336f7a926310cff425cea29556dce2a98859b8d234aa27968696c2e6f1cb7d34
   GITHUB_CLIENT_ID: this-is-our-github-client-id
   GITHUB_CLIENT_SECRET: this-is-our-github-client-secret
   GITHUB_APP_ID: 12345
