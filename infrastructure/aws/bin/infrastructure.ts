@@ -20,7 +20,7 @@ const stagingInfra = new InfrastructureStack(app, 'StagingInfrastructure', {
 new AppStack(app, 'StagingApp', {
   env: nonProdAccount,
   vpc: stagingInfra.vpc,
-  image: ContainerImage.fromEcrRepository(stagingInfra.dockerRepository, 'latest'), // use ContainerImage.fromRegistry("amazon/amazon-ecs-sample") on first deploy
+  image: ContainerImage.fromEcrRepository(stagingInfra.dockerRepository, 'latest'),
 });
 // --- END: STAGING --- //
 
@@ -38,6 +38,6 @@ const prodAccount: cdk.Environment = {
 // new AppStack(app, 'ProductionApp', {
 //   env: prodAccount,
 //   vpc: stagingInfra.vpc,
-//   image: ContainerImage.fromEcrRepository(stagingInfra.dockerRepository, 'latest'), // use ContainerImage.fromRegistry("amazon/amazon-ecs-sample") on first deploy
+//   image: ContainerImage.fromEcrRepository(stagingInfra.dockerRepository, 'latest'),
 // });
 // --- END: PRODUCTION --- //
