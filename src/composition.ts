@@ -62,11 +62,6 @@ const gitHubAppCredentials = {
     .toString("utf-8")
 }
 
-const userIdentityProviderRepository = new KeyValueUserDataRepository(
-  new RedisKeyValueStore(REDIS_URL),
-  "userIdentityProvider"
-)
-
 export const session = new AuthjsSession({
   isUserGuestReader: new IsUserGuestReader()
 })
@@ -190,7 +185,6 @@ export const logInHandler = new CompositeLogInHandler([
 export const logOutHandler = new ErrorIgnoringLogOutHandler(
   new CompositeLogOutHandler([
     new UserDataCleanUpLogOutHandler(session, projectUserDataRepository),
-    new UserDataCleanUpLogOutHandler(session, userIdentityProviderRepository),
     new UserDataCleanUpLogOutHandler(session, guestRepositoryAccessRepository),
     new UserDataCleanUpLogOutHandler(session, oAuthTokenRepository),
     new UserDataCleanUpLogOutHandler(session, guestAccessTokenRepository)
