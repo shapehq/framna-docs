@@ -1,23 +1,23 @@
 import SessionValidity from "./SessionValidity"
 
-interface IAccessTokenService {
+interface IAccessTokenReader {
   getAccessToken(): Promise<string>
 }
 
 type AccessTokenSessionValidatorConfig = {
-  readonly accessTokenService: IAccessTokenService
+  readonly accessTokenReader: IAccessTokenReader
 }
 
 export default class AccessTokenSessionValidator {
-  private readonly accessTokenService: IAccessTokenService
+  private readonly accessTokenReader: IAccessTokenReader
   
   constructor(config: AccessTokenSessionValidatorConfig) {
-    this.accessTokenService = config.accessTokenService
+    this.accessTokenReader = config.accessTokenReader
   }
   
   async validateSession(): Promise<SessionValidity> {
     try {
-      await this.accessTokenService.getAccessToken()
+      await this.accessTokenReader.getAccessToken()
       return SessionValidity.VALID
     } catch {
       return SessionValidity.INVALID_ACCESS_TOKEN
