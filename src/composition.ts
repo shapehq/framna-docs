@@ -38,6 +38,8 @@ import {
   TransferringAccessTokenReader,
   UserDataCleanUpLogOutHandler
 } from "@/features/auth/domain"
+import { IGuestInviter } from "./features/admin/domain/IGuestInviter"
+import { randomUUID } from "crypto"
 
 const {
   GITHUB_APP_ID,
@@ -175,3 +177,37 @@ export const logOutHandler = new ErrorIgnoringLogOutHandler(
     new UserDataCleanUpLogOutHandler(session, projectUserDataRepository)
   ])
 )
+
+export const guestRepository: IGuestRepository = {
+  getAll: function (): Promise<Guest[]> {
+      return Promise.resolve([
+          {
+              id: randomUUID(),
+              email: "ulrik@shape.dk",
+              status: "active",
+              projects: ["deas", "moonboon"]
+          },
+          {
+              id: randomUUID(),
+              email: "lars@company.com",
+              status: "invited",
+              projects: ["deas"]
+          }
+      ])
+  },
+  findById: function (id: string): Promise<Guest> {
+      throw new Error("Function not implemented.")
+  },
+  create: function (guest: Guest): Promise<Guest> {
+      throw new Error("Function not implemented.")
+  },
+  removeById: function (id: string): Promise<void> {
+      throw new Error("Function not implemented.")
+  }
+}
+
+export const guestInviter: IGuestInviter = {
+  inviteGuest: async (invitee: string) => {
+    console.log(`Inviting ${invitee}`)
+  }
+}
