@@ -17,19 +17,11 @@ export default async function SessionBarrier({
   if (!isAuthenticated) {
     return redirect("/api/auth/signin")
   }
-  const getIsGuest = async () => {
-    try {
-      return await session.getIsGuest()
-    } catch {
-      // We assume it's a guest.
-      return true
-    }
-  }
-  const isGuest = await getIsGuest()
+  const accountProviderType = await session.getAccountProviderType()
   const sessionValidity = await blockingSessionValidator.validateSession()
   return (
     <ClientSessionBarrier
-      isGuest={isGuest}
+      accountProviderType={accountProviderType}
       siteName={NEXT_PUBLIC_SHAPE_DOCS_TITLE}
       organizationName={GITHUB_ORGANIZATION_NAME}
       sessionValidity={sessionValidity}

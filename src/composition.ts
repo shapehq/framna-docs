@@ -117,13 +117,13 @@ const accessTokenReader = new TransferringAccessTokenReader({
   destinationOAuthTokenRepository: new OAuthTokenRepository({ provider: "github", db })
 })
 
-const guestRepositoryAccessRepository = new KeyValueUserDataRepository(
+const repositoryAccessRepository = new KeyValueUserDataRepository(
   new RedisKeyValueStore(REDIS_URL),
-  "guestRepositoryAccess"
+  "repositoryAccess"
 )
 
-export const guestRepositoryAccessReader = new CachingRepositoryAccessReader({
-  repository: guestRepositoryAccessRepository,
+export const repositoryAccessReader = new CachingRepositoryAccessReader({
+  repository: repositoryAccessRepository,
   repositoryAccessReader: new AuthjsRepositoryAccessReader()
 })
 
@@ -182,6 +182,6 @@ export const projectDataSource = new CachingProjectDataSource({
 export const logOutHandler = new ErrorIgnoringLogOutHandler(
   new CompositeLogOutHandler([
     new UserDataCleanUpLogOutHandler(session, projectUserDataRepository),
-    new UserDataCleanUpLogOutHandler(session, guestRepositoryAccessRepository)
+    new UserDataCleanUpLogOutHandler(session, repositoryAccessRepository)
   ])
 )

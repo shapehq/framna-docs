@@ -4,7 +4,7 @@ import InvalidSessionPage from "./InvalidSessionPage"
 import LoadingIndicator from "@/common/loading/DelayedLoadingIndicator"
 import { useRepositoryAccess } from "../../domain"
 
-export default function GuestAccessTokenInvalidPage({
+export default function NonGitHubAccountAccessTokenInvalidPage({
   organizationName
 }: {
   organizationName: string

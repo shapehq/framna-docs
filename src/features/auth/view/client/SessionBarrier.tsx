@@ -1,22 +1,23 @@
 "use client"
 
 import { ReactNode } from "react"
-import GuestAccessTokenInvalidPage from "./GuestAccessTokenInvalidPage"
-import InvalidSessionPage from "./InvalidSessionPage"
+import { AccountProviderType } from "@/common"
 import {
   SessionValidity,
   mergeSessionValidity,
   useSessionValidity
 } from "../../domain"
+import NonGitHubAccountAccessTokenInvalidPage from "./NonGitHubAccountAccessTokenInvalidPage"
+import InvalidSessionPage from "./InvalidSessionPage"
 
 export default function SessionBarrier({
-  isGuest,
+  accountProviderType,
   siteName,
   organizationName,
   sessionValidity: fastSessionValidity,
   children
 }: {
-  isGuest: boolean
+  accountProviderType: AccountProviderType
   siteName: string
   organizationName: string
   sessionValidity: SessionValidity
@@ -31,9 +32,10 @@ export default function SessionBarrier({
   case SessionValidity.VALID:
     return <>{children}</>
   case SessionValidity.INVALID_ACCESS_TOKEN:
-    if (isGuest) {
-      return <GuestAccessTokenInvalidPage organizationName={organizationName}/>
-    } else {
+    switch (accountProviderType) {
+    case "email":
+      return <NonGitHubAccountAccessTokenInvalidPage organizationName={organizationName}/>
+    case "github":
       return (
         <InvalidSessionPage title="Could not obtain access">
           It was not possible to obtain access to the projects on the <strong>{organizationName}</strong> organization on GitHub.
