@@ -40,6 +40,7 @@ import {
 } from "@/features/auth/domain"
 import { IGuestInviter } from "./features/admin/domain/IGuestInviter"
 import { randomUUID } from "crypto"
+import { Pool } from "pg"
 
 const {
   GITHUB_APP_ID,
@@ -203,6 +204,15 @@ export const guestRepository: IGuestRepository = {
   },
   removeById: function (id: string): Promise<void> {
       throw new Error("Function not implemented.")
+
+export const pool = new Pool({
+  host: 'localhost', // TODO: Move to env
+  user: 'ua', // TODO: Move to env
+  database: 'shape-docs', // TODO: Move to env
+  max: 20,
+  idleTimeoutMillis: 30000,
+  connectionTimeoutMillis: 2000,
+})
   }
 }
 
