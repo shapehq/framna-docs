@@ -1,7 +1,12 @@
 import { NextRequest, NextResponse } from "next/server"
-import { makeAPIErrorResponse } from "@/common"
+import { makeAPIErrorResponse, makeUnauthenticatedAPIErrorResponse } from "@/common"
+import { session } from "@/composition"
 
 export async function GET(req: NextRequest) {
+  const isAuthenticated = await session.getIsAuthenticated()
+  if (!isAuthenticated) {
+    return makeUnauthenticatedAPIErrorResponse()
+  }
   const rawURL = req.nextUrl.searchParams.get("url")
   if (!rawURL) {
     return makeAPIErrorResponse(400, "Missing \"url\" query parameter.")

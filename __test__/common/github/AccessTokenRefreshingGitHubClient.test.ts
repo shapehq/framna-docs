@@ -9,26 +9,31 @@ import {
 test("It forwards a GraphQL request", async () => {
   let forwardedRequest: GraphQLQueryRequest | undefined
   const sut = new AccessTokenRefreshingGitHubClient({
-    async getAccessToken() {
-      return "foo"
+    accessTokenReader: {
+      async getAccessToken() {
+        return "foo"
+      }
     },
-    async refreshAccessToken() {
-      return "foo"
-    }
-  }, {
-    async graphql(request: GraphQLQueryRequest) {
-      forwardedRequest = request
-      return {}
+    accessTokenRefresher: {
+      async refreshAccessToken() {
+        return "foo"
+      }
     },
-    async getRepositoryContent() {
-      return { downloadURL: "https://example.com" }
-    },
-    async getPullRequestComments() {
-      return []
-    },
-    async addCommentToPullRequest() {},
-    async getOrganizationMembershipStatus() {
-      return { state: "active" }
+    gitHubClient: {
+      async graphql(request: GraphQLQueryRequest) {
+        forwardedRequest = request
+        return {}
+      },
+      async getRepositoryContent() {
+        return { downloadURL: "https://example.com" }
+      },
+      async getPullRequestComments() {
+        return []
+      },
+      async addCommentToPullRequest() {},
+      async getOrganizationMembershipStatus() {
+        return { state: "active" }
+      }
     }
   })
   const request: GraphQLQueryRequest = {
@@ -42,26 +47,31 @@ test("It forwards a GraphQL request", async () => {
 test("It forwards a request to get the repository content", async () => {
   let forwardedRequest: GetRepositoryContentRequest | undefined
   const sut = new AccessTokenRefreshingGitHubClient({
-    async getAccessToken() {
-      return "foo"
+    accessTokenReader: {
+      async getAccessToken() {
+        return "foo"
+      }
     },
-    async refreshAccessToken() {
-      return "foo"
-    }
-  }, {
-    async graphql() {
-      return {}
+    accessTokenRefresher: {
+      async refreshAccessToken() {
+        return "foo"
+      }
     },
-    async getRepositoryContent(request: GetRepositoryContentRequest) {
-      forwardedRequest = request
-      return { downloadURL: "https://example.com" }
-    },
-    async getPullRequestComments() {
-      return []
-    },
-    async addCommentToPullRequest() {},
-    async getOrganizationMembershipStatus() {
-      return { state: "active" }
+    gitHubClient: {
+      async graphql() {
+        return {}
+      },
+      async getRepositoryContent(request: GetRepositoryContentRequest) {
+        forwardedRequest = request
+        return { downloadURL: "https://example.com" }
+      },
+      async getPullRequestComments() {
+        return []
+      },
+      async addCommentToPullRequest() {},
+      async getOrganizationMembershipStatus() {
+        return { state: "active" }
+      }
     }
   })
   const request: GetRepositoryContentRequest = {
@@ -77,26 +87,31 @@ test("It forwards a request to get the repository content", async () => {
 test("It forwards a request to get comments to a pull request", async () => {
   let forwardedRequest: GetPullRequestCommentsRequest | undefined
   const sut = new AccessTokenRefreshingGitHubClient({
-    async getAccessToken() {
-      return "foo"
+    accessTokenReader: {
+      async getAccessToken() {
+        return "foo"
+      }
     },
-    async refreshAccessToken() {
-      return "foo"
-    }
-  }, {
-    async graphql() {
-      return {}
+    accessTokenRefresher: {
+      async refreshAccessToken() {
+        return "foo"
+      }
     },
-    async getRepositoryContent() {
-      return { downloadURL: "https://example.com" }
-    },
-    async getPullRequestComments(request: GetPullRequestCommentsRequest) {
-      forwardedRequest = request
-      return []
-    },
-    async addCommentToPullRequest() {},
-    async getOrganizationMembershipStatus() {
-      return { state: "active" }
+    gitHubClient: {
+      async graphql() {
+        return {}
+      },
+      async getRepositoryContent() {
+        return { downloadURL: "https://example.com" }
+      },
+      async getPullRequestComments(request: GetPullRequestCommentsRequest) {
+        forwardedRequest = request
+        return []
+      },
+      async addCommentToPullRequest() {},
+      async getOrganizationMembershipStatus() {
+        return { state: "active" }
+      }
     }
   })
   const request: GetPullRequestCommentsRequest = {
@@ -112,27 +127,32 @@ test("It forwards a request to get comments to a pull request", async () => {
 test("It forwards a request to add a comment to a pull request", async () => {
   let forwardedRequest: AddCommentToPullRequestRequest | undefined
   const sut = new AccessTokenRefreshingGitHubClient({
-    async getAccessToken() {
-      return "foo"
+    accessTokenReader: {
+      async getAccessToken() {
+        return "foo"
+      }
     },
-    async refreshAccessToken() {
-      return "foo"
-    }
-  }, {
-    async graphql() {
-      return {}
+    accessTokenRefresher: {
+      async refreshAccessToken() {
+        return "foo"
+      }
     },
-    async getRepositoryContent() {
-      return { downloadURL: "https://example.com" }
-    },
-    async getPullRequestComments() {
-      return []
-    },
-    async addCommentToPullRequest(request: AddCommentToPullRequestRequest) {
-      forwardedRequest = request
-    },
-    async getOrganizationMembershipStatus() {
-      return { state: "active" }
+    gitHubClient: {
+      async graphql() {
+        return {}
+      },
+      async getRepositoryContent() {
+        return { downloadURL: "https://example.com" }
+      },
+      async getPullRequestComments() {
+        return []
+      },
+      async addCommentToPullRequest(request: AddCommentToPullRequestRequest) {
+        forwardedRequest = request
+      },
+      async getOrganizationMembershipStatus() {
+        return { state: "active" }
+      }
     }
   })
   const request: AddCommentToPullRequestRequest = {
@@ -150,30 +170,35 @@ test("It retries with a refreshed access token when receiving HTTP 401", async (
   let didRefreshAccessToken = false
   let didRespondWithAuthorizationError = false
   const sut = new AccessTokenRefreshingGitHubClient({
-    async getAccessToken() {
-      return "foo"
-    },
-    async refreshAccessToken() {
-      didRefreshAccessToken = true
-      return "foo"
-    }
-  }, {
-    async graphql() {
-      if (!didRespondWithAuthorizationError) {
-        didRespondWithAuthorizationError = true
-        throw { status: 401 }
+    accessTokenReader: {
+      async getAccessToken() {
+        return "foo"
       }
-      return []
     },
-    async getRepositoryContent() {
-      return { downloadURL: "https://example.com" }
+    accessTokenRefresher: {
+      async refreshAccessToken() {
+        didRefreshAccessToken = true
+        return "foo"
+      }
     },
-    async getPullRequestComments() {
-      return []
-    },
-    async addCommentToPullRequest() {},
-    async getOrganizationMembershipStatus() {
-      return { state: "active" }
+    gitHubClient: {
+      async graphql() {
+        if (!didRespondWithAuthorizationError) {
+          didRespondWithAuthorizationError = true
+          throw { status: 401 }
+        }
+        return []
+      },
+      async getRepositoryContent() {
+        return { downloadURL: "https://example.com" }
+      },
+      async getPullRequestComments() {
+        return []
+      },
+      async addCommentToPullRequest() {},
+      async getOrganizationMembershipStatus() {
+        return { state: "active" }
+      }
     }
   })
   const request: GraphQLQueryRequest = {
@@ -187,26 +212,31 @@ test("It retries with a refreshed access token when receiving HTTP 401", async (
 test("It only retries a request once when receiving HTTP 401", async () => {
   let requestCount = 0
   const sut = new AccessTokenRefreshingGitHubClient({
-    async getAccessToken() {
-      return "foo"
+    accessTokenReader: {
+      async getAccessToken() {
+        return "foo"
+      }
     },
-    async refreshAccessToken() {
-      return "foo"
-    }
-  }, {
-    async graphql() {
-      requestCount += 1
-      throw { status: 401 }
+    accessTokenRefresher: {
+      async refreshAccessToken() {
+        return "foo"
+      }
     },
-    async getRepositoryContent() {
-      return { downloadURL: "https://example.com" }
-    },
-    async getPullRequestComments() {
-      return []
-    },
-    async addCommentToPullRequest() {},
-    async getOrganizationMembershipStatus() {
-      return { state: "active" }
+    gitHubClient: {
+      async graphql() {
+        requestCount += 1
+        throw { status: 401 }
+      },
+      async getRepositoryContent() {
+        return { downloadURL: "https://example.com" }
+      },
+      async getPullRequestComments() {
+        return []
+      },
+      async addCommentToPullRequest() {},
+      async getOrganizationMembershipStatus() {
+        return { state: "active" }
+      }
     }
   })
   const request: GraphQLQueryRequest = {
@@ -224,25 +254,30 @@ test("It only retries a request once when receiving HTTP 401", async () => {
 test("It does not refresh an access token when the initial request was successful", async () => {
   let didRefreshAccesstoken = false
   const sut = new AccessTokenRefreshingGitHubClient({
-    async getAccessToken() {
-      return "foo"
+    accessTokenReader: {
+      async getAccessToken() {
+        return "foo"
+      }
     },
-    async refreshAccessToken() {
-      return "foo"
-    }
-  }, {
-    async graphql() {
-      return []
+    accessTokenRefresher: {
+      async refreshAccessToken() {
+        return "foo"
+      }
     },
-    async getRepositoryContent() {
-      return { downloadURL: "https://example.com" }
-    },
-    async getPullRequestComments() {
-      return []
-    },
-    async addCommentToPullRequest() {},
-    async getOrganizationMembershipStatus() {
-      return { state: "active" }
+    gitHubClient: {
+      async graphql() {
+        return []
+      },
+      async getRepositoryContent() {
+        return { downloadURL: "https://example.com" }
+      },
+      async getPullRequestComments() {
+        return []
+      },
+      async addCommentToPullRequest() {},
+      async getOrganizationMembershipStatus() {
+        return { state: "active" }
+      }
     }
   })
   const request: GraphQLQueryRequest = {

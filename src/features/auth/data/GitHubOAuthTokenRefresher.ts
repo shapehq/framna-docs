@@ -1,4 +1,4 @@
-import { UnauthorizedError } from "@/common/errors"
+import { UnauthorizedError } from "../../../common"
 import { OAuthToken, IOAuthTokenRefresher } from "../domain"
 
 export interface GitHubOAuthTokenRefresherConfig {

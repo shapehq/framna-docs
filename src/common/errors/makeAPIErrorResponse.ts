@@ -6,3 +6,7 @@ export default function makeAPIErrorResponse(
 ): NextResponse {
   return NextResponse.json({ status, message }, { status })
 }
+
+export function makeUnauthenticatedAPIErrorResponse(): NextResponse {
+  return makeAPIErrorResponse(401, "Unauthenticated")
+}

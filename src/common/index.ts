@@ -1,3 +1,4 @@
+export * from "./db"
 export * from "./errors"
 export * from "./github"
 export * from "./keyValueStore"

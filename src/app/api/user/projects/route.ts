@@ -1,8 +1,17 @@
 import { NextResponse } from "next/server"
-import { makeAPIErrorResponse, UnauthorizedError } from "../../../../common"
+import {
+  makeAPIErrorResponse,
+  UnauthorizedError,
+  makeUnauthenticatedAPIErrorResponse
+} from "../../../../common"
 import { projectDataSource } from "@/composition"
+import { session } from "@/composition"
 
 export async function GET() {
+  const isAuthenticated = await session.getIsAuthenticated()
+  if (!isAuthenticated) {
+    return makeUnauthenticatedAPIErrorResponse()
+  }
   try {
     const projects = await projectDataSource.getProjects()
     return NextResponse.json({projects})

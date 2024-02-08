@@ -15,21 +15,29 @@ const HttpErrorSchema = z.object({
   status: z.number()
 })
 
-interface IGitHubAccessTokenService {
+interface IGitHubAccessTokenReader {
   getAccessToken(): Promise<string>
+}
+
+interface IGitHubAccessTokenRefresher {
   refreshAccessToken(accessToken: string): Promise<string>
 }
 
+type AccessTokenRefreshingGitHubClientConfig = {
+  readonly accessTokenReader: IGitHubAccessTokenReader
+  readonly accessTokenRefresher: IGitHubAccessTokenRefresher
+  readonly gitHubClient: IGitHubClient
+}
+
 export default class AccessTokenRefreshingGitHubClient implements IGitHubClient {
-  private readonly accessTokenService: IGitHubAccessTokenService
+  private readonly accessTokenReader: IGitHubAccessTokenReader
+  private readonly accessTokenRefresher: IGitHubAccessTokenRefresher
   private readonly gitHubClient: IGitHubClient
   
-  constructor(
-    accessTokenService: IGitHubAccessTokenService,
-    gitHubClient: IGitHubClient
-  ) {
-    this.accessTokenService = accessTokenService
-    this.gitHubClient = gitHubClient
+  constructor(config: AccessTokenRefreshingGitHubClientConfig) {
+    this.accessTokenReader = config.accessTokenReader
+    this.accessTokenRefresher = config.accessTokenRefresher
+    this.gitHubClient = config.gitHubClient
   }
   
   async graphql(request: GraphQLQueryRequest): Promise<GraphQlQueryResponse> {
@@ -65,7 +73,7 @@ export default class AccessTokenRefreshingGitHubClient implements IGitHubClient 
   }
   
   private async send<T>(fn: () => Promise<T>): Promise<T> {
-    const accessToken = await this.accessTokenService.getAccessToken()
+    const accessToken = await this.accessTokenReader.getAccessToken()
     try {
       return await fn()
     } catch (e) {
@@ -73,7 +81,7 @@ export default class AccessTokenRefreshingGitHubClient implements IGitHubClient 
         const error = HttpErrorSchema.parse(e)
         if (error.status == 401) {
           // Refresh access token and try the request one last time.
-          await this.accessTokenService.refreshAccessToken(accessToken)
+          await this.accessTokenRefresher.refreshAccessToken(accessToken)
           return await fn()
         } else {
           // Not an error we can handle so forward it.

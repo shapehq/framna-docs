@@ -19,7 +19,8 @@ export default class AccessTokenSessionValidator {
     try {
       await this.accessTokenReader.getAccessToken()
       return SessionValidity.VALID
-    } catch {
+    } catch (error) {
+      console.error(error)
       return SessionValidity.INVALID_ACCESS_TOKEN
     }
   }

@@ -5,6 +5,7 @@ import { config as fontAwesomeConfig } from "@fortawesome/fontawesome-svg-core"
 import { CssBaseline } from "@mui/material"
 import ThemeRegistry from "../common/theme/ThemeRegistry"
 import ErrorHandler from "../common/errors/client/ErrorHandler"
+import SessionBarrier from "@/features/auth/view/SessionBarrier"
 import "@fortawesome/fontawesome-svg-core/styles.css"
 
 fontAwesomeConfig.autoAddCss = false
@@ -22,7 +23,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <ErrorHandler>
             <body>
               <CssBaseline/>
-              {children}
+              <SessionBarrier>
+                {children}
+              </SessionBarrier>
             </body>
           </ErrorHandler>
         </SessionProvider>

@@ -1,3 +1,8 @@
+import { Pool } from "pg"
+import { NextAuthOptions } from "next-auth"
+import GithubProvider from "next-auth/providers/github"
+import PostgresAdapter from "@auth/pg-adapter"
+import { Adapter } from "next-auth/adapters"
 import { AuthjsSession } from "@/common/session"
 import RedisKeyedMutexFactory from "@/common/mutex/RedisKeyedMutexFactory"
 import RedisKeyValueStore from "@/common/keyValueStore/RedisKeyValueStore"
@@ -5,6 +10,7 @@ import {
   AccessTokenRefreshingGitHubClient,
   GitHubClient,
   KeyValueUserDataRepository,
+  PostgreSQLDB,
   SessionMutexFactory
 } from "@/common"
 import {
@@ -17,30 +23,22 @@ import {
 } from "@/features/projects/domain"
 import {
   GitHubOAuthTokenRefresher,
-  GitHubInstallationAccessTokenDataSource,
-  AuthjsRefreshTokenReader,
+  // GitHubInstallationAccessTokenDataSource,
+  AuthjsOAuthTokenRepository,
   AuthjsRepositoryAccessReader
 } from "@/features/auth/data"
 import {
-  AccessTokenService,
+  AccessTokenRefresher,
   AccessTokenSessionValidator,
   CachingRepositoryAccessReader,
-  CompositeLogInHandler,
   CompositeLogOutHandler,
-  CredentialsTransferringLogInHandler,
   ErrorIgnoringLogOutHandler,
   GitHubOrganizationSessionValidator,
-  GuestAccessTokenRepository,
-  GuestAccessTokenService,
-  GuestCredentialsTransferrer,
-  HostAccessTokenService,
-  HostCredentialsTransferrer,
   HostOnlySessionValidator,
-  IsUserGuestReader,
-  LockingAccessTokenService,
+  LockingAccessTokenRefresher,
   OAuthTokenRepository,
-  OnlyStaleRefreshingAccessTokenService,
-  RepositoryRestrictingAccessTokenDataSource,
+  TransferringAccessTokenReader,
+  // RepositoryRestrictingAccessTokenDataSource,
   UserDataCleanUpLogOutHandler
 } from "@/features/auth/domain"
 
@@ -50,8 +48,52 @@ const {
   GITHUB_CLIENT_SECRET,
   GITHUB_PRIVATE_KEY_BASE_64,
   GITHUB_ORGANIZATION_NAME,
-  REDIS_URL
+  REDIS_URL,
+  POSTGRESQL_HOST,
+  POSTGRESQL_USER,
+  POSTGRESQL_DB
 } = process.env
+
+const pool = new Pool({
+  host: POSTGRESQL_HOST,
+  user: POSTGRESQL_USER,
+  database: POSTGRESQL_DB,
+  max: 20,
+  idleTimeoutMillis: 30000,
+  connectionTimeoutMillis: 2000
+})
+
+const db = new PostgreSQLDB({ pool })
+
+export const authOptions: NextAuthOptions = {
+  adapter: PostgresAdapter(pool) as Adapter,
+  secret: process.env.NEXTAUTH_SECRET,
+  providers: [
+    GithubProvider({
+      clientId: process.env.GITHUB_CLIENT_ID,
+      clientSecret: process.env.GITHUB_CLIENT_SECRET,
+      authorization: {
+        params: {
+          scope: "repo"
+        }
+      }
+    })
+  ],
+  session: {
+    strategy: "database"
+  },
+  callbacks: {
+    async signIn({ account, user }) {
+      console.log(account)
+      console.log(user)
+      return true
+    },
+    async session({ session, user }) {
+      session.user.id = user.id
+      return session
+    }
+  }
+}
 
 const gitHubAppCredentials = {
   appId: GITHUB_APP_ID,
@@ -62,28 +104,13 @@ const gitHubAppCredentials = {
     .toString("utf-8")
 }
 
-export const session = new AuthjsSession({
-  isUserGuestReader: new IsUserGuestReader()
+export const session = new AuthjsSession({ authOptions })
+
+const accessTokenReader = new TransferringAccessTokenReader({
+  userIdReader: session,
+  sourceOAuthTokenRepository: new AuthjsOAuthTokenRepository({ provider: "github", db }),
+  destinationOAuthTokenRepository: new OAuthTokenRepository({ db })
 })
-
-const oAuthTokenRepository = new OAuthTokenRepository(
-  new KeyValueUserDataRepository(
-    new RedisKeyValueStore(REDIS_URL),
-    "authToken"
-  )
-)
-
-const gitHubOAuthTokenRefresher = new GitHubOAuthTokenRefresher({
-  clientId: gitHubAppCredentials.clientId,
-  clientSecret: gitHubAppCredentials.clientSecret
-})
-
-const guestAccessTokenRepository = new GuestAccessTokenRepository(
-  new KeyValueUserDataRepository(
-    new RedisKeyValueStore(REDIS_URL),
-    "accessToken"
-  )
-)
 
 const guestRepositoryAccessRepository = new KeyValueUserDataRepository(
   new RedisKeyValueStore(REDIS_URL),
@@ -95,49 +122,33 @@ export const guestRepositoryAccessReader = new CachingRepositoryAccessReader({
   repositoryAccessReader: new AuthjsRepositoryAccessReader()
 })
 
-const guestAccessTokenDataSource = new RepositoryRestrictingAccessTokenDataSource({
-  repositoryAccessReader: guestRepositoryAccessReader,
-  dataSource: new GitHubInstallationAccessTokenDataSource({
-    ...gitHubAppCredentials,
-    organization: GITHUB_ORGANIZATION_NAME
+export const gitHubClient = new GitHubClient({
+  ...gitHubAppCredentials,
+  accessTokenReader
+})
+
+export const userGitHubClient = new AccessTokenRefreshingGitHubClient({
+  gitHubClient,
+  accessTokenReader,
+  accessTokenRefresher: new LockingAccessTokenRefresher({
+    mutexFactory: new SessionMutexFactory(
+      new RedisKeyedMutexFactory(REDIS_URL),
+      session,
+      "mutexAccessToken"
+    ),
+    accessTokenRefresher: new AccessTokenRefresher({
+      userIdReader: session,
+      oAuthTokenRepository: new OAuthTokenRepository({ db }),
+      oAuthTokenRefresher: new GitHubOAuthTokenRefresher({
+        clientId: gitHubAppCredentials.clientId,
+        clientSecret: gitHubAppCredentials.clientSecret
+      })
+    })
   })
 })
 
-export const accessTokenService = new LockingAccessTokenService(
-  new SessionMutexFactory(
-    new RedisKeyedMutexFactory(REDIS_URL),
-    session,
-    "mutexAccessToken"
-  ),
-  new OnlyStaleRefreshingAccessTokenService(
-    new AccessTokenService({
-      isGuestReader: session,
-      guestAccessTokenService: new GuestAccessTokenService({
-        userIdReader: session,
-        repository: guestAccessTokenRepository,
-        dataSource: guestAccessTokenDataSource
-      }),
-      hostAccessTokenService: new HostAccessTokenService({
-        userIdReader: session,
-        repository: oAuthTokenRepository,
-        refresher: gitHubOAuthTokenRefresher
-      })
-    })
-  )
-)
-
-export const gitHubClient = new GitHubClient({
-  ...gitHubAppCredentials,
-  accessTokenReader: accessTokenService
-})
-
-export const userGitHubClient = new AccessTokenRefreshingGitHubClient(
-  accessTokenService,
-  gitHubClient
-)
-
 export const blockingSessionValidator = new AccessTokenSessionValidator({
-  accessTokenService: accessTokenService
+  accessTokenReader
 })
 export const delayedSessionValidator = new HostOnlySessionValidator({
   isGuestReader: session,
@@ -167,26 +178,9 @@ export const projectDataSource = new CachingProjectDataSource({
   repository: projectRepository
 })
 
-export const logInHandler = new CompositeLogInHandler([
-  new CredentialsTransferringLogInHandler({
-    isUserGuestReader: new IsUserGuestReader(),
-    guestCredentialsTransferrer: new GuestCredentialsTransferrer({
-      dataSource: guestAccessTokenDataSource,
-      repository: guestAccessTokenRepository
-    }),
-    hostCredentialsTransferrer: new HostCredentialsTransferrer({
-      refreshTokenReader: new AuthjsRefreshTokenReader(),
-      oAuthTokenRefresher: gitHubOAuthTokenRefresher,
-      oAuthTokenRepository: oAuthTokenRepository
-    })
-  })
-])
-
 export const logOutHandler = new ErrorIgnoringLogOutHandler(
   new CompositeLogOutHandler([
     new UserDataCleanUpLogOutHandler(session, projectUserDataRepository),
-    new UserDataCleanUpLogOutHandler(session, guestRepositoryAccessRepository),
-    new UserDataCleanUpLogOutHandler(session, oAuthTokenRepository),
-    new UserDataCleanUpLogOutHandler(session, guestAccessTokenRepository)
+    new UserDataCleanUpLogOutHandler(session, guestRepositoryAccessRepository)
   ])
 )

@@ -13,6 +13,8 @@ namespace NodeJS {
     GITHUB_WEBHOK_REPOSITORY_DISALLOWLIST?: string
     GITHUB_ORGANIZATION_NAME: string
     REDIS_URL: string
-    DATABASE_URL: string
+    POSTGRESQL_HOST: string
+    POSTGRESQL_USER: string
+    POSTGRESQL_DB: string
   }
 }

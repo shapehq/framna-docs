@@ -1,25 +1,28 @@
 import IKeyedMutexFactory from "./IKeyedMutexFactory"
 import IMutex from "./IMutex"
 import IMutexFactory from "./IMutexFactory"
-import { ISession } from "@/common"
+
+interface IUserIDReader {
+  getUserId(): Promise<string>
+}
 
 export default class SessionMutexFactory implements IMutexFactory {
   private readonly mutexFactory: IKeyedMutexFactory
-  private readonly session: ISession
+  private readonly userIdReader: IUserIDReader
   private readonly baseKey: string
   
   constructor(
     mutexFactory: IKeyedMutexFactory,
-    session: ISession,
+    userIdReader: IUserIDReader,
     baseKey: string
   ) {
-    this.session = session
+    this.userIdReader = userIdReader
     this.baseKey = baseKey
     this.mutexFactory = mutexFactory
   }
   
   async makeMutex(): Promise<IMutex> {
-    const userId = await this.session.getUserId()
+    const userId = await this.userIdReader.getUserId()
     const key = `${this.baseKey}[${userId}]`
     return this.mutexFactory.makeMutex(key)
   }

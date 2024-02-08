@@ -1,8 +1,12 @@
 import { NextResponse } from "next/server"
-import { makeAPIErrorResponse } from "@/common"
+import { makeAPIErrorResponse, makeUnauthenticatedAPIErrorResponse } from "@/common"
 import { session, guestRepositoryAccessReader } from "@/composition"
 
 export async function GET() {
+  const isAuthenticated = await session.getIsAuthenticated()
+  if (!isAuthenticated) {
+    return makeUnauthenticatedAPIErrorResponse()
+  }
   let userId: string
   try {
     userId = await session.getUserId()
