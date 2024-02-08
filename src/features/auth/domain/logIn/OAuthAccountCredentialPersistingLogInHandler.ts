@@ -1,5 +1,5 @@
 import { IDB } from "@/common"
-import { ILogInHandler, IAccount, ISession, IUser } from "."
+import { ILogInHandler, IAccount } from "."
 
 export default class OAuthAccountCredentialPersistingLogInHandler implements ILogInHandler {
   private readonly db: IDB
