@@ -1,2 +1,2 @@
-export type { default as ILogInHandler, IAccount, ISession, IUser } from "./ILogInHandler"
+export type { default as ILogInHandler, IAccount } from "./ILogInHandler"
 export { default as OAuthAccountCredentialPersistingLogInHandler } from "./OAuthAccountCredentialPersistingLogInHandler"

@@ -17,7 +17,7 @@ export default class OAuthAccountCredentialPersistingLogInHandler implements ILo
     if (account.provider !== this.provider) {
       return true
     }
-    if (!account.providerAccountId || !account.access_token || !account.refresh_token) {
+    if (!account.access_token || !account.refresh_token) {
       return false
     }
     const query = `
@@ -37,7 +37,6 @@ export default class OAuthAccountCredentialPersistingLogInHandler implements ILo
       account.access_token,
       account.refresh_token
     ])
-    console.log("💾 DID PERSIST")
     return true
   }
 }
