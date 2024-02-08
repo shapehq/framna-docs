@@ -65,7 +65,7 @@ export default class DbGuestRepository implements IGuestRepository {
      * @param email Email of the guest
      */
     async removeByEmail(email: string): Promise<void> {
-        const sql = "DELETE FROM guests WHERE email = $1 LIMIT 1"
+        const sql = "DELETE FROM guests WHERE email = $1"
         await this.pool.query(sql, [email])
     }
     

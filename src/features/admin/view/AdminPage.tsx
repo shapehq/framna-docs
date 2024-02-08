@@ -3,25 +3,36 @@ import { Button, ButtonGroup, Chip, FormGroup, TableBody, TableCell, TableContai
 import Table from "@mui/material/Table"
 import { revalidatePath } from "next/cache"
 
+/**
+ * Server action to send an invite
+ */
+const sendInvite = async (formData: FormData): Promise<void> => {
+    'use server'
+    
+    const email = formData.get('email') as string
+    const projects = formData.get('projects') as string
+    
+    guestInviter.inviteGuestByEmail(email as string)
+    guestRepository.create(email as string, projects.split(",").map(p => p.trim()))
+    
+    revalidatePath('/admin/guests')
+}
+
+/**
+ * Server action to remove a guest
+ */
+const removeGuest = async (formData: FormData): Promise<void> => {
+    'use server'
+
+    const email = formData.get('email') as string
+
+    guestRepository.removeByEmail(email)
+
+    revalidatePath('/admin/guests')
+}
+
 const AdminPage = async () => {
-    const guests = await guestRepository.getAll()
-
-    async function sendInvite(formData: FormData): Promise<void> {
-        'use server'
-        const email = formData.get('email') as string
-        const projects = formData.get('projects') as string
-        guestInviter.inviteGuestByEmail(email as string)
-        guestRepository.create(email as string, projects.split(",").map(p => p.trim()))
-        revalidatePath('/admin/guests')
-    }
-
-    async function removeGuest(formData: FormData): Promise<void> {
-        'use server'
-        console.log(formData)
-        const email = formData.get('email') as string
-        guestRepository.removeByEmail(email)
-        revalidatePath('/admin/guests')
-    }
+    const guests = await guestRepository.getAll()   
 
     return (
         <>
