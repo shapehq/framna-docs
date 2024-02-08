@@ -29,7 +29,6 @@ import {
 import {
   AccessTokenRefresher,
   AccessTokenSessionValidator,
-  CachingRepositoryAccessReader,
   CompositeLogOutHandler,
   ErrorIgnoringLogOutHandler,
   GitHubOrganizationSessionValidator,
@@ -117,15 +116,7 @@ const accessTokenReader = new TransferringAccessTokenReader({
   destinationOAuthTokenRepository: new OAuthTokenRepository({ provider: "github", db })
 })
 
-const repositoryAccessRepository = new KeyValueUserDataRepository(
-  new RedisKeyValueStore(REDIS_URL),
-  "repositoryAccess"
-)
-
-export const repositoryAccessReader = new CachingRepositoryAccessReader({
-  repository: repositoryAccessRepository,
-  repositoryAccessReader: new AuthjsRepositoryAccessReader()
-})
+export const repositoryAccessReader = new AuthjsRepositoryAccessReader()
 
 export const gitHubClient = new GitHubClient({
   ...gitHubAppCredentials,
@@ -181,7 +172,6 @@ export const projectDataSource = new CachingProjectDataSource({
 
 export const logOutHandler = new ErrorIgnoringLogOutHandler(
   new CompositeLogOutHandler([
-    new UserDataCleanUpLogOutHandler(session, projectUserDataRepository),
-    new UserDataCleanUpLogOutHandler(session, repositoryAccessRepository)
+    new UserDataCleanUpLogOutHandler(session, projectUserDataRepository)
   ])
 )
