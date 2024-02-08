@@ -33,17 +33,7 @@ export default class AccessTokenRefresher implements IAccessTokenRefresher {
       return oAuthToken.accessToken
     }
     // Given access token is stale so we refresh it.
-    console.log("♻️ Refresh: " + oAuthToken.refreshToken)
-    let newOAuthToken: OAuthToken | undefined
-    try {
-      newOAuthToken = await this.oAuthTokenRefresher.refreshOAuthToken(oAuthToken.refreshToken)
-    } catch (error) {
-      // console.error(error)
-      // await this.oAuthTokenRepository.delete(userId)
-      throw new UnauthorizedError("Refresh token is invalid.")
-    }
-    console.log("💾 Store new token")
-    console.log(newOAuthToken)
+    const newOAuthToken = await this.oAuthTokenRefresher.refreshOAuthToken(oAuthToken.refreshToken)
     await this.oAuthTokenRepository.set(userId, newOAuthToken)
     return newOAuthToken.accessToken
   }
