@@ -1,8 +1,9 @@
 import { NextAuthOptions } from "next-auth"
 import { getServerSession } from "next-auth/next"
+import ISession, { AccountProviderType } from "./ISession"
 import { UnauthorizedError } from "../../common"
 
-export default class AuthjsSession {
+export default class AuthjsSession implements ISession {
   private readonly authOptions: NextAuthOptions
   
   constructor(config: { authOptions: NextAuthOptions }) {
@@ -22,7 +23,7 @@ export default class AuthjsSession {
     return session.user.id
   }
   
-  async getIsGuest(): Promise<boolean> {
-    return false
+  async getAccountProviderType(): Promise<AccountProviderType> {
+    return "github"
   }
 }

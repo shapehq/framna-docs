@@ -12,6 +12,11 @@ test("It requests organization membership status for the specified organization"
         queriedOrganizationName = request.organizationName
         return { state: "active" }
       }
+    },
+    accountProviderTypeReader: {
+      async getAccountProviderType() {
+        return "github"
+      }
     }
   })
   await sut.validateSession()
@@ -24,6 +29,11 @@ test("It considers session valid when membership state is \"active\"", async () 
     organizationMembershipStatusReader: {
       async getOrganizationMembershipStatus() {
         return { state: "active" }
+      }
+    },
+    accountProviderTypeReader: {
+      async getAccountProviderType() {
+        return "github"
       }
     }
   })
@@ -38,6 +48,11 @@ test("It considers user not to be part of the organization when membership state
       async getOrganizationMembershipStatus() {
         return { state: "pending" }
       }
+    },
+    accountProviderTypeReader: {
+      async getAccountProviderType() {
+        return "github"
+      }
     }
   })
   const sessionValidity = await sut.validateSession()
@@ -50,6 +65,11 @@ test("It considers user not to be part of the organization when receiving HTTP 4
     organizationMembershipStatusReader: {
       async getOrganizationMembershipStatus() {
         throw { status: 404, message: "User is not member of organization"}
+      }
+    },
+    accountProviderTypeReader: {
+      async getAccountProviderType() {
+        return "github"
       }
     }
   })
@@ -64,6 +84,11 @@ test("It considers organization to have blocked the GitHub app when receiving HT
       async getOrganizationMembershipStatus() {
         throw { status: 403, message: "Organization has blocked GitHub app"}
       }
+    },
+    accountProviderTypeReader: {
+      async getAccountProviderType() {
+        return "github"
+      }
     }
   })
   const sessionValidity = await sut.validateSession()
@@ -77,7 +102,30 @@ test("It forwards error when getting membership status throws unknown error", as
       async getOrganizationMembershipStatus() {
         throw { status: 500 }
       }
+    },
+    accountProviderTypeReader: {
+      async getAccountProviderType() {
+        return "github"
+      }
     }
   })
   await expect(sut.validateSession()).rejects.toEqual({ status: 500 })
+})
+
+test("It considers session valid when the account provider is not \"github\"", async () => {
+  const sut = new GitHubOrganizationSessionValidator({
+    acceptedOrganization: "foo",
+    organizationMembershipStatusReader: {
+      async getOrganizationMembershipStatus() {
+        throw { status: "pending" }
+      }
+    },
+    accountProviderTypeReader: {
+      async getAccountProviderType() {
+        return "email"
+      }
+    }
+  })
+  const sessionValidity = await sut.validateSession()
+  expect(sessionValidity).toEqual(SessionValidity.VALID)
 })

@@ -3,12 +3,13 @@ import { NextAuthOptions } from "next-auth"
 import GithubProvider from "next-auth/providers/github"
 import PostgresAdapter from "@auth/pg-adapter"
 import { Adapter } from "next-auth/adapters"
-import { AuthjsSession } from "@/common/session"
 import RedisKeyedMutexFactory from "@/common/mutex/RedisKeyedMutexFactory"
 import RedisKeyValueStore from "@/common/keyValueStore/RedisKeyValueStore"
 import {
   AccessTokenRefreshingGitHubClient,
+  AuthjsSession,
   GitHubClient,
+  ISession,
   KeyValueUserDataRepository,
   PostgreSQLDB,
   SessionMutexFactory
@@ -33,7 +34,6 @@ import {
   ErrorIgnoringLogOutHandler,
   GitHubOrganizationSessionValidator,
   OAuthAccountCredentialPersistingLogInHandler,
-  HostOnlySessionValidator,
   LockingAccessTokenRefresher,
   OAuthTokenRepository,
   TransferringAccessTokenReader,
@@ -109,7 +109,7 @@ const gitHubAppCredentials = {
     .toString("utf-8")
 }
 
-export const session = new AuthjsSession({ authOptions })
+export const session: ISession = new AuthjsSession({ authOptions })
 
 const accessTokenReader = new TransferringAccessTokenReader({
   userIdReader: session,
@@ -155,12 +155,10 @@ export const userGitHubClient = new AccessTokenRefreshingGitHubClient({
 export const blockingSessionValidator = new AccessTokenSessionValidator({
   accessTokenReader
 })
-export const delayedSessionValidator = new HostOnlySessionValidator({
-  isGuestReader: session,
-  sessionValidator: new GitHubOrganizationSessionValidator({
-    acceptedOrganization: GITHUB_ORGANIZATION_NAME,
-    organizationMembershipStatusReader: userGitHubClient
-  })
+export const delayedSessionValidator = new GitHubOrganizationSessionValidator({
+  acceptedOrganization: GITHUB_ORGANIZATION_NAME,
+  organizationMembershipStatusReader: userGitHubClient,
+  accountProviderTypeReader: session
 })
 
 const projectUserDataRepository = new KeyValueUserDataRepository(
