@@ -14,14 +14,10 @@ interface IGitHubProjectRepositoryDataSource {
   getRepositories(): Promise<GitHubProjectRepository[]>
 }
 
-type GitHubProjectDataSourceConfig = {
-  readonly dataSource: IGitHubProjectRepositoryDataSource
-}
-
 export default class GitHubProjectDataSource implements IProjectDataSource {
   private dataSource: IGitHubProjectRepositoryDataSource
   
-  constructor(config: GitHubProjectDataSourceConfig) {
+  constructor(config: { dataSource: IGitHubProjectRepositoryDataSource }) {
     this.dataSource = config.dataSource
   }
   

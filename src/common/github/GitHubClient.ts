@@ -12,14 +12,6 @@ import IGitHubClient, {
   PullRequestComment
 } from "./IGitHubClient"
 
-type GitHubClientConfig = {
-  readonly appId: string
-  readonly clientId: string
-  readonly clientSecret: string
-  readonly privateKey: string
-  readonly accessTokenReader: IGitHubAccessTokenReader
-}
-
 interface IGitHubAccessTokenReader {
   getAccessToken(): Promise<string>
 }
@@ -32,7 +24,15 @@ export default class GitHubClient implements IGitHubClient {
   private readonly accessTokenReader: IGitHubAccessTokenReader
   private readonly installationAuthenticator: InstallationAuthenticator
   
-  constructor(config: GitHubClientConfig) {
+  constructor(
+    config: {
+      appId: string
+      clientId: string
+      clientSecret: string
+      privateKey: string
+      accessTokenReader: IGitHubAccessTokenReader
+    }
+  ) {
     this.accessTokenReader = config.accessTokenReader
     const appAuth = createAppAuth({
       appId: config.appId,

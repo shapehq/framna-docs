@@ -10,16 +10,16 @@ interface IOrganizationMembershipStatusReader {
   ): Promise<OrganizationMembershipStatus>
 }
 
-type GitHubOrganizationSessionValidatorConfig = {
-  readonly acceptedOrganization: string
-  readonly organizationMembershipStatusReader: IOrganizationMembershipStatusReader
-}
-
 export default class GitHubOrganizationSessionValidator {
   private readonly acceptedOrganization: string
   private readonly organizationMembershipStatusReader: IOrganizationMembershipStatusReader
   
-  constructor(config: GitHubOrganizationSessionValidatorConfig) {
+  constructor(
+    config: {
+      acceptedOrganization: string
+      organizationMembershipStatusReader: IOrganizationMembershipStatusReader
+    }
+  ) {
     this.acceptedOrganization = config.acceptedOrganization
     this.organizationMembershipStatusReader = config.organizationMembershipStatusReader
   }

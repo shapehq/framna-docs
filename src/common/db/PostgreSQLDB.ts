@@ -1,14 +1,11 @@
 import { Pool, PoolClient } from "pg"
 import IDB, { IDBConnection, IDBQueryResult } from "./IDB"
 
-type PostgreSQLDBConnectionConfig = {
-  readonly client: PoolClient
-}
 
 export class PostgreSQLDBConnection implements IDBConnection {
   private readonly client: PoolClient
   
-  constructor(config: PostgreSQLDBConnectionConfig) {
+  constructor(config: { client: PoolClient }) {
     this.client = config.client
   }
   

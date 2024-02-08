@@ -1,17 +1,9 @@
 import IAccessTokenRefresher from "./IAccessTokenRefresher"
 import IOAuthTokenRepository from "../oAuthToken/IOAuthTokenRepository"
 import IOAuthTokenRefresher from "../oAuthToken/IOAuthTokenRefresher"
-import OAuthToken from "../oAuthToken/OAuthToken"
-import { UnauthorizedError } from "@/common"
 
 interface IUserIDReader {
   getUserId(): Promise<string>
-}
-
-type HostAccessTokenServiceConfig = {
-  readonly userIdReader: IUserIDReader
-  readonly oAuthTokenRepository: IOAuthTokenRepository
-  readonly oAuthTokenRefresher: IOAuthTokenRefresher
 }
 
 export default class AccessTokenRefresher implements IAccessTokenRefresher {
@@ -19,7 +11,13 @@ export default class AccessTokenRefresher implements IAccessTokenRefresher {
   private readonly oAuthTokenRepository: IOAuthTokenRepository
   private readonly oAuthTokenRefresher: IOAuthTokenRefresher
   
-  constructor(config: HostAccessTokenServiceConfig) {
+  constructor(
+    config: {
+      userIdReader: IUserIDReader
+      oAuthTokenRepository: IOAuthTokenRepository
+      oAuthTokenRefresher: IOAuthTokenRefresher
+    }
+  ) {
     this.userIdReader = config.userIdReader
     this.oAuthTokenRepository = config.oAuthTokenRepository
     this.oAuthTokenRefresher = config.oAuthTokenRefresher

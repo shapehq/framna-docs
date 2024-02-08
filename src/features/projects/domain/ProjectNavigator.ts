@@ -9,16 +9,11 @@ export interface IRouter {
   replace(path: string): void
 }
 
-type ProjectNavigatorConfig = {
-  readonly pathnameReader: IPathnameReader
-  readonly router: IRouter
-}
-
 export default class ProjectNavigator {
   private readonly pathnameReader: IPathnameReader
   private readonly router: IRouter
   
-  constructor(config: ProjectNavigatorConfig) {
+  constructor(config: { pathnameReader: IPathnameReader, router: IRouter }) {
     this.pathnameReader = config.pathnameReader
     this.router = config.router
   }

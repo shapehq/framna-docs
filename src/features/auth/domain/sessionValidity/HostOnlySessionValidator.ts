@@ -8,16 +8,16 @@ interface ISessionValidator {
   validateSession(): Promise<SessionValidity>
 }
 
-type HostOnlySessionValidatorConfig = {
-  readonly isGuestReader: IIsGuestReader
-  readonly sessionValidator: ISessionValidator
-}
-
 export default class HostOnlySessionValidator {
   private readonly isGuestReader: IIsGuestReader
   private readonly sessionValidator: ISessionValidator
   
-  constructor(config: HostOnlySessionValidatorConfig) {
+  constructor(
+    config: {
+      isGuestReader: IIsGuestReader
+      sessionValidator: ISessionValidator
+    }
+  ) {
     this.isGuestReader = config.isGuestReader
     this.sessionValidator = config.sessionValidator
   }

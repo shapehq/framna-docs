@@ -4,18 +4,18 @@ interface IUserIDReader {
   getUserId(): Promise<string>
 }
 
-type TransferringAccessTokenReaderConfig = {
-  readonly userIdReader: IUserIDReader
-  readonly sourceOAuthTokenRepository: IOAuthTokenRepository
-  readonly destinationOAuthTokenRepository: IOAuthTokenRepository
-}
-
 export default class TransferringAccessTokenReader {
   private readonly userIdReader: IUserIDReader
   private readonly sourceOAuthTokenRepository: IOAuthTokenRepository
   private readonly destinationOAuthTokenRepository: IOAuthTokenRepository
   
-  constructor(config: TransferringAccessTokenReaderConfig) {
+  constructor(
+    config: {
+      userIdReader: IUserIDReader
+      sourceOAuthTokenRepository: IOAuthTokenRepository
+      destinationOAuthTokenRepository: IOAuthTokenRepository
+    }
+  ) {
     this.userIdReader = config.userIdReader
     this.sourceOAuthTokenRepository = config.sourceOAuthTokenRepository
     this.destinationOAuthTokenRepository = config.destinationOAuthTokenRepository

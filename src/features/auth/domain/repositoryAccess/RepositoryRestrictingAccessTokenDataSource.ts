@@ -6,16 +6,16 @@ interface IAccessTokenDataSource {
   getAccessToken(repositoryNames: string[]): Promise<string>
 }
 
-type RepositoryRestrictingAccessTokenDataSourceConfig = {
-  readonly repositoryAccessReader: IRepositoryAccessReader
-  readonly dataSource: IAccessTokenDataSource
-}
-
 export default class RepositoryRestrictingAccessTokenDataSource {
   private readonly repositoryAccessReader: IRepositoryAccessReader
   private readonly dataSource: IAccessTokenDataSource
   
-  constructor(config: RepositoryRestrictingAccessTokenDataSourceConfig) {
+  constructor(
+    config: {
+      repositoryAccessReader: IRepositoryAccessReader
+      dataSource: IAccessTokenDataSource
+    }
+  ) {
     this.repositoryAccessReader = config.repositoryAccessReader
     this.dataSource = config.dataSource
   }

@@ -4,14 +4,10 @@ interface IAccessTokenReader {
   getAccessToken(): Promise<string>
 }
 
-type AccessTokenSessionValidatorConfig = {
-  readonly accessTokenReader: IAccessTokenReader
-}
-
 export default class AccessTokenSessionValidator {
   private readonly accessTokenReader: IAccessTokenReader
   
-  constructor(config: AccessTokenSessionValidatorConfig) {
+  constructor(config: { accessTokenReader: IAccessTokenReader }) {
     this.accessTokenReader = config.accessTokenReader
   }
   

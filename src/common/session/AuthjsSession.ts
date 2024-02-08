@@ -2,14 +2,10 @@ import { NextAuthOptions } from "next-auth"
 import { getServerSession } from "next-auth/next"
 import { UnauthorizedError } from "../../common"
 
-export type AuthSessionConfig = {
-  readonly authOptions: NextAuthOptions
-}
-
 export default class AuthjsSession {
   private readonly authOptions: NextAuthOptions
   
-  constructor(config: AuthSessionConfig) {
+  constructor(config: { authOptions: NextAuthOptions }) {
     this.authOptions = config.authOptions
   }
   

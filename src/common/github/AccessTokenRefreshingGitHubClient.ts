@@ -23,18 +23,18 @@ interface IGitHubAccessTokenRefresher {
   refreshAccessToken(accessToken: string): Promise<string>
 }
 
-type AccessTokenRefreshingGitHubClientConfig = {
-  readonly accessTokenReader: IGitHubAccessTokenReader
-  readonly accessTokenRefresher: IGitHubAccessTokenRefresher
-  readonly gitHubClient: IGitHubClient
-}
-
 export default class AccessTokenRefreshingGitHubClient implements IGitHubClient {
   private readonly accessTokenReader: IGitHubAccessTokenReader
   private readonly accessTokenRefresher: IGitHubAccessTokenRefresher
   private readonly gitHubClient: IGitHubClient
   
-  constructor(config: AccessTokenRefreshingGitHubClientConfig) {
+  constructor(
+    config: {
+      accessTokenReader: IGitHubAccessTokenReader
+      accessTokenRefresher: IGitHubAccessTokenRefresher
+      gitHubClient: IGitHubClient
+    }
+  ) {
     this.accessTokenReader = config.accessTokenReader
     this.accessTokenRefresher = config.accessTokenRefresher
     this.gitHubClient = config.gitHubClient

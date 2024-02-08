@@ -15,16 +15,16 @@ interface IGitHubGraphQLClient {
   graphql(request: GitHubGraphQLClientRequest): Promise<GitHubGraphQLClientResponse>
 }
 
-type GitHubProjectRepositoryDataSourceConfig = {
-  readonly graphQlClient: IGitHubGraphQLClient
-  readonly organizationName: string
-}
-
 export default class GitHubProjectRepositoryDataSource {
   private graphQlClient: IGitHubGraphQLClient
   private organizationName: string
   
-  constructor(config: GitHubProjectRepositoryDataSourceConfig) {
+  constructor(
+    config: {
+      graphQlClient: IGitHubGraphQLClient
+      organizationName: string
+    }
+  ) {
     this.graphQlClient = config.graphQlClient
     this.organizationName = config.organizationName
   }

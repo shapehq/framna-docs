@@ -1,16 +1,11 @@
 import { IDB, UnauthorizedError } from "../../../common"
 import { IOAuthTokenRepository, OAuthToken } from "../domain"
 
-type AuthjsOAuthTokenRepositoryConfig = {
-  readonly db: IDB
-  readonly provider: string
-}
-
 export default class AuthjsOAuthTokenRepository implements IOAuthTokenRepository {
   private readonly db: IDB
   private readonly provider: string
   
-  constructor(config: AuthjsOAuthTokenRepositoryConfig) {
+  constructor(config: { db: IDB, provider: string }) {
     this.db = config.db
     this.provider = config.provider
   }

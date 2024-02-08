@@ -7,18 +7,18 @@ interface IRepositoryAccessReader {
   getRepositoryNames(userId: string): Promise<string[]>
 }
 
-type CachingRepositoryAccessReaderConfig = {
-  readonly repository: IRepositoryNameRepository
-  readonly repositoryAccessReader: IRepositoryAccessReader
-}
-
 type IRepositoryNameRepository = IUserDataRepository<string>
 
 export default class CachingRepositoryAccessReader {
   private readonly repository: IRepositoryNameRepository
   private readonly repositoryAccessReader: IRepositoryAccessReader
   
-  constructor(config: CachingRepositoryAccessReaderConfig) {
+  constructor(
+    config: {
+      repository: IRepositoryNameRepository
+      repositoryAccessReader: IRepositoryAccessReader
+    }
+  ) {
     this.repository = config.repository
     this.repositoryAccessReader = config.repositoryAccessReader
   }
