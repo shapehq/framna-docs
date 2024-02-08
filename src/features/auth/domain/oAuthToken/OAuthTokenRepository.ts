@@ -42,19 +42,19 @@ export default class OAuthTokenRepository implements IOAuthTokenRepository {
       refresh_token
     )
     SELECT
-      $2,
+      $1,
       "providerAccountId",
       $3,
       $4
     FROM
       accounts
     WHERE
-      accounts."userId" = $1
+      accounts."userId" = $2
     ON CONFLICT (provider, provider_account_id)
     DO UPDATE SET access_token = excluded.access_token, refresh_token = excluded.refresh_token, last_updated_at = NOW();
     `
     try {
-      await this.db.query(query, [userId, this.provider, token.accessToken, token.refreshToken])
+      await this.db.query(query, [this.provider, userId, token.accessToken, token.refreshToken])
     } catch (error) {
       console.error(error)
       throw error
