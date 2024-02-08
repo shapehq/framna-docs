@@ -14,8 +14,7 @@ import {
   SessionMutexFactory
 } from "@/common"
 import {
-  GitHubProjectDataSource,
-  GitHubProjectRepositoryDataSource
+  GitHubProjectDataSource
 } from "@/features/projects/data"
 import {
   CachingProjectDataSource,
@@ -176,10 +175,8 @@ export const projectRepository = new ProjectRepository(
 
 export const projectDataSource = new CachingProjectDataSource({
   dataSource: new GitHubProjectDataSource({
-    dataSource: new GitHubProjectRepositoryDataSource({
-      graphQlClient: userGitHubClient,
-      organizationName: GITHUB_ORGANIZATION_NAME
-    })
+    graphQlClient: userGitHubClient,
+    organizationName: GITHUB_ORGANIZATION_NAME
   }),
   repository: projectRepository
 })

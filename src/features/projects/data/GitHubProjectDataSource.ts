@@ -10,19 +10,37 @@ import {
   ProjectConfigRemoteVersion,
 } from "../domain"
 
-interface IGitHubProjectRepositoryDataSource {
-  getRepositories(): Promise<GitHubProjectRepository[]>
+export type GitHubGraphQLClientRequest = {
+  readonly query: string
+  /* eslint-disable-next-line  @typescript-eslint/no-explicit-any */
+  readonly variables: {[key: string]: any}
+}
+
+export type GitHubGraphQLClientResponse = {
+  /* eslint-disable-next-line  @typescript-eslint/no-explicit-any */
+  readonly [key: string]: any
+}
+
+interface IGitHubGraphQLClient {
+  graphql(request: GitHubGraphQLClientRequest): Promise<GitHubGraphQLClientResponse>
 }
 
 export default class GitHubProjectDataSource implements IProjectDataSource {
-  private dataSource: IGitHubProjectRepositoryDataSource
+  private readonly graphQlClient: IGitHubGraphQLClient
+  private readonly organizationName: string
   
-  constructor(config: { dataSource: IGitHubProjectRepositoryDataSource }) {
-    this.dataSource = config.dataSource
+  constructor(
+    config: {
+      graphQlClient: IGitHubGraphQLClient,
+      organizationName: string
+    }
+  ) {
+    this.graphQlClient = config.graphQlClient
+    this.organizationName = config.organizationName
   }
   
   async getProjects(): Promise<Project[]> {
-    const repositories = await this.dataSource.getRepositories()
+    const repositories = await this.getRepositories()
     return repositories.map(repository => {
       return this.mapProject(repository)
     })
@@ -208,5 +226,76 @@ export default class GitHubProjectDataSource implements IProjectDataSource {
     return str
       .replace(/ /g, "-")
       .replace(/[^A-Za-z0-9-]/g, "")
+  }
+  
+  private async getRepositories(): Promise<GitHubProjectRepository[]> {
+    const request = {
+      query: `
+      query Repositories($searchQuery: String!) {
+        search(query: $searchQuery, type: REPOSITORY, first: 100) {
+          results: nodes {
+            ... on Repository {
+              name
+              owner {
+                login
+              }
+              defaultBranchRef {
+                name
+                target {
+                  ...on Commit {
+                    oid
+                  }
+                }
+              }
+              configYml: object(expression: "HEAD:.shape-docs.yml") {
+                ...ConfigParts
+              }
+              configYaml: object(expression: "HEAD:.shape-docs.yaml") {
+                ...ConfigParts
+              }
+              branches: refs(refPrefix: "refs/heads/", first: 100) {
+                ...RefConnectionParts
+              }
+              tags: refs(refPrefix: "refs/tags/", first: 100) {
+                ...RefConnectionParts
+              }
+            }
+          }
+        }
+      }
+      
+      fragment RefConnectionParts on RefConnection {
+        edges {
+          node {
+            name
+            ... on Ref {
+              name
+              target {
+                ... on Commit {
+                  oid
+                  tree {
+                    entries {
+                      name
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+      
+      fragment ConfigParts on GitObject {
+        ... on Blob {
+          text
+        }
+      }
+      `,
+      variables: {
+        searchQuery: `org:${this.organizationName} openapi in:name`
+      }
+    }
+    const response = await this.graphQlClient.graphql(request)
+    return response.search.results
   }
 }
