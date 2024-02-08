@@ -40,7 +40,11 @@ import {
 } from "@/features/auth/domain"
 import { IGuestInviter } from "./features/admin/domain/IGuestInviter"
 import { randomUUID } from "crypto"
+import { createTransport } from "nodemailer"
+import StreamTransport from "nodemailer/lib/stream-transport"
+import SMTPTransport from "nodemailer/lib/smtp-transport"
 import { Pool } from "pg"
+import DbGuestRepository from "./features/admin/data/DbGuestRepository"
 
 const {
   GITHUB_APP_ID,
@@ -179,31 +183,6 @@ export const logOutHandler = new ErrorIgnoringLogOutHandler(
   ])
 )
 
-export const guestRepository: IGuestRepository = {
-  getAll: function (): Promise<Guest[]> {
-      return Promise.resolve([
-          {
-              id: randomUUID(),
-              email: "ulrik@shape.dk",
-              status: "active",
-              projects: ["deas", "moonboon"]
-          },
-          {
-              id: randomUUID(),
-              email: "lars@company.com",
-              status: "invited",
-              projects: ["deas"]
-          }
-      ])
-  },
-  findById: function (id: string): Promise<Guest> {
-      throw new Error("Function not implemented.")
-  },
-  create: function (guest: Guest): Promise<Guest> {
-      throw new Error("Function not implemented.")
-  },
-  removeById: function (id: string): Promise<void> {
-      throw new Error("Function not implemented.")
 
 export const pool = new Pool({
   host: 'localhost', // TODO: Move to env
@@ -213,11 +192,42 @@ export const pool = new Pool({
   idleTimeoutMillis: 30000,
   connectionTimeoutMillis: 2000,
 })
+
+export const guestRepository: IGuestRepository = new DbGuestRepository(pool)
+
+const transport = createTransport({
+  host: "sandbox.smtp.mailtrap.io",
+  port: 2525,
+  auth: {
+    user: "0682027d57d0db",
+    pass: "28c3dbfbfc0af8"
   }
-}
+});
 
 export const guestInviter: IGuestInviter = {
-  inviteGuest: async (invitee: string) => {
-    console.log(`Inviting ${invitee}`)
+  inviteGuestByEmail: function (email: string): Promise<void> {
+    transport.sendMail({
+      to: email,
+      from: "no-reply@docs.shapetools.io",
+      subject: "You have been invited to join Shape Docs",
+      html: `
+        <html>
+        <head>
+          <style>
+            body {
+              font-family: Arial, sans-serif;
+            }
+          </style>
+        </head>
+          <body>
+            <p>You have been invited to join Shape Docs!</p>
+            <p>Shape Docs uses magic links for authentication. This means that you don't need to remember a password.</p>
+            <p>Click the link below to request your first magic link to log in:</p>
+            <a href="https://docs.shapetools.io">Log in</a>
+          </body>
+        </html>
+      `,
+    })
+    return Promise.resolve()
   }
 }

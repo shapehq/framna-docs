@@ -1,20 +1,40 @@
-import { guestRepository } from "@/composition"
+import { guestInviter, guestRepository } from "@/composition"
 import { Button, ButtonGroup, Chip, FormGroup, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField } from "@mui/material"
 import Table from "@mui/material/Table"
+import { revalidatePath } from "next/cache"
 
 const AdminPage = async () => {
     const guests = await guestRepository.getAll()
+
+    async function sendInvite(formData: FormData): Promise<void> {
+        'use server'
+        const email = formData.get('email') as string
+        const projects = formData.get('projects') as string
+        guestInviter.inviteGuestByEmail(email as string)
+        guestRepository.create(email as string, projects.split(",").map(p => p.trim()))
+        revalidatePath('/admin/guests')
+    }
+
+    async function removeGuest(formData: FormData): Promise<void> {
+        'use server'
+        console.log(formData)
+        const email = formData.get('email') as string
+        guestRepository.removeByEmail(email)
+        revalidatePath('/admin/guests')
+    }
 
     return (
         <>
         <h1>Guest Admin</h1>
         
         <h2>Invite Guest</h2>
-        <FormGroup row={true}>
-            <TextField placeholder="Email" />
-            <TextField placeholder="Projects" />
-            <Button variant="outlined">Send invite</Button>
-        </FormGroup>
+        <form action={sendInvite}>
+            <FormGroup row={true}>
+                <TextField name="email" type="email" placeholder="Email" required />
+                <TextField name="projects" placeholder="Projects" />
+                <Button type="submit" variant="outlined">Send invite</Button>
+            </FormGroup>
+        </form>
         
         <h2>Guests</h2>
         <TableContainer>
@@ -35,8 +55,10 @@ const AdminPage = async () => {
                             <TableCell>{row.projects.join(", ")}</TableCell>
                             <TableCell>
                                 <ButtonGroup variant="outlined">
-                                    <Button href={`/edit/${row.id}`}>Edit</Button>
-                                    <Button>Remove</Button>
+                                    <form action={removeGuest}>
+                                        <input type="hidden" name="email" value={row.email} />
+                                        <Button type="submit">Remove</Button>
+                                    </form>
                                 </ButtonGroup>
                             </TableCell>
                         </TableRow>

@@ -1,7 +1,8 @@
 
 interface IGuestRepository {
     getAll(): Promise<Guest[]>
-    findById(id: string): Promise<Guest>
-    create(guest: Guest): Promise<Guest>
-    removeById(id: string): Promise<void>
+    findByEmail(email: string): Promise<Guest | undefined>
+    create(email: string, projects: string[]): Promise<Guest>
+    removeByEmail(email: string): Promise<void>
+    getProjectsForEmail(email: string): Promise<string[]>
 }
