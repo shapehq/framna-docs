@@ -23,7 +23,6 @@ import {
 } from "@/features/projects/domain"
 import {
   GitHubOAuthTokenRefresher,
-  // GitHubInstallationAccessTokenDataSource,
   AuthjsOAuthTokenRepository,
   AuthjsRepositoryAccessReader
 } from "@/features/auth/data"
@@ -34,11 +33,11 @@ import {
   CompositeLogOutHandler,
   ErrorIgnoringLogOutHandler,
   GitHubOrganizationSessionValidator,
+  OAuthAccountCredentialPersistingLogInHandler,
   HostOnlySessionValidator,
   LockingAccessTokenRefresher,
   OAuthTokenRepository,
   TransferringAccessTokenReader,
-  // RepositoryRestrictingAccessTokenDataSource,
   UserDataCleanUpLogOutHandler
 } from "@/features/auth/domain"
 
@@ -65,6 +64,11 @@ const pool = new Pool({
 
 const db = new PostgreSQLDB({ pool })
 
+const logInHandler = new OAuthAccountCredentialPersistingLogInHandler({
+  db,
+  provider: "github"
+})
+
 export const authOptions: NextAuthOptions = {
   adapter: PostgresAdapter(pool) as Adapter,
   secret: process.env.NEXTAUTH_SECRET,
@@ -83,10 +87,12 @@ export const authOptions: NextAuthOptions = {
     strategy: "database"
   },
   callbacks: {
-    async signIn({ account, user }) {
-      console.log(account)
-      console.log(user)
-      return true
+    async signIn({ user, account }) {
+      if (account) {
+        return await logInHandler.handleLogIn(user.id, account)
+      } else {
+        return await logInHandler.handleLogIn(user.id)
+      }
     },
     async session({ session, user }) {
       session.user.id = user.id
@@ -109,7 +115,7 @@ export const session = new AuthjsSession({ authOptions })
 const accessTokenReader = new TransferringAccessTokenReader({
   userIdReader: session,
   sourceOAuthTokenRepository: new AuthjsOAuthTokenRepository({ provider: "github", db }),
-  destinationOAuthTokenRepository: new OAuthTokenRepository({ db })
+  destinationOAuthTokenRepository: new OAuthTokenRepository({ provider: "github", db })
 })
 
 const guestRepositoryAccessRepository = new KeyValueUserDataRepository(
@@ -138,7 +144,7 @@ export const userGitHubClient = new AccessTokenRefreshingGitHubClient({
     ),
     accessTokenRefresher: new AccessTokenRefresher({
       userIdReader: session,
-      oAuthTokenRepository: new OAuthTokenRepository({ db }),
+      oAuthTokenRepository: new OAuthTokenRepository({ db, provider: "github" }),
       oAuthTokenRefresher: new GitHubOAuthTokenRefresher({
         clientId: gitHubAppCredentials.clientId,
         clientSecret: gitHubAppCredentials.clientSecret

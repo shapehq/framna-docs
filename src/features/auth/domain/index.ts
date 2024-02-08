@@ -1,4 +1,5 @@
 export * from "./accessToken"
+export * from "./logIn"
 export * from "./logOut"
 export * from "./oAuthToken"
 export * from "./repositoryAccess"
