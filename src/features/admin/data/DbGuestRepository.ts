@@ -50,7 +50,13 @@ export default class DbGuestRepository implements IGuestRepository {
     async create(email: string, projects: string[]): Promise<Guest> {
         const sql = "INSERT INTO guests (email, projects) VALUES ($1, $2)"
         await this.pool.query(sql, [email, JSON.stringify(projects)])
-        return this.findByEmail(email)
+        
+        const insertedGuest = await this.findByEmail(email)
+        if (!insertedGuest) {
+            throw new Error("Guest not found after insert")
+        }
+        
+        return insertedGuest
     }
 
     /**
