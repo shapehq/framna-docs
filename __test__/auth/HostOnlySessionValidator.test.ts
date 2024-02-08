@@ -22,7 +22,6 @@ test("It validates session when user is host", async () => {
   expect(didValidateSession).toBeTruthy()
 })
 
-
 test("It does not validate session when user is guest", async () => {
   let didValidateSession = false
   const sut = new HostOnlySessionValidator({
