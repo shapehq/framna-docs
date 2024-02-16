@@ -39,11 +39,7 @@ import {
   UserDataCleanUpLogOutHandler
 } from "@/features/auth/domain"
 import { IGuestInviter } from "./features/admin/domain/IGuestInviter"
-import { randomUUID } from "crypto"
 import { createTransport } from "nodemailer"
-import StreamTransport from "nodemailer/lib/stream-transport"
-import SMTPTransport from "nodemailer/lib/smtp-transport"
-import { Pool } from "pg"
 import DbGuestRepository from "./features/admin/data/DbGuestRepository"
 
 const {
@@ -182,16 +178,6 @@ export const logOutHandler = new ErrorIgnoringLogOutHandler(
     new UserDataCleanUpLogOutHandler(session, projectUserDataRepository)
   ])
 )
-
-
-export const pool = new Pool({
-  host: 'localhost', // TODO: Move to env
-  user: 'ua', // TODO: Move to env
-  database: 'shape-docs', // TODO: Move to env
-  max: 20,
-  idleTimeoutMillis: 30000,
-  connectionTimeoutMillis: 2000,
-})
 
 export const guestRepository: IGuestRepository = new DbGuestRepository(pool)
 
