@@ -56,3 +56,9 @@ CREATE TABLE access_tokens
   
   PRIMARY KEY (provider, provider_account_id)
 );
+
+CREATE TABLE guests (
+    id SERIAL PRIMARY KEY,
+    email VARCHAR(255) UNIQUE NOT NULL,
+    projects jsonb
+);
