@@ -54,6 +54,15 @@ const {
   POSTGRESQL_DB
 } = process.env
 
+const gitHubAppCredentials = {
+  appId: GITHUB_APP_ID,
+  clientId: GITHUB_CLIENT_ID,
+  clientSecret: GITHUB_CLIENT_SECRET,
+  privateKey: Buffer
+    .from(GITHUB_PRIVATE_KEY_BASE_64, "base64")
+    .toString("utf-8")
+}
+
 const pool = new Pool({
   host: POSTGRESQL_HOST,
   user: POSTGRESQL_USER,
@@ -100,15 +109,6 @@ export const authOptions: NextAuthOptions = {
       return session
     }
   }
-}
-
-const gitHubAppCredentials = {
-  appId: GITHUB_APP_ID,
-  clientId: GITHUB_CLIENT_ID,
-  clientSecret: GITHUB_CLIENT_SECRET,
-  privateKey: Buffer
-    .from(GITHUB_PRIVATE_KEY_BASE_64, "base64")
-    .toString("utf-8")
 }
 
 export const session: ISession = new AuthjsSession({ authOptions })
