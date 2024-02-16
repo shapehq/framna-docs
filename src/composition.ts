@@ -1,6 +1,7 @@
 import { Pool } from "pg"
 import { NextAuthOptions } from "next-auth"
 import GithubProvider from "next-auth/providers/github"
+import EmailProvider from "next-auth/providers/email"
 import PostgresAdapter from "@auth/pg-adapter"
 import { Adapter } from "next-auth/adapters"
 import RedisKeyedMutexFactory from "@/common/mutex/RedisKeyedMutexFactory"
@@ -24,7 +25,8 @@ import {
 import {
   GitHubOAuthTokenRefresher,
   AuthjsOAuthTokenRepository,
-  AuthjsRepositoryAccessReader
+  AuthjsRepositoryAccessReader,
+  GitHubInstallationAccessTokenDataSource
 } from "@/features/auth/data"
 import {
   AccessTokenRefresher,
@@ -60,7 +62,8 @@ const gitHubAppCredentials = {
   clientSecret: GITHUB_CLIENT_SECRET,
   privateKey: Buffer
     .from(GITHUB_PRIVATE_KEY_BASE_64, "base64")
-    .toString("utf-8")
+    .toString("utf-8"),
+  organization: GITHUB_ORGANIZATION_NAME,
 }
 
 const pool = new Pool({
@@ -79,6 +82,8 @@ const logInHandler = new OAuthAccountCredentialPersistingLogInHandler({
   provider: "github"
 })
 
+const gitHubInstallationAccessTokenDataSource = new GitHubInstallationAccessTokenDataSource(gitHubAppCredentials)
+
 export const authOptions: NextAuthOptions = {
   adapter: PostgresAdapter(pool) as Adapter,
   secret: process.env.NEXTAUTH_SECRET,
@@ -91,13 +96,49 @@ export const authOptions: NextAuthOptions = {
           scope: "repo"
         }
       }
-    })
+    }),
+    EmailProvider({
+      sendVerificationRequest: ({ url }) => {
+        console.log("Magic link", url) // print to console for now
+      },
+    }),
   ],
   session: {
     strategy: "database"
   },
   callbacks: {
-    async signIn({ user, account }) {
+    async signIn({ user, account, email }) {
+      if (email && email.verificationRequest && user.email) { // in verification request flow
+        const guest = await guestRepository.findByEmail(user.email)
+        if (guest == undefined) {
+          return false // email not invited
+        }
+      }
+      else if (account?.provider == "email" && user.email) { // in sign in flow, click on magic link
+        // obtain access token from GitHub using app auth
+        const guest = await guestRepository.findByEmail(user.email)
+        if (guest == undefined) {
+          return false // email not invited
+        }
+        const accessToken = await gitHubInstallationAccessTokenDataSource.getAccessToken(guest.projects || [])
+        const query = `
+            INSERT INTO access_tokens (
+              provider,
+              provider_account_id,
+              access_token
+            )
+            VALUES ($1, $2, $3)
+            ON CONFLICT (provider, provider_account_id)
+            DO UPDATE SET access_token = $3, last_updated_at = NOW();
+            `
+        await pool.query(query, [
+          account.provider,
+          account.providerAccountId,
+          accessToken,
+        ])
+        return true
+      }
+
       if (account) {
         return await logInHandler.handleLogIn(user.id, account)
       } else {
