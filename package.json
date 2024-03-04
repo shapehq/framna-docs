@@ -15,7 +15,7 @@
   },
   "dependencies": {
     "@auth0/nextjs-auth0": "^3.3.0",
-    "@emotion/react": "^11.11.1",
+    "@emotion/react": "^11.11.4",
     "@emotion/styled": "^11.11.0",
     "@fortawesome/fontawesome-svg-core": "^6.4.2",
     "@fortawesome/free-solid-svg-icons": "^6.4.2",
