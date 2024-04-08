@@ -20,7 +20,7 @@
     "@fortawesome/fontawesome-svg-core": "^6.4.2",
     "@fortawesome/free-solid-svg-icons": "^6.4.2",
     "@fortawesome/react-fontawesome": "^0.2.0",
-    "@mui/icons-material": "^5.15.10",
+    "@mui/icons-material": "^5.15.15",
     "@mui/material": "^5.14.18",
     "@octokit/auth-app": "^6.0.1",
     "@octokit/core": "^5.1.0",
