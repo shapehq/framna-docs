@@ -34,8 +34,8 @@ import {
   CompositeLogOutHandler,
   ErrorIgnoringLogOutHandler,
   GitHubOrganizationSessionValidator,
-  OAuthAccountCredentialPersistingLogInHandler,
   LockingAccessTokenRefresher,
+  NullObjectLogInHandler,
   OAuthTokenRepository,
   TransferringAccessTokenReader,
   UserDataCleanUpLogOutHandler
@@ -77,10 +77,7 @@ const pool = new Pool({
 
 const db = new PostgreSQLDB({ pool })
 
-const logInHandler = new OAuthAccountCredentialPersistingLogInHandler({
-  db,
-  provider: "github"
-})
+const logInHandler = new NullObjectLogInHandler()
 
 const gitHubInstallationAccessTokenDataSource = new GitHubInstallationAccessTokenDataSource(gitHubAppCredentials)
 
