@@ -37,7 +37,7 @@ import {
   LockingAccessTokenRefresher,
   NullObjectLogInHandler,
   OAuthTokenRepository,
-  TransferringAccessTokenReader,
+  AccessTokenReader,
   UserDataCleanUpLogOutHandler
 } from "@/features/auth/domain"
 import { IGuestInviter } from "./features/admin/domain/IGuestInviter"
@@ -151,7 +151,7 @@ export const authOptions: NextAuthOptions = {
 
 export const session: ISession = new AuthjsSession({ authOptions })
 
-const accessTokenReader = new TransferringAccessTokenReader({
+const accessTokenReader = new AccessTokenReader({
   userIdReader: session,
   sourceOAuthTokenRepository: new AuthjsOAuthTokenRepository({ provider: "github", db }),
   destinationOAuthTokenRepository: new OAuthTokenRepository({ provider: "github", db })

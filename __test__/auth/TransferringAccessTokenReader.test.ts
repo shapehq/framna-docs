@@ -1,8 +1,8 @@
-import { TransferringAccessTokenReader } from "../../src/features/auth/domain"
+import { AccessTokenReader } from "../../src/features/auth/domain"
 
 test("It reads user ID", async () => {
   let didReadUserId = false
-  const sut = new TransferringAccessTokenReader({
+  const sut = new AccessTokenReader({
     userIdReader: {
       async getUserId() {
         didReadUserId = true
@@ -37,7 +37,7 @@ test("It reads user ID", async () => {
 test("It skips reading from source repository if a token was found in the destination repository", async () => {
   let didReadOAuthTokenFromSource = false
   let didReadOAuthTokenFromDestination = false
-  const sut = new TransferringAccessTokenReader({
+  const sut = new AccessTokenReader({
     userIdReader: {
       async getUserId() {
         return "1234"
@@ -74,7 +74,7 @@ test("It skips reading from source repository if a token was found in the destin
 test("It reads from source repository if no token was found in destination repository", async () => {
   let didReadOAuthTokenFromSource = false
   let didReadOAuthTokenFromDestination = false
-  const sut = new TransferringAccessTokenReader({
+  const sut = new AccessTokenReader({
     userIdReader: {
       async getUserId() {
         return "1234"
@@ -108,7 +108,7 @@ test("It reads from source repository if no token was found in destination repos
 test("It stores token read from source repository in destination repository", async () => {
   let storedAccessToken: string | undefined
   let storedRefreshToken: string | undefined
-  const sut = new TransferringAccessTokenReader({
+  const sut = new AccessTokenReader({
     userIdReader: {
       async getUserId() {
         return "1234"

@@ -4,7 +4,7 @@ interface IUserIDReader {
   getUserId(): Promise<string>
 }
 
-export default class TransferringAccessTokenReader {
+export default class AccessTokenReader {
   private readonly userIdReader: IUserIDReader
   private readonly sourceOAuthTokenRepository: IOAuthTokenRepository
   private readonly destinationOAuthTokenRepository: IOAuthTokenRepository
