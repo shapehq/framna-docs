@@ -13,7 +13,7 @@ export class InfrastructureStack extends cdk.Stack {
 
     this.vpc = new Vpc(this, 'VPC', {
       ipAddresses: IpAddresses.cidr("10.0.0.0/16"),
-      maxAzs: 1,
+      maxAzs: 2,
     });
 
     this.dockerRepository = new Repository(this, 'Repository', {
