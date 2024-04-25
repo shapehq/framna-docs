@@ -2,6 +2,7 @@ import * as cdk from 'aws-cdk-lib';
 import { Vpc } from 'aws-cdk-lib/aws-ec2';
 import { EcrImage, FargateService } from 'aws-cdk-lib/aws-ecs';
 import { ApplicationLoadBalancedFargateService } from 'aws-cdk-lib/aws-ecs-patterns';
+import { Effect, PolicyStatement } from 'aws-cdk-lib/aws-iam';
 import { Construct } from 'constructs';
 
 interface AppStackProps extends cdk.StackProps {
@@ -45,6 +46,12 @@ export class AppStack extends cdk.Stack {
     app.targetGroup.configureHealthCheck({
       path: "/api/health",
     });
+
+    app.service.taskDefinition.taskRole.addToPrincipalPolicy(new PolicyStatement({
+      actions: ['ses:SendEmail', 'SES:SendRawEmail'],
+      resources: ['*'],
+      effect: Effect.ALLOW,
+    }));
 
     this.service = app.service;
     this.loadBalancer = app.loadBalancer;
