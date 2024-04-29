@@ -53,7 +53,11 @@ const {
   REDIS_URL,
   POSTGRESQL_HOST,
   POSTGRESQL_USER,
-  POSTGRESQL_DB
+  POSTGRESQL_DB,
+  SMTP_HOST,
+  SMTP_USER,
+  SMTP_PASS,
+  FROM_EMAIL,
 } = process.env
 
 const gitHubAppCredentials = {
@@ -84,6 +88,8 @@ const logInHandler = new OAuthAccountCredentialPersistingLogInHandler({
 
 const gitHubInstallationAccessTokenDataSource = new GitHubInstallationAccessTokenDataSource(gitHubAppCredentials)
 
+const fromEmail = FROM_EMAIL || "Shape Docs <no-reply@docs.shapetools.io>" // must be a verified email in AWS SES
+
 export const authOptions: NextAuthOptions = {
   adapter: PostgresAdapter(pool) as Adapter,
   secret: process.env.NEXTAUTH_SECRET,
@@ -98,9 +104,14 @@ export const authOptions: NextAuthOptions = {
       }
     }),
     EmailProvider({
-      sendVerificationRequest: ({ url }) => {
-        console.log("Magic link", url) // print to console for now
+      server: {
+        host: SMTP_HOST,
+        auth: {
+          user: SMTP_USER,
+          pass: SMTP_PASS,
+        }
       },
+      from: fromEmail,
     }),
   ],
   session: {

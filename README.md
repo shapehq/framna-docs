@@ -28,6 +28,9 @@ GITHUB_WEBHOK_REPOSITORY_ALLOWLIST=''
 GITHUB_WEBHOK_REPOSITORY_DISALLOWLIST=''
 GITHUB_ORGANIZATION_NAME='shapehq'
 REDIS_URL=''
+SMTP_HOST=''
+SMTP_USER=''
+SMTP_PASS=''
 ```
 
 Each environment variable is described in the table below.
@@ -47,6 +50,10 @@ Each environment variable is described in the table below.
 |GITHUB_WEBHOK_REPOSITORY_DISALLOWLIST|Comma-separated list of repositories from which webhook calls should be ignored. The list of disallowed repositories takes precedence over the list of allowed repositories.|
 |GITHUB_ORGANIZATION_NAME|Name of the organization to show repositories for.|
 |REDIS_URL|The URL to the Redis store.|
+|SMTP_HOST|Hostname for SMTP server used for sending magic links and guest invitation.|
+|SMTP_USER|Username for SMTP server used for sending magic links and guest invitation.|
+|SMTP_PASS|Password for SMTP server used for sending magic links and guest invitation.|
+|FROM_EMAIL|Sender email for magic links and guest invitations.|
 
 Run the app using the following command:
 
@@ -59,6 +66,22 @@ Finally, open the application on https://dev.local:3000.
 ## Database Schemas
 
 See `create-tables.sql`
+
+## SMTP Setup
+
+Magic links are sent via email.
+
+Configure email sending via SMTP using the `SMTP_*` environment variables.
+
+Follow this guide for AWS SES: [Using the Amazon SES SMTP interface to send email](https://docs.aws.amazon.com/ses/latest/dg/send-email-smtp.html).
+
+Example (for AWS SES):
+
+```
+SMTP_HOST="email-smtp.eu-central-1.amazonaws.com"
+SMTP_USER="3AH7TB7N4I4JDIK2A66E"
+SMTP_PASS="SX/vT1W7q9d44Oe2fmEURYIWqttgBNbhrtuMDb6CBBBg"
+```
 
 ## 🚀 Deploying the App
 
