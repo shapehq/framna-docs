@@ -43,6 +43,7 @@ import {
 import { IGuestInviter } from "./features/admin/domain/IGuestInviter"
 import { createTransport } from "nodemailer"
 import DbGuestRepository from "./features/admin/data/DbGuestRepository"
+import { EmailGuestInviter } from "./features/admin/data/EmailGuestInviter"
 
 const {
   GITHUB_APP_ID,
@@ -233,39 +234,11 @@ export const logOutHandler = new ErrorIgnoringLogOutHandler(
 
 export const guestRepository: IGuestRepository = new DbGuestRepository(pool)
 
-const transport = createTransport({
-  host: "sandbox.smtp.mailtrap.io",
-  port: 2525,
-  auth: {
-    user: "0682027d57d0db",
-    pass: "28c3dbfbfc0af8"
-  }
-});
-
-export const guestInviter: IGuestInviter = {
-  inviteGuestByEmail: function (email: string): Promise<void> {
-    transport.sendMail({
-      to: email,
-      from: "no-reply@docs.shapetools.io",
-      subject: "You have been invited to join Shape Docs",
-      html: `
-        <html>
-        <head>
-          <style>
-            body {
-              font-family: Arial, sans-serif;
-            }
-          </style>
-        </head>
-          <body>
-            <p>You have been invited to join Shape Docs!</p>
-            <p>Shape Docs uses magic links for authentication. This means that you don't need to remember a password.</p>
-            <p>Click the link below to request your first magic link to log in:</p>
-            <a href="https://docs.shapetools.io">Log in</a>
-          </body>
-        </html>
-      `,
-    })
-    return Promise.resolve()
-  }
-}
+export const guestInviter: IGuestInviter = new EmailGuestInviter({
+  server: {
+    host: SMTP_HOST,
+    user: SMTP_USER,
+    pass: SMTP_PASS,
+  },
+  from: fromEmail,
+})
