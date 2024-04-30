@@ -1,41 +1,13 @@
-import { guestInviter, guestRepository } from "@/composition"
-import { Box, Button, ButtonGroup, Chip, FormGroup, Paper, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Typography } from "@mui/material"
+import { guestRepository } from "@/composition"
+import { Box, ButtonGroup, Chip, Paper, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from "@mui/material"
 import Table from "@mui/material/Table"
-import { revalidatePath } from "next/cache"
-
-/**
- * Server action to send an invite
- */
-const sendInvite = async (formData: FormData): Promise<void> => {
-    'use server'
-    
-    const email = formData.get('email') as string
-    const projects = formData.get('projects') as string
-    
-    guestInviter.inviteGuestByEmail(email as string)
-    guestRepository.create(email as string, projects.split(",").map(p => p.trim()))
-    
-    revalidatePath('/admin/guests')
-}
-
-/**
- * Server action to remove a guest
- */
-const removeGuest = async (formData: FormData): Promise<void> => {
-    'use server'
-
-    const email = formData.get('email') as string
-
-    guestRepository.removeByEmail(email)
-
-    revalidatePath('/admin/guests')
-}
+import { InviteGuestForm } from "./InviteGuestForm"
+import { RemoveGuestForm } from "./RemoveGuestForm"
 
 const AdminPage = async () => {
-    const guests = await guestRepository.getAll()   
+    const guests = await guestRepository.getAll()
 
     return (
-        <>
         <Box sx={{ p: 2 }}>
             <Typography variant="h4" gutterBottom>Admin</Typography>
 
@@ -44,13 +16,7 @@ const AdminPage = async () => {
                 <Typography variant="body2" gutterBottom>
                     Invite a guest to access the platform. An invitation email will be sent to the provided email address.
                 </Typography>
-                <form action={sendInvite}>
-                    <FormGroup row={true}>
-                        <TextField name="email" type="email" placeholder="Email" required sx={{ mr: 1 }} />
-                        <TextField name="projects" placeholder="Projects" sx={{ mr: 1 }} />
-                        <Button type="submit" variant="outlined">Send invite</Button>
-                    </FormGroup>
-                </form>
+                <InviteGuestForm />
             </Paper>
             <Typography variant="h6" gutterBottom>Guests</Typography>
 
@@ -72,14 +38,11 @@ const AdminPage = async () => {
                             {guests.map((row, index) => (
                                 <TableRow key={index}>
                                     <TableCell>{row.email}</TableCell>
-                                    <TableCell><Chip label={row.status} color={row.status=="active" ? "primary" : "default"}/></TableCell>
+                                    <TableCell><Chip label={row.status} color={row.status == "active" ? "primary" : "default"} /></TableCell>
                                     <TableCell>{row.projects.join(", ")}</TableCell>
                                     <TableCell>
                                         <ButtonGroup variant="outlined">
-                                            <form action={removeGuest}>
-                                                <input type="hidden" name="email" value={row.email} />
-                                                <Button type="submit">Remove</Button>
-                                            </form>
+                                            <RemoveGuestForm email={row.email} /> { /* TODO: Ask the user for confirmation */}
                                         </ButtonGroup>
                                     </TableCell>
                                 </TableRow>
@@ -89,7 +52,6 @@ const AdminPage = async () => {
                 </TableContainer>
             </Paper>
         </Box>
-        </>
     )
 }
 
