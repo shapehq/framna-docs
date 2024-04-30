@@ -42,7 +42,7 @@ const AdminPage = async () => {
                                     <TableCell>{row.projects.join(", ")}</TableCell>
                                     <TableCell>
                                         <ButtonGroup variant="outlined">
-                                            <RemoveGuestForm email={row.email} /> { /* TODO: Ask the user for confirmation */}
+                                            <RemoveGuestForm email={row.email} />
                                         </ButtonGroup>
                                     </TableCell>
                                 </TableRow>
