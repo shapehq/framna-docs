@@ -8,6 +8,8 @@ import { Construct } from 'constructs';
 interface AppStackProps extends cdk.StackProps {
   vpc: Vpc;
   image: EcrImage;
+  redisHostname: string,
+  postgresHostname: string,
 }
 
 export class AppStack extends cdk.Stack {
@@ -27,6 +29,7 @@ export class AppStack extends cdk.Stack {
       taskImageOptions: {
         image: props.image,
         environment: {
+          REDIS_URL: props.redisHostname,
         },
         containerPort: 3000,
       },
