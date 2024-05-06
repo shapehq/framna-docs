@@ -1,5 +1,6 @@
+import Guest from "./Guest"
 
-interface IGuestRepository {
+export default interface IGuestRepository {
     getAll(): Promise<Guest[]>
     findByEmail(email: string): Promise<Guest | undefined>
     create(email: string, projects: string[]): Promise<Guest>
