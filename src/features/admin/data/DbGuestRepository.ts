@@ -1,4 +1,5 @@
 import { Pool } from "pg"
+import { Guest, IGuestRepository } from "../domain"
 
 export default class DbGuestRepository implements IGuestRepository {
     readonly pool: Pool
