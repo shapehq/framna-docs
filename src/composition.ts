@@ -24,25 +24,28 @@ import {
 } from "@/features/projects/domain"
 import {
   GitHubOAuthTokenRefresher,
-  AuthjsOAuthTokenRepository,
-  AuthjsRepositoryAccessReader,
+  AuthjsOAuthTokenDataSource,
   GitHubInstallationAccessTokenDataSource
 } from "@/features/auth/data"
 import {
+  AccessTokenDataSource,
   AccessTokenRefresher,
+  AccessTokenTransferrer,
   AccessTokenSessionValidator,
   CompositeLogOutHandler,
   ErrorIgnoringLogOutHandler,
   GitHubOrganizationSessionValidator,
+  GitHubAccessTokenTransferrer,
+  GuestRepositoryAccessDataSource,
+  GuestAccessTokenTransferrer,
   LockingAccessTokenRefresher,
   NullObjectLogInHandler,
   OAuthTokenRepository,
-  AccessTokenReader,
   UserDataCleanUpLogOutHandler
 } from "@/features/auth/domain"
-import { IGuestInviter } from "./features/admin/domain/IGuestInviter"
+import { DbGuestRepository } from "./features/admin/data"
+import { IGuestInviter, IGuestRepository } from "./features/admin/domain"
 import { createTransport } from "nodemailer"
-import DbGuestRepository from "./features/admin/data/DbGuestRepository"
 
 const {
   GITHUB_APP_ID,
@@ -79,8 +82,6 @@ const db = new PostgreSQLDB({ pool })
 
 const logInHandler = new NullObjectLogInHandler()
 
-const gitHubInstallationAccessTokenDataSource = new GitHubInstallationAccessTokenDataSource(gitHubAppCredentials)
-
 export const authOptions: NextAuthOptions = {
   adapter: PostgresAdapter(pool) as Adapter,
   secret: process.env.NEXTAUTH_SECRET,
@@ -111,31 +112,6 @@ export const authOptions: NextAuthOptions = {
           return false // email not invited
         }
       }
-      else if (account?.provider == "email" && user.email) { // in sign in flow, click on magic link
-        // obtain access token from GitHub using app auth
-        const guest = await guestRepository.findByEmail(user.email)
-        if (guest == undefined) {
-          return false // email not invited
-        }
-        const accessToken = await gitHubInstallationAccessTokenDataSource.getAccessToken(guest.projects || [])
-        const query = `
-            INSERT INTO access_tokens (
-              provider,
-              provider_account_id,
-              access_token
-            )
-            VALUES ($1, $2, $3)
-            ON CONFLICT (provider, provider_account_id)
-            DO UPDATE SET access_token = $3, last_updated_at = NOW();
-            `
-        await pool.query(query, [
-          account.provider,
-          account.providerAccountId,
-          accessToken,
-        ])
-        return true
-      }
-
       if (account) {
         return await logInHandler.handleLogIn(user.id, account)
       } else {
@@ -149,33 +125,60 @@ export const authOptions: NextAuthOptions = {
   }
 }
 
-export const session: ISession = new AuthjsSession({ authOptions })
+export const session: ISession = new AuthjsSession({ db, authOptions })
 
-const accessTokenReader = new AccessTokenReader({
-  userIdReader: session,
-  sourceOAuthTokenRepository: new AuthjsOAuthTokenRepository({ provider: "github", db }),
-  destinationOAuthTokenRepository: new OAuthTokenRepository({ provider: "github", db })
+export const guestRepository: IGuestRepository = new DbGuestRepository(pool)
+
+const oauthTokenRepository = new OAuthTokenRepository({ db, provider: "github" })
+
+const githubAccessTokenDataSource = new AccessTokenDataSource({
+  session,
+  oauthTokenDataSource: oauthTokenRepository,
+  accessTokenTransferrer: new AccessTokenTransferrer({
+    session,
+    gitHubAccessTokenTransferrer: new GitHubAccessTokenTransferrer({
+      session,
+      sourceOAuthTokenDataSource: new AuthjsOAuthTokenDataSource({ db, provider: "github" }),
+      destinationOAuthTokenRepository: oauthTokenRepository
+    }),
+    guestAccessTokenTransferrer: new GuestAccessTokenTransferrer({
+      session,
+      guestRepository,
+      installationAccessTokenDataSource: new GitHubInstallationAccessTokenDataSource(
+        gitHubAppCredentials
+      ),
+      destinationOAuthTokenRepository: oauthTokenRepository
+    })
+  }),
+  mutexFactory: new SessionMutexFactory({
+    baseKey: "mutexTransferAccessToken",
+    mutexFactory: new RedisKeyedMutexFactory(REDIS_URL),
+    userIdReader: session
+  })
 })
 
-export const repositoryAccessReader = new AuthjsRepositoryAccessReader()
+export const repositoryAccessReader = new GuestRepositoryAccessDataSource({
+  db,
+  guestRepository
+})
 
 export const gitHubClient = new GitHubClient({
   ...gitHubAppCredentials,
-  accessTokenReader
+  accessTokenDataSource: githubAccessTokenDataSource
 })
 
 export const userGitHubClient = new AccessTokenRefreshingGitHubClient({
   gitHubClient,
-  accessTokenReader,
+  accessTokenDataSource: githubAccessTokenDataSource,
   accessTokenRefresher: new LockingAccessTokenRefresher({
-    mutexFactory: new SessionMutexFactory(
-      new RedisKeyedMutexFactory(REDIS_URL),
-      session,
-      "mutexAccessToken"
-    ),
+    mutexFactory: new SessionMutexFactory({
+      baseKey: "mutexAccessToken",
+      mutexFactory: new RedisKeyedMutexFactory(REDIS_URL),
+      userIdReader: session
+    }),
     accessTokenRefresher: new AccessTokenRefresher({
       userIdReader: session,
-      oAuthTokenRepository: new OAuthTokenRepository({ db, provider: "github" }),
+      oAuthTokenRepository: oauthTokenRepository,
       oAuthTokenRefresher: new GitHubOAuthTokenRefresher({
         clientId: gitHubAppCredentials.clientId,
         clientSecret: gitHubAppCredentials.clientSecret
@@ -185,8 +188,9 @@ export const userGitHubClient = new AccessTokenRefreshingGitHubClient({
 })
 
 export const blockingSessionValidator = new AccessTokenSessionValidator({
-  accessTokenReader
+  accessTokenDataSource: githubAccessTokenDataSource
 })
+
 export const delayedSessionValidator = new GitHubOrganizationSessionValidator({
   acceptedOrganization: GITHUB_ORGANIZATION_NAME,
   organizationMembershipStatusReader: userGitHubClient,
@@ -216,8 +220,6 @@ export const logOutHandler = new ErrorIgnoringLogOutHandler(
     new UserDataCleanUpLogOutHandler(session, projectUserDataRepository)
   ])
 )
-
-export const guestRepository: IGuestRepository = new DbGuestRepository(pool)
 
 const transport = createTransport({
   host: "sandbox.smtp.mailtrap.io",

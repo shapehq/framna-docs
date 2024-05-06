@@ -11,14 +11,14 @@ export default class SessionMutexFactory implements IMutexFactory {
   private readonly userIdReader: IUserIDReader
   private readonly baseKey: string
   
-  constructor(
-    mutexFactory: IKeyedMutexFactory,
+  constructor(config: {
     userIdReader: IUserIDReader,
+    mutexFactory: IKeyedMutexFactory,
     baseKey: string
-  ) {
-    this.userIdReader = userIdReader
-    this.baseKey = baseKey
-    this.mutexFactory = mutexFactory
+  }) {
+    this.userIdReader = config.userIdReader
+    this.baseKey = config.baseKey
+    this.mutexFactory = config.mutexFactory
   }
   
   async makeMutex(): Promise<IMutex> {

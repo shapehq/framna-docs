@@ -1,8 +1,11 @@
 import { IMutexFactory } from "@/common"
 import withMutex from "../../../../common/mutex/withMutex"
-import IAccessTokenRefresher from "./IAccessTokenRefresher"
 
-export default class LockingAccessTokenRefresher implements IAccessTokenRefresher {
+interface IAccessTokenRefresher {
+  refreshAccessToken(accessToken: string): Promise<string>
+}
+
+export default class LockingAccessTokenRefresher {
   private readonly mutexFactory: IMutexFactory
   private readonly accessTokenRefresher: IAccessTokenRefresher
   

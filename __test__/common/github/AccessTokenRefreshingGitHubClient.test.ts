@@ -9,7 +9,7 @@ import {
 test("It forwards a GraphQL request", async () => {
   let forwardedRequest: GraphQLQueryRequest | undefined
   const sut = new AccessTokenRefreshingGitHubClient({
-    accessTokenReader: {
+    accessTokenDataSource: {
       async getAccessToken() {
         return "foo"
       }
@@ -47,7 +47,7 @@ test("It forwards a GraphQL request", async () => {
 test("It forwards a request to get the repository content", async () => {
   let forwardedRequest: GetRepositoryContentRequest | undefined
   const sut = new AccessTokenRefreshingGitHubClient({
-    accessTokenReader: {
+    accessTokenDataSource: {
       async getAccessToken() {
         return "foo"
       }
@@ -87,7 +87,7 @@ test("It forwards a request to get the repository content", async () => {
 test("It forwards a request to get comments to a pull request", async () => {
   let forwardedRequest: GetPullRequestCommentsRequest | undefined
   const sut = new AccessTokenRefreshingGitHubClient({
-    accessTokenReader: {
+    accessTokenDataSource: {
       async getAccessToken() {
         return "foo"
       }
@@ -127,7 +127,7 @@ test("It forwards a request to get comments to a pull request", async () => {
 test("It forwards a request to add a comment to a pull request", async () => {
   let forwardedRequest: AddCommentToPullRequestRequest | undefined
   const sut = new AccessTokenRefreshingGitHubClient({
-    accessTokenReader: {
+    accessTokenDataSource: {
       async getAccessToken() {
         return "foo"
       }
@@ -170,7 +170,7 @@ test("It retries with a refreshed access token when receiving HTTP 401", async (
   let didRefreshAccessToken = false
   let didRespondWithAuthorizationError = false
   const sut = new AccessTokenRefreshingGitHubClient({
-    accessTokenReader: {
+    accessTokenDataSource: {
       async getAccessToken() {
         return "foo"
       }
@@ -212,7 +212,7 @@ test("It retries with a refreshed access token when receiving HTTP 401", async (
 test("It only retries a request once when receiving HTTP 401", async () => {
   let requestCount = 0
   const sut = new AccessTokenRefreshingGitHubClient({
-    accessTokenReader: {
+    accessTokenDataSource: {
       async getAccessToken() {
         return "foo"
       }
@@ -254,7 +254,7 @@ test("It only retries a request once when receiving HTTP 401", async () => {
 test("It does not refresh an access token when the initial request was successful", async () => {
   let didRefreshAccesstoken = false
   const sut = new AccessTokenRefreshingGitHubClient({
-    accessTokenReader: {
+    accessTokenDataSource: {
       async getAccessToken() {
         return "foo"
       }

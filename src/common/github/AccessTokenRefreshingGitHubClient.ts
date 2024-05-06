@@ -15,7 +15,7 @@ const HttpErrorSchema = z.object({
   status: z.number()
 })
 
-interface IGitHubAccessTokenReader {
+interface IGitHubAccessTokenDataSource {
   getAccessToken(): Promise<string>
 }
 
@@ -24,18 +24,18 @@ interface IGitHubAccessTokenRefresher {
 }
 
 export default class AccessTokenRefreshingGitHubClient implements IGitHubClient {
-  private readonly accessTokenReader: IGitHubAccessTokenReader
+  private readonly accessTokenDataSource: IGitHubAccessTokenDataSource
   private readonly accessTokenRefresher: IGitHubAccessTokenRefresher
   private readonly gitHubClient: IGitHubClient
   
   constructor(
     config: {
-      accessTokenReader: IGitHubAccessTokenReader
+      accessTokenDataSource: IGitHubAccessTokenDataSource
       accessTokenRefresher: IGitHubAccessTokenRefresher
       gitHubClient: IGitHubClient
     }
   ) {
-    this.accessTokenReader = config.accessTokenReader
+    this.accessTokenDataSource = config.accessTokenDataSource
     this.accessTokenRefresher = config.accessTokenRefresher
     this.gitHubClient = config.gitHubClient
   }
@@ -73,7 +73,7 @@ export default class AccessTokenRefreshingGitHubClient implements IGitHubClient 
   }
   
   private async send<T>(fn: () => Promise<T>): Promise<T> {
-    const accessToken = await this.accessTokenReader.getAccessToken()
+    const accessToken = await this.accessTokenDataSource.getAccessToken()
     try {
       return await fn()
     } catch (e) {

@@ -1,4 +1,3 @@
-import IAccessTokenRefresher from "./IAccessTokenRefresher"
 import IOAuthTokenRepository from "../oAuthToken/IOAuthTokenRepository"
 import IOAuthTokenRefresher from "../oAuthToken/IOAuthTokenRefresher"
 
@@ -6,7 +5,7 @@ interface IUserIDReader {
   getUserId(): Promise<string>
 }
 
-export default class AccessTokenRefresher implements IAccessTokenRefresher {
+export default class AccessTokenRefresher {
   private readonly userIdReader: IUserIDReader
   private readonly oAuthTokenRepository: IOAuthTokenRepository
   private readonly oAuthTokenRefresher: IOAuthTokenRefresher
@@ -31,7 +30,11 @@ export default class AccessTokenRefresher implements IAccessTokenRefresher {
       return oAuthToken.accessToken
     }
     // Given access token is stale so we refresh it.
-    const newOAuthToken = await this.oAuthTokenRefresher.refreshOAuthToken(oAuthToken.refreshToken)
+    const refreshToken = oAuthToken.refreshToken
+    if (!refreshToken) {
+      throw new Error("OAuth token does not have a refresh token")
+    }
+    const newOAuthToken = await this.oAuthTokenRefresher.refreshOAuthToken(refreshToken)
     await this.oAuthTokenRepository.set(userId, newOAuthToken)
     return newOAuthToken.accessToken
   }

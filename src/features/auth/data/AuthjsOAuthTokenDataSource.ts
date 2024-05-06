@@ -1,7 +1,7 @@
 import { IDB, UnauthorizedError } from "../../../common"
-import { IOAuthTokenRepository, OAuthToken } from "../domain"
+import { OAuthToken, IOAuthTokenDataSource } from "../domain"
 
-export default class AuthjsOAuthTokenRepository implements IOAuthTokenRepository {
+export default class AuthjsOAuthTokenDataSource implements IOAuthTokenDataSource {
   private readonly db: IDB
   private readonly provider: string
   
@@ -24,13 +24,5 @@ export default class AuthjsOAuthTokenRepository implements IOAuthTokenRepository
       throw new UnauthorizedError("")
     }
     return { accessToken, refreshToken }
-  }
-  
-  async set(_userId: string, _token: OAuthToken): Promise<void> {
-    throw new Error("Not implemented. We do not support modifying data owned by Auth.js. Use our access_tokens table instead.")
-  }
-  
-  async delete(_userId: string): Promise<void> {
-    throw new Error("Not implemented. We do not support modifying data owned by Auth.js. Use our access_tokens table instead.")
   }
 }

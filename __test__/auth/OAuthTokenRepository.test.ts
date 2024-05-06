@@ -83,7 +83,7 @@ test("It deletes the auth token for the specified user", async () => {
         }
       },
       async query(_query: string, values: any[] = []) {
-        deletedUserId = values[0]
+        deletedUserId = values[1]
         return { rows: [] }
       }
     }

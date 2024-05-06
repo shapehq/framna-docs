@@ -12,7 +12,7 @@ import IGitHubClient, {
   PullRequestComment
 } from "./IGitHubClient"
 
-interface IGitHubAccessTokenReader {
+interface IGitHubAccessTokenDataSource {
   getAccessToken(): Promise<string>
 }
 
@@ -21,7 +21,7 @@ type GitHubContentItem = {download_url: string}
 type InstallationAuthenticator = (installationId: number) => Promise<{token: string}>
 
 export default class GitHubClient implements IGitHubClient {
-  private readonly accessTokenReader: IGitHubAccessTokenReader
+  private readonly accessTokenDataSource: IGitHubAccessTokenDataSource
   private readonly installationAuthenticator: InstallationAuthenticator
   
   constructor(
@@ -30,10 +30,10 @@ export default class GitHubClient implements IGitHubClient {
       clientId: string
       clientSecret: string
       privateKey: string
-      accessTokenReader: IGitHubAccessTokenReader
+      accessTokenDataSource: IGitHubAccessTokenDataSource
     }
   ) {
-    this.accessTokenReader = config.accessTokenReader
+    this.accessTokenDataSource = config.accessTokenDataSource
     const appAuth = createAppAuth({
       appId: config.appId,
       clientId: config.clientId,
@@ -46,13 +46,13 @@ export default class GitHubClient implements IGitHubClient {
   }
   
   async graphql(request: GraphQLQueryRequest): Promise<GraphQlQueryResponse> {
-    const accessToken = await this.accessTokenReader.getAccessToken()
+    const accessToken = await this.accessTokenDataSource.getAccessToken()
     const octokit = new Octokit({ auth: accessToken })
     return await octokit.graphql(request.query, request.variables)
   }
   
   async getRepositoryContent(request: GetRepositoryContentRequest): Promise<RepositoryContent> {
-    const accessToken = await this.accessTokenReader.getAccessToken()
+    const accessToken = await this.accessTokenDataSource.getAccessToken()
     const octokit = new Octokit({ auth: accessToken })
     const response = await octokit.rest.repos.getContent({
       owner: request.repositoryOwner,
@@ -96,7 +96,7 @@ export default class GitHubClient implements IGitHubClient {
   async getOrganizationMembershipStatus(
     request: GetOrganizationMembershipStatusRequest
   ): Promise<GetOrganizationMembershipStatusRequestResponse> {
-    const accessToken = await this.accessTokenReader.getAccessToken()
+    const accessToken = await this.accessTokenDataSource.getAccessToken()
     const octokit = new Octokit({ auth: accessToken })
     const response = await octokit.rest.orgs.getMembershipForAuthenticatedUser({
       org: request.organizationName

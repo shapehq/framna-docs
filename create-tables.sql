@@ -46,19 +46,19 @@ CREATE TABLE users
   PRIMARY KEY (id)
 );
 
-CREATE TABLE access_tokens
+CREATE TABLE oauth_tokens
 (
+  user_id VARCHAR(255) NOT NULL,
   provider VARCHAR(255) NOT NULL,
-  provider_account_id VARCHAR(255) NOT NULL,
   access_token VARCHAR(255) NOT NULL,
   refresh_token VARCHAR(255) NULL,
   last_updated_at timestamptz NOT NULL DEFAULT now(),
   
-  PRIMARY KEY (provider, provider_account_id)
+  PRIMARY KEY (user_id, provider)
 );
 
 CREATE TABLE guests (
-    id SERIAL PRIMARY KEY,
-    email VARCHAR(255) UNIQUE NOT NULL,
-    projects jsonb
+  id SERIAL PRIMARY KEY,
+  email VARCHAR(255) UNIQUE NOT NULL,
+  projects jsonb
 );
