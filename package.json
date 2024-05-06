@@ -11,7 +11,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint --max-warnings=0",
-    "test": "jest"
+    "test": "jest",
+    "testwatch": "jest --watch"
   },
   "dependencies": {
     "@auth/pg-adapter": "^0.4.1",

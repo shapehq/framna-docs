@@ -1,3 +1,3 @@
 export default interface IGuestInviter {
-    inviteGuestByEmail: (email: string) => Promise<void>
+  inviteGuestByEmail: (email: string) => Promise<void>
 }

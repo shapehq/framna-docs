@@ -4,6 +4,7 @@ import GithubProvider from "next-auth/providers/github"
 import EmailProvider from "next-auth/providers/email"
 import PostgresAdapter from "@auth/pg-adapter"
 import { Adapter } from "next-auth/adapters"
+import { createTransport } from "nodemailer"
 import RedisKeyedMutexFactory from "@/common/mutex/RedisKeyedMutexFactory"
 import RedisKeyValueStore from "@/common/keyValueStore/RedisKeyValueStore"
 import {
@@ -43,9 +44,14 @@ import {
   OAuthTokenRepository,
   UserDataCleanUpLogOutHandler
 } from "@/features/auth/domain"
-import { DbGuestRepository } from "./features/admin/data"
-import { IGuestInviter, IGuestRepository } from "./features/admin/domain"
-import { createTransport } from "nodemailer"
+import {
+  DbGuestRepository,
+  EmailGuestInviter
+} from "./features/admin/data"
+import {
+  IGuestInviter,
+  IGuestRepository
+} from "./features/admin/domain"
 
 const {
   GITHUB_APP_ID,
@@ -56,7 +62,11 @@ const {
   REDIS_URL,
   POSTGRESQL_HOST,
   POSTGRESQL_USER,
-  POSTGRESQL_DB
+  POSTGRESQL_DB,
+  SMTP_HOST,
+  SMTP_USER,
+  SMTP_PASS,
+  FROM_EMAIL,
 } = process.env
 
 const gitHubAppCredentials = {
@@ -82,6 +92,8 @@ const db = new PostgreSQLDB({ pool })
 
 const logInHandler = new NullObjectLogInHandler()
 
+const fromEmail = FROM_EMAIL || "Shape Docs <no-reply@docs.shapetools.io>" // must be a verified email in AWS SES
+
 export const authOptions: NextAuthOptions = {
   adapter: PostgresAdapter(pool) as Adapter,
   secret: process.env.NEXTAUTH_SECRET,
@@ -96,9 +108,14 @@ export const authOptions: NextAuthOptions = {
       }
     }),
     EmailProvider({
-      sendVerificationRequest: ({ url }) => {
-        console.log("Magic link", url) // print to console for now
+      server: {
+        host: SMTP_HOST,
+        auth: {
+          user: SMTP_USER,
+          pass: SMTP_PASS,
+        }
       },
+      from: fromEmail,
     }),
   ],
   session: {
@@ -221,39 +238,11 @@ export const logOutHandler = new ErrorIgnoringLogOutHandler(
   ])
 )
 
-const transport = createTransport({
-  host: "sandbox.smtp.mailtrap.io",
-  port: 2525,
-  auth: {
-    user: "0682027d57d0db",
-    pass: "28c3dbfbfc0af8"
-  }
-});
-
-export const guestInviter: IGuestInviter = {
-  inviteGuestByEmail: function (email: string): Promise<void> {
-    transport.sendMail({
-      to: email,
-      from: "no-reply@docs.shapetools.io",
-      subject: "You have been invited to join Shape Docs",
-      html: `
-        <html>
-        <head>
-          <style>
-            body {
-              font-family: Arial, sans-serif;
-            }
-          </style>
-        </head>
-          <body>
-            <p>You have been invited to join Shape Docs!</p>
-            <p>Shape Docs uses magic links for authentication. This means that you don't need to remember a password.</p>
-            <p>Click the link below to request your first magic link to log in:</p>
-            <a href="https://docs.shapetools.io">Log in</a>
-          </body>
-        </html>
-      `,
-    })
-    return Promise.resolve()
-  }
-}
+export const guestInviter: IGuestInviter = new EmailGuestInviter({
+  server: {
+    host: SMTP_HOST,
+    user: SMTP_USER,
+    pass: SMTP_PASS,
+  },
+  from: fromEmail,
+})
