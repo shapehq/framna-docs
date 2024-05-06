@@ -1,25 +1,26 @@
-import { NextAuthOptions } from "next-auth"
-import { getServerSession } from "next-auth/next"
+import { NextAuthResult } from "next-auth"
 import { IDB, UnauthorizedError } from "../../common"
 import ISession, { AccountProviderType } from "./ISession"
 
 export default class AuthjsSession implements ISession {
   private readonly db: IDB
-  private readonly authOptions: NextAuthOptions
+  private readonly auth: NextAuthResult
   private accountProviderType: AccountProviderType | undefined
   
-  constructor(config: { db: IDB, authOptions: NextAuthOptions }) {
+  constructor(config: { db: IDB, auth: NextAuthResult }) {
     this.db = config.db
-    this.authOptions = config.authOptions
+    this.auth = config.auth
   }
   
   async getIsAuthenticated(): Promise<boolean> {
-    const session = await getServerSession(this.authOptions)
+    const { auth } = this.auth
+    const session = await auth()
     return session != null
   }
   
   async getUserId(): Promise<string> {
-    const session = await getServerSession(this.authOptions)
+    const { auth } = this.auth
+    const session = await auth()
     if (!session || !session.user || !session.user.id) {
       throw new UnauthorizedError("User ID is unavailable because the user is not authenticated.")
     }
@@ -27,7 +28,8 @@ export default class AuthjsSession implements ISession {
   }
   
   async getEmail(): Promise<string> {
-    const session = await getServerSession(this.authOptions)
+    const { auth } = this.auth
+    const session = await auth()
     if (!session || !session.user || !session.user.email) {
       throw new UnauthorizedError("User's email is unavailable because the user is not authenticated.")
     }

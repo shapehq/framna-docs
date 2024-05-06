@@ -1,9 +1,8 @@
 import { Pool } from "pg"
-import { NextAuthOptions } from "next-auth"
+import NextAuth from "next-auth"
 import GithubProvider from "next-auth/providers/github"
-import EmailProvider from "next-auth/providers/email"
+import EmailProvider from "next-auth/providers/nodemailer"
 import PostgresAdapter from "@auth/pg-adapter"
-import { Adapter } from "next-auth/adapters"
 import RedisKeyedMutexFactory from "@/common/mutex/RedisKeyedMutexFactory"
 import RedisKeyValueStore from "@/common/keyValueStore/RedisKeyValueStore"
 import {
@@ -93,8 +92,8 @@ const logInHandler = new NullObjectLogInHandler()
 
 const fromEmail = FROM_EMAIL || "Shape Docs <no-reply@docs.shapetools.io>" // must be a verified email in AWS SES
 
-export const authOptions: NextAuthOptions = {
-  adapter: PostgresAdapter(pool) as Adapter,
+export const auth = NextAuth({
+  adapter: PostgresAdapter(pool),
   secret: process.env.NEXTAUTH_SECRET,
   providers: [
     GithubProvider({
@@ -115,6 +114,7 @@ export const authOptions: NextAuthOptions = {
         }
       },
       from: fromEmail,
+      name: "email"
     }),
   ],
   session: {
@@ -128,6 +128,9 @@ export const authOptions: NextAuthOptions = {
           return false // email not invited
         }
       }
+      if (!user.id) {
+        return false
+      }
       if (account) {
         return await logInHandler.handleLogIn(user.id, account)
       } else {
@@ -139,9 +142,9 @@ export const authOptions: NextAuthOptions = {
       return session
     }
   }
-}
+})
 
-export const session: ISession = new AuthjsSession({ db, authOptions })
+export const session: ISession = new AuthjsSession({ db, auth })
 
 export const guestRepository: IGuestRepository = new DbGuestRepository(pool)
 

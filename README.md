@@ -17,8 +17,8 @@ Create a file named `.env.local` in the root of the project with the following c
 ```
 NEXT_PUBLIC_SHAPE_DOCS_TITLE='Shape Docs'
 SHAPE_DOCS_BASE_URL='https://docs.shapetools.io'
-NEXTAUTH_URL='https://docs.shapetools.io'
-NEXTAUTH_SECRET='use [openssl rand -base64 32] to generate a 32 bytes value'
+AUTH_SECRET='use [openssl rand -base64 32] to generate a 32 bytes value'
+NEXTAUTH_URL_INTERNAL='https://docs.shapetools.io'
 GITHUB_CLIENT_ID='GitHub App client ID'
 GITHUB_CLIENT_SECRET='GitHub App client secret'
 GITHUB_APP_ID='the GitHub App id'

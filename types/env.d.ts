@@ -2,8 +2,8 @@ namespace NodeJS {
   interface ProcessEnv {
     NEXT_PUBLIC_SHAPE_DOCS_TITLE: string
     SHAPE_DOCS_BASE_URL: string
+    AUTH_SECRET: string
     NEXTAUTH_URL: string
-    NEXTAUTH_SECRET: string
     GITHUB_CLIENT_ID: string
     GITHUB_CLIENT_SECRET: string
     GITHUB_APP_ID: string
