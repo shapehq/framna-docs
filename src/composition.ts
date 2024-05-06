@@ -4,7 +4,6 @@ import GithubProvider from "next-auth/providers/github"
 import EmailProvider from "next-auth/providers/email"
 import PostgresAdapter from "@auth/pg-adapter"
 import { Adapter } from "next-auth/adapters"
-import { createTransport } from "nodemailer"
 import RedisKeyedMutexFactory from "@/common/mutex/RedisKeyedMutexFactory"
 import RedisKeyValueStore from "@/common/keyValueStore/RedisKeyValueStore"
 import {
