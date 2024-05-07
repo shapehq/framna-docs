@@ -31,9 +31,7 @@ const SettingsList = () => {
       <SettingsItem href={'/admin/guests'}>
         Manage guests
       </SettingsItem>
-      <SettingsItem
-        onClick={() => signOut()}
-      >
+      <SettingsItem onClick={() => signOut()}>
         Log out
       </SettingsItem>
     </List>
