@@ -95,6 +95,11 @@ const fromEmail = FROM_EMAIL || "Shape Docs <no-reply@docs.shapetools.io>" // mu
 export const auth = NextAuth({
   adapter: PostgresAdapter(pool),
   secret: process.env.NEXTAUTH_SECRET,
+  theme: {
+    logo: "/images/duck.png",
+    colorScheme: "light",
+    brandColor: "black"
+  },
   providers: [
     GithubProvider({
       clientId: process.env.GITHUB_CLIENT_ID,
