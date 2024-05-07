@@ -1,5 +1,4 @@
 import { ReactNode } from "react"
-import { redirect } from "next/navigation"
 import { session, blockingSessionValidator } from "@/composition"
 import ClientSessionBarrier from "./client/SessionBarrier"
 
@@ -13,10 +12,6 @@ export default async function SessionBarrier({
 }: {
   children: ReactNode
 }) {
-  const isAuthenticated = await session.getIsAuthenticated()
-  if (!isAuthenticated) {
-    return redirect("/api/auth/signin")
-  }
   const accountProviderType = await session.getAccountProviderType()
   const sessionValidity = await blockingSessionValidator.validateSession()
   return (
