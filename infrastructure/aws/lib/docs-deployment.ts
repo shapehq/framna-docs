@@ -7,7 +7,8 @@ import { AppStack } from './app-stack';
 import { ContainerImage } from 'aws-cdk-lib/aws-ecs';
 
 interface DocsDeploymentProps {
-    env: Environment
+    env: Environment,
+    publicCertificateArn: string,
 }
 
 export default class DocsDeployment extends Construct {
@@ -39,6 +40,7 @@ export default class DocsDeployment extends Construct {
             image: ContainerImage.fromEcrRepository(this.infrastructure.dockerRepository, 'latest'),
             postgresHostname: this.postgres.dbInstance.instanceEndpoint.hostname,
             redisHostname: this.redis.cluster.attrRedisEndpointAddress,
+            publicCertificateArn: props.publicCertificateArn,
         });
 
         this.app.service.connections.allowToDefaultPort(this.redis);
