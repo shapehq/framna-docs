@@ -40,5 +40,7 @@ export default class DocsDeployment extends Construct {
             postgresHostname: this.postgres.dbInstance.instanceEndpoint.hostname,
             redisHostname: this.redis.cluster.attrRedisEndpointAddress,
         });
+
+        this.app.service.connections.allowToDefaultPort(this.redis);
     }
 }
