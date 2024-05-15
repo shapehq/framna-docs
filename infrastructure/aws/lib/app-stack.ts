@@ -3,7 +3,6 @@ import * as sm from 'aws-cdk-lib/aws-secretsmanager';
 import { Vpc } from 'aws-cdk-lib/aws-ec2';
 import { EcrImage, FargateService, Secret } from 'aws-cdk-lib/aws-ecs';
 import { ApplicationLoadBalancedFargateService } from 'aws-cdk-lib/aws-ecs-patterns';
-import { Effect, PolicyStatement } from 'aws-cdk-lib/aws-iam';
 import { Construct } from 'constructs';
 import { Certificate } from 'aws-cdk-lib/aws-certificatemanager';
 
@@ -12,6 +11,9 @@ interface AppStackProps extends cdk.StackProps {
   image: EcrImage;
   redisHostname: string,
   postgresHostname: string,
+  postgresUser: string,
+  postgresDb: string,
+  postgresPassword: sm.ISecret,
   publicCertificateArn: string,
 }
 
@@ -42,6 +44,10 @@ export class AppStack extends cdk.Stack {
       "AUTH0_MANAGEMENT_CLIENT_SECRET",
       "AUTH0_MANAGEMENT_DOMAIN",
       "AUTH0_SECRET",
+      // SMTP for sending emails
+      "SMTP_HOST",
+      "SMTP_USER",
+      "SMTP_PASS",
       // Other
       "SHAPE_DOCS_BASE_URL", // TODO: Could be part of config along with certificate issuing
     ]
@@ -71,18 +77,19 @@ export class AppStack extends cdk.Stack {
         image: props.image,
         environment: {
           REDIS_URL: props.redisHostname,
+          POSTGRESQL_HOST: props.postgresHostname,
+          POSTGRESQL_USER: props.postgresUser,
+          POSTGRESQL_DB: props.postgresDb,
           NEXT_PUBLIC_SHAPE_DOCS_TITLE: 'Shape Docs',
         },
-        secrets: envVars.reduce((acc, curr) => { // get each env var from Secrets Manager
-          acc[curr] = Secret.fromSecretsManager(secrets[curr]);
-          return acc;
-        }, {} as { [key: string]: Secret }),
+        secrets: {
+          ...envVars.reduce((acc, curr) => { // get each env var from Secrets Manager
+            acc[curr] = Secret.fromSecretsManager(secrets[curr]);
+            return acc;
+          }, {} as { [key: string]: Secret }),
+          POSTGRESQL_PASSWORD: Secret.fromSecretsManager(props.postgresPassword),
+        },
         containerPort: 3000,
-      },
-      taskSubnets: {
-        subnets: [
-          props.vpc.privateSubnets[0],
-        ],
       },
       circuitBreaker: {
         rollback: true,
@@ -96,12 +103,6 @@ export class AppStack extends cdk.Stack {
     app.targetGroup.configureHealthCheck({
       path: "/api/health",
     });
-
-    app.service.taskDefinition.taskRole.addToPrincipalPolicy(new PolicyStatement({
-      actions: ['ses:SendEmail', 'SES:SendRawEmail'],
-      resources: ['*'],
-      effect: Effect.ALLOW,
-    }));
 
     this.service = app.service;
     this.loadBalancer = app.loadBalancer;

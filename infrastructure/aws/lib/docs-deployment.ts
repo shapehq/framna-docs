@@ -39,10 +39,14 @@ export default class DocsDeployment extends Construct {
             vpc: this.infrastructure.vpc,
             image: ContainerImage.fromEcrRepository(this.infrastructure.dockerRepository, 'latest'),
             postgresHostname: this.postgres.dbInstance.instanceEndpoint.hostname,
+            postgresUser: this.postgres.username,
+            postgresDb: this.postgres.database,
+            postgresPassword: this.postgres.password,
             redisHostname: this.redis.cluster.attrRedisEndpointAddress,
             publicCertificateArn: props.publicCertificateArn,
         });
 
         this.app.service.connections.allowToDefaultPort(this.redis);
+        this.app.service.connections.allowToDefaultPort(this.postgres.dbInstance);
     }
 }
