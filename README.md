@@ -96,4 +96,12 @@ Each environment is deployed by merging changes into their respective branch. He
 
 ## 📖 Getting Started with Shape Docs
 
-Details on getting started showing documentation on Shape Docs can be [found on our Conflouence](https://shapedk.atlassian.net/wiki/spaces/DEVELOPERS/pages/3795615745/Shape+Docs).
+Details on getting started showing documentation on Shape Docs can be [found on our Confluence](https://shapedk.atlassian.net/wiki/spaces/DEVELOPERS/pages/3795615745/Shape+Docs).
+
+## ✨ Design
+
+This section documents key decisions that were made during the design of Shape Docs.
+
+### Multiple Authentication Providers
+
+Users are allowed to sign in with multiple authentication providers. They can sign in using either GitHub or a magic link. This is key for employees who are also invited as guests on the email associated with their GitHub account. When they sign in using a magic link, they will have access to the repositories that their GitHub account has access to. For users who are both invited as guests and have access through their GitHub account, the access granted by their GitHub account takes priority.
