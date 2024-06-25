@@ -6,7 +6,7 @@ import { z } from 'zod'
 
 const sendInviteSchema = z.object({
     email: z.string().email(),
-    projects: z.string().transform(v => v.trim().split(","))
+    projects: z.string().min(1).transform(v => v.trim().split(","))
 })
 
 export interface SendInviteResult {
@@ -25,7 +25,7 @@ export const sendInvite = async (prevState: any, formData: FormData): Promise<Se
 
     if (!validatedFields.success) {
         return {
-            error: 'Validation failed',
+            error: validatedFields.error.errors.map(e => `${e.path.join('.')}: ${e.message}`).join(', '),
             success: false,
         }
     }
