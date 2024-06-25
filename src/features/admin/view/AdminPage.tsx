@@ -3,6 +3,7 @@ import { Box, ButtonGroup, Chip, Paper, TableBody, TableCell, TableContainer, Ta
 import Table from "@mui/material/Table"
 import { InviteGuestForm } from "./InviteGuestForm"
 import { RemoveGuestForm } from "./RemoveGuestForm"
+import { EditGuestForm } from "./EditGuestForm"
 
 const AdminPage = async () => {
     const guests = await guestRepository.getAll()
@@ -42,6 +43,7 @@ const AdminPage = async () => {
                                     <TableCell>{row.projects.join(", ")}</TableCell>
                                     <TableCell>
                                         <ButtonGroup variant="outlined">
+                                            <EditGuestForm />
                                             <RemoveGuestForm email={row.email} />
                                         </ButtonGroup>
                                     </TableCell>
