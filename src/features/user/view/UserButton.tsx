@@ -50,13 +50,13 @@ const UserButton = ({ session }: { session: Session }) => {
       >
         <MenuItemHover>
           <Stack direction="row" alignItems="center">
-            {user?.image && 
-              <Avatar src={user.image} sx={{ width: 40, height: 40 }} alt={user.name || ""} />
+            {user && 
+              <Avatar src={user.image} sx={{ width: 40, height: 40 }} alt={user.name || user.email} />
             }
             <Box sx={{ marginLeft: "10px" }}>
               {user &&
                 <Typography sx={{ fontWeight: 600 }}>
-                  {user.name}
+                  {user.name || user.email}
                 </Typography>
               }
             </Box>
