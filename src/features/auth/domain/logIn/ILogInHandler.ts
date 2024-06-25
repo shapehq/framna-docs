@@ -1,8 +1,8 @@
 export interface IAccount {
-  provider: string
-  providerAccountId: string
-  access_token?: string
-  refresh_token?: string
+  readonly provider: string
+  readonly providerAccountId: string
+  readonly access_token?: string
+  readonly refresh_token?: string
 }
 
 export default interface ILogInHandler {

@@ -1,4 +1,4 @@
-import { KeyValueUserDataRepository } from "../../../src/common"
+import { KeyValueUserDataRepository } from "@/common"
 
 test("It reads the expected key", async () => {
   let readKey: string | undefined

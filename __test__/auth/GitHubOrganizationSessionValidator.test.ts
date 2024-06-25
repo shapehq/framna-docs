@@ -13,8 +13,8 @@ test("It requests organization membership status for the specified organization"
         return { state: "active" }
       }
     },
-    accountProviderTypeReader: {
-      async getAccountProviderType() {
+    accountProviderReader: {
+      async getAccountProvider() {
         return "github"
       }
     }
@@ -31,8 +31,8 @@ test("It considers session valid when membership state is \"active\"", async () 
         return { state: "active" }
       }
     },
-    accountProviderTypeReader: {
-      async getAccountProviderType() {
+    accountProviderReader: {
+      async getAccountProvider() {
         return "github"
       }
     }
@@ -49,8 +49,8 @@ test("It considers user not to be part of the organization when membership state
         return { state: "pending" }
       }
     },
-    accountProviderTypeReader: {
-      async getAccountProviderType() {
+    accountProviderReader: {
+      async getAccountProvider() {
         return "github"
       }
     }
@@ -67,8 +67,8 @@ test("It considers user not to be part of the organization when receiving HTTP 4
         throw { status: 404, message: "User is not member of organization"}
       }
     },
-    accountProviderTypeReader: {
-      async getAccountProviderType() {
+    accountProviderReader: {
+      async getAccountProvider() {
         return "github"
       }
     }
@@ -85,8 +85,8 @@ test("It considers organization to have blocked the GitHub app when receiving HT
         throw { status: 403, message: "Organization has blocked GitHub app"}
       }
     },
-    accountProviderTypeReader: {
-      async getAccountProviderType() {
+    accountProviderReader: {
+      async getAccountProvider() {
         return "github"
       }
     }
@@ -103,8 +103,8 @@ test("It forwards error when getting membership status throws unknown error", as
         throw { status: 500 }
       }
     },
-    accountProviderTypeReader: {
-      async getAccountProviderType() {
+    accountProviderReader: {
+      async getAccountProvider() {
         return "github"
       }
     }
@@ -120,8 +120,8 @@ test("It considers session valid when the account provider is not \"github\"", a
         throw { status: "pending" }
       }
     },
-    accountProviderTypeReader: {
-      async getAccountProviderType() {
+    accountProviderReader: {
+      async getAccountProvider() {
         return "email"
       }
     }

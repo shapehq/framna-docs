@@ -1,11 +1,11 @@
 import { NextAuthResult } from "next-auth"
-import { IDB, UnauthorizedError } from "../../common"
-import ISession, { AccountProviderType } from "./ISession"
+import { IDB, UnauthorizedError } from "@/common"
+import ISession, { AccountProvider } from "./ISession"
 
 export default class AuthjsSession implements ISession {
   private readonly db: IDB
   private readonly auth: NextAuthResult
-  private accountProviderType: AccountProviderType | undefined
+  private accountProvider: AccountProvider | undefined
   
   constructor(config: { db: IDB, auth: NextAuthResult }) {
     this.db = config.db
@@ -36,16 +36,16 @@ export default class AuthjsSession implements ISession {
     return session.user.email
   }
   
-  async getAccountProviderType(): Promise<AccountProviderType> {
-    if (this.accountProviderType) {
-      return this.accountProviderType
+  async getAccountProvider(): Promise<AccountProvider> {
+    if (this.accountProvider) {
+      return this.accountProvider
     }
-    const accountProviderType = await this.readAccountProviderTypeFromDB()
-    this.accountProviderType = accountProviderType
-    return accountProviderType
+    const accountProvider = await this.readAccountProviderFromDB()
+    this.accountProvider = accountProvider
+    return accountProvider
   }
   
-  private async readAccountProviderTypeFromDB(): Promise<AccountProviderType> {
+  private async readAccountProviderFromDB(): Promise<AccountProvider> {
     const userId = await this.getUserId()
     const result = await this.db.query(
       "SELECT true FROM accounts WHERE \"userId\" = $1 AND provider = $2 LIMIT 1",

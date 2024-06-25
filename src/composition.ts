@@ -6,11 +6,11 @@ import PostgresAdapter from "@auth/pg-adapter"
 import RedisKeyedMutexFactory from "@/common/mutex/RedisKeyedMutexFactory"
 import RedisKeyValueStore from "@/common/keyValueStore/RedisKeyValueStore"
 import {
-  AccessTokenRefreshingGitHubClient,
   AuthjsSession,
   GitHubClient,
   ISession,
   KeyValueUserDataRepository,
+  OAuthTokenRefreshingGitHubClient,
   PostgreSQLDB,
   SessionMutexFactory
 } from "@/common"
@@ -23,23 +23,23 @@ import {
 } from "@/features/projects/domain"
 import {
   GitHubOAuthTokenRefresher,
-  AuthjsOAuthTokenDataSource,
   GitHubInstallationAccessTokenDataSource
 } from "@/features/auth/data"
 import {
-  AccessTokenDataSource,
-  AccessTokenRefresher,
-  AccessTokenTransferrer,
-  AccessTokenSessionValidator,
+  AccountProviderTypeBasedOAuthTokenRefresher,
+  AuthjsAccountsOAuthTokenRepository,
   CompositeLogOutHandler,
+  CompositeOAuthTokenRepository,
   ErrorIgnoringLogOutHandler,
   GitHubOrganizationSessionValidator,
-  GitHubAccessTokenTransferrer,
-  GuestRepositoryAccessDataSource,
-  GuestAccessTokenTransferrer,
-  LockingAccessTokenRefresher,
-  NullObjectLogInHandler,
+  GuestOAuthTokenDataSource,
+  GuestOAuthTokenRefresher,
+  LockingOAuthTokenRefresher,
+  LogInHandler,
+  PersistingOAuthTokenDataSource,
+  PersistingOAuthTokenRefresher,
   OAuthTokenRepository,
+  OAuthTokenSessionValidator,
   UserDataCleanUpLogOutHandler
 } from "@/features/auth/domain"
 import {
@@ -88,9 +88,17 @@ const pool = new Pool({
 
 const db = new PostgreSQLDB({ pool })
 
-const logInHandler = new NullObjectLogInHandler()
+const oauthTokenRepository = new CompositeOAuthTokenRepository({
+  oAuthTokenRepositories: [
+    new OAuthTokenRepository({ db, provider: "github" }),
+    new AuthjsAccountsOAuthTokenRepository({ db, provider: "github" })
+  ]
+})
 
-const fromEmail = FROM_EMAIL || "Shape Docs <no-reply@docs.shapetools.io>" // must be a verified email in AWS SES
+const logInHandler = new LogInHandler({ oauthTokenRepository })
+
+// Must be a verified email in AWS SES.
+const fromEmail = FROM_EMAIL || "Shape Docs <no-reply@docs.shapetools.io>"
 
 export const auth = NextAuth({
   adapter: PostgresAdapter(pool),
@@ -153,72 +161,65 @@ export const session: ISession = new AuthjsSession({ db, auth })
 
 export const guestRepository: IGuestRepository = new DbGuestRepository(pool)
 
-const oauthTokenRepository = new OAuthTokenRepository({ db, provider: "github" })
-
-const githubAccessTokenDataSource = new AccessTokenDataSource({
+const guestOAuthTokenDataSource = new GuestOAuthTokenDataSource({
   session,
-  oauthTokenDataSource: oauthTokenRepository,
-  accessTokenTransferrer: new AccessTokenTransferrer({
-    session,
-    gitHubAccessTokenTransferrer: new GitHubAccessTokenTransferrer({
-      session,
-      sourceOAuthTokenDataSource: new AuthjsOAuthTokenDataSource({ db, provider: "github" }),
-      destinationOAuthTokenRepository: oauthTokenRepository
-    }),
-    guestAccessTokenTransferrer: new GuestAccessTokenTransferrer({
-      session,
-      guestRepository,
-      installationAccessTokenDataSource: new GitHubInstallationAccessTokenDataSource(
-        gitHubAppCredentials
-      ),
-      destinationOAuthTokenRepository: oauthTokenRepository
-    })
-  }),
-  mutexFactory: new SessionMutexFactory({
-    baseKey: "mutexTransferAccessToken",
-    mutexFactory: new RedisKeyedMutexFactory(REDIS_URL),
-    userIdReader: session
-  })
+  guestRepository,
+  gitHubInstallationAccessTokenDataSource: new GitHubInstallationAccessTokenDataSource(
+    gitHubAppCredentials
+  )
 })
 
-export const repositoryAccessReader = new GuestRepositoryAccessDataSource({
-  db,
-  guestRepository
+const oauthTokenDataSource = new PersistingOAuthTokenDataSource({
+  session,
+  mutexFactory: new SessionMutexFactory({
+    baseKey: "mutexPersistingOAuthTokenDataSource",
+    mutexFactory: new RedisKeyedMutexFactory(REDIS_URL),
+    userIdReader: session
+  }),
+  repository: oauthTokenRepository,
+  dataSource: guestOAuthTokenDataSource
+})
+
+const oauthTokenRefresher = new LockingOAuthTokenRefresher({
+  mutexFactory: new SessionMutexFactory({
+    baseKey: "mutexLockingOAuthTokenRefresher",
+    mutexFactory: new RedisKeyedMutexFactory(REDIS_URL),
+    userIdReader: session
+  }),
+  oauthTokenRefresher: new PersistingOAuthTokenRefresher({
+    userIdReader: session,
+    oauthTokenRepository,
+    oauthTokenRefresher: new AccountProviderTypeBasedOAuthTokenRefresher({
+      accountProviderReader: session,
+      strategy: {
+        github: new GitHubOAuthTokenRefresher(gitHubAppCredentials),
+        email: new GuestOAuthTokenRefresher({
+          dataSource: guestOAuthTokenDataSource
+        })
+      }
+    })
+  })
 })
 
 export const gitHubClient = new GitHubClient({
   ...gitHubAppCredentials,
-  accessTokenDataSource: githubAccessTokenDataSource
+  oauthTokenDataSource
 })
 
-export const userGitHubClient = new AccessTokenRefreshingGitHubClient({
+export const userGitHubClient = new OAuthTokenRefreshingGitHubClient({
   gitHubClient,
-  accessTokenDataSource: githubAccessTokenDataSource,
-  accessTokenRefresher: new LockingAccessTokenRefresher({
-    mutexFactory: new SessionMutexFactory({
-      baseKey: "mutexAccessToken",
-      mutexFactory: new RedisKeyedMutexFactory(REDIS_URL),
-      userIdReader: session
-    }),
-    accessTokenRefresher: new AccessTokenRefresher({
-      userIdReader: session,
-      oAuthTokenRepository: oauthTokenRepository,
-      oAuthTokenRefresher: new GitHubOAuthTokenRefresher({
-        clientId: gitHubAppCredentials.clientId,
-        clientSecret: gitHubAppCredentials.clientSecret
-      })
-    })
-  })
+  oauthTokenDataSource,
+  oauthTokenRefresher,
 })
 
-export const blockingSessionValidator = new AccessTokenSessionValidator({
-  accessTokenDataSource: githubAccessTokenDataSource
+export const blockingSessionValidator = new OAuthTokenSessionValidator({
+  oauthTokenDataSource
 })
 
 export const delayedSessionValidator = new GitHubOrganizationSessionValidator({
   acceptedOrganization: GITHUB_ORGANIZATION_NAME,
   organizationMembershipStatusReader: userGitHubClient,
-  accountProviderTypeReader: session
+  accountProviderReader: session
 })
 
 const projectUserDataRepository = new KeyValueUserDataRepository(
@@ -251,5 +252,5 @@ export const guestInviter: IGuestInviter = new EmailGuestInviter({
     user: SMTP_USER,
     pass: SMTP_PASS,
   },
-  from: fromEmail,
+  from: fromEmail
 })

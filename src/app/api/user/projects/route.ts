@@ -3,7 +3,7 @@ import {
   makeAPIErrorResponse,
   UnauthorizedError,
   makeUnauthenticatedAPIErrorResponse
-} from "../../../../common"
+} from "@/common"
 import { projectDataSource } from "@/composition"
 import { session } from "@/composition"
 

@@ -1,8 +1,8 @@
-import { LockingAccessTokenRefresher } from "../../src/features/auth/domain"
+import { LockingOAuthTokenRefresher } from "../../src/features/auth/domain"
 
 test("It acquires a lock", async () => {
   let didAcquireLock = false
-  const sut = new LockingAccessTokenRefresher({
+  const sut = new LockingOAuthTokenRefresher({
     mutexFactory: {
       async makeMutex() {
         return {
@@ -13,19 +13,19 @@ test("It acquires a lock", async () => {
         }
       }
     },
-    accessTokenRefresher: {
-      async refreshAccessToken() {
-        return "foo"
+    oauthTokenRefresher: {
+      async refreshOAuthToken(_refreshToken) {
+        return { accessToken: "newAccessToken" }
       }
     }
   })
-  await sut.refreshAccessToken("bar")
+  await sut.refreshOAuthToken({ accessToken: "foo", refreshToken: "bar" })
   expect(didAcquireLock).toBeTruthy()
 })
 
 test("It releases the acquired lock", async () => {
   let didReleaseLock = false
-  const sut = new LockingAccessTokenRefresher({
+  const sut = new LockingOAuthTokenRefresher({
     mutexFactory: {
       async makeMutex() {
         return {
@@ -36,19 +36,19 @@ test("It releases the acquired lock", async () => {
         }
       }
     },
-    accessTokenRefresher: {
-      async refreshAccessToken() {
-        return "foo"
+    oauthTokenRefresher: {
+      async refreshOAuthToken(_refreshToken) {
+        return { accessToken: "newAccessToken" }
       }
     }
   })
-  await sut.refreshAccessToken("bar")
+  await sut.refreshOAuthToken({ accessToken: "foo", refreshToken: "bar" })
   expect(didReleaseLock).toBeTruthy()
 })
 
 test("It refreshes access token", async () => {
   let didRefreshAccessToken = false
-  const sut = new LockingAccessTokenRefresher({
+  const sut = new LockingOAuthTokenRefresher({
     mutexFactory: {
       async makeMutex() {
         return {
@@ -57,13 +57,13 @@ test("It refreshes access token", async () => {
         }
       }
     },
-    accessTokenRefresher: {
-      async refreshAccessToken() {
+    oauthTokenRefresher: {
+      async refreshOAuthToken(_refreshToken) {
         didRefreshAccessToken = true
-        return "foo"
+        return { accessToken: "newAccessToken" }
       }
     }
   })
-  await sut.refreshAccessToken("foo")
+  await sut.refreshOAuthToken({ accessToken: "foo", refreshToken: "bar" })
   expect(didRefreshAccessToken).toBeTruthy()
 })

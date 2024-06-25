@@ -1,4 +1,4 @@
-import { IUserDataRepository, ZodJSONCoder } from "../../../common"
+import { IUserDataRepository, ZodJSONCoder } from "@/common"
 import IProjectRepository from "./IProjectRepository"
 import Project, { ProjectSchema } from "./Project"
 

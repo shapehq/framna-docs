@@ -1,7 +1,7 @@
 "use client"
 
 import useSWR from "swr"
-import { fetcher } from "../../../../common"
+import { fetcher } from "@/common"
 
 type RepositoriesContainer = { repositories: string[] }
 

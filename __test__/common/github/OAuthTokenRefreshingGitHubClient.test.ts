@@ -1,22 +1,25 @@
-import { AccessTokenRefreshingGitHubClient } from "../../../src/common"
+import { OAuthTokenRefreshingGitHubClient } from "@/common"
 import {
   GraphQLQueryRequest,
   GetRepositoryContentRequest,
   GetPullRequestCommentsRequest,
   AddCommentToPullRequestRequest
-} from "../../../src/common/github/IGitHubClient"
+} from "@/common/github/IGitHubClient"
 
 test("It forwards a GraphQL request", async () => {
   let forwardedRequest: GraphQLQueryRequest | undefined
-  const sut = new AccessTokenRefreshingGitHubClient({
-    accessTokenDataSource: {
-      async getAccessToken() {
-        return "foo"
+  const sut = new OAuthTokenRefreshingGitHubClient({
+    oauthTokenDataSource: {
+      async getOAuthToken() {
+        return { accessToken: "foo", refreshToken: "bar" }
       }
     },
-    accessTokenRefresher: {
-      async refreshAccessToken() {
-        return "foo"
+    oauthTokenRefresher: {
+      async refreshOAuthToken(_refreshToken) {
+        return {
+          accessToken: "newAccessToken",
+          refreshToken: "newRefreshToken"
+        }
       }
     },
     gitHubClient: {
@@ -46,15 +49,18 @@ test("It forwards a GraphQL request", async () => {
 
 test("It forwards a request to get the repository content", async () => {
   let forwardedRequest: GetRepositoryContentRequest | undefined
-  const sut = new AccessTokenRefreshingGitHubClient({
-    accessTokenDataSource: {
-      async getAccessToken() {
-        return "foo"
+  const sut = new OAuthTokenRefreshingGitHubClient({
+    oauthTokenDataSource: {
+      async getOAuthToken() {
+        return { accessToken: "foo", refreshToken: "bar" }
       }
     },
-    accessTokenRefresher: {
-      async refreshAccessToken() {
-        return "foo"
+    oauthTokenRefresher: {
+      async refreshOAuthToken(_refreshToken) {
+        return {
+          accessToken: "newAccessToken",
+          refreshToken: "newRefreshToken"
+        }
       }
     },
     gitHubClient: {
@@ -86,15 +92,18 @@ test("It forwards a request to get the repository content", async () => {
 
 test("It forwards a request to get comments to a pull request", async () => {
   let forwardedRequest: GetPullRequestCommentsRequest | undefined
-  const sut = new AccessTokenRefreshingGitHubClient({
-    accessTokenDataSource: {
-      async getAccessToken() {
-        return "foo"
+  const sut = new OAuthTokenRefreshingGitHubClient({
+    oauthTokenDataSource: {
+      async getOAuthToken() {
+        return { accessToken: "foo", refreshToken: "bar" }
       }
     },
-    accessTokenRefresher: {
-      async refreshAccessToken() {
-        return "foo"
+    oauthTokenRefresher: {
+      async refreshOAuthToken(_refreshToken) {
+        return {
+          accessToken: "newAccessToken",
+          refreshToken: "newRefreshToken"
+        }
       }
     },
     gitHubClient: {
@@ -126,15 +135,18 @@ test("It forwards a request to get comments to a pull request", async () => {
 
 test("It forwards a request to add a comment to a pull request", async () => {
   let forwardedRequest: AddCommentToPullRequestRequest | undefined
-  const sut = new AccessTokenRefreshingGitHubClient({
-    accessTokenDataSource: {
-      async getAccessToken() {
-        return "foo"
+  const sut = new OAuthTokenRefreshingGitHubClient({
+    oauthTokenDataSource: {
+      async getOAuthToken() {
+        return { accessToken: "foo", refreshToken: "bar" }
       }
     },
-    accessTokenRefresher: {
-      async refreshAccessToken() {
-        return "foo"
+    oauthTokenRefresher: {
+      async refreshOAuthToken(_refreshToken) {
+        return {
+          accessToken: "newAccessToken",
+          refreshToken: "newRefreshToken"
+        }
       }
     },
     gitHubClient: {
@@ -166,19 +178,22 @@ test("It forwards a request to add a comment to a pull request", async () => {
   expect(forwardedRequest).toEqual(request)
 })
 
-test("It retries with a refreshed access token when receiving HTTP 401", async () => {
-  let didRefreshAccessToken = false
+test("It retries with a refreshed OAuth token when receiving HTTP 401", async () => {
+  let didRefreshOAuthToken = false
   let didRespondWithAuthorizationError = false
-  const sut = new AccessTokenRefreshingGitHubClient({
-    accessTokenDataSource: {
-      async getAccessToken() {
-        return "foo"
+  const sut = new OAuthTokenRefreshingGitHubClient({
+    oauthTokenDataSource: {
+      async getOAuthToken() {
+        return { accessToken: "foo", refreshToken: "bar" }
       }
     },
-    accessTokenRefresher: {
-      async refreshAccessToken() {
-        didRefreshAccessToken = true
-        return "foo"
+    oauthTokenRefresher: {
+      async refreshOAuthToken(_refreshToken) {
+        didRefreshOAuthToken = true
+        return {
+          accessToken: "newAccessToken",
+          refreshToken: "newRefreshToken"
+        }
       }
     },
     gitHubClient: {
@@ -206,20 +221,23 @@ test("It retries with a refreshed access token when receiving HTTP 401", async (
     variables: { hello: "world" }
   }
   await sut.graphql(request)
-  expect(didRefreshAccessToken).toBeTruthy()
+  expect(didRefreshOAuthToken).toBeTruthy()
 })
 
 test("It only retries a request once when receiving HTTP 401", async () => {
   let requestCount = 0
-  const sut = new AccessTokenRefreshingGitHubClient({
-    accessTokenDataSource: {
-      async getAccessToken() {
-        return "foo"
+  const sut = new OAuthTokenRefreshingGitHubClient({
+    oauthTokenDataSource: {
+      async getOAuthToken() {
+        return { accessToken: "foo", refreshToken: "bar" }
       }
     },
-    accessTokenRefresher: {
-      async refreshAccessToken() {
-        return "foo"
+    oauthTokenRefresher: {
+      async refreshOAuthToken(_refreshToken) {
+        return {
+          accessToken: "newAccessToken",
+          refreshToken: "newRefreshToken"
+        }
       }
     },
     gitHubClient: {
@@ -246,22 +264,25 @@ test("It only retries a request once when receiving HTTP 401", async () => {
   // When receiving the second HTTP 401 the call should fail.
   await expect(sut.graphql(request)).rejects.toEqual({ status: 401 })
   // We expect two requests:
-  // 1. The initial request that failed after which we refreshed the access token.
+  // 1. The initial request that failed after which we refreshed the OAuth token.
   // 2. The second request that failed after which we gave up.
   expect(requestCount).toEqual(2)
 })
 
-test("It does not refresh an access token when the initial request was successful", async () => {
-  let didRefreshAccesstoken = false
-  const sut = new AccessTokenRefreshingGitHubClient({
-    accessTokenDataSource: {
-      async getAccessToken() {
-        return "foo"
+test("It does not refresh an OAuth token when the initial request was successful", async () => {
+  let didRefreshOAuthToken = false
+  const sut = new OAuthTokenRefreshingGitHubClient({
+    oauthTokenDataSource: {
+      async getOAuthToken() {
+        return { accessToken: "foo", refreshToken: "bar" }
       }
     },
-    accessTokenRefresher: {
-      async refreshAccessToken() {
-        return "foo"
+    oauthTokenRefresher: {
+      async refreshOAuthToken(_refreshToken) {
+        return {
+          accessToken: "newAccessToken",
+          refreshToken: "newRefreshToken"
+        }
       }
     },
     gitHubClient: {
@@ -285,5 +306,5 @@ test("It does not refresh an access token when the initial request was successfu
     variables: { hello: "world" }
   }
   await sut.graphql(request)
-  expect(didRefreshAccesstoken).toBeFalsy()
+  expect(didRefreshOAuthToken).toBeFalsy()
 })

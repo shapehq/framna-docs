@@ -12,11 +12,11 @@ export default async function SessionBarrier({
 }: {
   children: ReactNode
 }) {
-  const accountProviderType = await session.getAccountProviderType()
+  const accountProvider = await session.getAccountProvider()
   const sessionValidity = await blockingSessionValidator.validateSession()
   return (
     <ClientSessionBarrier
-      accountProviderType={accountProviderType}
+      accountProvider={accountProvider}
       siteName={NEXT_PUBLIC_SHAPE_DOCS_TITLE}
       organizationName={GITHUB_ORGANIZATION_NAME}
       sessionValidity={sessionValidity}

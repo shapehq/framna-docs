@@ -1,4 +1,4 @@
-import OAuthToken from "./OAuthToken"
+import { OAuthToken } from ".."
 
 export default interface IOAuthTokenRepository {
   get(userId: string): Promise<OAuthToken>

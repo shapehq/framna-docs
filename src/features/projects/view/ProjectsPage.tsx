@@ -9,7 +9,7 @@ export default async function ProjectsPage({
   projectRepository: ProjectRepository
   path: string
 }) {
-  const enableGitHubLinks = await session.getAccountProviderType() == "github"
+  const enableGitHubLinks = await session.getAccountProvider() == "github"
   const projects = await projectRepository.get()
   return (
     <ClientProjectsPage

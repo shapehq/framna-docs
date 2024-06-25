@@ -1,7 +1,7 @@
-import { IDB, UnauthorizedError } from "../../../../common"
-import { IOAuthTokenRepository, OAuthToken } from "."
+import { IDB, UnauthorizedError } from "@/common"
+import { IOAuthTokenRepository, OAuthToken } from ".."
 
-export default class OAuthTokenRepository implements IOAuthTokenRepository {
+export default class AuthjsAccountsOAuthTokenRepository implements IOAuthTokenRepository {
   private readonly db: IDB
   private readonly provider: string
   
@@ -16,9 +16,9 @@ export default class OAuthTokenRepository implements IOAuthTokenRepository {
       access_token, 
       refresh_token
     FROM 
-      oauth_tokens
+      accounts
     WHERE 
-      provider = $1 AND user_id = $2;
+      provider = $1 AND \"userId\" = $2;
     `
     const result = await this.db.query(query, [this.provider, userId])
     if (result.rows.length == 0) {
@@ -32,15 +32,9 @@ export default class OAuthTokenRepository implements IOAuthTokenRepository {
   
   async set(userId: string, token: OAuthToken): Promise<void> {
     const query = `
-    INSERT INTO oauth_tokens (
-      provider,
-      user_id,
-      access_token,
-      refresh_token
-    )
-    VALUES ($1, $2, $3, $4)
-    ON CONFLICT (user_id, provider)
-    DO UPDATE SET access_token = $3, refresh_token = $4, last_updated_at = NOW();
+    UPDATE accounts
+    SET access_token = $3, refresh_token = $4
+    WHERE provider = $1 AND \"userId\" = $2
     `
     try {
       await this.db.query(query, [this.provider, userId, token.accessToken, token.refreshToken])
@@ -51,7 +45,16 @@ export default class OAuthTokenRepository implements IOAuthTokenRepository {
   }
   
   async delete(userId: string): Promise<void> {
-    const query = `DELETE FROM oauth_tokens WHERE provider = $1 AND user_id = $2`
-    await this.db.query(query, [this.provider, userId])
+    const query = `
+    UPDATE accounts
+    SET access_token = "", refresh_token = ""
+    WHERE provider = $1 AND \"userId\" = $2
+    `
+    try {
+      await this.db.query(query, [this.provider, userId])
+    } catch (error) {
+      console.error(error)
+      throw error
+    }
   }
 }

@@ -1,12 +1,12 @@
-import { AccountProviderType } from "@/common"
+import { AccountProvider } from "@/common"
 import SessionValidity from "./SessionValidity"
 
 type OrganizationMembershipStatus = {
   readonly state: "active" | "pending"
 }
 
-interface IAccountProviderTypeReader {
-  getAccountProviderType(): Promise<AccountProviderType>
+interface IAccountProviderReader {
+  getAccountProvider(): Promise<AccountProvider>
 }
 
 interface IOrganizationMembershipStatusReader {
@@ -18,23 +18,25 @@ interface IOrganizationMembershipStatusReader {
 export default class GitHubOrganizationSessionValidator {
   private readonly acceptedOrganization: string
   private readonly organizationMembershipStatusReader: IOrganizationMembershipStatusReader
-  private readonly accountProviderTypeReader: IAccountProviderTypeReader
+  private readonly accountProviderReader: IAccountProviderReader
   
   constructor(
     config: {
       acceptedOrganization: string
       organizationMembershipStatusReader: IOrganizationMembershipStatusReader,
-      accountProviderTypeReader: IAccountProviderTypeReader
+      accountProviderReader: IAccountProviderReader
     }
   ) {
     this.acceptedOrganization = config.acceptedOrganization
     this.organizationMembershipStatusReader = config.organizationMembershipStatusReader
-    this.accountProviderTypeReader = config.accountProviderTypeReader
+    this.accountProviderReader = config.accountProviderReader
   }
   
   async validateSession(): Promise<SessionValidity> {
-    const accountProviderType = await this.accountProviderTypeReader.getAccountProviderType()
-    if (accountProviderType !== "github") {
+    const accountProvider = await this.accountProviderReader.getAccountProvider()
+    console.log(accountProvider)
+    if (accountProvider !== "github") {
+      console.log("FOOO")
       // Only validate GitHub sessions and consider any other valid.
       return SessionValidity.VALID
     }

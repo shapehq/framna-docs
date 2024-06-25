@@ -27,7 +27,6 @@ export default async function Page({ params }: { params: PageParams }) {
 }
 
 function getPath(slug: string | string[] | undefined) {
-  console.log("Slug: " + slug)
   if (slug === undefined) {
     return "/"
   } else if (typeof slug === "string") {

@@ -1,7 +1,7 @@
 "use client"
 
 import { ReactNode } from "react"
-import { AccountProviderType } from "@/common"
+import { AccountProvider } from "@/common"
 import {
   SessionValidity,
   mergeSessionValidity,
@@ -11,13 +11,13 @@ import NonGitHubAccountAccessTokenInvalidPage from "./NonGitHubAccountAccessToke
 import InvalidSessionPage from "./InvalidSessionPage"
 
 export default function SessionBarrier({
-  accountProviderType,
+  accountProvider,
   siteName,
   organizationName,
   sessionValidity: fastSessionValidity,
   children
 }: {
-  accountProviderType: AccountProviderType
+  accountProvider: AccountProvider
   siteName: string
   organizationName: string
   sessionValidity: SessionValidity
@@ -32,7 +32,7 @@ export default function SessionBarrier({
   case SessionValidity.VALID:
     return <>{children}</>
   case SessionValidity.INVALID_ACCESS_TOKEN:
-    switch (accountProviderType) {
+    switch (accountProvider) {
     case "email":
       return <NonGitHubAccountAccessTokenInvalidPage organizationName={organizationName}/>
     case "github":
