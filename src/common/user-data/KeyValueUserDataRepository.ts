@@ -1,4 +1,4 @@
-import IKeyValueStore from "../keyValueStore/IKeyValueStore"
+import IKeyValueStore from "../key-value-store/IKeyValueStore"
 import IUserDataRepository from "./IUserDataRepository"
 
 export default class KeyValueUserDataRepository implements IUserDataRepository<string> {

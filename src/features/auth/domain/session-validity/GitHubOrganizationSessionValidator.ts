@@ -34,9 +34,7 @@ export default class GitHubOrganizationSessionValidator {
   
   async validateSession(): Promise<SessionValidity> {
     const accountProvider = await this.accountProviderReader.getAccountProvider()
-    console.log(accountProvider)
     if (accountProvider !== "github") {
-      console.log("FOOO")
       // Only validate GitHub sessions and consider any other valid.
       return SessionValidity.VALID
     }

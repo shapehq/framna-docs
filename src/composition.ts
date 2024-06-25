@@ -4,7 +4,7 @@ import GithubProvider from "next-auth/providers/github"
 import EmailProvider from "next-auth/providers/nodemailer"
 import PostgresAdapter from "@auth/pg-adapter"
 import RedisKeyedMutexFactory from "@/common/mutex/RedisKeyedMutexFactory"
-import RedisKeyValueStore from "@/common/keyValueStore/RedisKeyValueStore"
+import RedisKeyValueStore from "@/common/key-value-store/RedisKeyValueStore"
 import {
   AuthjsSession,
   GitHubClient,
