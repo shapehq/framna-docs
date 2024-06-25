@@ -54,6 +54,8 @@ export default class GitHubOrganizationSessionValidator {
           return SessionValidity.OUTSIDE_GITHUB_ORGANIZATION
         } else if (error.status == 403) {
           return SessionValidity.GITHUB_APP_BLOCKED
+        } else if (error.status == 401) {
+          return SessionValidity.INVALID_ACCESS_TOKEN
         } else  {
           throw error
         }
