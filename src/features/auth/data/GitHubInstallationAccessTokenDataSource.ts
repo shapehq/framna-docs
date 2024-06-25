@@ -1,7 +1,7 @@
 import { Octokit } from "octokit"
 import { createAppAuth } from "@octokit/auth-app"
 
-type GitHubInstallationAccessTokenRefresherConfig = {
+type GitHubInstallationAccessTokenDataSourceConfig = {
   readonly appId: string
   readonly clientId: string
   readonly clientSecret: string
@@ -9,10 +9,10 @@ type GitHubInstallationAccessTokenRefresherConfig = {
   readonly organization: string
 }
 
-export default class GitHubInstallationAccessTokenRefresher {
-  private readonly config: GitHubInstallationAccessTokenRefresherConfig
+export default class GitHubInstallationAccessTokenDataSource {
+  private readonly config: GitHubInstallationAccessTokenDataSourceConfig
   
-  constructor(config: GitHubInstallationAccessTokenRefresherConfig) {
+  constructor(config: GitHubInstallationAccessTokenDataSourceConfig) {
     this.config = config
   }
   
