@@ -1,5 +1,5 @@
-import { Pool, PoolClient } from "pg"
-import IDB, { IDBConnection, IDBQueryResult } from "./IDB"
+import { Pool, PoolClient, QueryResult } from "pg"
+import IDB, { IDBConnection, IDBQueryResult, IDBRow } from "./IDB"
 
 
 export class PostgreSQLDBConnection implements IDBConnection {
@@ -13,8 +13,8 @@ export class PostgreSQLDBConnection implements IDBConnection {
     this.client.release()
   }
   
-  async query(query: string, values: any[] = []): Promise<IDBQueryResult> {
-    const result = await this.client.query(query, values)
+  async query<T extends IDBRow>(query: string, values: any[] = []): Promise<IDBQueryResult<T>> {
+    const result: QueryResult<T> = await this.client.query(query, values)
     return { rows: result.rows }
   }
 }
@@ -35,9 +35,9 @@ export default class PostgreSQLDB implements IDB {
     return new PostgreSQLDBConnection({ client })
   }
   
-  async query(query: string, values: any[] = []): Promise<IDBQueryResult> {
+  async query<T extends IDBRow>(query: string, values: any[] = []): Promise<IDBQueryResult<T>> {
     const connection = await this.connect()
-    const result = await connection.query(query, values)
+    const result = await connection.query<T>(query, values)
     connection.disconnect()
     return result
   }
