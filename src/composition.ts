@@ -97,6 +97,8 @@ const oauthTokenRepository = new CompositeOAuthTokenRepository({
 
 const logInHandler = new LogInHandler({ oauthTokenRepository })
 
+export const guestRepository: IGuestRepository = new DbGuestRepository({ db })
+
 // Must be a verified email in AWS SES.
 const fromEmail = FROM_EMAIL || "Shape Docs <no-reply@docs.shapetools.io>"
 
@@ -158,8 +160,6 @@ export const auth = NextAuth({
 })
 
 export const session: ISession = new AuthjsSession({ db, auth })
-
-export const guestRepository: IGuestRepository = new DbGuestRepository(pool)
 
 const guestOAuthTokenDataSource = new GuestOAuthTokenDataSource({
   session,

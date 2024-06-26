@@ -1,11 +1,11 @@
-import { Pool } from "pg"
+import { IDB } from "@/common"
 import { Guest, IGuestRepository } from "../domain"
 
 export default class DbGuestRepository implements IGuestRepository {
-    readonly pool: Pool
+    private readonly db: IDB
 
-    constructor(pool: Pool) {
-        this.pool = pool
+    constructor(config: { db: IDB }) {
+        this.db = config.db
     }
     
     /**
@@ -25,7 +25,7 @@ export default class DbGuestRepository implements IGuestRepository {
             LEFT JOIN users u ON g.email = u.email 
             ORDER BY g.email ASC
         `
-        const result = await this.pool.query(sql)
+        const result = await this.db.query<Guest>(sql)
         return result.rows
     }
 
@@ -37,7 +37,7 @@ export default class DbGuestRepository implements IGuestRepository {
      */
     async findByEmail(email: string): Promise<Guest | undefined> {
         const sql = "SELECT * FROM guests WHERE email = $1"
-        const result = await this.pool.query(sql, [email])
+        const result = await this.db.query<Guest>(sql, [email])
         return result.rows[0]
     }
 
@@ -50,7 +50,7 @@ export default class DbGuestRepository implements IGuestRepository {
      */
     async create(email: string, projects: string[]): Promise<Guest> {
         const sql = "INSERT INTO guests (email, projects) VALUES ($1, $2)"
-        await this.pool.query(sql, [email, JSON.stringify(projects)])
+        await this.db.query(sql, [email, JSON.stringify(projects)])
         
         const insertedGuest = await this.findByEmail(email)
         if (!insertedGuest) {
@@ -67,7 +67,7 @@ export default class DbGuestRepository implements IGuestRepository {
      */
     async removeByEmail(email: string): Promise<void> {
         const sql = "DELETE FROM guests WHERE email = $1"
-        await this.pool.query(sql, [email])
+        await this.db.query(sql, [email])
     }
     
     /**
@@ -78,7 +78,7 @@ export default class DbGuestRepository implements IGuestRepository {
      */
     async getProjectsForEmail(email: string): Promise<string[]> {
         const sql = "SELECT projects FROM guests WHERE email = $1"
-        const result = await this.pool.query(sql, [email])
+        const result = await this.db.query(sql, [email])
         return result.rows[0] ? result.rows[0].projects : []
     }
 }
