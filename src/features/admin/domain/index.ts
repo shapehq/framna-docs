@@ -1,3 +1,6 @@
+export type { default as Account } from "./Account"
 export type { default as Guest } from "./Guest"
 export type { default as IGuestRepository } from "./IGuestRepository"
 export type { default as IGuestInviter } from "./IGuestInviter"
+export type { default as IUserRepository } from "./IUserRepository"
+export type { default as User } from "./User"

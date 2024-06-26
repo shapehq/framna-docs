@@ -44,11 +44,13 @@ import {
 } from "@/features/auth/domain"
 import {
   DbGuestRepository,
+  DbUserRepository,
   EmailGuestInviter
 } from "./features/admin/data"
 import {
   IGuestInviter,
-  IGuestRepository
+  IGuestRepository,
+  IUserRepository
 } from "./features/admin/domain"
 
 const {
@@ -95,9 +97,11 @@ const oauthTokenRepository = new CompositeOAuthTokenRepository({
   ]
 })
 
-const logInHandler = new LogInHandler({ oauthTokenRepository })
+const userRepository: IUserRepository = new DbUserRepository({ db })
 
 export const guestRepository: IGuestRepository = new DbGuestRepository({ db })
+
+const logInHandler = new LogInHandler({ userRepository, guestRepository })
 
 // Must be a verified email in AWS SES.
 const fromEmail = FROM_EMAIL || "Shape Docs <no-reply@docs.shapetools.io>"
@@ -137,20 +141,7 @@ export const auth = NextAuth({
   },
   callbacks: {
     async signIn({ user, account, email }) {
-      if (email && email.verificationRequest && user.email) { // in verification request flow
-        const guest = await guestRepository.findByEmail(user.email)
-        if (guest == undefined) {
-          return false // email not invited
-        }
-      }
-      if (!user.id) {
-        return false
-      }
-      if (account) {
-        return await logInHandler.handleLogIn(user.id, account)
-      } else {
-        return await logInHandler.handleLogIn(user.id)
-      }
+      return await logInHandler.handleLogIn(user, account, email)
     },
     async session({ session, user }) {
       session.user.id = user.id
