@@ -45,7 +45,8 @@ import {
 import {
   DbGuestRepository,
   DbUserRepository,
-  EmailGuestInviter
+  EmailGuestInviter,
+  MagicLinkEmailSender
 } from "./features/admin/data"
 import {
   IGuestInviter,
@@ -133,7 +134,11 @@ export const auth = NextAuth({
         }
       },
       from: fromEmail,
-      name: "email"
+      name: "email",
+      sendVerificationRequest: async (params) => {
+        const sender = new MagicLinkEmailSender()
+        await sender.sendMagicLink(params)
+      }
     }),
   ],
   session: {
