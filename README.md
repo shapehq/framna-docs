@@ -59,8 +59,8 @@ Be aware that the GitHub private key must be PKCS8. GitHub creates PKCS1 keys, s
 
 ```bash
 openssl pkcs8 -topk8 -inform PEM -outform PEM -nocrypt \
-  -in ~/Downloads/private-key-pkcs1.pem \
-  -out ~/Downloads/private-key-pkcs8.pem
+  -in private-key-pkcs1.pem \
+  -out private-key-pkcs8.pem
 ```
 
 The key can then be base 64 encoded and assigned to the GITHUB_PRIVATE_KEY_BASE_64 environment variable as follows:
