@@ -55,6 +55,7 @@ import {
 } from "./features/admin/domain"
 
 const {
+  SHAPE_DOCS_BASE_URL,
   GITHUB_APP_ID,
   GITHUB_CLIENT_ID,
   GITHUB_CLIENT_SECRET,
@@ -243,6 +244,7 @@ export const logOutHandler = new ErrorIgnoringLogOutHandler(
 )
 
 export const guestInviter: IGuestInviter = new EmailGuestInviter({
+  url: SHAPE_DOCS_BASE_URL,
   server: {
     host: SMTP_HOST,
     user: SMTP_USER,
