@@ -55,6 +55,20 @@ Each environment variable is described in the table below.
 |SMTP_PASS|Password for SMTP server used for sending magic links and guest invitation.|
 |FROM_EMAIL|Sender email for magic links and guest invitations.|
 
+Be aware that the GitHub private key must be PKCS8. GitHub creates PKCS1 keys, so we must manually convert the key from PKCS1 to PKCS8 before base64 encoding it. This can be done as follows:
+
+```bash
+openssl pkcs8 -topk8 -inform PEM -outform PEM -nocrypt \
+  -in ~/Downloads/private-key-pkcs1.pem \
+  -out ~/Downloads/private-key-pkcs8.pem
+```
+
+The key can then be base 64 encoded and assigned to the GITHUB_PRIVATE_KEY_BASE_64 environment variable as follows:
+
+```bash
+base64 -i ~/Downloads/private-key-pkcs8.pem | pbcopy
+```
+
 Run the app using the following command:
 
 ```
