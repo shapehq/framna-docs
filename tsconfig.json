@@ -29,5 +29,5 @@
     ".next/types/**/*.ts",
     "types/*.d.ts"
   ],
-  "exclude": ["node_modules"]
+  "exclude": ["node_modules", "infrastructure"]
 }
