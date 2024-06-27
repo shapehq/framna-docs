@@ -29,8 +29,8 @@ import {
   AccountProviderTypeBasedOAuthTokenRefresher,
   AuthjsAccountsOAuthTokenRepository,
   CompositeLogOutHandler,
-  CompositeOAuthTokenRepository,
   ErrorIgnoringLogOutHandler,
+  FallbackOAuthTokenRepository,
   GitHubOrganizationSessionValidator,
   GuestOAuthTokenDataSource,
   GuestOAuthTokenRefresher,
@@ -92,18 +92,16 @@ const pool = new Pool({
 
 const db = new PostgreSQLDB({ pool })
 
-const oauthTokenRepository = new CompositeOAuthTokenRepository({
-  oAuthTokenRepositories: [
-    new OAuthTokenRepository({ db, provider: "github" }),
-    new AuthjsAccountsOAuthTokenRepository({ db, provider: "github" })
-  ]
+const oauthTokenRepository = new FallbackOAuthTokenRepository({
+  primaryRepository: new OAuthTokenRepository({ db, provider: "github" }),
+  secondaryRepository: new AuthjsAccountsOAuthTokenRepository({ db, provider: "github" })
 })
 
 const userRepository: IUserRepository = new DbUserRepository({ db })
 
 export const guestRepository: IGuestRepository = new DbGuestRepository({ db })
 
-const logInHandler = new LogInHandler({ userRepository, guestRepository })
+const logInHandler = new LogInHandler({ userRepository, guestRepository, oauthTokenRepository })
 
 // Must be a verified email in AWS SES.
 const fromEmail = FROM_EMAIL || "Shape Docs <no-reply@docs.shapetools.io>"

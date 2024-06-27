@@ -1,16 +1,21 @@
 import { ILogInHandler, IUser, IAccount, IEmail } from "."
 import { IGuestRepository, IUserRepository } from "@/features/admin/domain"
+import { IOAuthTokenRepository } from "../oauth-token"
+import saneParseInt from "@/common/utils/saneParseInt"
 
 export default class LogInHandler implements ILogInHandler {
   private readonly userRepository: IUserRepository
   private readonly guestRepository: IGuestRepository
+  private readonly oauthTokenRepository: IOAuthTokenRepository
   
   constructor(config: {
     userRepository: IUserRepository,
-    guestRepository: IGuestRepository
+    guestRepository: IGuestRepository,
+    oauthTokenRepository: IOAuthTokenRepository
   }) {
     this.userRepository = config.userRepository
     this.guestRepository = config.guestRepository
+    this.oauthTokenRepository = config.oauthTokenRepository
   }
   
   async handleLogIn(user: IUser, account: IAccount | null, email?: IEmail) {
@@ -18,7 +23,7 @@ export default class LogInHandler implements ILogInHandler {
       return false
     }
     if (account.provider === "github") {
-      return await this.handleLogInForGitHubUser(account)
+      return await this.handleLogInForGitHubUser(user, account)
     } else if (account.provider === "nodemailer") {
       return await this.handleLogInForGuestUser(user)
     } else {
@@ -27,12 +32,21 @@ export default class LogInHandler implements ILogInHandler {
     }
   }
   
-  private async handleLogInForGitHubUser(account: IAccount) {
-    if (!account.access_token) {
+  private async handleLogInForGitHubUser(user: IUser, account: IAccount) {
+    if (!user.id) {
       return false
     }
-    if (!account.refresh_token) {
+    const accessToken = account.access_token
+    const refreshToken = account.refresh_token
+    if (!accessToken) {
       return false
+    }
+    if (!refreshToken) {
+      return false
+    }
+    let userId = saneParseInt(user.id)
+    if (userId) {
+      await this.oauthTokenRepository.set(`${userId}`, { accessToken, refreshToken })
     }
     return true
   }

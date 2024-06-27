@@ -8,6 +8,6 @@ export type { default as IOAuthTokenRefresher } from "./refresher/IOAuthTokenRef
 export { default as LockingOAuthTokenRefresher } from "./refresher/LockingOAuthTokenRefresher"
 export { default as PersistingOAuthTokenRefresher } from "./refresher/PersistingOAuthTokenRefresher"
 export { default as AuthjsAccountsOAuthTokenRepository } from "./repository/AuthjsAccountsOAuthTokenRepository"
-export { default as CompositeOAuthTokenRepository } from "./repository/CompositeOAuthTokenRepository"
+export { default as FallbackOAuthTokenRepository } from "./repository/FallbackOAuthTokenRepository"
 export type { default as IOAuthTokenRepository } from "./repository/IOAuthTokenRepository"
 export { default as OAuthTokenRepository } from "./repository/OAuthTokenRepository"

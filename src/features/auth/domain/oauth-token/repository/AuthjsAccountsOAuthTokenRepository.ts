@@ -30,31 +30,7 @@ export default class AuthjsAccountsOAuthTokenRepository implements IOAuthTokenRe
     return { accessToken, refreshToken }
   }
   
-  async set(userId: string, token: OAuthToken): Promise<void> {
-    const query = `
-    UPDATE accounts
-    SET access_token = $3, refresh_token = $4
-    WHERE provider = $1 AND \"userId\" = $2
-    `
-    try {
-      await this.db.query(query, [this.provider, userId, token.accessToken, token.refreshToken])
-    } catch (error) {
-      console.error(error)
-      throw error
-    }
-  }
+  async set(_userId: string, _token: OAuthToken): Promise<void> {}
   
-  async delete(userId: string): Promise<void> {
-    const query = `
-    UPDATE accounts
-    SET access_token = "", refresh_token = ""
-    WHERE provider = $1 AND \"userId\" = $2
-    `
-    try {
-      await this.db.query(query, [this.provider, userId])
-    } catch (error) {
-      console.error(error)
-      throw error
-    }
-  }
+  async delete(_userId: string): Promise<void> {}
 }
