@@ -144,8 +144,8 @@ export const auth = NextAuth({
     strategy: "database"
   },
   callbacks: {
-    async signIn({ user, account, email }) {
-      return await logInHandler.handleLogIn(user, account, email)
+    async signIn({ user, account }) {
+      return await logInHandler.handleLogIn({ user, account })
     },
     async session({ session, user }) {
       session.user.id = user.id

@@ -1,4 +1,4 @@
-import { ILogInHandler, IUser, IAccount, IEmail } from "."
+import { ILogInHandler, IUser, IAccount } from "."
 import { IGuestRepository, IUserRepository } from "@/features/admin/domain"
 import { IOAuthTokenRepository } from "../oauth-token"
 import saneParseInt from "@/common/utils/saneParseInt"
@@ -18,12 +18,12 @@ export default class LogInHandler implements ILogInHandler {
     this.oauthTokenRepository = config.oauthTokenRepository
   }
   
-  async handleLogIn(user: IUser, account: IAccount | null, email?: IEmail) {
+  async handleLogIn({ user, account }: { user: IUser, account: IAccount | null }) {
     if (!account) {
       return false
     }
     if (account.provider === "github") {
-      return await this.handleLogInForGitHubUser(user, account)
+      return await this.handleLogInForGitHubUser({ user, account })
     } else if (account.provider === "nodemailer") {
       return await this.handleLogInForGuestUser(user)
     } else {
@@ -32,7 +32,7 @@ export default class LogInHandler implements ILogInHandler {
     }
   }
   
-  private async handleLogInForGitHubUser(user: IUser, account: IAccount) {
+  private async handleLogInForGitHubUser({ user, account }: { user: IUser, account: IAccount }) {
     if (!user.id) {
       return false
     }
@@ -45,10 +45,20 @@ export default class LogInHandler implements ILogInHandler {
       return false
     }
     let userId = saneParseInt(user.id)
-    if (userId) {
-      await this.oauthTokenRepository.set(`${userId}`, { accessToken, refreshToken })
+    if (!userId) {
+      // We do not have a valid user ID, meaning this is the first time the user logs in.
+      // When logging in for the first time, the user has a temporary ID that we cannot
+      // look up in our database, so we rely on Auth.js to persist the access token and 
+      // refresh token. This is intended according to Auth.js' documentation:
+      // https://authjs.dev/reference/nextjs#signin
+      return true
     }
-    return true
+    try {
+      await this.oauthTokenRepository.set(`${userId}`, { accessToken, refreshToken })
+      return true
+    } catch (error) {
+      return false
+    }
   }
   
   private async handleLogInForGuestUser(user: IUser) {
