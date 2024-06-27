@@ -13,6 +13,7 @@ describe('EmailGuestInviter', () => {
     describe('constructor', () => {
         it('should create a transporter', () => {
             const sut = new EmailGuestInviter({
+                url: "https://docs.shapetools.io",
                 server: {
                     host: 'smtp.example.com',
                     user: 'user',
@@ -34,6 +35,7 @@ describe('EmailGuestInviter', () => {
     describe('inviteGuestByEmail', () => {
         it('should send an invite', async () => {
             const sut = new EmailGuestInviter({
+                url: "https://docs.shapetools.io",
                 server: {
                     host: 'smtp.example.com',
                     user: 'user',
