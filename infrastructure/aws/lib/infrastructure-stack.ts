@@ -1,7 +1,7 @@
 import * as cdk from 'aws-cdk-lib';
 import { IpAddresses, Vpc } from 'aws-cdk-lib/aws-ec2';
 import { Repository } from 'aws-cdk-lib/aws-ecr';
-import { Policy, User } from 'aws-cdk-lib/aws-iam';
+import { Effect, Policy, PolicyStatement, User } from 'aws-cdk-lib/aws-iam';
 import { Construct } from 'constructs';
 
 export class InfrastructureStack extends cdk.Stack {
@@ -24,17 +24,35 @@ export class InfrastructureStack extends cdk.Stack {
     const deploymentPolicy = new Policy(this, 'DeploymentPolicy', {
       policyName: 'DeploymentPolicy',
       statements: [
-        // TODO: Change!
+        // ECR permissions
+        new PolicyStatement({
+          effect: Effect.ALLOW,
+          actions: [
+            "ecr:GetAuthorizationToken",
+            "ecr:PutImage",
+          ],
+          resources: [
+            "*"
+          ],
+        }),  
+        // ECS permissions
+        new PolicyStatement({
+          effect: Effect.ALLOW,
+          actions: [
+            "ecs:Describe*",
+            "ecs:RegisterTaskDefinition",
+            "ecs:UpdateService",
+          ],
+          resources: [
+            "*"
+          ],
+        }),
       ],
     });
 
-    const deploymentUser = new User(this, 'GitHubActionsUser', {
-      managedPolicies: [
-        {
-          managedPolicyArn: 'arn:aws:iam::aws:policy/AdministratorAccess', // TODO: Change!
-        },
-      ],
-    });
+    const deploymentUser = new User(this, 'GitHubActionsUser');
+
+    deploymentPolicy.attachToUser(deploymentUser);
 
     deploymentUser.attachInlinePolicy(deploymentPolicy);
   }
