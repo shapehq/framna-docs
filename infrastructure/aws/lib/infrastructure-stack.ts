@@ -24,24 +24,24 @@ export class InfrastructureStack extends cdk.Stack {
     const deploymentPolicy = new Policy(this, 'DeploymentPolicy', {
       policyName: 'DeploymentPolicy',
       statements: [
-        // ECR permissions
         new PolicyStatement({
           effect: Effect.ALLOW,
           actions: [
+            // ECR
             "ecr:GetAuthorizationToken",
+            "ecr:GetDownloadUrlForLayer",
+            "ecr:BatchCheckLayerAvailability",
             "ecr:PutImage",
-          ],
-          resources: [
-            "*"
-          ],
-        }),  
-        // ECS permissions
-        new PolicyStatement({
-          effect: Effect.ALLOW,
-          actions: [
-            "ecs:Describe*",
-            "ecs:RegisterTaskDefinition",
+            "ecr:InitiateLayerUpload",
+            "ecr:UploadLayerPart",
+            "ecr:CompleteLayerUpload",
+            // ECS
+            "ecs:DescribeServices",
             "ecs:UpdateService",
+            "ecs:RegisterTaskDefinition",
+            "ecs:DeregisterTaskDefinition",
+            "ecs:DescribeTaskDefinition",
+            "iam:PassRole"
           ],
           resources: [
             "*"
