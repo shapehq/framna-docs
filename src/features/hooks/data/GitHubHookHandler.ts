@@ -1,6 +1,7 @@
 import { NextRequest } from "next/server"
-import { Webhooks, EmitterWebhookEventName } from "@octokit/webhooks"
+import { Webhooks } from "@octokit/webhooks"
 import { IPullRequestEventHandler } from "../domain"
+import { WebhookEventName } from "@octokit/webhooks/dist-types/types"
 
 interface GitHubHookHandlerConfig {
   readonly secret: string
@@ -20,7 +21,7 @@ class GitHubHookHandler {
   async handle(req: NextRequest): Promise<void> {
     await this.webhooks.verifyAndReceive({
       id: req.headers.get('X-GitHub-Delivery') as string,
-      name: req.headers.get('X-GitHub-Event') as EmitterWebhookEventName,
+      name: req.headers.get('X-GitHub-Event') as WebhookEventName,
       payload: await req.text(),
       signature: req.headers.get('X-Hub-Signature') as string,
     }).catch((error) => {
