@@ -57,10 +57,6 @@ jobs:
           aws ecs describe-task-definition --task-definition ${{ env.ECS_TASK_DEFINITION_NAME }} --region ${{ env.AWS_REGION }} | jq .taskDefinition > task-definition.json
           jq . task-definition.json
 
-      - name: Create .env.local
-        run: |
-          cp .env.example .env.local
-
       - name: Build, tag, and push image to Amazon ECR
         id: build-image
         env:
