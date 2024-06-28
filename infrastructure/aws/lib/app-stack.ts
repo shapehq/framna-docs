@@ -45,7 +45,7 @@ export class AppStack extends cdk.Stack {
       "AUTH0_MANAGEMENT_DOMAIN", // TODO: Remove once we have transitioned to NEXTAUTH
       "AUTH0_SECRET", // TODO: Remove once we have transitioned to NEXTAUTH
       "NEXTAUTH_SECRET",
-      "NEXTAUTH_URL_INTERNAL",
+      "NEXTAUTH_URL", // TODO: Could be part of config along with certificate issuing
       // SMTP for sending emails
       "SMTP_HOST",
       "SMTP_USER",
