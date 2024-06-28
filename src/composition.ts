@@ -49,10 +49,12 @@ import {
   MagicLinkEmailSender
 } from "./features/admin/data"
 import {
+  Guest,
   IGuestInviter,
   IGuestRepository,
   IUserRepository
 } from "./features/admin/domain"
+import DummyGuestRepository from "./features/admin/data/DummyGuestRepository"
 
 const {
   SHAPE_DOCS_BASE_URL,
@@ -99,7 +101,7 @@ const oauthTokenRepository = new FallbackOAuthTokenRepository({
 
 const userRepository: IUserRepository = new DbUserRepository({ db })
 
-export const guestRepository: IGuestRepository = new DbGuestRepository({ db })
+export const guestRepository = (process.env.IS_BUILD_PROCESS !== undefined) ? new DummyGuestRepository : new DbGuestRepository({ db })
 
 const logInHandler = new LogInHandler({ userRepository, guestRepository, oauthTokenRepository })
 
