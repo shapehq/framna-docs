@@ -36,14 +36,16 @@ export class AppStack extends cdk.Stack {
       "GITHUB_WEBHOK_REPOSITORY_DISALLOWLIST",
       "GITHUB_WEBHOOK_SECRET",
       // Auth0
-      "AUTH0_BASE_URL",
-      "AUTH0_CLIENT_ID",
-      "AUTH0_CLIENT_SECRET",
-      "AUTH0_ISSUER_BASE_URL",
-      "AUTH0_MANAGEMENT_CLIENT_ID",
-      "AUTH0_MANAGEMENT_CLIENT_SECRET",
-      "AUTH0_MANAGEMENT_DOMAIN",
-      "AUTH0_SECRET",
+      "AUTH0_BASE_URL", // TODO: Remove once we have transitioned to NEXTAUTH
+      "AUTH0_CLIENT_ID", // TODO: Remove once we have transitioned to NEXTAUTH
+      "AUTH0_CLIENT_SECRET", // TODO: Remove once we have transitioned to NEXTAUTH
+      "AUTH0_ISSUER_BASE_URL", // TODO: Remove once we have transitioned to NEXTAUTH
+      "AUTH0_MANAGEMENT_CLIENT_ID", // TODO: Remove once we have transitioned to NEXTAUTH
+      "AUTH0_MANAGEMENT_CLIENT_SECRET", // TODO: Remove once we have transitioned to NEXTAUTH
+      "AUTH0_MANAGEMENT_DOMAIN", // TODO: Remove once we have transitioned to NEXTAUTH
+      "AUTH0_SECRET", // TODO: Remove once we have transitioned to NEXTAUTH
+      "NEXTAUTH_SECRET",
+      "NEXTAUTH_URL_INTERNAL",
       // SMTP for sending emails
       "SMTP_HOST",
       "SMTP_USER",
