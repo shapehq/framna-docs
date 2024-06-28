@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server"
 import { makeAPIErrorResponse, makeUnauthenticatedAPIErrorResponse } from "@/common"
-import { session, repositoryAccessReader } from "@/composition"
+import { session } from "@/composition"
 
 export async function GET() {
   const isAuthenticated = await session.getIsAuthenticated()
@@ -14,7 +14,7 @@ export async function GET() {
     return makeAPIErrorResponse(401, "Unauthorized")
   }
   try {
-    const repositoryNames = await repositoryAccessReader.getRepositoryNames(userId)
+    const repositoryNames = [] as string[]
     return NextResponse.json({repositories: repositoryNames})
   /* eslint-disable-next-line  @typescript-eslint/no-explicit-any */
   } catch (error: any) {
