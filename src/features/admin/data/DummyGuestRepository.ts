@@ -7,6 +7,10 @@ import { Guest, IGuestRepository } from "../domain"
  * have access to a database.
  */
 export default class DummyGuestRepository implements IGuestRepository {
+    constructor() {
+        console.warn("DummyGuestRepository initialized. No data will be stored.")
+    }
+
     getAll(): Promise<Guest[]> {
         return Promise.resolve([])
     }
