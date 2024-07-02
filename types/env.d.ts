@@ -15,10 +15,11 @@ namespace NodeJS {
     REDIS_URL: string
     POSTGRESQL_HOST: string
     POSTGRESQL_USER: string
-    POSTGRESQL_DB: string,
-    SMTP_HOST: string,
-    SMTP_USER: string,
-    SMTP_PASS: string,
-    FROM_EMAIL: string | undefined,
+    POSTGRESQL_PASSWORD: string
+    POSTGRESQL_DB: string
+    SMTP_HOST: string
+    SMTP_USER: string
+    SMTP_PASS: string
+    FROM_EMAIL: string | undefined
   }
 }

@@ -66,6 +66,7 @@ const {
   REDIS_URL,
   POSTGRESQL_HOST,
   POSTGRESQL_USER,
+  POSTGRESQL_PASSWORD,
   POSTGRESQL_DB,
   SMTP_HOST,
   SMTP_USER,
@@ -86,6 +87,7 @@ const gitHubAppCredentials = {
 const pool = new Pool({
   host: POSTGRESQL_HOST,
   user: POSTGRESQL_USER,
+  password: POSTGRESQL_PASSWORD,
   database: POSTGRESQL_DB,
   max: 20,
   idleTimeoutMillis: 30000,
