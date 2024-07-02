@@ -25,9 +25,15 @@ COPY . .
 # Next.js collects completely anonymous telemetry data about general usage.
 # Learn more here: https://nextjs.org/telemetry
 # Uncomment the following line in case you want to disable telemetry during the build.
-# ENV NEXT_TELEMETRY_DISABLED 1
+ENV NEXT_TELEMETRY_DISABLED 1
 
 # RUN yarn build
+
+# Copy example env vars (needed for build process - picked up by Next)
+COPY .env.example .env
+
+# Signal to code that we are in the build process (e.g. to disable database access)
+ENV IS_BUILD_PROCESS true
 
 # If using npm comment out above and use below instead
 RUN npm run build
