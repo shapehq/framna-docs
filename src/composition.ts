@@ -139,7 +139,14 @@ export const auth = NextAuth({
       from: fromEmail,
       name: "email",
       sendVerificationRequest: async (params) => {
-        const sender = new MagicLinkEmailSender()
+        const sender = new MagicLinkEmailSender({
+          server: {
+            host: SMTP_HOST,
+            user: SMTP_USER,
+            pass: SMTP_PASS,
+          },
+          from: fromEmail
+        })
         await sender.sendMagicLink(params)
       }
     }),

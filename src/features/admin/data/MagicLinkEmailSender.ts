@@ -1,46 +1,36 @@
-import { createTransport } from "nodemailer"
-import type { Transport, TransportOptions } from "nodemailer"
-import * as JSONTransport from "nodemailer/lib/json-transport/index.js"
-import * as SendmailTransport from "nodemailer/lib/sendmail-transport/index.js"
-import * as SESTransport from "nodemailer/lib/ses-transport/index.js"
-import * as SMTPTransport from "nodemailer/lib/smtp-transport/index.js"
-import * as SMTPPool from "nodemailer/lib/smtp-pool/index.js"
-import * as StreamTransport from "nodemailer/lib/stream-transport/index.js"
-
-type AllTransportOptions =
-  | string
-  | SMTPTransport
-  | SMTPTransport.Options
-  | SMTPPool
-  | SMTPPool.Options
-  | SendmailTransport
-  | SendmailTransport.Options
-  | StreamTransport
-  | StreamTransport.Options
-  | JSONTransport
-  | JSONTransport.Options
-  | SESTransport
-  | SESTransport.Options
-  | Transport<any>
-  | TransportOptions
+import { Transporter, createTransport } from "nodemailer"
 
 export default class MagicLinkEmailSender {
-  constructor() {}
+  private readonly transport: Transporter
+  private readonly from: string
+  
+  constructor(config: {
+    server: {
+      host: string,
+      user: string,
+      pass: string
+    },
+    from: string
+  }) {
+    this.transport = createTransport({
+      host: config.server.host,
+      auth: {
+        user: config.server.user,
+        pass: config.server.pass
+      }
+    })
+    this.from = config.from
+  }
 
   async sendMagicLink(params: {
     identifier: string
     expires: Date
     url: string
-    provider: {
-      from: string
-      server?: AllTransportOptions
-    }
   }): Promise<void> {
-    const { identifier, expires, url, provider } = params
-    const transport = createTransport(provider.server)
-    const result = await transport.sendMail({
+    const { identifier, expires, url } = params
+    const result = await this.transport.sendMail({
       to: identifier,
-      from: provider.from,
+      from: this.from,
       subject: "Sign in to Shape Docs",
       text: text({ url }),
       html: html({ url, expires }),
