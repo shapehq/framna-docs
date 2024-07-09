@@ -12,7 +12,7 @@ jest.mock("nodemailer", () => {
 describe("EmailGuestInviter", () => {
   describe("constructor", () => {
     it("should create a transporter", () => {
-      const sut = new EmailGuestInviter({
+      new EmailGuestInviter({
         url: "https://docs.shapetools.io",
         server: {
           host: "smtp.example.com",
