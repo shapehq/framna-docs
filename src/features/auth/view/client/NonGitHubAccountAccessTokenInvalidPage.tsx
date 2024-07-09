@@ -4,11 +4,7 @@ import InvalidSessionPage from "./InvalidSessionPage"
 import LoadingIndicator from "@/common/loading/DelayedLoadingIndicator"
 import { useRepositoryAccess } from "../../domain"
 
-export default function NonGitHubAccountAccessTokenInvalidPage({
-  organizationName
-}: {
-  organizationName: string
-}) {
+export default function NonGitHubAccountAccessTokenInvalidPage() {
   const {repositories, isLoading, error} = useRepositoryAccess()
   if (isLoading) {
     return (
@@ -20,7 +16,7 @@ export default function NonGitHubAccountAccessTokenInvalidPage({
   if (error) {
     return (
       <InvalidSessionPage title="Could not obtain access">
-        It was not possible to obtain access to the projects on the <strong>{organizationName}</strong> organization on GitHub.
+        It was not possible to obtain access to the repositories on GitHub.
       </InvalidSessionPage>
     )
   }

@@ -32,7 +32,6 @@ import {
   CompositeLogOutHandler,
   ErrorIgnoringLogOutHandler,
   FallbackOAuthTokenRepository,
-  GitHubOrganizationSessionValidator,
   GuestOAuthTokenDataSource,
   GuestOAuthTokenRefresher,
   LockingOAuthTokenRefresher,
@@ -65,7 +64,6 @@ const {
   GITHUB_CLIENT_ID,
   GITHUB_CLIENT_SECRET,
   GITHUB_PRIVATE_KEY_BASE_64,
-  GITHUB_ORGANIZATION_NAME,
   REDIS_URL,
   POSTGRESQL_HOST,
   POSTGRESQL_USER,
@@ -83,8 +81,7 @@ const gitHubAppCredentials = {
   clientSecret: GITHUB_CLIENT_SECRET,
   privateKey: Buffer
     .from(GITHUB_PRIVATE_KEY_BASE_64, "base64")
-    .toString("utf-8"),
-  organization: GITHUB_ORGANIZATION_NAME,
+    .toString("utf-8")
 }
 
 const pool = new Pool({
@@ -225,12 +222,6 @@ export const userGitHubClient = new OAuthTokenRefreshingGitHubClient({
 
 export const blockingSessionValidator = new OAuthTokenSessionValidator({
   oauthTokenDataSource
-})
-
-export const delayedSessionValidator = new GitHubOrganizationSessionValidator({
-  acceptedOrganization: GITHUB_ORGANIZATION_NAME,
-  organizationMembershipStatusReader: userGitHubClient,
-  accountProviderReader: session
 })
 
 const projectUserDataRepository = new KeyValueUserDataRepository(

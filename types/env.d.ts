@@ -17,7 +17,6 @@ namespace NodeJS {
     readonly GITHUB_WEBHOOK_SECRET: string
     readonly GITHUB_WEBHOK_REPOSITORY_ALLOWLIST: string
     readonly GITHUB_WEBHOK_REPOSITORY_DISALLOWLIST: string
-    readonly GITHUB_ORGANIZATION_NAME: string
     readonly GITHUB_CLIENT_ID: string
     readonly GITHUB_CLIENT_SECRET: string
     readonly GITHUB_APP_ID: string

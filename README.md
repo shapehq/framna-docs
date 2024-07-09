@@ -29,7 +29,6 @@ The table below contains explanations for environment variables. The list is not
 |GITHUB_WEBHOOK_SECRET|Secret shared with the GitHub app to validate a webhook call.|
 |GITHUB_WEBHOK_REPOSITORY_ALLOWLIST|Comma-separated list of repositories from which webhook calls should be accepted. Leave empty to accept calls from all repositories.|
 |GITHUB_WEBHOK_REPOSITORY_DISALLOWLIST|Comma-separated list of repositories from which webhook calls should be ignored. The list of disallowed repositories takes precedence over the list of allowed repositories.|
-|GITHUB_ORGANIZATION_NAME|Name of the organization to show repositories for.|
 |REDIS_URL|The URL to the Redis store.|
 |SMTP_HOST|Hostname for SMTP server used for sending magic links and guest invitation.|
 |SMTP_USER|Username for SMTP server used for sending magic links and guest invitation.|
