@@ -2,6 +2,7 @@ import { Transporter, createTransport } from "nodemailer"
 
 export default class MagicLinkEmailSender {
   private readonly transport: Transporter
+  private readonly websiteTitle: string
   private readonly from: string
   
   constructor(config: {
@@ -10,6 +11,7 @@ export default class MagicLinkEmailSender {
       user: string,
       pass: string
     },
+    websiteTitle: string,
     from: string
   }) {
     this.transport = createTransport({
@@ -19,21 +21,26 @@ export default class MagicLinkEmailSender {
         pass: config.server.pass
       }
     })
+    this.websiteTitle = config.websiteTitle
     this.from = config.from
   }
 
-  async sendMagicLink(params: {
+  async sendMagicLink({
+    identifier,
+    expires,
+    url
+  }: {
     identifier: string
     expires: Date
     url: string
   }): Promise<void> {
-    const { identifier, expires, url } = params
+    const websiteTitle = this.websiteTitle
     const result = await this.transport.sendMail({
       to: identifier,
       from: this.from,
-      subject: "Sign in to Shape Docs",
-      text: text({ url }),
-      html: html({ url, expires }),
+      subject: `Sign in to ${websiteTitle}`,
+      text: text({ websiteTitle, url }),
+      html: html({ websiteTitle, url, expires }),
     })
     const failed = result.rejected.concat(result.pending).filter(Boolean)
     if (failed.length) {
@@ -42,11 +49,18 @@ export default class MagicLinkEmailSender {
   }
 }
 
-function text({ url }: { url: string }) {
-  return `Sign in to Shape Docs.\n${url}\n\n`
+function text({ websiteTitle, url }: { websiteTitle: string, url: string }) {
+  return `Sign in to ${websiteTitle}.\n${url}\n\n`
 }
 
-function html({ url, expires }: { url: string, expires: Date }) {
+function html({
+  websiteTitle,
+  url,expires
+}: {
+  websiteTitle: string,
+  url: string,
+  expires: Date
+}) {
   const imageHost = "http://docs.shapetools.io"
   const color = {
     background: "#f9f9f9",
@@ -61,13 +75,13 @@ function html({ url, expires }: { url: string, expires: Date }) {
     style="background: ${color.mainBackground}; max-width: 600px; margin: auto; border-radius: 10px;">
     <tr>
       <td align="center" style="padding: 10px 0px;">
-        <img src="${imageHost}/images/logo.png" width="150" alt="Shape Docs logo" />
+        <img src="${imageHost}/images/logo.png" width="150" alt="${websiteTitle} logo" />
       </td>
     </tr>
     <tr>
       <td align="center"
         style="padding: 10px 0px; font-size: 22px; font-family: Helvetica, Arial, sans-serif; color: ${color.text};">
-        Sign in to <strong>Shape Docs</strong>
+        Sign in to <strong>${websiteTitle}</strong>
       </td>
     </tr>
     <tr>

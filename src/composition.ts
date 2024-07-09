@@ -147,6 +147,7 @@ export const auth = NextAuth({
             user: SMTP_USER,
             pass: SMTP_PASS,
           },
+          websiteTitle: NEXT_PUBLIC_SHAPE_DOCS_TITLE,
           from: FROM_EMAIL
         })
         await sender.sendMagicLink(params)
