@@ -49,7 +49,8 @@ describe("EmailGuestInviter", () => {
       expect(nodemailer.createTransport().sendMail).toHaveBeenCalledWith({
         to: "guest@email.dk",
         from: "some@email.dk",
-        subject: "You have been invited to join Shape Docs",
+        subject: "You have been invited Shape Docs",
+        text: expect.any(String), // difficult to test the exact content
         html: expect.any(String) // difficult to test the exact content
       })
     })
