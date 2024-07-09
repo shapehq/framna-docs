@@ -8,8 +8,8 @@ import "@fortawesome/fontawesome-svg-core/styles.css"
 fontAwesomeConfig.autoAddCss = false
 
 export const metadata: Metadata = {
-  title: "Shape Docs",
-  description: "Documentation for Shape\"s APIs",
+  title: process.env.NEXT_PUBLIC_SHAPE_DOCS_TITLE,
+  description: process.env.NEXT_PUBLIC_SHAPE_DOCS_DESCRIPTION
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
