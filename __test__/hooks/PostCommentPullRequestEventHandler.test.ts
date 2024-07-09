@@ -12,7 +12,7 @@ test("It adds a comment to the repository", async () => {
   }, "https://docs.shapetools.io")
   await sut.pullRequestOpened({
     appInstallationId: 42,
-    repositoryOwner: "shapehq",
+    repositoryOwner: "acme",
     repositoryName: "foo",
     ref: "bar",
     pullRequestNumber: 1337
@@ -32,7 +32,7 @@ test("It adds a comment containing a link to the documentation", async () => {
   }, "https://docs.shapetools.io")
   await sut.pullRequestOpened({
     appInstallationId: 42,
-    repositoryOwner: "shapehq",
+    repositoryOwner: "acme",
     repositoryName: "foo",
     ref: "bar",
     pullRequestNumber: 1337
@@ -52,7 +52,7 @@ test("It removes the \"openapi\" suffix of the repository name", async () => {
   }, "https://docs.shapetools.io")
   await sut.pullRequestOpened({
     appInstallationId: 42,
-    repositoryOwner: "shapehq",
+    repositoryOwner: "acme",
     repositoryName: "foo-openapi",
     ref: "bar",
     pullRequestNumber: 1337

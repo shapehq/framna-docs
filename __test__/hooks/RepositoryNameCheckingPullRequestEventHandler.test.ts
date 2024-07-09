@@ -9,7 +9,7 @@ test("It does not call event handler when repository name does not have \"-opena
   }, [], [])
   await sut.pullRequestOpened({
     appInstallationId: 42,
-    repositoryOwner: "shapehq",
+    repositoryOwner: "acme",
     repositoryName: "foo",
     ref: "bar",
     pullRequestNumber: 1337
@@ -26,7 +26,7 @@ test("It does not call event handler when repository name contains \"-openapi\" 
   }, [], [])
   await sut.pullRequestOpened({
     appInstallationId: 42,
-    repositoryOwner: "shapehq",
+    repositoryOwner: "acme",
     repositoryName: "foo-openapi-bar",
     ref: "bar",
     pullRequestNumber: 1337
@@ -43,7 +43,7 @@ test("It calls event handler when no repositories have been allowed or disallowe
   }, [], [])
   await sut.pullRequestOpened({
     appInstallationId: 42,
-    repositoryOwner: "shapehq",
+    repositoryOwner: "acme",
     repositoryName: "foo-openapi",
     ref: "bar",
     pullRequestNumber: 1337
@@ -60,7 +60,7 @@ test("It does not call event handler for repository that is not on the allowlist
   }, ["example-openapi"], [])
   await sut.pullRequestOpened({
     appInstallationId: 42,
-    repositoryOwner: "shapehq",
+    repositoryOwner: "acme",
     repositoryName: "foo",
     ref: "bar",
     pullRequestNumber: 1337
@@ -77,7 +77,7 @@ test("It does not call event handler for repository that is on the disallowlist"
   }, [], ["example-openapi"])
   await sut.pullRequestOpened({
     appInstallationId: 42,
-    repositoryOwner: "shapehq",
+    repositoryOwner: "acme",
     repositoryName: "example-openapi",
     ref: "bar",
     pullRequestNumber: 1337
@@ -94,7 +94,7 @@ test("It lets the disallowlist takes precedence over the allowlist", async () =>
   }, ["example-openapi"], ["example-openapi"])
   await sut.pullRequestOpened({
     appInstallationId: 42,
-    repositoryOwner: "shapehq",
+    repositoryOwner: "acme",
     repositoryName: "example-openapi",
     ref: "bar",
     pullRequestNumber: 1337

@@ -13,7 +13,7 @@ test("It fetches comments from the repository", async () => {
   }, "https://docs.shapetools.io")
   await sut.pullRequestOpened({
     appInstallationId: 42,
-    repositoryOwner: "shapehq",
+    repositoryOwner: "acme",
     repositoryName: "foo",
     ref: "bar",
     pullRequestNumber: 1337
@@ -35,7 +35,7 @@ test("It does calls decorated event handler if a comment does not exist in the r
   }, "https://docs.shapetools.io")
   await sut.pullRequestOpened({
     appInstallationId: 42,
-    repositoryOwner: "shapehq",
+    repositoryOwner: "acme",
     repositoryName: "foo",
     ref: "bar",
     pullRequestNumber: 1337
@@ -60,7 +60,7 @@ test("It does not call the event handler if a comment already exists in the repo
   }, "https://docs.shapetools.io")
   await sut.pullRequestOpened({
     appInstallationId: 42,
-    repositoryOwner: "shapehq",
+    repositoryOwner: "acme",
     repositoryName: "foo",
     ref: "bar",
     pullRequestNumber: 1337
@@ -85,7 +85,7 @@ test("It calls the event handler if a comment exists matching the needle domain 
   }, "https://docs.shapetools.io")
   await sut.pullRequestOpened({
     appInstallationId: 42,
-    repositoryOwner: "shapehq",
+    repositoryOwner: "acme",
     repositoryName: "foo",
     ref: "bar",
     pullRequestNumber: 1337
@@ -110,7 +110,7 @@ test("It calls the event handler if the repository contains a comment from a bot
   }, "https://docs.shapetools.io")
   await sut.pullRequestOpened({
     appInstallationId: 42,
-    repositoryOwner: "shapehq",
+    repositoryOwner: "acme",
     repositoryName: "foo",
     ref: "bar",
     pullRequestNumber: 1337
