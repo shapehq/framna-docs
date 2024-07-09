@@ -1,7 +1,6 @@
 import { Pool, PoolClient, QueryResult } from "pg"
 import IDB, { IDBConnection, IDBQueryResult, IDBRow } from "./IDB"
 
-
 export class PostgreSQLDBConnection implements IDBConnection {
   private readonly client: PoolClient
   
