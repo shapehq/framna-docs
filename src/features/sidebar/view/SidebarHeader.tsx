@@ -28,7 +28,7 @@ export default function SidebarHeader() {
             letterSpacing: 1
           }}
         >
-          Shape Docs
+          {process.env.NEXT_PUBLIC_SHAPE_DOCS_TITLE}
         </Typography>
       </Link> 
     </Box>
