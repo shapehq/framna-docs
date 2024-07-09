@@ -489,7 +489,7 @@ test("It filters away tags with no specifications", async () => {
   expect(projects[0].versions.length).toEqual(2)
 })
 
-test("It reads image from .shape-config.yml", async () => {
+test("It reads image from .shape-docs.yml", async () => {
   const sut = new GitHubProjectDataSource({
     organizationName: "foo",
     graphQlClient: {
@@ -608,7 +608,7 @@ test("It filters away tags with no specifications", async () => {
   expect(projects[0].versions.length).toEqual(2)
 })
 
-test("It reads display name from .shape-config.yml", async () => {
+test("It reads display name from .shape-docs.yml", async () => {
   const sut = new GitHubProjectDataSource({
     organizationName: "foo",
     graphQlClient: {
@@ -659,7 +659,7 @@ test("It reads display name from .shape-config.yml", async () => {
   expect(projects[0].displayName).toEqual("Hello World")
 })
 
-test("It reads image from .shape-config.yml", async () => {
+test("It reads image from .shape-docs.yml", async () => {
   const sut = new GitHubProjectDataSource({
     organizationName: "foo",
     graphQlClient: {
@@ -708,7 +708,7 @@ test("It reads image from .shape-config.yml", async () => {
   expect(projects[0].imageURL).toEqual("/api/blob/acme/foo-openapi/icon.png?ref=12345678")
 })
 
-test("It reads display name from .shape-config.yaml", async () => {
+test("It reads display name from .shape-docs.yaml", async () => {
   const sut = new GitHubProjectDataSource({
     organizationName: "foo",
     graphQlClient: {
@@ -759,7 +759,7 @@ test("It reads display name from .shape-config.yaml", async () => {
   expect(projects[0].displayName).toEqual("Hello World")
 })
 
-test("It reads image from .shape-config.yaml", async () => {
+test("It reads image from .shape-docs.yaml", async () => {
   const sut = new GitHubProjectDataSource({
     organizationName: "foo",
     graphQlClient: {
