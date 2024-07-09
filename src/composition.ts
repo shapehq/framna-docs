@@ -49,9 +49,7 @@ import {
   MagicLinkEmailSender
 } from "./features/admin/data"
 import {
-  Guest,
   IGuestInviter,
-  IGuestRepository,
   IUserRepository
 } from "./features/admin/domain"
 import DummyGuestRepository from "./features/admin/data/DummyGuestRepository"
