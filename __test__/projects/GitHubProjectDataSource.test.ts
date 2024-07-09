@@ -1637,3 +1637,32 @@ test("It queries for both .yml and .yaml file extension with no extension", asyn
   expect(query).toContain(".demo-docs.yml")
   expect(query).toContain(".demo-docs.yaml")
 })
+
+test("It loads projects for all logins", async () => {
+  let searchQueries: string[] = []
+  const sut = new GitHubProjectDataSource({
+    projectConfigurationFilename: ".demo-docs",
+    loginsDataSource: {
+      async getLogins() {
+        return ["acme", "somecorp", "techsystems"]
+      }
+    },
+    graphQlClient: {
+      async graphql(request) {
+        if (request.variables?.searchQuery) {
+          searchQueries.push(request.variables.searchQuery)
+        }
+        return {
+          search: {
+            results: []
+          }
+        }
+      }
+    }
+  })
+  await sut.getProjects()
+  expect(searchQueries.length).toEqual(3)
+  expect(searchQueries[0]).toBe("user:acme openapi in:name")
+  expect(searchQueries[1]).toBe("user:somecorp openapi in:name")
+  expect(searchQueries[2]).toBe("user:techsystems openapi in:name")
+})
