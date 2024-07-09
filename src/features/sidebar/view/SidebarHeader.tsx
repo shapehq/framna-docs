@@ -16,7 +16,7 @@ export default function SidebarHeader() {
       >
         <Image
           src="/images/logo.png"
-          alt="Duck"
+          alt={`${process.env.NEXT_PUBLIC_SHAPE_DOCS_TITLE} logo`}
           width={40}
           height={45}
           priority={true}
