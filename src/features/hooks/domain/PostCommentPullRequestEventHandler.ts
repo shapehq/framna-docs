@@ -1,23 +1,24 @@
 import IPullRequestEventHandler, { IPullRequestOpenedEvent } from "./IPullRequestEventHandler"
 import IPullRequestCommentRepository from "./IPullRequestCommentRepository"
-import GitHubCommentFactory from "./GitHubCommentFactory"
+import IGitHubCommentFactory from "./IGitHubCommentFactory"
 
 export default class PostCommentPullRequestEventHandler implements IPullRequestEventHandler {
   private readonly commentRepository: IPullRequestCommentRepository
-  private readonly domain: string
+  private readonly commentFactory: IGitHubCommentFactory
   
-  constructor(
+  constructor(config: {
     commentRepository: IPullRequestCommentRepository,
-    domain: string
-  ) {
-    this.commentRepository = commentRepository
-    this.domain = domain
+    commentFactory: IGitHubCommentFactory
+  }) {
+    this.commentRepository = config.commentRepository
+    this.commentFactory = config.commentFactory
   }
   
   async pullRequestOpened(event: IPullRequestOpenedEvent): Promise<void> {
-    const projectId = event.repositoryName.replace(/-openapi$/, "")
-    const link = `${this.domain}/${projectId}/${event.ref}`
-    const commentBody = GitHubCommentFactory.makeDocumentationPreviewReadyComment(link)
+    const commentBody = this.commentFactory.makeDocumentationPreviewReadyComment({
+      repositoryName: event.repositoryName,
+      ref: event.ref
+    })
     await this.commentRepository.addComment({
       appInstallationId: event.appInstallationId,
       repositoryOwner: event.repositoryOwner,

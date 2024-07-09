@@ -6,11 +6,13 @@ import {
 import {
   PostCommentPullRequestEventHandler,
   RepositoryNameCheckingPullRequestEventHandler,
-  ExistingCommentCheckingPullRequestEventHandler
+  ExistingCommentCheckingPullRequestEventHandler,
+  GitHubCommentFactory
 } from "@/features/hooks/domain"
 import { gitHubClient } from "@/composition"
 
 const {
+  NEXT_PUBLIC_SHAPE_DOCS_TITLE,
   SHAPE_DOCS_BASE_URL,
   GITHUB_WEBHOOK_SECRET,
   GITHUB_WEBHOK_REPOSITORY_ALLOWLIST,
@@ -30,14 +32,17 @@ const disallowedRepositoryNames = listFromCommaSeparatedString(GITHUB_WEBHOK_REP
 const hookHandler = new GitHubHookHandler({
   secret: GITHUB_WEBHOOK_SECRET,
   pullRequestEventHandler: new RepositoryNameCheckingPullRequestEventHandler(
-    new ExistingCommentCheckingPullRequestEventHandler(
-      new PostCommentPullRequestEventHandler(
-        new GitHubPullRequestCommentRepository(gitHubClient),
-        SHAPE_DOCS_BASE_URL
-      ),
-      new GitHubPullRequestCommentRepository(gitHubClient),
-      SHAPE_DOCS_BASE_URL
-    ),
+    new ExistingCommentCheckingPullRequestEventHandler({
+      eventHandler: new PostCommentPullRequestEventHandler({
+        commentRepository: new GitHubPullRequestCommentRepository(gitHubClient),
+        commentFactory: new GitHubCommentFactory({
+          websiteTitle: NEXT_PUBLIC_SHAPE_DOCS_TITLE,
+          domain: SHAPE_DOCS_BASE_URL
+        })
+      }),
+      commentRepository: new GitHubPullRequestCommentRepository(gitHubClient),
+      needleDomain: SHAPE_DOCS_BASE_URL
+    }),
     allowedRepositoryNames,
     disallowedRepositoryNames
   )

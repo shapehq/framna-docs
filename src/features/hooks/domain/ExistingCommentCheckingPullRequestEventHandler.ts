@@ -6,14 +6,14 @@ export default class ExistingCommentCheckingPullRequestEventHandler implements I
   private readonly commentRepository: IPullRequestCommentRepository
   private readonly needleDomain: string
   
-  constructor(
+  constructor(config: {
     eventHandler: IPullRequestEventHandler,
     commentRepository: IPullRequestCommentRepository,
     needleDomain: string
-   ) {
-    this.eventHandler = eventHandler
-    this.commentRepository = commentRepository
-    this.needleDomain = needleDomain
+  }) {
+    this.eventHandler = config.eventHandler
+    this.commentRepository = config.commentRepository
+    this.needleDomain = config.needleDomain
   }
   
   async pullRequestOpened(event: IPullRequestOpenedEvent): Promise<void> {

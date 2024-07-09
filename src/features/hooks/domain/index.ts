@@ -1,5 +1,6 @@
 export { default as ExistingCommentCheckingPullRequestEventHandler } from "./ExistingCommentCheckingPullRequestEventHandler"
 export { default as GitHubCommentFactory } from "./GitHubCommentFactory"
+export type { default as IGitHubCommentFactory } from "./IGitHubCommentFactory"
 export type { default as IPullRequestCommentRepository } from "./IPullRequestCommentRepository"
 export type { default as IPullRequestEventHandler } from "./IPullRequestEventHandler"
 export { default as PostCommentPullRequestEventHandler } from "./PostCommentPullRequestEventHandler"
