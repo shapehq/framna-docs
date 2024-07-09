@@ -10,7 +10,7 @@ env:
   ECS_CLUSTER: StagingApp-EcsDefaultClusterMnL3mNNYNVPC9C1EC7A3-L9xrshUBnmqe
   ECS_TASK_DEFINITION_NAME: StagingAppAppServiceTaskDef1613562E
   CONTAINER_NAME: web
-  OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN_FRAMNA_DOCS }}
+  OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN_SHAPE_DOCS }}
 
 jobs:
   build:
@@ -25,8 +25,8 @@ jobs:
 
       - name: Install AWS credentials from 1Password
         run: |
-          AWS_ACCESS_KEY_ID=$(op read "op://Framna Docs GitHub Actions/AWS GitHub Actions User/access_key_id")
-          AWS_SECRET_ACCESS_KEY=$(op read "op://Framna Docs GitHub Actions/AWS GitHub Actions User/secret_access_key")
+          AWS_ACCESS_KEY_ID=$(op read "op://Shape Docs GitHub Actions/AWS GitHub Actions User/access_key_id")
+          AWS_SECRET_ACCESS_KEY=$(op read "op://Shape Docs GitHub Actions/AWS GitHub Actions User/secret_access_key")
           echo "AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID" >> $GITHUB_ENV
           echo "AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY" >> $GITHUB_ENV
 
