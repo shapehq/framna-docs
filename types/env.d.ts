@@ -1,26 +1,26 @@
 namespace NodeJS {
   interface ProcessEnv {
-    SHAPE_DOCS_BASE_URL: string
-    SHAPE_DOCS_PROJECT_CONFIGURATION_FILENAME: string
-    FROM_EMAIL: string | undefined
-    NEXT_PUBLIC_SHAPE_DOCS_TITLE: string
-    NEXT_PUBLIC_SHAPE_DOCS_DESCRIPTION: string
-    NEXTAUTH_URL_INTERNAL: string
-    NEXTAUTH_SECRET: string
-    REDIS_URL: string
-    POSTGRESQL_HOST: string
-    POSTGRESQL_USER: string
-    POSTGRESQL_DB: string
-    SMTP_HOST: string
-    SMTP_USER: string
-    SMTP_PASS: string
-    GITHUB_WEBHOOK_SECRET: string
-    GITHUB_WEBHOK_REPOSITORY_ALLOWLIST: string
-    GITHUB_WEBHOK_REPOSITORY_DISALLOWLIST: string
-    GITHUB_ORGANIZATION_NAME: string
-    GITHUB_CLIENT_ID: string
-    GITHUB_CLIENT_SECRET: string
-    GITHUB_APP_ID: string
-    GITHUB_PRIVATE_KEY_BASE_64: string
+    readonly SHAPE_DOCS_BASE_URL: string
+    readonly SHAPE_DOCS_PROJECT_CONFIGURATION_FILENAME: string
+    readonly FROM_EMAIL: string | undefined
+    readonly NEXT_PUBLIC_SHAPE_DOCS_TITLE: string
+    readonly NEXT_PUBLIC_SHAPE_DOCS_DESCRIPTION: string
+    readonly NEXTAUTH_URL_INTERNAL: string
+    readonly NEXTAUTH_SECRET: string
+    readonly REDIS_URL: string
+    readonly POSTGRESQL_HOST: string
+    readonly POSTGRESQL_USER: string
+    readonly POSTGRESQL_DB: string
+    readonly SMTP_HOST: string
+    readonly SMTP_USER: string
+    readonly SMTP_PASS: string
+    readonly GITHUB_WEBHOOK_SECRET: string
+    readonly GITHUB_WEBHOK_REPOSITORY_ALLOWLIST: string
+    readonly GITHUB_WEBHOK_REPOSITORY_DISALLOWLIST: string
+    readonly GITHUB_ORGANIZATION_NAME: string
+    readonly GITHUB_CLIENT_ID: string
+    readonly GITHUB_CLIENT_SECRET: string
+    readonly GITHUB_APP_ID: string
+    readonly GITHUB_PRIVATE_KEY_BASE_64: string
   }
 }
