@@ -19,7 +19,7 @@ on:
         description: Comma-separated list of repositories user needs access to
         required: true
 env:
-  OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN_SHAPE_DOCS }}
+  OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN_FRAMNA_DOCS }}
 jobs:
   build:
     name: Invite Guest
