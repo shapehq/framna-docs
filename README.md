@@ -14,7 +14,7 @@ Portal displaying our projects that are documented with OpenAPI. Hosted on [docs
 
 Copy `.env.example` to `.env.local` in the root of the project. Make sure to replace any placeholders and generate a random secret using OpenSSL.
 
-The table below contains explations for environment variables. The list is not pre-emptive and `.env.example` contains the full list.
+The table below contains explanations for environment variables. The list is not preemptive and `.env.example` contains the full list.
 
 |Environment Variable|Description|
 |-|-|
