@@ -107,8 +107,9 @@ export const guestRepository = (process.env.IS_BUILD_PROCESS !== undefined) ? ne
 
 const logInHandler = new LogInHandler({ userRepository, guestRepository, oauthTokenRepository })
 
-// Must be a verified email in AWS SES.
-const fromEmail = FROM_EMAIL || "Shape Docs <no-reply@docs.shapetools.io>"
+if (!FROM_EMAIL) {
+  throw new Error("FROM_EMAIL environment variable must be set to an e-mail verified in AWS SES")
+}
 
 export const auth = NextAuth({
   adapter: PostgresAdapter(pool),
@@ -136,7 +137,7 @@ export const auth = NextAuth({
           pass: SMTP_PASS,
         }
       },
-      from: fromEmail,
+      from: FROM_EMAIL,
       name: "email",
       sendVerificationRequest: async (params) => {
         const sender = new MagicLinkEmailSender({
@@ -145,7 +146,7 @@ export const auth = NextAuth({
             user: SMTP_USER,
             pass: SMTP_PASS,
           },
-          from: fromEmail
+          from: FROM_EMAIL
         })
         await sender.sendMagicLink(params)
       }
@@ -259,5 +260,5 @@ export const guestInviter: IGuestInviter = new EmailGuestInviter({
     user: SMTP_USER,
     pass: SMTP_PASS,
   },
-  from: fromEmail
+  from: FROM_EMAIL
 })
