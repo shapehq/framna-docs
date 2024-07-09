@@ -34,7 +34,7 @@ export default function getSelection({
   if (versionId) {
     version = project.versions.find(e => e.id == versionId)
     if (!version && specificationId && !isSpecificationIdFilename(specificationId)) {
-      // With the introduction of remote versions that are specified in the .shape-docs.yml
+      // With the introduction of remote versions that are specified in the .yml
       // configuration file, it has become impossible to tell if the last component in a URL
       // is the specification ID or if it belongs to the version ID. Previously, we required
       // specification IDs to end with either ".yml" or ".yaml" but that no longer makes

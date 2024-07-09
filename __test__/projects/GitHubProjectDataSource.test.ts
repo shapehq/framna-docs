@@ -5,6 +5,7 @@ import {
 test("It loads repositories from data source", async () => {
   let didLoadRepositories = false
   const sut = new GitHubProjectDataSource({
+    projectConfigurationFilename: ".demo-docs.yml",
     organizationName: "foo",
     graphQlClient: {
       async graphql() {
@@ -23,6 +24,7 @@ test("It loads repositories from data source", async () => {
 
 test("It maps projects including branches and tags", async () => {
   const sut = new GitHubProjectDataSource({
+    projectConfigurationFilename: ".demo-docs.yml",
     organizationName: "foo",
     graphQlClient: {
       async graphql() {
@@ -109,6 +111,7 @@ test("It maps projects including branches and tags", async () => {
 
 test("It removes \"-openapi\" suffix from project name", async () => {
   const sut = new GitHubProjectDataSource({
+    projectConfigurationFilename: ".demo-docs.yml",
     organizationName: "foo",
     graphQlClient: {
       async graphql() {
@@ -169,6 +172,7 @@ test("It removes \"-openapi\" suffix from project name", async () => {
 
 test("It supports multiple OpenAPI specifications on a branch", async () => {
   const sut = new GitHubProjectDataSource({
+    projectConfigurationFilename: ".demo-docs.yml",
     organizationName: "foo",
     graphQlClient: {
       async graphql() {
@@ -269,6 +273,7 @@ test("It supports multiple OpenAPI specifications on a branch", async () => {
 
 test("It removes \"-openapi\" suffix from project name", async () => {
   const sut = new GitHubProjectDataSource({
+    projectConfigurationFilename: ".demo-docs.yml",
     organizationName: "foo",
     graphQlClient: {
       async graphql() {
@@ -329,6 +334,7 @@ test("It removes \"-openapi\" suffix from project name", async () => {
 
 test("It filters away projects with no versions", async () => {
   const sut = new GitHubProjectDataSource({
+    projectConfigurationFilename: ".demo-docs.yml",
     organizationName: "foo",
     graphQlClient: {
       async graphql() {
@@ -363,6 +369,7 @@ test("It filters away projects with no versions", async () => {
 
 test("It filters away branches with no specifications", async () => {
   const sut = new GitHubProjectDataSource({
+    projectConfigurationFilename: ".demo-docs.yml",
     organizationName: "foo",
     graphQlClient: {
       async graphql() {
@@ -421,6 +428,7 @@ test("It filters away branches with no specifications", async () => {
 
 test("It filters away tags with no specifications", async () => {
   const sut = new GitHubProjectDataSource({
+    projectConfigurationFilename: ".demo-docs.yml",
     organizationName: "foo",
     graphQlClient: {
       async graphql() {
@@ -489,8 +497,9 @@ test("It filters away tags with no specifications", async () => {
   expect(projects[0].versions.length).toEqual(2)
 })
 
-test("It reads image from .shape-docs.yml", async () => {
+test("It reads image from configuration file with .yml extension", async () => {
   const sut = new GitHubProjectDataSource({
+    projectConfigurationFilename: ".demo-docs.yml",
     organizationName: "foo",
     graphQlClient: {
       async graphql() {
@@ -540,6 +549,7 @@ test("It reads image from .shape-docs.yml", async () => {
 
 test("It filters away tags with no specifications", async () => {
   const sut = new GitHubProjectDataSource({
+    projectConfigurationFilename: ".demo-docs.yml",
     organizationName: "foo",
     graphQlClient: {
       async graphql() {
@@ -608,8 +618,9 @@ test("It filters away tags with no specifications", async () => {
   expect(projects[0].versions.length).toEqual(2)
 })
 
-test("It reads display name from .shape-docs.yml", async () => {
+test("It reads display name from configuration file with .yml extension", async () => {
   const sut = new GitHubProjectDataSource({
+    projectConfigurationFilename: ".demo-docs.yml",
     organizationName: "foo",
     graphQlClient: {
       async graphql() {
@@ -659,8 +670,9 @@ test("It reads display name from .shape-docs.yml", async () => {
   expect(projects[0].displayName).toEqual("Hello World")
 })
 
-test("It reads image from .shape-docs.yml", async () => {
+test("It reads image from configuration file with .yml extension", async () => {
   const sut = new GitHubProjectDataSource({
+    projectConfigurationFilename: ".demo-docs.yml",
     organizationName: "foo",
     graphQlClient: {
       async graphql() {
@@ -708,8 +720,9 @@ test("It reads image from .shape-docs.yml", async () => {
   expect(projects[0].imageURL).toEqual("/api/blob/acme/foo-openapi/icon.png?ref=12345678")
 })
 
-test("It reads display name from .shape-docs.yaml", async () => {
+test("It reads display name from configuration file with .yaml extension", async () => {
   const sut = new GitHubProjectDataSource({
+    projectConfigurationFilename: ".demo-docs.yml",
     organizationName: "foo",
     graphQlClient: {
       async graphql() {
@@ -759,8 +772,9 @@ test("It reads display name from .shape-docs.yaml", async () => {
   expect(projects[0].displayName).toEqual("Hello World")
 })
 
-test("It reads image from .shape-docs.yaml", async () => {
+test("It reads image from configuration file with .yaml extension", async () => {
   const sut = new GitHubProjectDataSource({
+    projectConfigurationFilename: ".demo-docs.yml",
     organizationName: "foo",
     graphQlClient: {
       async graphql() {
@@ -810,6 +824,7 @@ test("It reads image from .shape-docs.yaml", async () => {
 
 test("It sorts projects alphabetically", async () => {
   const sut = new GitHubProjectDataSource({
+    projectConfigurationFilename: ".demo-docs.yml",
     organizationName: "foo",
     graphQlClient: {
       async graphql() {
@@ -916,6 +931,7 @@ test("It sorts projects alphabetically", async () => {
 
 test("It sorts versions alphabetically", async () => {
   const sut = new GitHubProjectDataSource({
+    projectConfigurationFilename: ".demo-docs.yml",
     organizationName: "foo",
     graphQlClient: {
       async graphql() {
@@ -1001,6 +1017,7 @@ test("It sorts versions alphabetically", async () => {
 
 test("It prioritizes main, master, develop, and development branch names when sorting verisons", async () => {
   const sut = new GitHubProjectDataSource({
+    projectConfigurationFilename: ".demo-docs.yml",
     organizationName: "foo",
     graphQlClient: {
       async graphql() {
@@ -1112,6 +1129,7 @@ test("It prioritizes main, master, develop, and development branch names when so
 
 test("It identifies the default branch in returned versions", async () => {
   const sut = new GitHubProjectDataSource({
+    projectConfigurationFilename: ".demo-docs.yml",
     organizationName: "foo",
     graphQlClient: {
       async graphql() {
@@ -1199,6 +1217,7 @@ test("It adds remote versions from the project configuration", async () => {
         url: https://example.com/louie.yml
   `
   const sut = new GitHubProjectDataSource({
+    projectConfigurationFilename: ".demo-docs.yml",
     organizationName: "foo",
     graphQlClient: {
       async graphql() {
@@ -1269,6 +1288,7 @@ test("It modifies ID of remote version if the ID already exists", async () => {
         url: https://example.com/hello.yml
   `
   const sut = new GitHubProjectDataSource({
+    projectConfigurationFilename: ".demo-docs.yml",
     organizationName: "foo",
     graphQlClient: {
       async graphql() {
@@ -1355,6 +1375,7 @@ test("It lets users specify the ID of a remote version", async () => {
         url: https://example.com/baz.yml
   `
   const sut = new GitHubProjectDataSource({
+    projectConfigurationFilename: ".demo-docs.yml",
     organizationName: "foo",
     graphQlClient: {
       async graphql() {
@@ -1409,6 +1430,7 @@ test("It lets users specify the ID of a remote specification", async () => {
         url: https://example.com/baz.yml
   `
   const sut = new GitHubProjectDataSource({
+    projectConfigurationFilename: ".demo-docs.yml",
     organizationName: "foo",
     graphQlClient: {
       async graphql() {

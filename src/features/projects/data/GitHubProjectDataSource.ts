@@ -28,15 +28,18 @@ interface IGitHubGraphQLClient {
 export default class GitHubProjectDataSource implements IProjectDataSource {
   private readonly graphQlClient: IGitHubGraphQLClient
   private readonly organizationName: string
+  private readonly projectConfigurationFilename: string
   
   constructor(
     config: {
       graphQlClient: IGitHubGraphQLClient,
-      organizationName: string
+      organizationName: string,
+      projectConfigurationFilename: string
     }
   ) {
     this.graphQlClient = config.graphQlClient
     this.organizationName = config.organizationName
+    this.projectConfigurationFilename = config.projectConfigurationFilename.replace(/\.ya?ml$/, "")
   }
   
   async getProjects(): Promise<Project[]> {
@@ -247,10 +250,10 @@ export default class GitHubProjectDataSource implements IProjectDataSource {
                   }
                 }
               }
-              configYml: object(expression: "HEAD:.shape-docs.yml") {
+              configYml: object(expression: "HEAD:${this.projectConfigurationFilename}.yml") {
                 ...ConfigParts
               }
-              configYaml: object(expression: "HEAD:.shape-docs.yaml") {
+              configYaml: object(expression: "HEAD:${this.projectConfigurationFilename}.yaml") {
                 ...ConfigParts
               }
               branches: refs(refPrefix: "refs/heads/", first: 100) {

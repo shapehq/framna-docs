@@ -59,6 +59,7 @@ import DummyGuestRepository from "./features/admin/data/DummyGuestRepository"
 const {
   NEXT_PUBLIC_SHAPE_DOCS_TITLE,
   SHAPE_DOCS_BASE_URL,
+  SHAPE_DOCS_PROJECT_CONFIGURATION_FILENAME,
   GITHUB_APP_ID,
   GITHUB_CLIENT_ID,
   GITHUB_CLIENT_SECRET,
@@ -244,7 +245,8 @@ export const projectRepository = new ProjectRepository(
 export const projectDataSource = new CachingProjectDataSource({
   dataSource: new GitHubProjectDataSource({
     graphQlClient: userGitHubClient,
-    organizationName: GITHUB_ORGANIZATION_NAME
+    organizationName: GITHUB_ORGANIZATION_NAME,
+    projectConfigurationFilename: SHAPE_DOCS_PROJECT_CONFIGURATION_FILENAME
   }),
   repository: projectRepository
 })
