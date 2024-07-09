@@ -1,4 +1,5 @@
 import { Transporter, createTransport } from "nodemailer"
+import base64EncodedLogo from "@/common/images/base64EncodedLogo"
 
 export default class MagicLinkEmailSender {
   private readonly transport: Transporter
@@ -39,78 +40,76 @@ export default class MagicLinkEmailSender {
       to: identifier,
       from: this.from,
       subject: `Sign in to ${websiteTitle}`,
-      text: text({ websiteTitle, url }),
-      html: html({ websiteTitle, url, expires }),
+      text: this.makeText({ url }),
+      html: this.makeHtml({ url, expires }),
     })
     const failed = result.rejected.concat(result.pending).filter(Boolean)
     if (failed.length) {
       throw new Error(`Email (${failed.join(", ")}) could not be sent`)
     }
   }
-}
 
-function text({ websiteTitle, url }: { websiteTitle: string, url: string }) {
-  return `Sign in to ${websiteTitle}.\n${url}\n\n`
-}
-
-function html({
-  websiteTitle,
-  url,expires
-}: {
-  websiteTitle: string,
-  url: string,
-  expires: Date
-}) {
-  const imageHost = "http://docs.shapetools.io"
-  const color = {
-    background: "#f9f9f9",
-    text: "#000",
-    mainBackground: "#fff",
-    buttonBackground: "#0D6DDB",
-    buttonText: "#fff"
+  private makeText({ url }: { url: string }) {
+    return `Sign in to ${this.websiteTitle}.\n${url}\n\n`
   }
-  return `
-<body style="background: ${color.background};">
-  <table width="100%" border="0" cellspacing="20" cellpadding="0"
-    style="background: ${color.mainBackground}; max-width: 600px; margin: auto; border-radius: 10px;">
-    <tr>
-      <td align="center" style="padding: 10px 0px;">
-        <img src="${imageHost}/images/logo.png" width="150" alt="${websiteTitle} logo" />
-      </td>
-    </tr>
-    <tr>
-      <td align="center"
-        style="padding: 10px 0px; font-size: 22px; font-family: Helvetica, Arial, sans-serif; color: ${color.text};">
-        Sign in to <strong>${websiteTitle}</strong>
-      </td>
-    </tr>
-    <tr>
-      <td align="center"
-        style="padding: 0px 0px; font-size: 16px; font-family: Helvetica, Arial, sans-serif; color: ${color.text}; line-height: 24px;">
-        The link can only be used once<br />and expires on <strong>${formatDate(expires)}</strong>.
-      </td>
-    </tr>
-    <tr>
-      <td align="center" style="padding: 20px 0;">
-        <table border="0" cellspacing="0" cellpadding="0">
-          <tr>
-            <td align="center" style="border-radius: 12px;" bgcolor="${color.buttonBackground}"><a href="${url}"
-                target="_blank"
-                style="font-size: 18px; font-family: Helvetica, Arial, sans-serif; color: ${color.buttonText}; text-decoration: none; padding: 20px 30px; display: inline-block; font-weight: semibold;">Sign
-                in</a></td>
-          </tr>
-        </table>
-      </td>
-    </tr>
-    <tr>
-      <td align="center"
-        style="padding: 0px 0px 10px 0px; font-size: 16px; line-height: 22px; font-family: Helvetica, Arial, sans-serif; color: ${color.text};">
-        If you did not request this email, you can safely ignore it.
-      </td>
-    </tr>
-  </table>
-</body>
-`
+
+  private makeHtml({
+    url,
+    expires
+  }: {
+    url: string,
+    expires: Date
+  }) {
+    const color = {
+      background: "#f9f9f9",
+      text: "#000",
+      mainBackground: "#fff",
+      buttonBackground: "#0D6DDB",
+      buttonText: "#fff"
+    }
+    return `
+  <body style="background: ${color.background};">
+    <table width="100%" border="0" cellspacing="20" cellpadding="0"
+      style="background: ${color.mainBackground}; max-width: 600px; margin: auto; border-radius: 10px;">
+      <tr>
+        <td align="center" style="padding: 10px 0px;">
+          <img src="data:image/jpg;base64,${base64EncodedLogo}" width="150" alt="${this.websiteTitle} logo" />
+        </td>
+      </tr>
+      <tr>
+        <td align="center"
+          style="padding: 10px 0px; font-size: 22px; font-family: Helvetica, Arial, sans-serif; color: ${color.text};">
+          Sign in to <strong>${this.websiteTitle}</strong>
+        </td>
+      </tr>
+      <tr>
+        <td align="center"
+          style="padding: 0px 0px; font-size: 16px; font-family: Helvetica, Arial, sans-serif; color: ${color.text}; line-height: 24px;">
+          The link can only be used once<br />and expires on <strong>${formatDate(expires)}</strong>.
+        </td>
+      </tr>
+      <tr>
+        <td align="center" style="padding: 20px 0;">
+          <table border="0" cellspacing="0" cellpadding="0">
+            <tr>
+              <td align="center" style="border-radius: 12px;" bgcolor="${color.buttonBackground}"><a href="${url}"
+                  target="_blank"
+                  style="font-size: 18px; font-family: Helvetica, Arial, sans-serif; color: ${color.buttonText}; text-decoration: none; padding: 20px 30px; display: inline-block; font-weight: semibold;">Sign
+                  in</a></td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+      <tr>
+        <td align="center"
+          style="padding: 0px 0px 10px 0px; font-size: 16px; line-height: 22px; font-family: Helvetica, Arial, sans-serif; color: ${color.text};">
+          If you did not request this email, you can safely ignore it.
+        </td>
+      </tr>
+    </table>
+  </body>
+  `
+}
 }
 
 function formatDate(date: Date) {
