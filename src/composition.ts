@@ -245,7 +245,6 @@ export const projectRepository = new ProjectRepository(
 export const projectDataSource = new CachingProjectDataSource({
   dataSource: new GitHubProjectDataSource({
     graphQlClient: userGitHubClient,
-    organizationName: GITHUB_ORGANIZATION_NAME,
     projectConfigurationFilename: SHAPE_DOCS_PROJECT_CONFIGURATION_FILENAME
   }),
   repository: projectRepository

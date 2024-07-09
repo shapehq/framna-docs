@@ -1,7 +1,7 @@
 export type GraphQLQueryRequest = {
   readonly query: string
   /* eslint-disable-next-line  @typescript-eslint/no-explicit-any */
-  readonly variables: {[key: string]: any}
+  readonly variables?: {[key: string]: any}
 }
 
 export type GraphQlQueryResponse = {

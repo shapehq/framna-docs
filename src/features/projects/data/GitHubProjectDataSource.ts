@@ -13,7 +13,7 @@ import {
 export type GitHubGraphQLClientRequest = {
   readonly query: string
   /* eslint-disable-next-line  @typescript-eslint/no-explicit-any */
-  readonly variables: {[key: string]: any}
+  readonly variables?: {[key: string]: any}
 }
 
 export type GitHubGraphQLClientResponse = {
@@ -27,23 +27,21 @@ interface IGitHubGraphQLClient {
 
 export default class GitHubProjectDataSource implements IProjectDataSource {
   private readonly graphQlClient: IGitHubGraphQLClient
-  private readonly organizationName: string
   private readonly projectConfigurationFilename: string
   
   constructor(
     config: {
       graphQlClient: IGitHubGraphQLClient,
-      organizationName: string,
       projectConfigurationFilename: string
     }
   ) {
     this.graphQlClient = config.graphQlClient
-    this.organizationName = config.organizationName
     this.projectConfigurationFilename = config.projectConfigurationFilename.replace(/\.ya?ml$/, "")
   }
   
   async getProjects(): Promise<Project[]> {
-    const repositories = await this.getRepositories()
+    const logins = await this.getLogins()
+    const repositories = await this.getRepositories({ logins })
     return repositories.map(repository => {
       return this.mapProject(repository)
     })
@@ -231,7 +229,29 @@ export default class GitHubProjectDataSource implements IProjectDataSource {
       .replace(/[^A-Za-z0-9-]/g, "")
   }
   
-  private async getRepositories(): Promise<GitHubProjectRepository[]> {
+  private async getLogins(): Promise<string[]> {
+    const request = {
+      query: `query {
+        viewer {
+          login
+          organizations(first: 100) {
+            nodes {
+              login
+            }
+          }
+        }
+      }`
+    }
+    const response = await this.graphQlClient.graphql(request)
+    const viewer = response.viewer
+    const organizations = viewer.organizations.nodes.map((e: { login: string }) => e.login)
+    return [viewer.login].concat(organizations)
+  }
+  
+  private async getRepositories({ logins }: { logins: string[] }): Promise<GitHubProjectRepository[]> {
+    if (logins.length === 0) {
+      return []
+    }
     const request = {
       query: `
       query Repositories($searchQuery: String!) {
@@ -295,10 +315,11 @@ export default class GitHubProjectDataSource implements IProjectDataSource {
       }
       `,
       variables: {
-        searchQuery: `org:${this.organizationName} openapi in:name`
+        searchQuery: `user:${logins[0]} openapi in:name`
       }
     }
     const response = await this.graphQlClient.graphql(request)
-    return response.search.results
+    const nextResults = await this.getRepositories({ logins: logins.slice(1) })
+    return response.search.results.concat(nextResults)
   }
 }
