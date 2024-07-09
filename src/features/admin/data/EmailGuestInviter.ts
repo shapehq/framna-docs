@@ -1,5 +1,5 @@
-import { Transporter, createTransport } from "nodemailer";
-import { IGuestInviter } from "../domain";
+import { Transporter, createTransport } from "nodemailer"
+import { IGuestInviter } from "../domain"
 
 export default class EmailGuestInviter implements IGuestInviter {
   private readonly websiteTitle: string
