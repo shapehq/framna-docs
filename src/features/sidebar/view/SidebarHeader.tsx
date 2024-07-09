@@ -15,7 +15,7 @@ export default function SidebarHeader() {
         }}
       >
         <Image
-          src="/logo.png"
+          src="/images/logo.png"
           alt="Duck"
           width={40}
           height={45}
