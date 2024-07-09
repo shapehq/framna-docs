@@ -13,7 +13,7 @@ test("It fetches comments from the repository", async () => {
       },
       async addComment() {}
     },
-    needleDomain: "https://docs.shapetools.io"
+    needleDomain: "https://example.com"
   })
   await sut.pullRequestOpened({
     appInstallationId: 42,
@@ -39,7 +39,7 @@ test("It does calls decorated event handler if a comment does not exist in the r
       },
       async addComment() {}
     },
-    needleDomain: "https://docs.shapetools.io"
+    needleDomain: "https://example.com"
   })
   await sut.pullRequestOpened({
     appInstallationId: 42,
@@ -62,13 +62,13 @@ test("It does not call the event handler if a comment already exists in the repo
     commentRepository: {
       async getComments() {
         return [{
-          body: "The documentation is available on https://docs.shapetools.io",
+          body: "The documentation is available on https://example.com",
           isFromBot: true
         }]
       },
       async addComment() {}
     },
-    needleDomain: "https://docs.shapetools.io"
+    needleDomain: "https://example.com"
   })
   await sut.pullRequestOpened({
     appInstallationId: 42,
@@ -91,13 +91,13 @@ test("It calls the event handler if a comment exists matching the needle domain 
     commentRepository: {
       async getComments() {
         return [{
-          body: "The documentation is available on https://docs.shapetools.io",
+          body: "The documentation is available on https://example.com",
           isFromBot: false
         }]
       },
       async addComment() {}
     },
-    needleDomain: "https://docs.shapetools.io"
+    needleDomain: "https://example.com"
   })
   await sut.pullRequestOpened({
     appInstallationId: 42,
@@ -126,7 +126,7 @@ test("It calls the event handler if the repository contains a comment from a bot
       },
       async addComment() {}
     },
-    needleDomain: "https://docs.shapetools.io"
+    needleDomain: "https://example.com"
   })
   await sut.pullRequestOpened({
     appInstallationId: 42,

@@ -14,7 +14,7 @@ describe("EmailGuestInviter", () => {
     it("should create a transporter", () => {
       new EmailGuestInviter({
         websiteTitle: "Demo Docs",
-        url: "https://docs.shapetools.io",
+        url: "https://example.com",
         server: {
           host: "smtp.example.com",
           user: "user",
@@ -37,7 +37,7 @@ describe("EmailGuestInviter", () => {
     it("should send an invite", async () => {
       const sut = new EmailGuestInviter({
         websiteTitle: "Demo Docs",
-        url: "https://docs.shapetools.io",
+        url: "https://example.com",
         server: {
           host: "smtp.example.com",
           user: "user",
