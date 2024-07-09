@@ -57,6 +57,7 @@ import {
 import DummyGuestRepository from "./features/admin/data/DummyGuestRepository"
 
 const {
+  NEXT_PUBLIC_SHAPE_DOCS_TITLE,
   SHAPE_DOCS_BASE_URL,
   GITHUB_APP_ID,
   GITHUB_CLIENT_ID,
@@ -254,6 +255,7 @@ export const logOutHandler = new ErrorIgnoringLogOutHandler(
 )
 
 export const guestInviter: IGuestInviter = new EmailGuestInviter({
+  websiteTitle: NEXT_PUBLIC_SHAPE_DOCS_TITLE,
   url: SHAPE_DOCS_BASE_URL,
   server: {
     host: SMTP_HOST,
