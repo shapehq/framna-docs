@@ -58,7 +58,7 @@ function html({ url }: { url: string }) {
     style="background: ${color.mainBackground}; max-width: 600px; margin: auto; border-radius: 10px;">
     <tr>
       <td align="center" style="padding: 10px 0px;">
-        <img src="${imageHost}/images/duck.png" width="150" alt="Shape Docs logo" />
+        <img src="${imageHost}/images/logo.png" width="150" alt="Shape Docs logo" />
       </td>
     </tr>
     <tr>

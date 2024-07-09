@@ -115,7 +115,7 @@ export const auth = NextAuth({
   adapter: PostgresAdapter(pool),
   secret: process.env.NEXTAUTH_SECRET,
   theme: {
-    logo: "/images/duck.png",
+    logo: "/images/logo.png",
     colorScheme: "light",
     brandColor: "black"
   },
