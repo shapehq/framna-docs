@@ -1474,3 +1474,66 @@ test("It lets users specify the ID of a remote specification", async () => {
     }]
   }])
 })
+
+test("It queries for both .yml and .yaml file extension with specifying .yml extension", async () => {
+  let query: string | undefined
+  const sut = new GitHubProjectDataSource({
+    projectConfigurationFilename: ".demo-docs.yml",
+    organizationName: "foo",
+    graphQlClient: {
+      async graphql(request) {
+        query = request.query
+        return {
+          search: {
+            results: []
+          }
+        }
+      }
+    }
+  })
+  await sut.getProjects()
+  expect(query).toContain(".demo-docs.yml")
+  expect(query).toContain(".demo-docs.yaml")
+})
+
+test("It queries for both .yml and .yaml file extension with specifying .yaml extension", async () => {
+  let query: string | undefined
+  const sut = new GitHubProjectDataSource({
+    projectConfigurationFilename: ".demo-docs.yml",
+    organizationName: "foo",
+    graphQlClient: {
+      async graphql(request) {
+        query = request.query
+        return {
+          search: {
+            results: []
+          }
+        }
+      }
+    }
+  })
+  await sut.getProjects()
+  expect(query).toContain(".demo-docs.yml")
+  expect(query).toContain(".demo-docs.yaml")
+})
+
+test("It queries for both .yml and .yaml file extension with no extension", async () => {
+  let query: string | undefined
+  const sut = new GitHubProjectDataSource({
+    projectConfigurationFilename: ".demo-docs",
+    organizationName: "foo",
+    graphQlClient: {
+      async graphql(request) {
+        query = request.query
+        return {
+          search: {
+            results: []
+          }
+        }
+      }
+    }
+  })
+  await sut.getProjects()
+  expect(query).toContain(".demo-docs.yml")
+  expect(query).toContain(".demo-docs.yaml")
+})
