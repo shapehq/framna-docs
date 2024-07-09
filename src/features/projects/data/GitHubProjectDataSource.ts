@@ -1,46 +1,34 @@
 import GitHubProjectRepository, {
   GitHubProjectRepositoryRef
 } from "./GitHubProjectRepository"
+import IGitHubLoginDataSource from "./IGitHubLoginDataSource"
+import IGitHubGraphQLClient from "./IGitHubGraphQLClient"
 import {
   Project,
   Version,
   IProjectConfig,
   IProjectDataSource,
   ProjectConfigParser,
-  ProjectConfigRemoteVersion,
+  ProjectConfigRemoteVersion
 } from "../domain"
 
-export type GitHubGraphQLClientRequest = {
-  readonly query: string
-  /* eslint-disable-next-line  @typescript-eslint/no-explicit-any */
-  readonly variables?: {[key: string]: any}
-}
-
-export type GitHubGraphQLClientResponse = {
-  /* eslint-disable-next-line  @typescript-eslint/no-explicit-any */
-  readonly [key: string]: any
-}
-
-interface IGitHubGraphQLClient {
-  graphql(request: GitHubGraphQLClientRequest): Promise<GitHubGraphQLClientResponse>
-}
-
 export default class GitHubProjectDataSource implements IProjectDataSource {
+  private readonly loginsDataSource: IGitHubLoginDataSource
   private readonly graphQlClient: IGitHubGraphQLClient
   private readonly projectConfigurationFilename: string
   
-  constructor(
-    config: {
-      graphQlClient: IGitHubGraphQLClient,
-      projectConfigurationFilename: string
-    }
-  ) {
+  constructor(config: {
+    loginsDataSource: IGitHubLoginDataSource,
+    graphQlClient: IGitHubGraphQLClient,
+    projectConfigurationFilename: string
+  }) {
+    this.loginsDataSource = config.loginsDataSource
     this.graphQlClient = config.graphQlClient
     this.projectConfigurationFilename = config.projectConfigurationFilename.replace(/\.ya?ml$/, "")
   }
   
   async getProjects(): Promise<Project[]> {
-    const logins = await this.getLogins()
+    const logins = await this.loginsDataSource.getLogins()
     const repositories = await this.getRepositories({ logins })
     return repositories.map(repository => {
       return this.mapProject(repository)
@@ -227,25 +215,6 @@ export default class GitHubProjectDataSource implements IProjectDataSource {
     return str
       .replace(/ /g, "-")
       .replace(/[^A-Za-z0-9-]/g, "")
-  }
-  
-  private async getLogins(): Promise<string[]> {
-    const request = {
-      query: `query {
-        viewer {
-          login
-          organizations(first: 100) {
-            nodes {
-              login
-            }
-          }
-        }
-      }`
-    }
-    const response = await this.graphQlClient.graphql(request)
-    const viewer = response.viewer
-    const organizations = viewer.organizations.nodes.map((e: { login: string }) => e.login)
-    return [viewer.login].concat(organizations)
   }
   
   private async getRepositories({ logins }: { logins: string[] }): Promise<GitHubProjectRepository[]> {
