@@ -24,15 +24,13 @@ export default class GitHubClient implements IGitHubClient {
   private readonly oauthTokenDataSource: IGitHubOAuthTokenDataSource
   private readonly installationAuthenticator: InstallationAuthenticator
   
-  constructor(
-    config: {
-      appId: string
-      clientId: string
-      clientSecret: string
-      privateKey: string
-      oauthTokenDataSource: IGitHubOAuthTokenDataSource
-    }
-  ) {
+  constructor(config: {
+    appId: string
+    clientId: string
+    clientSecret: string
+    privateKey: string
+    oauthTokenDataSource: IGitHubOAuthTokenDataSource
+  }) {
     this.oauthTokenDataSource = config.oauthTokenDataSource
     const appAuth = createAppAuth({
       appId: config.appId,
