@@ -21,7 +21,12 @@ export default class ProjectRepository implements IProjectRepository {
     if (!string) {
       return undefined
     }
-    return ZodJSONCoder.decode(ProjectSchema.array(), string)
+    try {
+      return ZodJSONCoder.decode(ProjectSchema.array(), string)
+    } catch (err) {
+      console.error(err)
+      return undefined
+    }
   }
   
   async set(projects: Project[]): Promise<void> {
