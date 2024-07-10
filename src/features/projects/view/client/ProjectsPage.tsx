@@ -43,7 +43,8 @@ export default function ProjectsPage({
   useEffect(() => {
     // Ensure the URL reflects the current selection of project, version, and specification.
     projectNavigator.navigateIfNeeded({
-      projectId: project?.id,
+      projectOwner: project?.owner,
+      projectName: project?.name,
       versionId: version?.id,
       specificationId: specification?.id
     })
@@ -60,13 +61,13 @@ export default function ProjectsPage({
     }
     const version = project.versions[0]
     const specification = version.specifications[0]
-    projectNavigator.navigate(project.id, version.id, specification.id)
+    projectNavigator.navigate(project.owner, project.name, version.id, specification.id)
   }
   const selectVersion = (versionId: string) => {
     projectNavigator.navigateToVersion(project!, versionId, specification!.name)
   }
   const selectSpecification = (specificationId: string) => {
-    projectNavigator.navigate(project!.id, version!.id, specificationId)
+    projectNavigator.navigate(project!.owner, project!.name, version!.id, specificationId)
   }
   const canCloseSidebar = project !== undefined
   const toggleSidebar = (isOpen: boolean) => {

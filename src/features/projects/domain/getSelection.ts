@@ -16,16 +16,18 @@ export default function getSelection({
   if (path.startsWith("/")) {
     path = path.substring(1)
   }
-  const { projectId: _projectId, versionId, specificationId } = guessSelection(path)
+  const { owner: _owner, projectName: _projectName, versionId, specificationId } = guessSelection(path)
   // If no project is selected and the user only has a single project then we select that.
-  let projectId = _projectId
-  if (!projectId && projects.length == 1) {
-    projectId = projects[0].id
+  let owner = _owner
+  let projectName = _projectName
+  if (!projectName && projects.length == 1) {
+    owner = projects[0].owner
+    projectName = projects[0].name
   }
-  if (!projectId) {
+  if (!projectName) {
     return {}
   }
-  const project = projects.find(e => e.id == projectId)
+  const project = projects.find(e => e.owner == owner && e.name == projectName)
   if (!project) {
     return {}
   }
@@ -65,20 +67,20 @@ export default function getSelection({
 
 function guessSelection(pathname: string) {
   const comps = pathname.split("/")
-  if (comps.length == 0) {
+  if (comps.length == 0 || comps.length == 1) {
     return {}
-  } else if (comps.length == 1) {
-    return { projectId: comps[0] }
-  } else if (comps.length == 2) {
-    return {
-      projectId: comps[0],
-      versionId: comps[1]
-    }
+  }
+  const owner = comps[0]
+  const projectName = comps[1]
+  if (comps.length == 2) {
+    return { owner, projectName }
+  } else if (comps.length == 3) {
+    const versionId = comps[2]
+    return { owner, projectName, versionId }
   } else {
-    const projectId = comps[0]
-    const versionId = comps.slice(1, -1).join("/")
+    const versionId = comps.slice(2, -1).join("/")
     const specificationId = comps[comps.length - 1]
-    return { projectId, versionId, specificationId }
+    return { owner, projectName, versionId, specificationId }
   }
 }
 

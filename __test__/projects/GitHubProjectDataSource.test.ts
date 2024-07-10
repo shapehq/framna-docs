@@ -87,7 +87,7 @@ test("It maps projects including branches and tags", async () => {
   })
   const projects = await sut.getProjects()
   expect(projects).toEqual([{
-    id: "foo",
+    id: "acme-foo",
     name: "foo",
     displayName: "foo",
     url: "https://github.com/acme/foo",
@@ -179,7 +179,7 @@ test("It removes \"-openapi\" suffix from project name", async () => {
     }
   })
   const projects = await sut.getProjects()
-  expect(projects[0].id).toEqual("foo")
+  expect(projects[0].id).toEqual("acme-foo")
   expect(projects[0].name).toEqual("foo")
   expect(projects[0].displayName).toEqual("foo")
 })
@@ -249,7 +249,7 @@ test("It supports multiple OpenAPI specifications on a branch", async () => {
   })
   const projects = await sut.getProjects()
   expect(projects).toEqual([{
-    id: "foo",
+    id: "acme-foo",
     name: "foo",
     displayName: "foo",
     url: "https://github.com/acme/foo",
@@ -351,7 +351,7 @@ test("It removes \"-openapi\" suffix from project name", async () => {
     }
   })
   const projects = await sut.getProjects()
-  expect(projects[0].id).toEqual("foo")
+  expect(projects[0].id).toEqual("acme-foo")
   expect(projects[0].name).toEqual("foo")
   expect(projects[0].displayName).toEqual("foo")
 })
@@ -713,7 +713,7 @@ test("It reads display name from configuration file with .yml extension", async 
     }
   })
   const projects = await sut.getProjects()
-  expect(projects[0].id).toEqual("foo")
+  expect(projects[0].id).toEqual("acme-foo")
   expect(projects[0].name).toEqual("foo")
   expect(projects[0].displayName).toEqual("Hello World")
 })
@@ -823,7 +823,7 @@ test("It reads display name from configuration file with .yaml extension", async
     }
   })
   const projects = await sut.getProjects()
-  expect(projects[0].id).toEqual("foo")
+  expect(projects[0].id).toEqual("acme-foo")
   expect(projects[0].name).toEqual("foo")
   expect(projects[0].displayName).toEqual("Hello World")
 })
