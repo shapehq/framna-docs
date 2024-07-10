@@ -147,15 +147,15 @@ export const blockingSessionValidator = new OAuthTokenSessionValidator({
   oauthTokenDataSource
 })
 
-const projectUserDataRepository = new KeyValueUserDataRepository(
-  new RedisKeyValueStore(REDIS_URL),
-  "projects"
-)
+const projectUserDataRepository = new KeyValueUserDataRepository({
+  store: new RedisKeyValueStore(REDIS_URL),
+  baseKey: "projects"
+})
 
-export const projectRepository = new ProjectRepository(
-  session,
-  projectUserDataRepository
-)
+export const projectRepository = new ProjectRepository({
+  userIDReader: session,
+  repository: projectUserDataRepository
+})
 
 export const projectDataSource = new CachingProjectDataSource({
   dataSource: new GitHubProjectDataSource({

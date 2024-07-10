@@ -5,9 +5,9 @@ export default class KeyValueUserDataRepository implements IUserDataRepository<s
   private readonly store: IKeyValueStore
   private readonly baseKey: string
   
-  constructor(store: IKeyValueStore, baseKey: string) {
-    this.store = store
-    this.baseKey = baseKey
+  constructor(config: { store: IKeyValueStore, baseKey: string }) {
+    this.store = config.store
+    this.baseKey = config.baseKey
   }
   
   async get(userId: string): Promise<string | null> {
