@@ -27,18 +27,30 @@ const TrailingToolbarItem = ({
         alignItems="center"
         sx={{ display: { sm: "flex", md: "none" } }}
       >
-        <ProjectName text={project.name} url={projectNameURL} />
+        <RepositoryPathItem
+          text={project.owner}
+          url={project.ownerUrl}
+          sx={{ marginRight: 1 }}
+        />
+        <Typography variant="h6" sx={{ marginRight: 1 }}>/</Typography>
+        <RepositoryPathItem text={project.name} url={projectNameURL} />
       </Stack>
       <Stack
         direction="row"
         alignItems="center"
         sx={{ display: { xs: "none", sm: "none", md: "flex" } }}
       >
-        <ProjectName
+        <RepositoryPathItem
+          text={project.owner}
+          url={project.ownerUrl}
+          sx={{ marginRight: 1 }}
+        />
+        <Typography variant="h6" sx={{ marginRight: 1 }}>/</Typography>
+        <RepositoryPathItem
           text={project.name}
           url={projectNameURL}
           sx={{ marginRight: 1 }}
-        /> 
+        />
         <Typography variant="h6" sx={{ marginRight: 1 }}>/</Typography>
         <VersionSelector
           versions={project.versions}
@@ -70,7 +82,7 @@ const TrailingToolbarItem = ({
 
 export default TrailingToolbarItem
 
-const ProjectName = ({
+const RepositoryPathItem = ({
   url,
   text,
   sx
@@ -95,7 +107,7 @@ const ProjectName = ({
   } else {
     return (
       <Typography variant="body1" sx={sx}>
-        {text}
+        Test {text}
       </Typography>
     )
   }
