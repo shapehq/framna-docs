@@ -1,12 +1,3 @@
-CREATE TABLE verification_token
-(
-  identifier TEXT NOT NULL,
-  expires TIMESTAMPTZ NOT NULL,
-  token TEXT NOT NULL,
-
-  PRIMARY KEY (identifier, token)
-);
-
 CREATE TABLE accounts
 (
   id SERIAL,
@@ -51,14 +42,8 @@ CREATE TABLE oauth_tokens
   user_id VARCHAR(255) NOT NULL,
   provider VARCHAR(255) NOT NULL,
   access_token VARCHAR(255) NOT NULL,
-  refresh_token VARCHAR(255) NULL,
+  refresh_token VARCHAR(255) NOT NULL,
   last_updated_at timestamptz NOT NULL DEFAULT now(),
   
   PRIMARY KEY (user_id, provider)
-);
-
-CREATE TABLE guests (
-  id SERIAL PRIMARY KEY,
-  email VARCHAR(255) UNIQUE NOT NULL,
-  projects jsonb
 );

@@ -119,7 +119,7 @@ test("It sets value in primary repository only", async () => {
       async delete(_userId) {}
     }
   })
-  await sut.set("1234", { accessToken: "foo" })
+  await sut.set("1234", { accessToken: "foo", refreshToken: "bar" })
   expect(didSetInPrimaryRepository).toBeTruthy()
   expect(didSetInSecondaryRepository).toBeFalsy()
 })

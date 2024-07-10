@@ -18,11 +18,9 @@ import {
 } from "../../domain"
 
 export default function ProjectsPage({
-  enableGitHubLinks,
   projects: serverProjects,
   path
 }: {
-  enableGitHubLinks: boolean
   projects?: Project[]
   path: string
 }) {
@@ -93,7 +91,6 @@ export default function ProjectsPage({
       }
       toolbarTrailingItem={project && version && specification &&
         <TrailingToolbarItem
-          enableGitHubLinks={enableGitHubLinks}
           project={project}
           version={version}
           specification={specification}

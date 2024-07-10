@@ -3,4 +3,3 @@ DROP TABLE verification_token;
 DROP TABLE accounts;
 DROP TABLE sessions;
 DROP TABLE users;
-DROP TABLE guests;

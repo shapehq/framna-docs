@@ -5,12 +5,10 @@ export default class LockingOAuthTokenRefresher implements IOAuthTokenRefresher 
   private readonly mutexFactory: IMutexFactory
   private readonly oauthTokenRefresher: IOAuthTokenRefresher
   
-  constructor(
-    config: {
-      mutexFactory: IMutexFactory
-      oauthTokenRefresher: IOAuthTokenRefresher
-    }
-  ) {
+  constructor(config: {
+    mutexFactory: IMutexFactory
+    oauthTokenRefresher: IOAuthTokenRefresher
+  }) {
     this.mutexFactory = config.mutexFactory
     this.oauthTokenRefresher = config.oauthTokenRefresher
   }

@@ -15,7 +15,10 @@ test("It acquires a lock", async () => {
     },
     oauthTokenRefresher: {
       async refreshOAuthToken(_refreshToken) {
-        return { accessToken: "newAccessToken" }
+        return {
+          accessToken: "newAccessToken",
+          refreshToken: "newRefreshToken"
+        }
       }
     }
   })
@@ -38,7 +41,10 @@ test("It releases the acquired lock", async () => {
     },
     oauthTokenRefresher: {
       async refreshOAuthToken(_refreshToken) {
-        return { accessToken: "newAccessToken" }
+        return {
+          accessToken: "newAccessToken",
+          refreshToken: "newRefreshToken"
+        }
       }
     }
   })
@@ -60,7 +66,10 @@ test("It refreshes access token", async () => {
     oauthTokenRefresher: {
       async refreshOAuthToken(_refreshToken) {
         didRefreshAccessToken = true
-        return { accessToken: "newAccessToken" }
+        return {
+          accessToken: "newAccessToken",
+          refreshToken: "newRefreshToken"
+        }
       }
     }
   })

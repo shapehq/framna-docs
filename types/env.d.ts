@@ -2,7 +2,6 @@ namespace NodeJS {
   interface ProcessEnv {
     readonly SHAPE_DOCS_BASE_URL: string
     readonly SHAPE_DOCS_PROJECT_CONFIGURATION_FILENAME: string
-    readonly FROM_EMAIL: string | undefined
     readonly NEXT_PUBLIC_SHAPE_DOCS_TITLE: string
     readonly NEXT_PUBLIC_SHAPE_DOCS_DESCRIPTION: string
     readonly NEXTAUTH_URL_INTERNAL: string
@@ -11,9 +10,6 @@ namespace NodeJS {
     readonly POSTGRESQL_HOST: string
     readonly POSTGRESQL_USER: string
     readonly POSTGRESQL_DB: string
-    readonly SMTP_HOST: string
-    readonly SMTP_USER: string
-    readonly SMTP_PASS: string
     readonly GITHUB_WEBHOOK_SECRET: string
     readonly GITHUB_WEBHOK_REPOSITORY_ALLOWLIST: string
     readonly GITHUB_WEBHOK_REPOSITORY_DISALLOWLIST: string

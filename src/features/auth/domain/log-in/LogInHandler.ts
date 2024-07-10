@@ -1,20 +1,11 @@
 import { ILogInHandler, IUser, IAccount } from "."
-import { IGuestRepository, IUserRepository } from "@/features/admin/domain"
 import { IOAuthTokenRepository } from "../oauth-token"
 import saneParseInt from "@/common/utils/saneParseInt"
 
 export default class LogInHandler implements ILogInHandler {
-  private readonly userRepository: IUserRepository
-  private readonly guestRepository: IGuestRepository
   private readonly oauthTokenRepository: IOAuthTokenRepository
   
-  constructor(config: {
-    userRepository: IUserRepository,
-    guestRepository: IGuestRepository,
-    oauthTokenRepository: IOAuthTokenRepository
-  }) {
-    this.userRepository = config.userRepository
-    this.guestRepository = config.guestRepository
+  constructor(config: { oauthTokenRepository: IOAuthTokenRepository }) {
     this.oauthTokenRepository = config.oauthTokenRepository
   }
   
@@ -24,8 +15,6 @@ export default class LogInHandler implements ILogInHandler {
     }
     if (account.provider === "github") {
       return await this.handleLogInForGitHubUser({ user, account })
-    } else if (account.provider === "nodemailer") {
-      return await this.handleLogInForGuestUser(user)
     } else {
       console.error("Unhandled account provider: " + account.provider)
       return false
@@ -59,23 +48,5 @@ export default class LogInHandler implements ILogInHandler {
     } catch (error) {
       return false
     }
-  }
-  
-  private async handleLogInForGuestUser(user: IUser) {
-    if (!user.email) {
-      return false
-    }
-    const existingUser = await this.userRepository.findByEmail(user.email)
-    if (existingUser && existingUser.accounts.length > 0) {
-      // The user is already authenticated with an identity provider,
-      // so we'll ask them to use that instead.
-      return "/api/auth/signin?error=OAuthAccountNotLinked"
-    }
-    const guest = await this.guestRepository.findByEmail(user.email)
-    if (!guest) {
-      // The e-mail address has not been invited as a guest.
-      return false
-    }
-    return true
   }
 }

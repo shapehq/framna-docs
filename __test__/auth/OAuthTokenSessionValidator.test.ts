@@ -6,7 +6,10 @@ test("It reads the access token", async () => {
     oauthTokenDataSource: {
       async getOAuthToken() {
         didReadOAuthToken = true
-        return { accessToken: "foo" }
+        return {
+          accessToken: "foo",
+          refreshToken: "bar"
+        }
       }
     }
   })
@@ -18,7 +21,10 @@ test("It considers session valid when it can read an access token", async () => 
   const sut = new OAuthTokenSessionValidator({
     oauthTokenDataSource: {
       async getOAuthToken() {
-        return { accessToken: "foo" }
+        return {
+          accessToken: "foo",
+          refreshToken: "bar"
+        }
       }
     }
   })

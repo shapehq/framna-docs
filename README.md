@@ -30,10 +30,6 @@ The table below contains explanations for environment variables. The list is not
 |GITHUB_WEBHOK_REPOSITORY_ALLOWLIST|Comma-separated list of repositories from which webhook calls should be accepted. Leave empty to accept calls from all repositories.|
 |GITHUB_WEBHOK_REPOSITORY_DISALLOWLIST|Comma-separated list of repositories from which webhook calls should be ignored. The list of disallowed repositories takes precedence over the list of allowed repositories.|
 |REDIS_URL|The URL to the Redis store.|
-|SMTP_HOST|Hostname for SMTP server used for sending magic links and guest invitation.|
-|SMTP_USER|Username for SMTP server used for sending magic links and guest invitation.|
-|SMTP_PASS|Password for SMTP server used for sending magic links and guest invitation.|
-|FROM_EMAIL|Sender email for magic links and guest invitations.|
 
 Be aware that the GitHub private key must be PKCS8. GitHub creates PKCS1 keys, so we must manually convert the key from PKCS1 to PKCS8 before base64 encoding it. This can be done as follows:
 
@@ -61,22 +57,6 @@ Finally, open the application on https://dev.local:3000.
 
 See `create-tables.sql`
 
-## SMTP Setup
-
-Magic links are sent via email.
-
-Configure email sending via SMTP using the `SMTP_*` environment variables.
-
-Follow this guide for AWS SES: [Using the Amazon SES SMTP interface to send email](https://docs.aws.amazon.com/ses/latest/dg/send-email-smtp.html).
-
-Example (for AWS SES):
-
-```
-SMTP_HOST="email-smtp.eu-central-1.amazonaws.com"
-SMTP_USER="3AH7TB7N4I4JDIK2A66E"
-SMTP_PASS="SX/vT1W7q9d44Oe2fmEURYIWqttgBNbhrtuMDb6CBBBg"
-```
-
 ## 🚀 Deploying the App
 
 The app is hosted on Heroku in two different environments.
@@ -91,11 +71,3 @@ Each environment is deployed by merging changes into their respective branch. He
 ## 📖 Getting Started with Shape Docs
 
 Details on getting started showing documentation on Shape Docs can be [found on our Confluence](https://shapedk.atlassian.net/wiki/spaces/DEVELOPERS/pages/3795615745/Shape+Docs).
-
-## ✨ Design
-
-This section documents key decisions that were made during the design of Shape Docs.
-
-### Multiple Authentication Providers
-
-Users are allowed to sign in with multiple authentication providers. They can sign in using either GitHub or a magic link. This is key for employees who are also invited as guests on the email associated with their GitHub account. When they sign in using a magic link, they will have access to the repositories that their GitHub account has access to. For users who are both invited as guests and have access through their GitHub account, the access granted by their GitHub account takes priority.

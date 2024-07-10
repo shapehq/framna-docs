@@ -28,9 +28,6 @@ const SettingsList = () => {
     }}>
       <DocumentationVisualizationPicker sx={{ marginBottom: 2 }} />
       <ThickDivider sx={{ marginLeft: -2, marginRight: -2 }} />
-      <SettingsItem href={'/admin/guests'}>
-        Manage guests
-      </SettingsItem>
       <SettingsItem onClick={() => signOut()}>
         Log out
       </SettingsItem>

@@ -1,7 +1,6 @@
 import { Pool } from "pg"
 import NextAuth from "next-auth"
 import GithubProvider from "next-auth/providers/github"
-import EmailProvider from "next-auth/providers/nodemailer"
 import PostgresAdapter from "@auth/pg-adapter"
 import RedisKeyedMutexFactory from "@/common/mutex/RedisKeyedMutexFactory"
 import RedisKeyValueStore from "@/common/key-value-store/RedisKeyValueStore"
@@ -23,40 +22,23 @@ import {
   ProjectRepository
 } from "@/features/projects/domain"
 import {
-  GitHubOAuthTokenRefresher,
-  GitHubInstallationAccessTokenDataSource
+  GitHubOAuthTokenRefresher
 } from "@/features/auth/data"
 import {
-  AccountProviderTypeBasedOAuthTokenRefresher,
   AuthjsAccountsOAuthTokenRepository,
   CompositeLogOutHandler,
   ErrorIgnoringLogOutHandler,
   FallbackOAuthTokenRepository,
-  GuestOAuthTokenDataSource,
-  GuestOAuthTokenRefresher,
   LockingOAuthTokenRefresher,
   LogInHandler,
-  PersistingOAuthTokenDataSource,
+  OAuthTokenDataSource,
   PersistingOAuthTokenRefresher,
   OAuthTokenRepository,
   OAuthTokenSessionValidator,
   UserDataCleanUpLogOutHandler
 } from "@/features/auth/domain"
-import {
-  DbGuestRepository,
-  DbUserRepository,
-  EmailGuestInviter,
-  MagicLinkEmailSender
-} from "./features/admin/data"
-import {
-  IGuestInviter,
-  IUserRepository
-} from "./features/admin/domain"
-import DummyGuestRepository from "./features/admin/data/DummyGuestRepository"
 
 const {
-  NEXT_PUBLIC_SHAPE_DOCS_TITLE,
-  SHAPE_DOCS_BASE_URL,
   SHAPE_DOCS_PROJECT_CONFIGURATION_FILENAME,
   GITHUB_APP_ID,
   GITHUB_CLIENT_ID,
@@ -66,11 +48,7 @@ const {
   POSTGRESQL_HOST,
   POSTGRESQL_USER,
   POSTGRESQL_PASSWORD,
-  POSTGRESQL_DB,
-  SMTP_HOST,
-  SMTP_USER,
-  SMTP_PASS,
-  FROM_EMAIL,
+  POSTGRESQL_DB
 } = process.env
 
 const gitHubAppCredentials = {
@@ -99,15 +77,7 @@ const oauthTokenRepository = new FallbackOAuthTokenRepository({
   secondaryRepository: new AuthjsAccountsOAuthTokenRepository({ db, provider: "github" })
 })
 
-const userRepository: IUserRepository = new DbUserRepository({ db })
-
-export const guestRepository = (process.env.IS_BUILD_PROCESS !== undefined) ? new DummyGuestRepository : new DbGuestRepository({ db })
-
-const logInHandler = new LogInHandler({ userRepository, guestRepository, oauthTokenRepository })
-
-if (!FROM_EMAIL) {
-  throw new Error("FROM_EMAIL environment variable must be set to an e-mail verified in AWS SES")
-}
+const logInHandler = new LogInHandler({ oauthTokenRepository })
 
 export const auth = NextAuth({
   adapter: PostgresAdapter(pool),
@@ -126,30 +96,7 @@ export const auth = NextAuth({
           scope: "repo"
         }
       }
-    }),
-    EmailProvider({
-      server: {
-        host: SMTP_HOST,
-        auth: {
-          user: SMTP_USER,
-          pass: SMTP_PASS,
-        }
-      },
-      from: FROM_EMAIL,
-      name: "email",
-      sendVerificationRequest: async params => {
-        const sender = new MagicLinkEmailSender({
-          server: {
-            host: SMTP_HOST,
-            user: SMTP_USER,
-            pass: SMTP_PASS,
-          },
-          websiteTitle: NEXT_PUBLIC_SHAPE_DOCS_TITLE,
-          from: FROM_EMAIL
-        })
-        await sender.sendMagicLink(params)
-      }
-    }),
+    })
   ],
   session: {
     strategy: "database"
@@ -165,25 +112,11 @@ export const auth = NextAuth({
   }
 })
 
-export const session: ISession = new AuthjsSession({ db, auth })
+export const session: ISession = new AuthjsSession({ auth })
 
-const guestOAuthTokenDataSource = new GuestOAuthTokenDataSource({
+const oauthTokenDataSource = new OAuthTokenDataSource({
   session,
-  guestRepository,
-  gitHubInstallationAccessTokenDataSource: new GitHubInstallationAccessTokenDataSource(
-    gitHubAppCredentials
-  )
-})
-
-const oauthTokenDataSource = new PersistingOAuthTokenDataSource({
-  session,
-  mutexFactory: new SessionMutexFactory({
-    baseKey: "mutexPersistingOAuthTokenDataSource",
-    mutexFactory: new RedisKeyedMutexFactory(REDIS_URL),
-    userIdReader: session
-  }),
-  repository: oauthTokenRepository,
-  dataSource: guestOAuthTokenDataSource
+  repository: oauthTokenRepository
 })
 
 const oauthTokenRefresher = new LockingOAuthTokenRefresher({
@@ -195,15 +128,7 @@ const oauthTokenRefresher = new LockingOAuthTokenRefresher({
   oauthTokenRefresher: new PersistingOAuthTokenRefresher({
     userIdReader: session,
     oauthTokenRepository,
-    oauthTokenRefresher: new AccountProviderTypeBasedOAuthTokenRefresher({
-      accountProviderReader: session,
-      strategy: {
-        github: new GitHubOAuthTokenRefresher(gitHubAppCredentials),
-        email: new GuestOAuthTokenRefresher({
-          dataSource: guestOAuthTokenDataSource
-        })
-      }
-    })
+    oauthTokenRefresher: new GitHubOAuthTokenRefresher(gitHubAppCredentials)
   })
 })
 
@@ -215,7 +140,7 @@ export const gitHubClient = new GitHubClient({
 export const userGitHubClient = new OAuthTokenRefreshingGitHubClient({
   gitHubClient,
   oauthTokenDataSource,
-  oauthTokenRefresher,
+  oauthTokenRefresher
 })
 
 export const blockingSessionValidator = new OAuthTokenSessionValidator({
@@ -248,14 +173,3 @@ export const logOutHandler = new ErrorIgnoringLogOutHandler(
     new UserDataCleanUpLogOutHandler(session, projectUserDataRepository)
   ])
 )
-
-export const guestInviter: IGuestInviter = new EmailGuestInviter({
-  websiteTitle: NEXT_PUBLIC_SHAPE_DOCS_TITLE,
-  url: SHAPE_DOCS_BASE_URL,
-  server: {
-    host: SMTP_HOST,
-    user: SMTP_USER,
-    pass: SMTP_PASS,
-  },
-  from: FROM_EMAIL
-})
