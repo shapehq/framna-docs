@@ -14,8 +14,8 @@ import {
   SessionMutexFactory
 } from "@/common"
 import {
-  GitHubProjectDataSource,
-  GitHubLoginDataSource
+  GitHubLoginDataSource,
+  GitHubProjectDataSource
 } from "@/features/projects/data"
 import {
   CachingProjectDataSource,
@@ -32,9 +32,9 @@ import {
   LockingOAuthTokenRefresher,
   LogInHandler,
   OAuthTokenDataSource,
-  PersistingOAuthTokenRefresher,
   OAuthTokenRepository,
   OAuthTokenSessionValidator,
+  PersistingOAuthTokenRefresher,
   UserDataCleanUpLogOutHandler
 } from "@/features/auth/domain"
 
