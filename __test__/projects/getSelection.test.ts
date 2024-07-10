@@ -16,7 +16,9 @@ test("It selects the first project when there is only one project and path is em
           name: "hello.yml",
           url: "https://example.com/hello.yml"
         }]
-      }]
+      }],
+      owner: "acme",
+      ownerUrl: "https://example.com/acme"
     }]
   })
   expect(sut.project!.id).toEqual("foo")
@@ -31,7 +33,9 @@ test("It selects the first version and specification of the specified project", 
       id: "foo",
       name: "foo",
       displayName: "foo",
-      versions: []
+      versions: [],
+      owner: "acme",
+      ownerUrl: "https://example.com/acme"
     }, {
       id: "bar",
       name: "bar",
@@ -54,7 +58,9 @@ test("It selects the first version and specification of the specified project", 
         name: "baz2",
         isDefault: false,
         specifications: []
-      }]
+      }],
+      owner: "acme",
+      ownerUrl: "https://example.com/acme"
     }]
   })
   expect(sut.project!.id).toEqual("bar")
@@ -69,7 +75,9 @@ test("It selects the first specification of the specified project and version", 
       id: "foo",
       name: "foo",
       displayName: "foo",
-      versions: []
+      versions: [],
+      owner: "acme",
+      ownerUrl: "https://example.com/acme"
     }, {
       id: "bar",
       name: "bar",
@@ -88,7 +96,9 @@ test("It selects the first specification of the specified project and version", 
           name: "hello1.yml",
           url: "https://example.com/hello.yml"
         }]
-      }]
+      }],
+      owner: "acme",
+      ownerUrl: "https://example.com/acme"
     }]
   })
   expect(sut.project!.id).toEqual("bar")
@@ -103,7 +113,9 @@ test("It selects the specification of the specified version", () => {
       id: "foo",
       name: "foo",
       displayName: "foo",
-      versions: []
+      versions: [],
+      owner: "acme",
+      ownerUrl: "https://example.com/acme"
     }, {
       id: "bar",
       name: "bar",
@@ -126,7 +138,9 @@ test("It selects the specification of the specified version", () => {
           name: "hello2.yml",
           url: "https://example.com/hello.yml"
         }]
-      }]
+      }],
+      owner: "acme",
+      ownerUrl: "https://example.com/acme"
     }]
   })
   expect(sut.project!.id).toEqual("bar")
@@ -141,7 +155,9 @@ test("It selects the specified project, version, and specification", () => {
       id: "foo",
       name: "foo",
       displayName: "foo",
-      versions: []
+      versions: [],
+      owner: "acme",
+      ownerUrl: "https://example.com/acme"
     }, {
       id: "bar",
       name: "bar",
@@ -164,7 +180,9 @@ test("It selects the specified project, version, and specification", () => {
           name: "hello2.yml",
           url: "https://example.com/hello.yml"
         }]
-      }]
+      }],
+      owner: "acme",
+      ownerUrl: "https://example.com/acme"
     }]
   })
   expect(sut.project!.id).toEqual("bar")
@@ -179,7 +197,9 @@ test("It returns a undefined project, version, and specification when the select
       id: "bar",
       name: "bar",
       displayName: "bar",
-      versions: []
+      versions: [],
+      owner: "acme",
+      ownerUrl: "https://example.com/acme"
     }]
   })
   expect(sut.project).toBeUndefined()
@@ -199,7 +219,9 @@ test("It returns a undefined version and specification when the selected version
         name: "baz",
         isDefault: false,
         specifications: []
-      }]
+      }],
+      owner: "acme",
+      ownerUrl: "https://example.com/acme"
     }]
   })
   expect(sut.project!.id).toEqual("foo")
@@ -223,7 +245,9 @@ test("It returns a undefined specification when the selected specification canno
           name: "hello.yml",
           url: "https://example.com/hello.yml"
         }]
-      }]
+      }],
+      owner: "acme",
+      ownerUrl: "https://example.com/acme"
     }]
   })
   expect(sut.project!.id).toEqual("foo")
@@ -247,7 +271,9 @@ test("It moves specification ID to version ID if needed", () => {
           name: "hello.yml",
           url: "https://example.com/hello.yml"
         }]
-      }]
+      }],
+      owner: "acme",
+      ownerUrl: "https://example.com/acme"
     }]
   })
   expect(sut.project!.id).toEqual("foo")

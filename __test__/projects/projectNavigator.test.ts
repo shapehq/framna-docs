@@ -42,7 +42,9 @@ test("It navigates to first specification when changing version", async () => {
         name: "world.yml",
         url: "https://example.com/world.yml"
       }]
-    }]
+    }],
+    owner: "acme",
+    ownerUrl: "https://example.com/acme"
   }
   let pushedPath: string | undefined
   const sut = new ProjectNavigator({
@@ -101,7 +103,9 @@ test("It finds a specification with the same name when changing version", async 
         name: "jupiter.yml",
         url: "https://example.com/jupiter.yml"
       }]
-    }]
+    }],
+    owner: "acme",
+    ownerUrl: "https://example.com/acme"
   }
   let pushedPath: string | undefined
   const sut = new ProjectNavigator({

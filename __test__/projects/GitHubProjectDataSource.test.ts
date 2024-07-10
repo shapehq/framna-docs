@@ -113,7 +113,9 @@ test("It maps projects including branches and tags", async () => {
       }],
       url: "https://github.com/acme/foo/tree/1.0",
       isDefault: false
-    }]
+    }],
+    owner: "acme",
+    ownerUrl: "https://github.com/acme"
   }])
 })
 
@@ -283,7 +285,9 @@ test("It supports multiple OpenAPI specifications on a branch", async () => {
       }],
       url: "https://github.com/acme/foo/tree/1.0",
       isDefault: false
-    }]
+    }],
+    owner: "acme",
+    ownerUrl: "https://github.com/acme"
   }])
 })
 

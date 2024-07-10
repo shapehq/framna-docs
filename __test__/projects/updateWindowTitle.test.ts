@@ -18,7 +18,9 @@ test("It leaves out specification when the specification has a generic name", as
       id: "foo",
       name: "foo",
       displayName: "foo",
-      versions: []
+      versions: [],
+      owner: "acme",
+      ownerUrl: "https://example.com/acme"
     },
     version: {
       id: "bar",
@@ -52,7 +54,9 @@ test("It leaves out version when it is the defualt version", async () => {
       id: "foo",
       name: "foo",
       displayName: "foo",
-      versions: []
+      versions: [],
+      owner: "acme",
+      ownerUrl: "https://example.com/acme"
     },
     version: {
       id: "bar",
@@ -82,7 +86,9 @@ test("It adds version when it is not the defualt version", async () => {
       id: "foo",
       name: "foo",
       displayName: "foo",
-      versions: []
+      versions: [],
+      owner: "acme",
+      ownerUrl: "https://example.com/acme"
     },
     version: {
       id: "bar",
