@@ -64,10 +64,12 @@ export default class GitHubProjectDataSource implements IProjectDataSource {
     const defaultName = repository.name.replace(/-openapi$/, "")
     return {
       id: defaultName,
+      owner: repository.owner.login,
       name: defaultName,
       displayName: config?.name || defaultName,
       versions,
       imageURL: imageURL,
+      ownerUrl: `https://github.com/${repository.owner.login}`,
       url: `https://github.com/${repository.owner.login}/${repository.name}`
     }
   }
