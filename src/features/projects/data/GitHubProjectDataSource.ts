@@ -220,13 +220,44 @@ export default class GitHubProjectDataSource implements IProjectDataSource {
   }
   
   private async getRepositories({ logins }: { logins: string[] }): Promise<GitHubProjectRepository[]> {
-    if (logins.length === 0) {
-      return []
-    }
+    let searchQueries: string[] = []
+    // Search for all private repositories the user has access to. This is needed to find
+    // repositories for external collaborators who do not belong to an organization.
+    searchQueries.push("openapi in:name is:private")
+    // Search for public repositories belonging to a user or organization.
+    searchQueries = searchQueries.concat(logins.map(login => `openapi in:name user:${login} is:public`))
+    return await Promise.all(searchQueries.map(searchQuery => {
+      return this.getRepositoriesForSearchQuery({ searchQuery })
+    }))
+    .then(e => e.flat())
+    .then(repositories => {
+      // GitHub's search API does not enable searching for repositories whose name ends with "-openapi",
+      // only repositories whose names include "openapi" so we filter the results ourselves.
+      return repositories.filter(repository => {
+        return repository.name.endsWith("-openapi")
+      })
+    })
+    .then(repositories => {
+      // Ensure we don't have duplicates in the resulting repositories.
+      const uniqueIdentifiers = new Set<string>()
+      return repositories.filter(repository => {
+        const identifier = `${repository.owner.login}-${repository.name}`
+        const alreadyAdded = uniqueIdentifiers.has(identifier)
+        uniqueIdentifiers.add(identifier)
+        return !alreadyAdded
+      })
+    })
+  }
+  
+  private async getRepositoriesForSearchQuery(params: {
+    searchQuery: string,
+    cursor?: string
+  }): Promise<GitHubProjectRepository[]> {
+    const { searchQuery, cursor } = params
     const request = {
       query: `
-      query Repositories($searchQuery: String!) {
-        search(query: $searchQuery, type: REPOSITORY, first: 100) {
+      query Repositories($searchQuery: String!, $cursor: String) {
+        search(query: $searchQuery, type: REPOSITORY, first: 100, after: $cursor) {
           results: nodes {
             ... on Repository {
               name
@@ -254,6 +285,11 @@ export default class GitHubProjectDataSource implements IProjectDataSource {
                 ...RefConnectionParts
               }
             }
+          }
+          
+          pageInfo {
+            hasNextPage
+            endCursor
           }
         }
       }
@@ -285,12 +321,20 @@ export default class GitHubProjectDataSource implements IProjectDataSource {
         }
       }
       `,
-      variables: {
-        searchQuery: `user:${logins[0]} openapi in:name`
-      }
+      variables: { searchQuery, cursor }
     }
     const response = await this.graphQlClient.graphql(request)
-    const nextResults = await this.getRepositories({ logins: logins.slice(1) })
+    if (!response.search || !response.search.results || !response.search.pageInfo) {
+      return []
+    }
+    const pageInfo = response.search.pageInfo
+    if (!pageInfo.hasNextPage || !pageInfo.endCursor) {
+      return response.search.results
+    }
+    const nextResults = await this.getRepositoriesForSearchQuery({
+      searchQuery,
+      cursor: pageInfo.endCursor
+    })
     return response.search.results.concat(nextResults)
   }
 }
