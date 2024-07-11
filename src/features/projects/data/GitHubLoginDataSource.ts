@@ -10,7 +10,8 @@ export default class GitHubLoginDataSource implements IGitHubLoginDataSource {
   
   async getLogins(): Promise<string[]> {
     const request = {
-      query: `query {
+      query: `
+      query {
         viewer {
           login
           organizations(first: 100) {
