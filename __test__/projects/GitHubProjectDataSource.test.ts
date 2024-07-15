@@ -5,6 +5,7 @@ import {
 test("It loads repositories from data source", async () => {
   let didLoadRepositories = false
   const sut = new GitHubProjectDataSource({
+    repositoryNameSuffix: "-openapi",
     projectConfigurationFilename: ".demo-docs.yml",
     loginsDataSource: {
       async getLogins() {
@@ -28,6 +29,7 @@ test("It loads repositories from data source", async () => {
 
 test("It maps projects including branches and tags", async () => {
   const sut = new GitHubProjectDataSource({
+    repositoryNameSuffix: "-openapi",
     projectConfigurationFilename: ".demo-docs.yml",
     loginsDataSource: {
       async getLogins() {
@@ -39,7 +41,7 @@ test("It maps projects including branches and tags", async () => {
         return { 
           search: {
             results: [{
-              name: "foo",
+              name: "foo-openapi",
               owner: {
                 login: "acme"
               },
@@ -90,17 +92,17 @@ test("It maps projects including branches and tags", async () => {
     id: "acme-foo",
     name: "foo",
     displayName: "foo",
-    url: "https://github.com/acme/foo",
+    url: "https://github.com/acme/foo-openapi",
     versions: [{
       id: "main",
       name: "main",
       specifications: [{
         id: "openapi.yml",
         name: "openapi.yml",
-        url: "/api/blob/acme/foo/openapi.yml?ref=12345678",
-        editURL: "https://github.com/acme/foo/edit/main/openapi.yml"
+        url: "/api/blob/acme/foo-openapi/openapi.yml?ref=12345678",
+        editURL: "https://github.com/acme/foo-openapi/edit/main/openapi.yml"
       }],
-      url: "https://github.com/acme/foo/tree/main",
+      url: "https://github.com/acme/foo-openapi/tree/main",
       isDefault: true
     }, {
       id: "1.0",
@@ -108,10 +110,10 @@ test("It maps projects including branches and tags", async () => {
       specifications: [{
         id: "openapi.yml",
         name: "openapi.yml",
-        url: "/api/blob/acme/foo/openapi.yml?ref=12345678",
-        editURL: "https://github.com/acme/foo/edit/1.0/openapi.yml"
+        url: "/api/blob/acme/foo-openapi/openapi.yml?ref=12345678",
+        editURL: "https://github.com/acme/foo-openapi/edit/1.0/openapi.yml"
       }],
-      url: "https://github.com/acme/foo/tree/1.0",
+      url: "https://github.com/acme/foo-openapi/tree/1.0",
       isDefault: false
     }],
     owner: "acme",
@@ -121,6 +123,7 @@ test("It maps projects including branches and tags", async () => {
 
 test("It removes \"-openapi\" suffix from project name", async () => {
   const sut = new GitHubProjectDataSource({
+    repositoryNameSuffix: "-openapi",
     projectConfigurationFilename: ".demo-docs.yml",
     loginsDataSource: {
       async getLogins() {
@@ -186,6 +189,7 @@ test("It removes \"-openapi\" suffix from project name", async () => {
 
 test("It supports multiple OpenAPI specifications on a branch", async () => {
   const sut = new GitHubProjectDataSource({
+    repositoryNameSuffix: "-openapi",
     projectConfigurationFilename: ".demo-docs.yml",
     loginsDataSource: {
       async getLogins() {
@@ -197,7 +201,7 @@ test("It supports multiple OpenAPI specifications on a branch", async () => {
         return {
           search: {
             results: [{
-              name: "foo",
+              name: "foo-openapi",
               owner: {
                 login: "acme"
               },
@@ -252,27 +256,27 @@ test("It supports multiple OpenAPI specifications on a branch", async () => {
     id: "acme-foo",
     name: "foo",
     displayName: "foo",
-    url: "https://github.com/acme/foo",
+    url: "https://github.com/acme/foo-openapi",
     versions: [{
       id: "main",
       name: "main",
       specifications: [{
         id: "foo-service.yml",
         name: "foo-service.yml",
-        url: "/api/blob/acme/foo/foo-service.yml?ref=12345678",
-        editURL: "https://github.com/acme/foo/edit/main/foo-service.yml"
+        url: "/api/blob/acme/foo-openapi/foo-service.yml?ref=12345678",
+        editURL: "https://github.com/acme/foo-openapi/edit/main/foo-service.yml"
       }, {
         id: "bar-service.yml",
         name: "bar-service.yml",
-        url: "/api/blob/acme/foo/bar-service.yml?ref=12345678",
-        editURL: "https://github.com/acme/foo/edit/main/bar-service.yml"
+        url: "/api/blob/acme/foo-openapi/bar-service.yml?ref=12345678",
+        editURL: "https://github.com/acme/foo-openapi/edit/main/bar-service.yml"
       }, {
         id: "baz-service.yml",
         name: "baz-service.yml",
-        url: "/api/blob/acme/foo/baz-service.yml?ref=12345678",
-        editURL: "https://github.com/acme/foo/edit/main/baz-service.yml"
+        url: "/api/blob/acme/foo-openapi/baz-service.yml?ref=12345678",
+        editURL: "https://github.com/acme/foo-openapi/edit/main/baz-service.yml"
       }],
-      url: "https://github.com/acme/foo/tree/main",
+      url: "https://github.com/acme/foo-openapi/tree/main",
       isDefault: true
     }, {
       id: "1.0",
@@ -280,10 +284,10 @@ test("It supports multiple OpenAPI specifications on a branch", async () => {
       specifications: [{
         id: "openapi.yml",
         name: "openapi.yml",
-        url: "/api/blob/acme/foo/openapi.yml?ref=12345678",
-        editURL: "https://github.com/acme/foo/edit/1.0/openapi.yml"
+        url: "/api/blob/acme/foo-openapi/openapi.yml?ref=12345678",
+        editURL: "https://github.com/acme/foo-openapi/edit/1.0/openapi.yml"
       }],
-      url: "https://github.com/acme/foo/tree/1.0",
+      url: "https://github.com/acme/foo-openapi/tree/1.0",
       isDefault: false
     }],
     owner: "acme",
@@ -293,6 +297,7 @@ test("It supports multiple OpenAPI specifications on a branch", async () => {
 
 test("It removes \"-openapi\" suffix from project name", async () => {
   const sut = new GitHubProjectDataSource({
+    repositoryNameSuffix: "-openapi",
     projectConfigurationFilename: ".demo-docs.yml",
     loginsDataSource: {
       async getLogins() {
@@ -358,6 +363,7 @@ test("It removes \"-openapi\" suffix from project name", async () => {
 
 test("It filters away projects with no versions", async () => {
   const sut = new GitHubProjectDataSource({
+    repositoryNameSuffix: "-openapi",
     projectConfigurationFilename: ".demo-docs.yml",
     loginsDataSource: {
       async getLogins() {
@@ -397,6 +403,7 @@ test("It filters away projects with no versions", async () => {
 
 test("It filters away branches with no specifications", async () => {
   const sut = new GitHubProjectDataSource({
+    repositoryNameSuffix: "-openapi",
     projectConfigurationFilename: ".demo-docs.yml",
     loginsDataSource: {
       async getLogins() {
@@ -460,6 +467,7 @@ test("It filters away branches with no specifications", async () => {
 
 test("It filters away tags with no specifications", async () => {
   const sut = new GitHubProjectDataSource({
+    repositoryNameSuffix: "-openapi",
     projectConfigurationFilename: ".demo-docs.yml",
     loginsDataSource: {
       async getLogins() {
@@ -535,6 +543,7 @@ test("It filters away tags with no specifications", async () => {
 
 test("It reads image from configuration file with .yml extension", async () => {
   const sut = new GitHubProjectDataSource({
+    repositoryNameSuffix: "-openapi",
     projectConfigurationFilename: ".demo-docs.yml",
     loginsDataSource: {
       async getLogins() {
@@ -589,6 +598,7 @@ test("It reads image from configuration file with .yml extension", async () => {
 
 test("It filters away tags with no specifications", async () => {
   const sut = new GitHubProjectDataSource({
+    repositoryNameSuffix: "-openapi",
     projectConfigurationFilename: ".demo-docs.yml",
     loginsDataSource: {
       async getLogins() {
@@ -664,6 +674,7 @@ test("It filters away tags with no specifications", async () => {
 
 test("It reads display name from configuration file with .yml extension", async () => {
   const sut = new GitHubProjectDataSource({
+    repositoryNameSuffix: "-openapi",
     projectConfigurationFilename: ".demo-docs.yml",
     loginsDataSource: {
       async getLogins() {
@@ -720,6 +731,7 @@ test("It reads display name from configuration file with .yml extension", async 
 
 test("It reads image from configuration file with .yml extension", async () => {
   const sut = new GitHubProjectDataSource({
+    repositoryNameSuffix: "-openapi",
     projectConfigurationFilename: ".demo-docs.yml",
     loginsDataSource: {
       async getLogins() {
@@ -774,6 +786,7 @@ test("It reads image from configuration file with .yml extension", async () => {
 
 test("It reads display name from configuration file with .yaml extension", async () => {
   const sut = new GitHubProjectDataSource({
+    repositoryNameSuffix: "-openapi",
     projectConfigurationFilename: ".demo-docs.yml",
     loginsDataSource: {
       async getLogins() {
@@ -830,6 +843,7 @@ test("It reads display name from configuration file with .yaml extension", async
 
 test("It reads image from configuration file with .yaml extension", async () => {
   const sut = new GitHubProjectDataSource({
+    repositoryNameSuffix: "-openapi",
     projectConfigurationFilename: ".demo-docs.yml",
     loginsDataSource: {
       async getLogins() {
@@ -884,6 +898,7 @@ test("It reads image from configuration file with .yaml extension", async () => 
 
 test("It sorts projects alphabetically", async () => {
   const sut = new GitHubProjectDataSource({
+    repositoryNameSuffix: "-openapi",
     projectConfigurationFilename: ".demo-docs.yml",
     loginsDataSource: {
       async getLogins() {
@@ -895,7 +910,7 @@ test("It sorts projects alphabetically", async () => {
         return {
           search: {
             results: [{
-              name: "cathrine",
+              name: "cathrine-openapi",
               owner: {
                 login: "acme"
               },
@@ -924,7 +939,7 @@ test("It sorts projects alphabetically", async () => {
                 edges: []
               }
             }, {
-              name: "anne",
+              name: "anne-openapi",
               owner: {
                 login: "acme"
               },
@@ -953,7 +968,7 @@ test("It sorts projects alphabetically", async () => {
                 edges: []
               }
             }, {
-              name: "bobby",
+              name: "bobby-openapi",
               owner: {
                 login: "acme"
               },
@@ -995,6 +1010,7 @@ test("It sorts projects alphabetically", async () => {
 
 test("It sorts versions alphabetically", async () => {
   const sut = new GitHubProjectDataSource({
+    repositoryNameSuffix: "-openapi",
     projectConfigurationFilename: ".demo-docs.yml",
     loginsDataSource: {
       async getLogins() {
@@ -1006,7 +1022,7 @@ test("It sorts versions alphabetically", async () => {
         return {
           search: {
             results: [{
-              name: "foo",
+              name: "foo-openapi",
               owner: {
                 login: "acme"
               },
@@ -1085,6 +1101,7 @@ test("It sorts versions alphabetically", async () => {
 
 test("It prioritizes main, master, develop, and development branch names when sorting verisons", async () => {
   const sut = new GitHubProjectDataSource({
+    repositoryNameSuffix: "-openapi",
     projectConfigurationFilename: ".demo-docs.yml",
     loginsDataSource: {
       async getLogins() {
@@ -1096,7 +1113,7 @@ test("It prioritizes main, master, develop, and development branch names when so
         return {
           search: {
             results: [{
-              name: "foo",
+              name: "foo-openapi",
               owner: {
                 login: "acme"
               },
@@ -1201,6 +1218,7 @@ test("It prioritizes main, master, develop, and development branch names when so
 
 test("It identifies the default branch in returned versions", async () => {
   const sut = new GitHubProjectDataSource({
+    repositoryNameSuffix: "-openapi",
     projectConfigurationFilename: ".demo-docs.yml",
     loginsDataSource: {
       async getLogins() {
@@ -1212,7 +1230,7 @@ test("It identifies the default branch in returned versions", async () => {
         return {
           search: {
             results: [{
-              name: "foo",
+              name: "foo-openapi",
               owner: {
                 login: "acme"
               },
@@ -1293,6 +1311,7 @@ test("It adds remote versions from the project configuration", async () => {
         url: https://example.com/louie.yml
   `
   const sut = new GitHubProjectDataSource({
+    repositoryNameSuffix: "-openapi",
     projectConfigurationFilename: ".demo-docs.yml",
     loginsDataSource: {
       async getLogins() {
@@ -1304,7 +1323,7 @@ test("It adds remote versions from the project configuration", async () => {
         return {
           search: {
             results: [{
-              name: "foo",
+              name: "foo-openapi",
               owner: {
                 login: "acme"
               },
@@ -1368,6 +1387,7 @@ test("It modifies ID of remote version if the ID already exists", async () => {
         url: https://example.com/hello.yml
   `
   const sut = new GitHubProjectDataSource({
+    repositoryNameSuffix: "-openapi",
     projectConfigurationFilename: ".demo-docs.yml",
     loginsDataSource: {
       async getLogins() {
@@ -1379,7 +1399,7 @@ test("It modifies ID of remote version if the ID already exists", async () => {
         return {
           search: {
             results: [{
-              name: "foo",
+              name: "foo-openapi",
               owner: {
                 login: "acme"
               },
@@ -1420,13 +1440,13 @@ test("It modifies ID of remote version if the ID already exists", async () => {
   expect(projects[0].versions).toEqual([{
     id: "bar",
     name: "bar",
-    url: "https://github.com/acme/foo/tree/bar",
+    url: "https://github.com/acme/foo-openapi/tree/bar",
     isDefault: true,
     specifications: [{
       id: "openapi.yml",
       name: "openapi.yml",
-      url: "/api/blob/acme/foo/openapi.yml?ref=12345678",
-      editURL: "https://github.com/acme/foo/edit/bar/openapi.yml"
+      url: "/api/blob/acme/foo-openapi/openapi.yml?ref=12345678",
+      editURL: "https://github.com/acme/foo-openapi/edit/bar/openapi.yml"
     }]
   }, {
     id: "bar1",
@@ -1459,6 +1479,7 @@ test("It lets users specify the ID of a remote version", async () => {
         url: https://example.com/baz.yml
   `
   const sut = new GitHubProjectDataSource({
+    repositoryNameSuffix: "-openapi",
     projectConfigurationFilename: ".demo-docs.yml",
     loginsDataSource: {
       async getLogins() {
@@ -1470,7 +1491,7 @@ test("It lets users specify the ID of a remote version", async () => {
         return {
           search: {
             results: [{
-              name: "foo",
+              name: "foo-openapi",
               owner: {
                 login: "acme"
               },
@@ -1518,6 +1539,7 @@ test("It lets users specify the ID of a remote specification", async () => {
         url: https://example.com/baz.yml
   `
   const sut = new GitHubProjectDataSource({
+    repositoryNameSuffix: "-openapi",
     projectConfigurationFilename: ".demo-docs.yml",
     loginsDataSource: {
       async getLogins() {
@@ -1529,7 +1551,7 @@ test("It lets users specify the ID of a remote specification", async () => {
         return {
           search: {
             results: [{
-              name: "foo",
+              name: "foo-openapi",
               owner: {
                 login: "acme"
               },
@@ -1570,6 +1592,7 @@ test("It lets users specify the ID of a remote specification", async () => {
 test("It queries for both .yml and .yaml file extension with specifying .yml extension", async () => {
   let query: string | undefined
   const sut = new GitHubProjectDataSource({
+    repositoryNameSuffix: "-openapi",
     projectConfigurationFilename: ".demo-docs.yml",
     loginsDataSource: {
       async getLogins() {
@@ -1595,6 +1618,7 @@ test("It queries for both .yml and .yaml file extension with specifying .yml ext
 test("It queries for both .yml and .yaml file extension with specifying .yaml extension", async () => {
   let query: string | undefined
   const sut = new GitHubProjectDataSource({
+    repositoryNameSuffix: "-openapi",
     projectConfigurationFilename: ".demo-docs.yml",
     loginsDataSource: {
       async getLogins() {
@@ -1620,6 +1644,7 @@ test("It queries for both .yml and .yaml file extension with specifying .yaml ex
 test("It queries for both .yml and .yaml file extension with no extension", async () => {
   let query: string | undefined
   const sut = new GitHubProjectDataSource({
+    repositoryNameSuffix: "-openapi",
     projectConfigurationFilename: ".demo-docs",
     loginsDataSource: {
       async getLogins() {
@@ -1645,6 +1670,7 @@ test("It queries for both .yml and .yaml file extension with no extension", asyn
 test("It loads projects for all logins", async () => {
   let searchQueries: string[] = []
   const sut = new GitHubProjectDataSource({
+    repositoryNameSuffix: "-openapi",
     projectConfigurationFilename: ".demo-docs",
     loginsDataSource: {
       async getLogins() {
@@ -1665,8 +1691,9 @@ test("It loads projects for all logins", async () => {
     }
   })
   await sut.getProjects()
-  expect(searchQueries.length).toEqual(3)
-  expect(searchQueries[0]).toBe("user:acme openapi in:name")
-  expect(searchQueries[1]).toBe("user:somecorp openapi in:name")
-  expect(searchQueries[2]).toBe("user:techsystems openapi in:name")
+  expect(searchQueries.length).toEqual(4)
+  expect(searchQueries).toContain("\"-openapi\" in:name is:private")
+  expect(searchQueries).toContain("\"-openapi\" in:name user:acme is:public")
+  expect(searchQueries).toContain("\"-openapi\" in:name user:somecorp is:public")
+  expect(searchQueries).toContain("\"-openapi\" in:name user:techsystems is:public")
 })

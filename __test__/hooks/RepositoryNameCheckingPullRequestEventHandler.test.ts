@@ -3,10 +3,15 @@ import { RepositoryNameCheckingPullRequestEventHandler } from "../../src/feature
 test("It does not call event handler when repository name does not have \"-openapi\" suffix", async () => {
   let didCallEventHandler = false
   const sut = new RepositoryNameCheckingPullRequestEventHandler({
-    async pullRequestOpened() {
-      didCallEventHandler = true
-    }
-  }, [], [])
+    eventHandler: {
+      async pullRequestOpened() {
+        didCallEventHandler = true
+      }
+    },
+    repositoryNameSuffix: "-openapi",
+    allowedRepositoryNames: [],
+    disallowedRepositoryNames: []
+  })
   await sut.pullRequestOpened({
     appInstallationId: 42,
     repositoryOwner: "acme",
@@ -20,10 +25,15 @@ test("It does not call event handler when repository name does not have \"-opena
 test("It does not call event handler when repository name contains \"-openapi\" but it is not the last part of the repository name", async () => {
   let didCallEventHandler = false
   const sut = new RepositoryNameCheckingPullRequestEventHandler({
-    async pullRequestOpened() {
-      didCallEventHandler = true
-    }
-  }, [], [])
+    eventHandler: {
+      async pullRequestOpened() {
+        didCallEventHandler = true
+      }
+    },
+    repositoryNameSuffix: "-openapi",
+    allowedRepositoryNames: [],
+    disallowedRepositoryNames: []
+  })
   await sut.pullRequestOpened({
     appInstallationId: 42,
     repositoryOwner: "acme",
@@ -37,10 +47,15 @@ test("It does not call event handler when repository name contains \"-openapi\" 
 test("It calls event handler when no repositories have been allowed or disallowed", async () => {
   let didCallEventHandler = false
   const sut = new RepositoryNameCheckingPullRequestEventHandler({
-    async pullRequestOpened() {
-      didCallEventHandler = true
-    }
-  }, [], [])
+    eventHandler: {
+      async pullRequestOpened() {
+        didCallEventHandler = true
+      }
+    },
+    repositoryNameSuffix: "-openapi",
+    allowedRepositoryNames: [],
+    disallowedRepositoryNames: []
+  })
   await sut.pullRequestOpened({
     appInstallationId: 42,
     repositoryOwner: "acme",
@@ -54,10 +69,15 @@ test("It calls event handler when no repositories have been allowed or disallowe
 test("It does not call event handler for repository that is not on the allowlist", async () => {
   let didCallEventHandler = false
   const sut = new RepositoryNameCheckingPullRequestEventHandler({
-    async pullRequestOpened() {
-      didCallEventHandler = true
-    }
-  }, ["example-openapi"], [])
+    eventHandler: {
+      async pullRequestOpened() {
+        didCallEventHandler = true
+      }
+    },
+    repositoryNameSuffix: "-openapi",
+    allowedRepositoryNames: ["example-openapi"],
+    disallowedRepositoryNames: []
+  })
   await sut.pullRequestOpened({
     appInstallationId: 42,
     repositoryOwner: "acme",
@@ -71,10 +91,15 @@ test("It does not call event handler for repository that is not on the allowlist
 test("It does not call event handler for repository that is on the disallowlist", async () => {
   let didCallEventHandler = false
   const sut = new RepositoryNameCheckingPullRequestEventHandler({
-    async pullRequestOpened() {
-      didCallEventHandler = true
-    }
-  }, [], ["example-openapi"])
+    eventHandler: {
+      async pullRequestOpened() {
+        didCallEventHandler = true
+      }
+    },
+    repositoryNameSuffix: "-openapi",
+    allowedRepositoryNames: [],
+    disallowedRepositoryNames: ["example-openapi"]
+  })
   await sut.pullRequestOpened({
     appInstallationId: 42,
     repositoryOwner: "acme",
@@ -88,10 +113,15 @@ test("It does not call event handler for repository that is on the disallowlist"
 test("It lets the disallowlist takes precedence over the allowlist", async () => {
   let didCallEventHandler = false
   const sut = new RepositoryNameCheckingPullRequestEventHandler({
-    async pullRequestOpened() {
-      didCallEventHandler = true
-    }
-  }, ["example-openapi"], ["example-openapi"])
+    eventHandler: {
+      async pullRequestOpened() {
+        didCallEventHandler = true
+      }
+    },
+    repositoryNameSuffix: "-openapi",
+    allowedRepositoryNames: ["example-openapi"],
+    disallowedRepositoryNames: ["example-openapi"]
+  })
   await sut.pullRequestOpened({
     appInstallationId: 42,
     repositoryOwner: "acme",

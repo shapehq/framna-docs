@@ -329,10 +329,13 @@ export default class GitHubProjectDataSource implements IProjectDataSource {
       variables: { searchQuery, cursor }
     }
     const response = await this.graphQlClient.graphql(request)
-    if (!response.search || !response.search.results || !response.search.pageInfo) {
+    if (!response.search || !response.search.results) {
       return []
     }
     const pageInfo = response.search.pageInfo
+    if (!pageInfo) {
+      return response.search.results
+    }
     if (!pageInfo.hasNextPage || !pageInfo.endCursor) {
       return response.search.results
     }
