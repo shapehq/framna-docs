@@ -4,8 +4,6 @@ import IGitHubClient, {
   GraphQlQueryResponse,
   GetRepositoryContentRequest,
   GetPullRequestCommentsRequest,
-  GetOrganizationMembershipStatusRequest,
-  GetOrganizationMembershipStatusRequestResponse,
   AddCommentToPullRequestRequest,
   UpdatePullRequestCommentRequest,
   GetPullRequestFilesRequest,
@@ -76,14 +74,6 @@ export default class OAuthTokenRefreshingGitHubClient implements IGitHubClient {
   async updatePullRequestComment(request: UpdatePullRequestCommentRequest) {
     return await this.send(async () => {
       return await this.gitHubClient.updatePullRequestComment(request)
-    })
-  }
-  
-  async getOrganizationMembershipStatus(
-    request: GetOrganizationMembershipStatusRequest
-  ): Promise<GetOrganizationMembershipStatusRequestResponse> {
-    return await this.send(async () => {
-      return await this.gitHubClient.getOrganizationMembershipStatus(request)
     })
   }
   

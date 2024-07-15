@@ -27,10 +27,7 @@ test("It adds comment when none exist", async () => {
       async addCommentToPullRequest() {
         didAddComment = true
       },
-      async updatePullRequestComment() {},
-      async getOrganizationMembershipStatus() {
-        return { state: "active" }
-      }
+      async updatePullRequestComment() {}
     }
   })
   await sut.commentPullRequest({
@@ -75,10 +72,7 @@ test("It adds comment containing list of changed files", async () => {
         didAddComment = true
         commentBody = request.body
       },
-      async updatePullRequestComment() {},
-      async getOrganizationMembershipStatus() {
-        return { state: "active" }
-      }
+      async updatePullRequestComment() {}
     }
   })
   await sut.commentPullRequest({
@@ -121,10 +115,7 @@ test("It skips adding comment when no YAML files were found in the PR", async ()
       async addCommentToPullRequest() {
         didAddComment = true
       },
-      async updatePullRequestComment() {},
-      async getOrganizationMembershipStatus() {
-        return { state: "active" }
-      }
+      async updatePullRequestComment() {}
     }
   })
   await sut.commentPullRequest({
@@ -171,9 +162,6 @@ test("It updates comment when one already exists", async () => {
       async addCommentToPullRequest() {},
       async updatePullRequestComment() {
         didUpdateComment = true
-      },
-      async getOrganizationMembershipStatus() {
-        return { state: "active" }
       }
     }
   })
@@ -227,9 +215,6 @@ test("It skips updating comment when the body has not changed", async () => {
       },
       async updatePullRequestComment() {
         didUpdateComment = true
-      },
-      async getOrganizationMembershipStatus() {
-        return { state: "active" }
       }
     }
   })
@@ -302,9 +287,6 @@ test("It updates comment to remove file list  when all relevant file changes wer
       async updatePullRequestComment(request) {
         didUpdateComment = true
         updatedCommentBody = request.body
-      },
-      async getOrganizationMembershipStatus() {
-        return { state: "active" }
       }
     }
   })
@@ -371,10 +353,7 @@ test("It adds comment without file table if only project configuration was edite
         didAddComment = true
         commentBody = request.body
       },
-      async updatePullRequestComment() {},
-      async getOrganizationMembershipStatus() {
-        return { state: "active" }
-      }
+      async updatePullRequestComment() {}
     }
   })
   await sut.commentPullRequest({

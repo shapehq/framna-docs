@@ -70,14 +70,6 @@ export type UpdatePullRequestCommentRequest = {
   readonly body: string
 }
 
-export type GetOrganizationMembershipStatusRequest = {
-  readonly organizationName: string
-}
-
-export type GetOrganizationMembershipStatusRequestResponse = {
-  readonly state: "active" | "pending"
-}
-
 export default interface IGitHubClient {
   graphql(request: GraphQLQueryRequest): Promise<GraphQlQueryResponse>
   getRepositoryContent(request: GetRepositoryContentRequest): Promise<RepositoryContent>
@@ -85,5 +77,4 @@ export default interface IGitHubClient {
   getPullRequestComments(request: GetPullRequestCommentsRequest): Promise<PullRequestComment[]>
   addCommentToPullRequest(request: AddCommentToPullRequestRequest): Promise<void>
   updatePullRequestComment(request: UpdatePullRequestCommentRequest): Promise<void>
-  getOrganizationMembershipStatus(request: GetOrganizationMembershipStatusRequest): Promise<GetOrganizationMembershipStatusRequestResponse>
 }

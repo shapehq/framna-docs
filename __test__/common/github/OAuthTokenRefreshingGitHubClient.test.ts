@@ -37,10 +37,7 @@ test("It forwards a GraphQL request", async () => {
         return []
       },
       async updatePullRequestComment() {},
-      async addCommentToPullRequest() {},
-      async getOrganizationMembershipStatus() {
-        return { state: "active" }
-      }
+      async addCommentToPullRequest() {}
     }
   })
   const request: GraphQLQueryRequest = {
@@ -82,10 +79,7 @@ test("It forwards a request to get the repository content", async () => {
         return []
       },
       async addCommentToPullRequest() {},
-      async updatePullRequestComment() {},
-      async getOrganizationMembershipStatus() {
-        return { state: "active" }
-      }
+      async updatePullRequestComment() {}
     }
   })
   const request: GetRepositoryContentRequest = {
@@ -129,10 +123,7 @@ test("It forwards a request to get comments to a pull request", async () => {
         return []
       },
       async addCommentToPullRequest() {},
-      async updatePullRequestComment() {},
-      async getOrganizationMembershipStatus() {
-        return { state: "active" }
-      }
+      async updatePullRequestComment() {}
     }
   })
   const request: GetPullRequestCommentsRequest = {
@@ -177,10 +168,7 @@ test("It forwards a request to add a comment to a pull request", async () => {
       async addCommentToPullRequest(request: AddCommentToPullRequestRequest) {
         forwardedRequest = request
       },
-      async updatePullRequestComment() {},
-      async getOrganizationMembershipStatus() {
-        return { state: "active" }
-      }
+      async updatePullRequestComment() {}
     }
   })
   const request: AddCommentToPullRequestRequest = {
@@ -230,10 +218,7 @@ test("It retries with a refreshed OAuth token when receiving HTTP 401", async ()
         return []
       },
       async updatePullRequestComment() {},
-      async addCommentToPullRequest() {},
-      async getOrganizationMembershipStatus() {
-        return { state: "active" }
-      }
+      async addCommentToPullRequest() {}
     }
   })
   const request: GraphQLQueryRequest = {
@@ -275,10 +260,7 @@ test("It only retries a request once when receiving HTTP 401", async () => {
         return []
       },
       async updatePullRequestComment() {},
-      async addCommentToPullRequest() {},
-      async getOrganizationMembershipStatus() {
-        return { state: "active" }
-      }
+      async addCommentToPullRequest() {}
     }
   })
   const request: GraphQLQueryRequest = {
@@ -323,10 +305,7 @@ test("It does not refresh an OAuth token when the initial request was successful
         return []
       },
       async addCommentToPullRequest() {},
-      async updatePullRequestComment() {},
-      async getOrganizationMembershipStatus() {
-        return { state: "active" }
-      }
+      async updatePullRequestComment() {}
     }
   })
   const request: GraphQLQueryRequest = {
