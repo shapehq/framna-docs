@@ -15,7 +15,9 @@ export type RepositoryContent = {
 
 export type PullRequestComment = {
   readonly isFromBot: boolean
-  readonly body: string
+  readonly gitHubApp?: {
+    readonly id: string
+  }
 }
 
 export type GetRepositoryContentRequest = {

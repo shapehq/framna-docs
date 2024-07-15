@@ -72,10 +72,12 @@ export default class GitHubClient implements IGitHubClient {
     })
     const result: PullRequestComment[] = []
     for await (const comment of comments) {
-      result.push({
-        body: comment.body || "",
-        isFromBot: comment.user?.type == "Bot"
-      })
+      const isFromBot = comment.user?.type == "Bot"
+      let gitHubApp: { id: string } | undefined
+      if (comment.performed_via_github_app) {
+        gitHubApp = { id: comment.performed_via_github_app.id.toString() }
+      }
+      result.push({ isFromBot, gitHubApp })
     }
     return result
   }

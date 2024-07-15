@@ -15,6 +15,7 @@ const {
   NEXT_PUBLIC_SHAPE_DOCS_TITLE,
   SHAPE_DOCS_BASE_URL,
   REPOSITORY_NAME_SUFFIX,
+  GITHUB_APP_ID,
   GITHUB_WEBHOOK_SECRET,
   GITHUB_WEBHOK_REPOSITORY_ALLOWLIST,
   GITHUB_WEBHOK_REPOSITORY_DISALLOWLIST
@@ -43,7 +44,7 @@ const hookHandler = new GitHubHookHandler({
         })
       }),
       commentRepository: new GitHubPullRequestCommentRepository(gitHubClient),
-      needleDomain: SHAPE_DOCS_BASE_URL
+      gitHubAppId: GITHUB_APP_ID
     }),
     repositoryNameSuffix: REPOSITORY_NAME_SUFFIX,
     allowedRepositoryNames,

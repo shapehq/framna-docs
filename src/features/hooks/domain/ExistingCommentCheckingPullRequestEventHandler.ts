@@ -4,23 +4,24 @@ import IPullRequestCommentRepository from "./IPullRequestCommentRepository"
 export default class ExistingCommentCheckingPullRequestEventHandler implements IPullRequestEventHandler {
   private readonly eventHandler: IPullRequestEventHandler
   private readonly commentRepository: IPullRequestCommentRepository
-  private readonly needleDomain: string
+  private readonly gitHubAppId: string
   
   constructor(config: {
     eventHandler: IPullRequestEventHandler,
     commentRepository: IPullRequestCommentRepository,
-    needleDomain: string
+    gitHubAppId: string
   }) {
     this.eventHandler = config.eventHandler
     this.commentRepository = config.commentRepository
-    this.needleDomain = config.needleDomain
+    this.gitHubAppId = config.gitHubAppId
   }
   
   async pullRequestOpened(event: IPullRequestOpenedEvent): Promise<void> {
     const comments = await this.commentRepository.getComments(event)
-    const containsOurComment = comments.find(comment => {
-      return comment.isFromBot && comment.body.includes(this.needleDomain)
+    const ourComment = comments.find(comment => {
+      return comment.isFromBot && comment.gitHubApp?.id == this.gitHubAppId
     })
+    const containsOurComment = ourComment !== undefined
     if (containsOurComment) {
       return
     }
