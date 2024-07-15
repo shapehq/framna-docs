@@ -30,9 +30,13 @@ test("It forwards a GraphQL request", async () => {
       async getRepositoryContent() {
         return { downloadURL: "https://example.com" }
       },
+      async getPullRequestFiles() {
+        return []
+      },
       async getPullRequestComments() {
         return []
       },
+      async updatePullRequestComment() {},
       async addCommentToPullRequest() {},
       async getOrganizationMembershipStatus() {
         return { state: "active" }
@@ -71,10 +75,14 @@ test("It forwards a request to get the repository content", async () => {
         forwardedRequest = request
         return { downloadURL: "https://example.com" }
       },
+      async getPullRequestFiles() {
+        return []
+      },
       async getPullRequestComments() {
         return []
       },
       async addCommentToPullRequest() {},
+      async updatePullRequestComment() {},
       async getOrganizationMembershipStatus() {
         return { state: "active" }
       }
@@ -113,11 +121,15 @@ test("It forwards a request to get comments to a pull request", async () => {
       async getRepositoryContent() {
         return { downloadURL: "https://example.com" }
       },
+      async getPullRequestFiles() {
+        return []
+      },
       async getPullRequestComments(request: GetPullRequestCommentsRequest) {
         forwardedRequest = request
         return []
       },
       async addCommentToPullRequest() {},
+      async updatePullRequestComment() {},
       async getOrganizationMembershipStatus() {
         return { state: "active" }
       }
@@ -156,12 +168,16 @@ test("It forwards a request to add a comment to a pull request", async () => {
       async getRepositoryContent() {
         return { downloadURL: "https://example.com" }
       },
+      async getPullRequestFiles() {
+        return []
+      },
       async getPullRequestComments() {
         return []
       },
       async addCommentToPullRequest(request: AddCommentToPullRequestRequest) {
         forwardedRequest = request
       },
+      async updatePullRequestComment() {},
       async getOrganizationMembershipStatus() {
         return { state: "active" }
       }
@@ -207,9 +223,13 @@ test("It retries with a refreshed OAuth token when receiving HTTP 401", async ()
       async getRepositoryContent() {
         return { downloadURL: "https://example.com" }
       },
+      async getPullRequestFiles() {
+        return []
+      },
       async getPullRequestComments() {
         return []
       },
+      async updatePullRequestComment() {},
       async addCommentToPullRequest() {},
       async getOrganizationMembershipStatus() {
         return { state: "active" }
@@ -248,9 +268,13 @@ test("It only retries a request once when receiving HTTP 401", async () => {
       async getRepositoryContent() {
         return { downloadURL: "https://example.com" }
       },
+      async getPullRequestFiles() {
+        return []
+      },
       async getPullRequestComments() {
         return []
       },
+      async updatePullRequestComment() {},
       async addCommentToPullRequest() {},
       async getOrganizationMembershipStatus() {
         return { state: "active" }
@@ -292,10 +316,14 @@ test("It does not refresh an OAuth token when the initial request was successful
       async getRepositoryContent() {
         return { downloadURL: "https://example.com" }
       },
+      async getPullRequestFiles() {
+        return []
+      },
       async getPullRequestComments() {
         return []
       },
       async addCommentToPullRequest() {},
+      async updatePullRequestComment() {},
       async getOrganizationMembershipStatus() {
         return { state: "active" }
       }
