@@ -5,7 +5,8 @@ import {
 import {
   PostCommentPullRequestEventHandler,
   FilteringPullRequestEventHandler,
-  RepositoryNameEventFilter
+  RepositoryNameEventFilter,
+  PullRequestCommenter
 } from "@/features/hooks/domain"
 import { gitHubClient } from "@/composition"
 
@@ -39,12 +40,14 @@ const hookHandler = new GitHubHookHandler({
       disallowlist
     }),
     eventHandler: new PostCommentPullRequestEventHandler({
-      siteName: NEXT_PUBLIC_SHAPE_DOCS_TITLE,
-      domain: SHAPE_DOCS_BASE_URL,
-      repositoryNameSuffix: REPOSITORY_NAME_SUFFIX,
-      projectConfigurationFilename: SHAPE_DOCS_PROJECT_CONFIGURATION_FILENAME,
-      gitHubAppId: GITHUB_APP_ID,
-      gitHubClient: gitHubClient
+      pullRequestCommenter: new PullRequestCommenter({
+        siteName: NEXT_PUBLIC_SHAPE_DOCS_TITLE,
+        domain: SHAPE_DOCS_BASE_URL,
+        repositoryNameSuffix: REPOSITORY_NAME_SUFFIX,
+        projectConfigurationFilename: SHAPE_DOCS_PROJECT_CONFIGURATION_FILENAME,
+        gitHubAppId: GITHUB_APP_ID,
+        gitHubClient: gitHubClient
+      })
     })
   })
 })

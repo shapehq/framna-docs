@@ -2,3 +2,4 @@ export type { default as IPullRequestEventHandler } from "./IPullRequestEventHan
 export { default as PostCommentPullRequestEventHandler } from "./PostCommentPullRequestEventHandler"
 export { default as FilteringPullRequestEventHandler } from "./FilteringPullRequestEventHandler"
 export { default as RepositoryNameEventFilter } from "./RepositoryNameEventFilter"
+export { default as PullRequestCommenter } from "./PullRequestCommenter"
