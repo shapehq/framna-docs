@@ -1,16 +1,16 @@
 export default class RepositoryNameEventFilter {
   private readonly repositoryNameSuffix: string
-  private readonly allowedRepositoryNames: string[]
-  private readonly disallowedRepositoryNames: string[]
+  private readonly allowlist: string[]
+  private readonly disallowlist: string[]
   
   constructor(config: {
     repositoryNameSuffix: string
-    allowedRepositoryNames: string[]
-    disallowedRepositoryNames: string[]
+    allowlist: string[]
+    disallowlist: string[]
   }) {
     this.repositoryNameSuffix = config.repositoryNameSuffix
-    this.allowedRepositoryNames = config.allowedRepositoryNames
-    this.disallowedRepositoryNames = config.disallowedRepositoryNames
+    this.allowlist = config.allowlist
+    this.disallowlist = config.disallowlist
   }
   
   includeEvent(event: { repositoryOwner: string, repositoryName: string }) {
@@ -32,13 +32,13 @@ export default class RepositoryNameEventFilter {
   }
   
   private isAllowedRepositoryName(repositoryName: string) {
-    if (this.allowedRepositoryNames.length == 0) {
+    if (this.allowlist.length == 0) {
       return true
     }
-    return this.allowedRepositoryNames.includes(repositoryName)
+    return this.allowlist.includes(repositoryName)
   }
   
   private isDisallowedRepositoryName(repositoryName: string) {
-    return this.disallowedRepositoryNames.includes(repositoryName)
+    return this.disallowlist.includes(repositoryName)
   }
 }

@@ -27,16 +27,16 @@ const listFromCommaSeparatedString = (str?: string) => {
   return str.split(",").map(e => e.trim())
 }
 
-const allowedRepositoryNames = listFromCommaSeparatedString(GITHUB_WEBHOK_REPOSITORY_ALLOWLIST)
-const disallowedRepositoryNames = listFromCommaSeparatedString(GITHUB_WEBHOK_REPOSITORY_DISALLOWLIST)
+const allowlist = listFromCommaSeparatedString(GITHUB_WEBHOK_REPOSITORY_ALLOWLIST)
+const disallowlist = listFromCommaSeparatedString(GITHUB_WEBHOK_REPOSITORY_DISALLOWLIST)
   
 const hookHandler = new GitHubHookHandler({
   secret: GITHUB_WEBHOOK_SECRET,
   pullRequestEventHandler: new FilteringPullRequestEventHandler({
     filter: new RepositoryNameEventFilter({
       repositoryNameSuffix: REPOSITORY_NAME_SUFFIX,
-      allowedRepositoryNames,
-      disallowedRepositoryNames
+      allowlist,
+      disallowlist
     }),
     eventHandler: new PostCommentPullRequestEventHandler({
       siteName: NEXT_PUBLIC_SHAPE_DOCS_TITLE,
