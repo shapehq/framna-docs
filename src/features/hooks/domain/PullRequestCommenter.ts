@@ -132,8 +132,8 @@ export default class PullRequestCommenter {
     result += `The changes are now ready to previewed on <a href="${this.domain}/${owner}/${projectId}/${ref}">${this.siteName}</a> 🚀`
     if (rows.length > 0) {
       const rowsHTML = rows
-      .map(row => `<tr><td><strong>${row.title}</strong></td><td>${row.link}</td><td>${row.status}</td></tr>`)
-      .join("\n")
+        .map(row => `<tr><td><strong>${row.title}</strong></td><td>${row.link}</td><td>${row.status}</td></tr>`)
+        .join("\n")
       result = `${result}\n\n<table>${rowsHTML}</table>`
     }
     return result
