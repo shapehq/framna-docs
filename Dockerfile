@@ -32,9 +32,6 @@ ENV NEXT_TELEMETRY_DISABLED 1
 # Copy example env vars (needed for build process - picked up by Next)
 COPY .env.example .env
 
-# Signal to code that we are in the build process (e.g. to disable database access)
-ENV IS_BUILD_PROCESS true
-
 # If using npm comment out above and use below instead
 RUN npm run build
 
