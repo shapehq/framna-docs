@@ -33,10 +33,6 @@ export default class PullRequestCommenter {
     pullRequestNumber: number
   }) {
     const files = await this.getChangedYamlFiles(request)
-    if (files.length == 0) {
-      // Do nothing if no OpenAPI files were updated.
-      return
-    }
     const commentBody = this.makeCommentBody({
       files,
       owner: request.repositoryOwner,
@@ -52,7 +48,7 @@ export default class PullRequestCommenter {
         repositoryName: request.repositoryName,
         body: commentBody
       })
-    } else if (!existingComment) {
+    } else if (!existingComment && files.length > 0) {
       await this.gitHubClient.addCommentToPullRequest({
         appInstallationId: request.appInstallationId,
         repositoryOwner: request.repositoryOwner,
