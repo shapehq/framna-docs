@@ -99,12 +99,31 @@ export default class PullRequestCommenter {
     repositoryName: string
     ref: string
   }): string {
+    const { owner, repositoryName, ref } = params
+    const projectId = this.getProjectId({ repositoryName })
+    const tableHTML = this.makeFileTableHTML(params)
+    let result = "### 📖 Documentation Preview"
+    result += "\n\n"
+    result += `The changes are now ready to previewed on <a href="${this.domain}/${owner}/${projectId}/${ref}">${this.siteName}</a> 🚀`
+    if (tableHTML) {
+      result += "\n\n" + tableHTML
+   }
+    return result
+  }
+  
+  private makeFileTableHTML(params: {
+    files: PullRequestFile[]
+    owner: string
+    repositoryName: string
+    ref: string
+  }) {
     const { files, owner, repositoryName, ref } = params
-    const projectId = repositoryName.replace(new RegExp(this.repositoryNameSuffix + "$"), "")
-    let rows: { title: string, status: string, link: string }[] = []
+    let rows: { filename: string, link: string, status: string }[] = []
+    const projectId = this.getProjectId({ repositoryName })
     // Make sure we don't include the project configuration file.
     const baseConfigFilename = this.projectConfigurationFilename.replace(this.fileExtensionRegex, "")
     const changedFiles = files.filter(file => file.filename.replace(this.fileExtensionRegex, "") != baseConfigFilename)
+    // Create rows for each file
     for (const file of changedFiles) {
       const status = this.getStatusText(file)
       let link = ""
@@ -112,18 +131,15 @@ export default class PullRequestCommenter {
         const url = `${this.domain}/${owner}/${projectId}/${ref}/${file.filename}`
         link += ` <a href="${url}">${url}</a>`
       }
-      rows.push({ title: file.filename, status, link })
+      rows.push({ filename: file.filename, status, link })
     }
-    let result = `### 📖 Documentation Preview`
-    result += `\n\n`
-    result += `The changes are now ready to previewed on <a href="${this.domain}/${owner}/${projectId}/${ref}">${this.siteName}</a> 🚀`
-    if (rows.length > 0) {
-      const rowsHTML = rows
-        .map(row => `<tr><td><strong>${row.title}</strong></td><td>${row.link}</td><td>${row.status}</td></tr>`)
-        .join("\n")
-      result = `${result}\n\n<table>${rowsHTML}</table>`
+    if (rows.length == 0) {
+      return undefined
     }
-    return result
+    const rowsHTML = rows
+      .map(row => `<tr><td><strong>${row.filename}</strong></td><td>${row.link}</td><td>${row.status}</td></tr>`)
+      .join("\n")
+    return `<table>${rowsHTML}</table>`
   }
   
   private getStatusText(file: PullRequestFile) {
@@ -138,5 +154,9 @@ export default class PullRequestCommenter {
     } else {
       return ""
     }
+  }
+  
+  private getProjectId({ repositoryName }: { repositoryName: string }): string {
+    return repositoryName.replace(new RegExp(this.repositoryNameSuffix + "$"), "")
   }
 }
