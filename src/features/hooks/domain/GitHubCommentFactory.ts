@@ -15,15 +15,14 @@ export default class GitHubCommentFactory implements IGitHubCommentFactory {
     this.domain = config.domain
   }
   
-  makeDocumentationPreviewReadyComment({
-    repositoryName,
-    ref
-  }: {
+  makeDocumentationPreviewReadyComment(params: {
+    owner: string
     repositoryName: string
     ref: string
   }): string {
+    const { owner, repositoryName, ref } = params
     const projectId = repositoryName.replace(new RegExp(this.repositoryNameSuffix + "$"), "")
-    const link = `${this.domain}/${projectId}/${ref}`
+    const link = `${this.domain}/${owner}/${projectId}/${ref}`
     return `### 📖 Documentation Preview
 
 These edits are available for preview at [${this.siteName}](${link}).

@@ -1,8 +1,6 @@
 export default interface IGitHubCommentFactory {
-  makeDocumentationPreviewReadyComment({
-    repositoryName,
-    ref
-  }: {
+  makeDocumentationPreviewReadyComment(request: {
+    owner: string
     repositoryName: string
     ref: string
   }): string

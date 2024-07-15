@@ -16,6 +16,7 @@ export default class PostCommentPullRequestEventHandler implements IPullRequestE
   
   async pullRequestOpened(event: IPullRequestOpenedEvent): Promise<void> {
     const commentBody = this.commentFactory.makeDocumentationPreviewReadyComment({
+      owner: event.repositoryOwner,
       repositoryName: event.repositoryName,
       ref: event.ref
     })
