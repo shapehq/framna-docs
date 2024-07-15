@@ -13,7 +13,7 @@ test("It fetches comments from the repository", async () => {
       },
       async addComment() {}
     },
-    needleDomain: "https://example.com"
+    gitHubAppId: "appid1234"
   })
   await sut.pullRequestOpened({
     appInstallationId: 42,
@@ -25,7 +25,7 @@ test("It fetches comments from the repository", async () => {
   expect(didFetchComments).toBeTruthy()
 })
 
-test("It does calls decorated event handler if a comment does not exist in the repository", async () => {
+test("It calls decorated event handler if a comment does not exist in the repository", async () => {
   let didCallEventHandler = false
   const sut = new ExistingCommentCheckingPullRequestEventHandler({
     eventHandler: {
@@ -39,7 +39,7 @@ test("It does calls decorated event handler if a comment does not exist in the r
       },
       async addComment() {}
     },
-    needleDomain: "https://example.com"
+    gitHubAppId: "appid1234"
   })
   await sut.pullRequestOpened({
     appInstallationId: 42,
@@ -62,13 +62,15 @@ test("It does not call the event handler if a comment already exists in the repo
     commentRepository: {
       async getComments() {
         return [{
-          body: "The documentation is available on https://example.com",
-          isFromBot: true
+          isFromBot: true,
+          gitHubApp: {
+            id: "appid1234"
+          }
         }]
       },
       async addComment() {}
     },
-    needleDomain: "https://example.com"
+    gitHubAppId: "appid1234"
   })
   await sut.pullRequestOpened({
     appInstallationId: 42,
@@ -80,7 +82,7 @@ test("It does not call the event handler if a comment already exists in the repo
   expect(didCallEventHandler).toBeFalsy()
 })
 
-test("It calls the event handler if a comment exists matching the needle domain but that comment is not from a bot", async () => {
+test("It calls the event handler if a comment exists with our GitHub app ID but that comment is not from a bot", async () => {
   let didCallEventHandler = false
   const sut = new ExistingCommentCheckingPullRequestEventHandler({
     eventHandler: {
@@ -91,13 +93,15 @@ test("It calls the event handler if a comment exists matching the needle domain 
     commentRepository: {
       async getComments() {
         return [{
-          body: "The documentation is available on https://example.com",
-          isFromBot: false
+          isFromBot: false,
+          gitHubApp: {
+            id: "appid1234"
+          }
         }]
       },
       async addComment() {}
     },
-    needleDomain: "https://example.com"
+    gitHubAppId: "appid1234"
   })
   await sut.pullRequestOpened({
     appInstallationId: 42,
@@ -109,7 +113,7 @@ test("It calls the event handler if a comment exists matching the needle domain 
   expect(didCallEventHandler).toBeTruthy()
 })
 
-test("It calls the event handler if the repository contains a comment from a bot but that comment does not contain the needle domain", async () => {
+test("It calls the event handler if the repository contains a comment from a bot but that comment is not from our GitHub app", async () => {
   let didCallEventHandler = false
   const sut = new ExistingCommentCheckingPullRequestEventHandler({
     eventHandler: {
@@ -120,13 +124,15 @@ test("It calls the event handler if the repository contains a comment from a bot
     commentRepository: {
       async getComments() {
         return [{
-          body: "Hello world!",
-          isFromBot: true
+          isFromBot: true,
+          gitHubApp: {
+            id: "someotherapp"
+          }
         }]
       },
       async addComment() {}
     },
-    needleDomain: "https://example.com"
+    gitHubAppId: "appid1234"
   })
   await sut.pullRequestOpened({
     appInstallationId: 42,
