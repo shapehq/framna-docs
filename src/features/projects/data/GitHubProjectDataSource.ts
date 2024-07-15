@@ -15,15 +15,18 @@ import {
 export default class GitHubProjectDataSource implements IProjectDataSource {
   private readonly loginsDataSource: IGitHubLoginDataSource
   private readonly graphQlClient: IGitHubGraphQLClient
+  private readonly repositoryNameSuffix: string
   private readonly projectConfigurationFilename: string
   
   constructor(config: {
     loginsDataSource: IGitHubLoginDataSource,
     graphQlClient: IGitHubGraphQLClient,
+    repositoryNameSuffix: string,
     projectConfigurationFilename: string
   }) {
     this.loginsDataSource = config.loginsDataSource
     this.graphQlClient = config.graphQlClient
+    this.repositoryNameSuffix = config.repositoryNameSuffix
     this.projectConfigurationFilename = config.projectConfigurationFilename.replace(/\.ya?ml$/, "")
   }
   
@@ -61,7 +64,7 @@ export default class GitHubProjectDataSource implements IProjectDataSource {
     ).filter(version => {
       return version.specifications.length > 0
     })
-    const defaultName = repository.name.replace(/-openapi$/, "")
+    const defaultName = repository.name.replace(new RegExp(this.repositoryNameSuffix + "$"), "")
     return {
       id: `${repository.owner.login}-${defaultName}`,
       owner: repository.owner.login,
@@ -223,9 +226,11 @@ export default class GitHubProjectDataSource implements IProjectDataSource {
     let searchQueries: string[] = []
     // Search for all private repositories the user has access to. This is needed to find
     // repositories for external collaborators who do not belong to an organization.
-    searchQueries.push("openapi in:name is:private")
+    searchQueries.push(`"${this.repositoryNameSuffix}" in:name is:private`)
     // Search for public repositories belonging to a user or organization.
-    searchQueries = searchQueries.concat(logins.map(login => `openapi in:name user:${login} is:public`))
+    searchQueries = searchQueries.concat(logins.map(login => {
+      return `"${this.repositoryNameSuffix}" in:name user:${login} is:public`
+    }))
     return await Promise.all(searchQueries.map(searchQuery => {
       return this.getRepositoriesForSearchQuery({ searchQuery })
     }))
@@ -234,7 +239,7 @@ export default class GitHubProjectDataSource implements IProjectDataSource {
       // GitHub's search API does not enable searching for repositories whose name ends with "-openapi",
       // only repositories whose names include "openapi" so we filter the results ourselves.
       return repositories.filter(repository => {
-        return repository.name.endsWith("-openapi")
+        return repository.name.endsWith(this.repositoryNameSuffix)
       })
     })
     .then(repositories => {

@@ -1,10 +1,16 @@
 import IGitHubCommentFactory from "./IGitHubCommentFactory"
 
 export default class GitHubCommentFactory implements IGitHubCommentFactory {
+  private readonly repositoryNameSuffix: string
   private readonly websiteTitle: string
   private readonly domain: string
   
-  constructor(config: { websiteTitle: string, domain: string }) {
+  constructor(config: {
+    repositoryNameSuffix: string,
+    websiteTitle: string,
+    domain: string
+  }) {
+    this.repositoryNameSuffix = config.repositoryNameSuffix
     this.websiteTitle = config.websiteTitle
     this.domain = config.domain
   }
@@ -16,7 +22,7 @@ export default class GitHubCommentFactory implements IGitHubCommentFactory {
     repositoryName: string
     ref: string
   }): string {
-    const projectId = repositoryName.replace(/-openapi$/, "")
+    const projectId = repositoryName.replace(new RegExp(this.repositoryNameSuffix + "$"), "")
     const link = `${this.domain}/${projectId}/${ref}`
     return `### 📖 Documentation Preview
       

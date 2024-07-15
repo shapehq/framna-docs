@@ -14,6 +14,7 @@ import { gitHubClient } from "@/composition"
 const {
   NEXT_PUBLIC_SHAPE_DOCS_TITLE,
   SHAPE_DOCS_BASE_URL,
+  REPOSITORY_NAME_SUFFIX,
   GITHUB_WEBHOOK_SECRET,
   GITHUB_WEBHOK_REPOSITORY_ALLOWLIST,
   GITHUB_WEBHOK_REPOSITORY_DISALLOWLIST
@@ -31,11 +32,12 @@ const disallowedRepositoryNames = listFromCommaSeparatedString(GITHUB_WEBHOK_REP
   
 const hookHandler = new GitHubHookHandler({
   secret: GITHUB_WEBHOOK_SECRET,
-  pullRequestEventHandler: new RepositoryNameCheckingPullRequestEventHandler(
-    new ExistingCommentCheckingPullRequestEventHandler({
+  pullRequestEventHandler: new RepositoryNameCheckingPullRequestEventHandler({
+    eventHandler: new ExistingCommentCheckingPullRequestEventHandler({
       eventHandler: new PostCommentPullRequestEventHandler({
         commentRepository: new GitHubPullRequestCommentRepository(gitHubClient),
         commentFactory: new GitHubCommentFactory({
+          repositoryNameSuffix: REPOSITORY_NAME_SUFFIX,
           websiteTitle: NEXT_PUBLIC_SHAPE_DOCS_TITLE,
           domain: SHAPE_DOCS_BASE_URL
         })
@@ -43,9 +45,10 @@ const hookHandler = new GitHubHookHandler({
       commentRepository: new GitHubPullRequestCommentRepository(gitHubClient),
       needleDomain: SHAPE_DOCS_BASE_URL
     }),
+    repositoryNameSuffix: REPOSITORY_NAME_SUFFIX,
     allowedRepositoryNames,
     disallowedRepositoryNames
-  )
+  })
 })
 
 export const POST = async (req: NextRequest): Promise<NextResponse> => {

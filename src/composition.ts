@@ -40,6 +40,7 @@ import {
 
 const {
   SHAPE_DOCS_PROJECT_CONFIGURATION_FILENAME,
+  REPOSITORY_NAME_SUFFIX,
   GITHUB_APP_ID,
   GITHUB_CLIENT_ID,
   GITHUB_CLIENT_SECRET,
@@ -163,6 +164,7 @@ export const projectDataSource = new CachingProjectDataSource({
       graphQlClient: userGitHubClient
     }),
     graphQlClient: userGitHubClient,
+    repositoryNameSuffix: REPOSITORY_NAME_SUFFIX,
     projectConfigurationFilename: SHAPE_DOCS_PROJECT_CONFIGURATION_FILENAME
   }),
   repository: projectRepository

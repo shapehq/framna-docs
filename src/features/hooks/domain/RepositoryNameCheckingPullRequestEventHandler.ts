@@ -2,17 +2,20 @@ import IPullRequestEventHandler, { IPullRequestOpenedEvent } from "./IPullReques
 
 export default class RepositoryNameCheckingPullRequestEventHandler implements IPullRequestEventHandler {
   private readonly eventHandler: IPullRequestEventHandler
+  private readonly repositoryNameSuffix: string
   private readonly allowedRepositoryNames: string[]
   private readonly disallowedRepositoryNames: string[]
   
-  constructor(
+  constructor(config: {
     eventHandler: IPullRequestEventHandler,
+    repositoryNameSuffix: string,
     allowedRepositoryNames?: string[],
     disallowedRepositoryNames?: string[]
-  ) {
-    this.eventHandler = eventHandler
-    this.allowedRepositoryNames = allowedRepositoryNames || []
-    this.disallowedRepositoryNames = disallowedRepositoryNames || []
+  }) {
+    this.eventHandler = config.eventHandler
+    this.repositoryNameSuffix = config.repositoryNameSuffix
+    this.allowedRepositoryNames = config.allowedRepositoryNames || []
+    this.disallowedRepositoryNames = config.disallowedRepositoryNames || []
   }
   
   async pullRequestOpened(event: IPullRequestOpenedEvent): Promise<void> {
@@ -29,7 +32,7 @@ export default class RepositoryNameCheckingPullRequestEventHandler implements IP
   }
   
   private repositoryNameHasExpectedSuffix(repositoryName: string) {
-    return repositoryName.match(/-openapi$/)
+    return repositoryName.endsWith(this.repositoryNameSuffix)
   }
   
   private isAllowedRepositoryName(repositoryName: string) {

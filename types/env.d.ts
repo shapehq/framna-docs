@@ -10,6 +10,7 @@ namespace NodeJS {
     readonly POSTGRESQL_HOST: string
     readonly POSTGRESQL_USER: string
     readonly POSTGRESQL_DB: string
+    readonly REPOSITORY_NAME_SUFFIX: string
     readonly GITHUB_WEBHOOK_SECRET: string
     readonly GITHUB_WEBHOK_REPOSITORY_ALLOWLIST: string
     readonly GITHUB_WEBHOK_REPOSITORY_DISALLOWLIST: string
