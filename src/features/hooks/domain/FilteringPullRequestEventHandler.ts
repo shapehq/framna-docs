@@ -5,7 +5,7 @@ import IPullRequestEventHandler, {
 } from "./IPullRequestEventHandler"
 
 interface IFilter {
-  includeEvent(event: { repositoryName: string }): boolean
+  includeEvent(event: { repositoryOwner: string, repositoryName: string }): boolean
 }
 
 export default class FilteringPullRequestEventHandler implements IPullRequestEventHandler {

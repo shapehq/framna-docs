@@ -13,14 +13,15 @@ export default class RepositoryNameEventFilter {
     this.disallowedRepositoryNames = config.disallowedRepositoryNames
   }
   
-  includeEvent(event: { repositoryName: string }) {
+  includeEvent(event: { repositoryOwner: string, repositoryName: string }) {
+    const fullRepositoryName = `${event.repositoryOwner}/${event.repositoryName}`
     if (!this.repositoryNameHasExpectedSuffix(event.repositoryName)) {
       return false
     }
-    if (!this.isAllowedRepositoryName(event.repositoryName)) {
+    if (!this.isAllowedRepositoryName(fullRepositoryName)) {
       return false
     }
-    if (this.isDisallowedRepositoryName(event.repositoryName)) {
+    if (this.isDisallowedRepositoryName(fullRepositoryName)) {
       return false
     }
     return true
