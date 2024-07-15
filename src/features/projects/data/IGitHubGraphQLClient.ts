@@ -1,11 +1,11 @@
 export type GitHubGraphQLClientRequest = {
   readonly query: string
-  /* eslint-disable-next-line  @typescript-eslint/no-explicit-any */
+  /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
   readonly variables?: {[key: string]: any}
 }
 
 export type GitHubGraphQLClientResponse = {
-  /* eslint-disable-next-line  @typescript-eslint/no-explicit-any */
+  /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
   readonly [key: string]: any
 }
 

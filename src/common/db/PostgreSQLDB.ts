@@ -12,6 +12,7 @@ export class PostgreSQLDBConnection implements IDBConnection {
     this.client.release()
   }
   
+  /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
   async query<T extends IDBRow>(query: string, values: any[] = []): Promise<IDBQueryResult<T>> {
     const result: QueryResult<T> = await this.client.query(query, values)
     return { rows: result.rows }
@@ -34,6 +35,7 @@ export default class PostgreSQLDB implements IDB {
     return new PostgreSQLDBConnection({ client })
   }
   
+  /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
   async query<T extends IDBRow>(query: string, values: any[] = []): Promise<IDBQueryResult<T>> {
     const connection = await this.connect()
     const result = await connection.query<T>(query, values)

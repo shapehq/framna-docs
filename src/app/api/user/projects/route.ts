@@ -4,8 +4,7 @@ import {
   UnauthorizedError,
   makeUnauthenticatedAPIErrorResponse
 } from "@/common"
-import { projectDataSource } from "@/composition"
-import { session } from "@/composition"
+import { session, projectDataSource } from "@/composition"
 
 export async function GET() {
   const isAuthenticated = await session.getIsAuthenticated()

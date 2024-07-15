@@ -118,7 +118,7 @@ export default class PullRequestCommenter {
     ref: string
   }) {
     const { files, owner, repositoryName, ref } = params
-    let rows: { filename: string, link: string, status: string }[] = []
+    const rows: { filename: string, link: string, status: string }[] = []
     const projectId = this.getProjectId({ repositoryName })
     // Make sure we don't include the project configuration file.
     const baseConfigFilename = this.projectConfigurationFilename.replace(this.fileExtensionRegex, "")

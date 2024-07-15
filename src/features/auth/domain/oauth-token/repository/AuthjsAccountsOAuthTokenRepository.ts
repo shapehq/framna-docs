@@ -18,7 +18,7 @@ export default class AuthjsAccountsOAuthTokenRepository implements IOAuthTokenRe
     FROM 
       accounts
     WHERE 
-      provider = $1 AND \"userId\" = $2;
+      provider = $1 AND "userId" = $2;
     `
     const result = await this.db.query(query, [this.provider, userId])
     if (result.rows.length == 0) {

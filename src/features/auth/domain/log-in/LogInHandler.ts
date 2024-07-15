@@ -33,7 +33,7 @@ export default class LogInHandler implements ILogInHandler {
     if (!refreshToken) {
       return false
     }
-    let userId = saneParseInt(user.id)
+    const userId = saneParseInt(user.id)
     if (!userId) {
       // We do not have a valid user ID, meaning this is the first time the user logs in.
       // When logging in for the first time, the user has a temporary ID that we cannot

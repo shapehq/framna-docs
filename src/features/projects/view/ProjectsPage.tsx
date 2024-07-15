@@ -1,4 +1,3 @@
-import { session } from "@/composition"
 import { ProjectRepository } from "../domain"
 import ClientProjectsPage from "./client/ProjectsPage"
 
