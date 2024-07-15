@@ -38,7 +38,7 @@ const hookHandler = new GitHubHookHandler({
         commentRepository: new GitHubPullRequestCommentRepository(gitHubClient),
         commentFactory: new GitHubCommentFactory({
           repositoryNameSuffix: REPOSITORY_NAME_SUFFIX,
-          websiteTitle: NEXT_PUBLIC_SHAPE_DOCS_TITLE,
+          siteName: NEXT_PUBLIC_SHAPE_DOCS_TITLE,
           domain: SHAPE_DOCS_BASE_URL
         })
       }),
