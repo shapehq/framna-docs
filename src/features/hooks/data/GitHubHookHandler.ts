@@ -20,10 +20,10 @@ class GitHubHookHandler {
   
   async handle(req: NextRequest): Promise<void> {
     await this.webhooks.verifyAndReceive({
-      id: req.headers.get('X-GitHub-Delivery') as string,
-      name: req.headers.get('X-GitHub-Event') as WebhookEventName,
+      id: req.headers.get("X-GitHub-Delivery") as string,
+      name: req.headers.get("X-GitHub-Event") as WebhookEventName,
       payload: await req.text(),
-      signature: req.headers.get('X-Hub-Signature') as string,
+      signature: req.headers.get("X-Hub-Signature") as string,
     }).catch((error) => {
       console.error(`Error: ${error.message}`)
       return false
