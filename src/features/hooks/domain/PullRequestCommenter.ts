@@ -106,16 +106,7 @@ export default class PullRequestCommenter {
     const baseConfigFilename = this.projectConfigurationFilename.replace(this.fileExtensionRegex, "")
     const changedFiles = files.filter(file => file.filename.replace(this.fileExtensionRegex, "") != baseConfigFilename)
     for (const file of changedFiles) {
-      let status = ""
-      if (file.status == "added") {
-        status += "Added"
-      } else if (file.status == "removed") {
-        status += "Removed"
-      } else if (file.status == "renamed") {
-        status += "Renamed"
-      } else if (file.status == "changed" || file.status == "modified") {
-        status += "Changed"
-      }
+      const status = this.getStatusText(file)
       let link = ""
       if (file.status != "removed") {
         const url = `${this.domain}/${owner}/${projectId}/${ref}/${file.filename}`
@@ -133,5 +124,19 @@ export default class PullRequestCommenter {
       result = `${result}\n\n<table>${rowsHTML}</table>`
     }
     return result
+  }
+  
+  private getStatusText(file: PullRequestFile) {
+    if (file.status == "added") {
+      return "Added"
+    } else if (file.status == "removed") {
+      return "Removed"
+    } else if (file.status == "renamed") {
+      return "Renamed"
+    } else if (file.status == "changed" || file.status == "modified") {
+      return "Changed"
+    } else {
+      return ""
+    }
   }
 }
