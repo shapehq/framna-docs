@@ -1,34 +1,29 @@
-import IPullRequestEventHandler, { IPullRequestOpenedEvent } from "./IPullRequestEventHandler"
-
-export default class RepositoryNameCheckingPullRequestEventHandler implements IPullRequestEventHandler {
-  private readonly eventHandler: IPullRequestEventHandler
+export default class RepositoryNameEventFilter {
   private readonly repositoryNameSuffix: string
   private readonly allowedRepositoryNames: string[]
   private readonly disallowedRepositoryNames: string[]
   
   constructor(config: {
-    eventHandler: IPullRequestEventHandler,
-    repositoryNameSuffix: string,
-    allowedRepositoryNames?: string[],
-    disallowedRepositoryNames?: string[]
+    repositoryNameSuffix: string
+    allowedRepositoryNames: string[]
+    disallowedRepositoryNames: string[]
   }) {
-    this.eventHandler = config.eventHandler
     this.repositoryNameSuffix = config.repositoryNameSuffix
-    this.allowedRepositoryNames = config.allowedRepositoryNames || []
-    this.disallowedRepositoryNames = config.disallowedRepositoryNames || []
+    this.allowedRepositoryNames = config.allowedRepositoryNames
+    this.disallowedRepositoryNames = config.disallowedRepositoryNames
   }
   
-  async pullRequestOpened(event: IPullRequestOpenedEvent): Promise<void> {
+  includeEvent(event: { repositoryName: string }) {
     if (!this.repositoryNameHasExpectedSuffix(event.repositoryName)) {
-      return
+      return false
     }
     if (!this.isAllowedRepositoryName(event.repositoryName)) {
-      return
+      return false
     }
     if (this.isDisallowedRepositoryName(event.repositoryName)) {
-      return
+      return false
     }
-    return await this.eventHandler.pullRequestOpened(event)
+    return true
   }
   
   private repositoryNameHasExpectedSuffix(repositoryName: string) {

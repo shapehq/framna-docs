@@ -47,7 +47,19 @@ class GitHubHookHandler {
       if (!payload.installation) {
         throw new Error("Payload does not contain information about the app installation.")
       }
-      await this.pullRequestEventHandler.pullRequestOpened({
+      await this.pullRequestEventHandler.pullRequestReopened({
+        appInstallationId: payload.installation.id,
+        repositoryOwner: payload.repository.owner.login,
+        repositoryName: payload.repository.name,
+        ref: payload.pull_request.head.ref,
+        pullRequestNumber: payload.pull_request.number
+      })
+    })
+    this.webhooks.on("pull_request.synchronize", async ({ payload }) => {
+      if (!payload.installation) {
+        throw new Error("Payload does not contain information about the app installation.")
+      }
+      await this.pullRequestEventHandler.pullRequestSynchronized({
         appInstallationId: payload.installation.id,
         repositoryOwner: payload.repository.owner.login,
         repositoryName: payload.repository.name,

@@ -5,11 +5,14 @@ import IGitHubClient, {
   GraphQlQueryResponse,
   GetRepositoryContentRequest,
   GetPullRequestCommentsRequest,
+  GetPullRequestFilesRequest,
   AddCommentToPullRequestRequest,
+  UpdatePullRequestCommentRequest,
   GetOrganizationMembershipStatusRequest,
   GetOrganizationMembershipStatusRequestResponse,
   RepositoryContent,
-  PullRequestComment
+  PullRequestComment,
+  PullRequestFile
 } from "./IGitHubClient"
 
 interface IGitHubOAuthTokenDataSource {
@@ -62,6 +65,19 @@ export default class GitHubClient implements IGitHubClient {
     return { downloadURL: item.download_url }
   }
   
+  async getPullRequestFiles(request: GetPullRequestFilesRequest): Promise<PullRequestFile[]> {
+    const auth = await this.installationAuthenticator(request.appInstallationId)
+    const octokit = new Octokit({ auth: auth.token })
+    const files = await octokit.paginate(octokit.rest.pulls.listFiles, {
+      owner: request.repositoryOwner,
+      repo: request.repositoryName,
+      pull_number: request.pullRequestNumber,
+    })
+    return files.map(file => {
+      return { filename: file.filename, status: file.status }
+    })
+  }
+  
   async getPullRequestComments(request: GetPullRequestCommentsRequest): Promise<PullRequestComment[]> {
     const auth = await this.installationAuthenticator(request.appInstallationId)
     const octokit = new Octokit({ auth: auth.token })
@@ -72,12 +88,14 @@ export default class GitHubClient implements IGitHubClient {
     })
     const result: PullRequestComment[] = []
     for await (const comment of comments) {
+      const id = comment.id
+      const body = comment.body
       const isFromBot = comment.user?.type == "Bot"
       let gitHubApp: { id: string } | undefined
       if (comment.performed_via_github_app) {
         gitHubApp = { id: comment.performed_via_github_app.id.toString() }
       }
-      result.push({ isFromBot, gitHubApp })
+      result.push({ id, body, isFromBot, gitHubApp })
     }
     return result
   }
@@ -89,6 +107,17 @@ export default class GitHubClient implements IGitHubClient {
       owner: request.repositoryOwner,
       repo: request.repositoryName,
       issue_number: request.pullRequestNumber,
+      body: request.body
+    })
+  }
+  
+  async updatePullRequestComment(request: UpdatePullRequestCommentRequest): Promise<void> {
+    const auth = await this.installationAuthenticator(request.appInstallationId)
+    const octokit = new Octokit({ auth: auth.token })
+    await octokit.rest.issues.updateComment({
+      comment_id: request.commentId,
+      owner: request.repositoryOwner,
+      repo: request.repositoryName,
       body: request.body
     })
   }

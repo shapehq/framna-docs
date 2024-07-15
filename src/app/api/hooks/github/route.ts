@@ -1,19 +1,18 @@
 import { NextRequest, NextResponse } from "next/server"
 import {
-  GitHubHookHandler,
-  GitHubPullRequestCommentRepository
+  GitHubHookHandler
 } from "@/features/hooks/data"
 import {
   PostCommentPullRequestEventHandler,
-  RepositoryNameCheckingPullRequestEventHandler,
-  ExistingCommentCheckingPullRequestEventHandler,
-  GitHubCommentFactory
+  FilteringPullRequestEventHandler,
+  RepositoryNameEventFilter
 } from "@/features/hooks/domain"
 import { gitHubClient } from "@/composition"
 
 const {
   NEXT_PUBLIC_SHAPE_DOCS_TITLE,
   SHAPE_DOCS_BASE_URL,
+  SHAPE_DOCS_PROJECT_CONFIGURATION_FILENAME,
   REPOSITORY_NAME_SUFFIX,
   GITHUB_APP_ID,
   GITHUB_WEBHOOK_SECRET,
@@ -33,22 +32,20 @@ const disallowedRepositoryNames = listFromCommaSeparatedString(GITHUB_WEBHOK_REP
   
 const hookHandler = new GitHubHookHandler({
   secret: GITHUB_WEBHOOK_SECRET,
-  pullRequestEventHandler: new RepositoryNameCheckingPullRequestEventHandler({
-    eventHandler: new ExistingCommentCheckingPullRequestEventHandler({
-      eventHandler: new PostCommentPullRequestEventHandler({
-        commentRepository: new GitHubPullRequestCommentRepository(gitHubClient),
-        commentFactory: new GitHubCommentFactory({
-          repositoryNameSuffix: REPOSITORY_NAME_SUFFIX,
-          siteName: NEXT_PUBLIC_SHAPE_DOCS_TITLE,
-          domain: SHAPE_DOCS_BASE_URL
-        })
-      }),
-      commentRepository: new GitHubPullRequestCommentRepository(gitHubClient),
-      gitHubAppId: GITHUB_APP_ID
+  pullRequestEventHandler: new FilteringPullRequestEventHandler({
+    filter: new RepositoryNameEventFilter({
+      repositoryNameSuffix: REPOSITORY_NAME_SUFFIX,
+      allowedRepositoryNames,
+      disallowedRepositoryNames
     }),
-    repositoryNameSuffix: REPOSITORY_NAME_SUFFIX,
-    allowedRepositoryNames,
-    disallowedRepositoryNames
+    eventHandler: new PostCommentPullRequestEventHandler({
+      siteName: NEXT_PUBLIC_SHAPE_DOCS_TITLE,
+      domain: SHAPE_DOCS_BASE_URL,
+      repositoryNameSuffix: REPOSITORY_NAME_SUFFIX,
+      projectConfigurationFilename: SHAPE_DOCS_PROJECT_CONFIGURATION_FILENAME,
+      gitHubAppId: GITHUB_APP_ID,
+      gitHubClient: gitHubClient
+    })
   })
 })
 

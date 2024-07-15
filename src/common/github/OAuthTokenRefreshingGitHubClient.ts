@@ -7,8 +7,11 @@ import IGitHubClient, {
   GetOrganizationMembershipStatusRequest,
   GetOrganizationMembershipStatusRequestResponse,
   AddCommentToPullRequestRequest,
+  UpdatePullRequestCommentRequest,
+  GetPullRequestFilesRequest,
   RepositoryContent,
-  PullRequestComment
+  PullRequestComment,
+  PullRequestFile
 } from "./IGitHubClient"
 
 const HttpErrorSchema = z.object({
@@ -52,15 +55,27 @@ export default class OAuthTokenRefreshingGitHubClient implements IGitHubClient {
     })
   }
   
+  async getPullRequestFiles(request: GetPullRequestFilesRequest): Promise<PullRequestFile[]> {
+    return await this.send(async () => {
+      return await this.gitHubClient.getPullRequestFiles(request)
+    })
+  }
+  
   async getPullRequestComments(request: GetPullRequestCommentsRequest): Promise<PullRequestComment[]> {
     return await this.send(async () => {
       return await this.gitHubClient.getPullRequestComments(request)
     })
   }
   
-  async addCommentToPullRequest(request: AddCommentToPullRequestRequest): Promise<void> {
+  async addCommentToPullRequest(request: AddCommentToPullRequestRequest) {
     return await this.send(async () => {
       return await this.gitHubClient.addCommentToPullRequest(request)
+    })
+  }
+  
+  async updatePullRequestComment(request: UpdatePullRequestCommentRequest) {
+    return await this.send(async () => {
+      return await this.gitHubClient.updatePullRequestComment(request)
     })
   }
   
