@@ -2,10 +2,11 @@ import IKeyValueStore from "./IKeyValueStore"
 import Redis from "ioredis"
 
 export default class RedisKeyValueStore implements IKeyValueStore {
-  private readonly redis: Redis
+  private readonly url: string
+  private _redis: Redis | undefined
 
   constructor(url: string) {
-    this.redis = new Redis(url)
+    this.url = url
   }
   
   async get(key: string): Promise<string | null> {
@@ -26,5 +27,14 @@ export default class RedisKeyValueStore implements IKeyValueStore {
   
   async delete(key: string): Promise<void> {
     await this.redis.del(key)
+  }
+  
+  private get redis(): Redis {
+    if (this._redis) {
+      return this._redis
+    }
+    const redis = new Redis(this.url)
+    this._redis = redis
+    return redis
   }
 }
