@@ -3,7 +3,7 @@ export default interface IGitHubCommentFactory {
     repositoryName,
     ref
   }: {
-    repositoryName: string,
+    repositoryName: string
     ref: string
   }): string
 }

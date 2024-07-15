@@ -6,8 +6,8 @@ export default class GitHubCommentFactory implements IGitHubCommentFactory {
   private readonly domain: string
   
   constructor(config: {
-    repositoryNameSuffix: string,
-    websiteTitle: string,
+    repositoryNameSuffix: string
+    websiteTitle: string
     domain: string
   }) {
     this.repositoryNameSuffix = config.repositoryNameSuffix
