@@ -110,7 +110,7 @@ export default class PullRequestCommenter {
       if (file.status == "added") {
         status += "Added"
       } else if (file.status == "removed") {
-        status += "Remvoed"
+        status += "Removed"
       } else if (file.status == "renamed") {
         status += "Renamed"
       } else if (file.status == "changed" || file.status == "modified") {
