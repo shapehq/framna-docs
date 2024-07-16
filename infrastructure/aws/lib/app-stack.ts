@@ -15,6 +15,7 @@ interface AppStackProps extends cdk.StackProps {
   postgresUser: string,
   postgresDb: string,
   postgresPassword: sm.ISecret,
+  domainName: string,
   publicCertificateArn: string,
 }
 
@@ -37,9 +38,6 @@ export class AppStack extends cdk.Stack {
       "GITHUB_WEBHOOK_SECRET",
       // NextAuth
       "NEXTAUTH_SECRET",
-      "NEXTAUTH_URL",
-      // Other
-      "SHAPE_DOCS_BASE_URL",
     ]
 
     // create the env vars as secrets in Secrets Manager
@@ -74,7 +72,9 @@ export class AppStack extends cdk.Stack {
           NEXT_PUBLIC_SHAPE_DOCS_DESCRIPTION: "Documentation for Shape's APIs",
           SHAPE_DOCS_PROJECT_CONFIGURATION_FILENAME: ".shape-docs.yml",
           REPOSITORY_NAME_SUFFIX: "-openapi",
-          AUTH_TRUST_HOST: "true",
+          AUTH_TRUST_HOST: "true", // https://authjs.dev/getting-started/deployment#docker
+          SHAPE_DOCS_BASE_URL: `https://${props.domainName}`,
+          NEXTAUTH_URL: `https://${props.domainName}`,
         },
         secrets: {
           ...envVars.reduce((acc, curr) => { // get each env var from Secrets Manager

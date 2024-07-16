@@ -8,6 +8,7 @@ import { ContainerImage } from 'aws-cdk-lib/aws-ecs';
 
 interface DocsDeploymentProps {
     env: Environment,
+    domainName: string,
     publicCertificateArn: string,
 }
 
@@ -43,6 +44,7 @@ export default class DocsDeployment extends Construct {
             postgresDb: this.postgres.database,
             postgresPassword: this.postgres.password,
             redisHostname: this.redis.cluster.attrRedisEndpointAddress,
+            domainName: props.domainName,
             publicCertificateArn: props.publicCertificateArn,
         });
 
