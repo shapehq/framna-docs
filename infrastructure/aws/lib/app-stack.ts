@@ -5,6 +5,7 @@ import { EcrImage, FargateService, Secret } from 'aws-cdk-lib/aws-ecs';
 import { ApplicationLoadBalancedFargateService } from 'aws-cdk-lib/aws-ecs-patterns';
 import { Construct } from 'constructs';
 import { Certificate } from 'aws-cdk-lib/aws-certificatemanager';
+import { ListenerAction } from 'aws-cdk-lib/aws-elasticloadbalancingv2';
 
 interface AppStackProps extends cdk.StackProps {
   vpc: Vpc;
@@ -34,19 +35,11 @@ export class AppStack extends cdk.Stack {
       "GITHUB_WEBHOK_REPOSITORY_ALLOWLIST",
       "GITHUB_WEBHOK_REPOSITORY_DISALLOWLIST",
       "GITHUB_WEBHOOK_SECRET",
-      // Auth0
-      "AUTH0_BASE_URL", // TODO: Remove once we have transitioned to NEXTAUTH
-      "AUTH0_CLIENT_ID", // TODO: Remove once we have transitioned to NEXTAUTH
-      "AUTH0_CLIENT_SECRET", // TODO: Remove once we have transitioned to NEXTAUTH
-      "AUTH0_ISSUER_BASE_URL", // TODO: Remove once we have transitioned to NEXTAUTH
-      "AUTH0_MANAGEMENT_CLIENT_ID", // TODO: Remove once we have transitioned to NEXTAUTH
-      "AUTH0_MANAGEMENT_CLIENT_SECRET", // TODO: Remove once we have transitioned to NEXTAUTH
-      "AUTH0_MANAGEMENT_DOMAIN", // TODO: Remove once we have transitioned to NEXTAUTH
-      "AUTH0_SECRET", // TODO: Remove once we have transitioned to NEXTAUTH
+      // NextAuth
       "NEXTAUTH_SECRET",
-      "NEXTAUTH_URL", // TODO: Could be part of config along with certificate issuing
+      "NEXTAUTH_URL",
       // Other
-      "SHAPE_DOCS_BASE_URL", // TODO: Could be part of config along with certificate issuing
+      "SHAPE_DOCS_BASE_URL",
     ]
 
     // create the env vars as secrets in Secrets Manager
@@ -77,7 +70,11 @@ export class AppStack extends cdk.Stack {
           POSTGRESQL_HOST: props.postgresHostname,
           POSTGRESQL_USER: props.postgresUser,
           POSTGRESQL_DB: props.postgresDb,
-          NEXT_PUBLIC_SHAPE_DOCS_TITLE: 'Shape Docs',
+          NEXT_PUBLIC_SHAPE_DOCS_TITLE: "Shape Docs",
+          NEXT_PUBLIC_SHAPE_DOCS_DESCRIPTION: "Documentation for Shape's APIs",
+          SHAPE_DOCS_PROJECT_CONFIGURATION_FILENAME: ".shape-docs.yml",
+          REPOSITORY_NAME_SUFFIX: "-openapi",
+          AUTH_TRUST_HOST: "true",
         },
         secrets: {
           ...envVars.reduce((acc, curr) => { // get each env var from Secrets Manager
@@ -99,6 +96,15 @@ export class AppStack extends cdk.Stack {
 
     app.targetGroup.configureHealthCheck({
       path: "/api/health",
+    });
+
+    app.loadBalancer.addListener('HTTP', {
+      port: 80,
+      defaultAction: ListenerAction.redirect({
+        protocol: 'HTTPS',
+        port: '443',
+        permanent: true,
+      }),
     });
 
     this.service = app.service;

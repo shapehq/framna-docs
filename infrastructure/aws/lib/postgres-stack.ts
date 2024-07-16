@@ -24,6 +24,16 @@ export class PostgresStack extends Stack {
             }
         })
 
+        const parameterGroup = new rds.ParameterGroup(this, 'PostgresParameterGroup', {
+            engine: rds.DatabaseInstanceEngine.postgres({
+                version: rds.PostgresEngineVersion.VER_16,
+            }),
+            description: 'Parameter group for postgres16',
+            parameters: {
+                'rds.force_ssl': '0', // allow non-ssl connections
+            },
+        });
+
         this.dbInstance = new rds.DatabaseInstance(this, `DbInstance`, {
             engine: rds.DatabaseInstanceEngine.postgres({
                 version: rds.PostgresEngineVersion.VER_16,
@@ -45,6 +55,7 @@ export class PostgresStack extends Stack {
             enablePerformanceInsights: true,
             multiAz: false,
             storageEncrypted: true,
+            parameterGroup: parameterGroup,
         })
     }
 }
