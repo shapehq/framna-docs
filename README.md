@@ -61,6 +61,10 @@ Clone the repository and consult [the article on contributing](https://github.co
 git clone git@github.com:shapehq/shape-docs.git
 ```
 
+## ❤️ The Product of a Shape Weekend
+
+Every year we go on Shape Weekend, three days where all employees in Shape get together for a hackathon to build amazing products. In 2023, a team of Shape developers with a passion for documentation and spec-driven development built Shape Docs and we've used it daily ever since!
+
 ---
 
 Tartelet is built with ❤️ by [Shape](https://shape.dk) in Denmark. Oh, and [we are hiring](https://careers.shape.dk) 🤗
