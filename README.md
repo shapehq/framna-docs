@@ -32,7 +32,7 @@ Shape Docs makes managing and previewing OpenAPI documentation a breeze, streaml
 
 ## 🚀 Getting Started
 
-Please refer to the following articles in [the wiki](https://github.com/shapehq/tartelet/wiki) to get started with Tartelet.
+Please refer to the following articles in [the wiki](https://github.com/shapehq/shape-docs/wiki) to get started with Shape Docs.
 
 - [Adding Documentation to Shape Docs](https://github.com/shapehq/shape-docs/wiki/Adding-Documentation-to-Shape-Docs)
 - [Browsing Documentation](https://github.com/shapehq/shape-docs/wiki/Browsing-Documentation)
@@ -67,4 +67,4 @@ Every year we go on Shape Weekend, three days where all employees in Shape get t
 
 ---
 
-Tartelet is built with ❤️ by [Shape](https://shape.dk) in Denmark. Oh, and [we are hiring](https://careers.shape.dk) 🤗
+Shape Docks is built with ❤️ by [Shape](https://shape.dk) in Denmark. Oh, and [we are hiring](https://careers.shape.dk) 🤗
