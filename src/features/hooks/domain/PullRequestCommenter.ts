@@ -118,7 +118,7 @@ export default class PullRequestCommenter {
     ref: string
   }) {
     const { files, owner, repositoryName, ref } = params
-    const rows: { filename: string, link: string, status: string }[] = []
+    const rows: { filename: string, status: string, button: string }[] = []
     const projectId = this.getProjectId({ repositoryName })
     // Make sure we don't include the project configuration file.
     const baseConfigFilename = this.projectConfigurationFilename.replace(this.fileExtensionRegex, "")
@@ -126,18 +126,18 @@ export default class PullRequestCommenter {
     // Create rows for each file
     for (const file of changedFiles) {
       const status = this.getStatusText(file)
-      let link = ""
+      let button = ""
       if (file.status != "removed") {
-        const url = `${this.domain}/${owner}/${projectId}/${ref}/${file.filename}`
-        link += ` <a href="${url}">${url}</a>`
+        const link = `${this.domain}/${owner}/${projectId}/${ref}/${file.filename}`
+        button = ` <a href="${link}">Preview</a>`
       }
-      rows.push({ filename: file.filename, status, link })
+      rows.push({ filename: file.filename, status, button })
     }
     if (rows.length == 0) {
       return undefined
     }
     const rowsHTML = rows
-      .map(row => `<tr><td><strong>${row.filename}</strong></td><td>${row.link}</td><td>${row.status}</td></tr>`)
+      .map(row => `<tr><td><strong>${row.filename}</strong></td><td>${row.status}</td><td>${row.button}</td></tr>`)
       .join("\n")
     return `<table>${rowsHTML}</table>`
   }
