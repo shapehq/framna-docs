@@ -21,7 +21,7 @@ const prodAccount: cdk.Environment = {
 
 new DocsDeployment(app, 'Staging', {
   env: nonProdAccount,
-  publicCertificateArn: 'arn:aws:acm:eu-central-1:841481405304:certificate/6d513b25-bbca-49ec-9de0-377e303c313f',
+  publicCertificateArn: 'arn:aws:acm:eu-central-1:841481405304:certificate/6a081533-5176-40d1-b1b8-27a88abb8dbe',
 })
 
 new DocsDeployment(app, 'Prod', {
