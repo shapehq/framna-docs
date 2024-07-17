@@ -1,73 +1,70 @@
-<p align="center">
-  <img height="300" src="/logo.png">
-</p>
+<div align="center">
+<img width="200" src="https://github.com/shapehq/shape-docs/raw/main/logo.png" alt="Shape Docs logo" />
+</div>
 
-# shape-docs
+<div align="center">
+<h3>👋 Welcome to Shape Docs</h3>
+<h4>Self-hosted web portal that collects OpenAPI documentation and facilitates spec-driven development, built with GitHub-based authorization.</h4>
+</div>
 
-Portal displaying our projects that are documented with OpenAPI. Hosted on [docs.shapetools.io](https://docs.shapetools.io) and [staging.docs.shapetools.io](https://staging.docs.shapetools.io).
+<div align="center">
+<a href="https://github.com/shapehq/shape-docs/actions/workflows/build.yml"><img src="https://github.com/shapehq/shape-docs/actions/workflows/build.yml/badge.svg"></a>
+<a href="https://github.com/shapehq/shape-docs/actions/workflows/test.yml"><img src="https://github.com/shapehq/shape-docs/actions/workflows/test.yml/badge.svg"></a>
+<a href="https://github.com/shapehq/shape-docs/actions/workflows/lint.yml"><img src="https://github.com/shapehq/shape-docs/actions/workflows/lint.yml/badge.svg"></a>
+</div>
 
-[![Build](https://github.com/shapehq/shape-docs/actions/workflows/build.yml/badge.svg)](https://github.com/shapehq/shape-docs/actions/workflows/build.yml)
-[![Test](https://github.com/shapehq/shape-docs/actions/workflows/test.yml/badge.svg)](https://github.com/shapehq/shape-docs/actions/workflows/test.yml)
-[![Lint](https://github.com/shapehq/shape-docs/actions/workflows/lint.yml/badge.svg)](https://github.com/shapehq/shape-docs/actions/workflows/lint.yml)
+---
 
-## 💻 Running the App Locally
+<div align="center">
+<a href="#-getting-started">🚀 Getting Started</a>&nbsp;&nbsp;&nbsp;&nbsp;
+<a href="#-how-does-it-work">👨‍🔧 How does it work?</a>&nbsp;&nbsp;&nbsp;&nbsp;
+<a href="#-how-can-i-contribute">👩‍💻 How can I contribute?</a>&nbsp;&nbsp;&nbsp;&nbsp;
+<a href="https://github.com/shapehq/shape-docs/wiki">📖 Wiki</a>
+</div>
 
-Copy `.env.example` to `.env.local` in the root of the project. Make sure to replace any placeholders and generate a random secret using OpenSSL.
+<hr />
 
-The table below contains explanations for environment variables. The list is not preemptive and `.env.example` contains the full list.
+Shape Docs makes managing and previewing OpenAPI documentation a breeze, streamlining spec-driven development. With GitHub-based authorization, you can easily control who accesses your docs. Shape Docs comments on pull requests that tweak your OpenAPI specs, giving you preview URLs to ensure every update is well-reviewed
 
-|Environment Variable|Description|
-|-|-|
-|NEXT_PUBLIC_SHAPE_DOCS_TITLE|Title of the portal. Displayed to the user in the browser.|
-|SHAPE_DOCS_BASE_URL|The URL where Shape Docs is hosted.|
-|NEXTAUTH_URL|The URL where Shape Docs is hosted.|
-|NEXTAUTH_SECRET|A long secret value used to encrypt the session cookie. Generate it using `openssl rand -base64 32`.|
-|GITHUB_CLIENT_ID|The client ID of your GitHub app.|
-|GITHUB_CLIENT_SECRET|The client secret of your GitHub app.|
-|GITHUB_APP_ID|The ID of your GitHub app.|
-|GITHUB_PRIVATE_KEY_BASE_64|Your GitHub app's private key encoded to base 64. Can be created using `cat my-key.pem | base64 | pbcopy`.|
-|GITHUB_WEBHOOK_SECRET|Secret shared with the GitHub app to validate a webhook call.|
-|GITHUB_WEBHOK_REPOSITORY_ALLOWLIST|Comma-separated list of repositories from which webhook calls should be accepted. Leave empty to accept calls from all repositories.|
-|GITHUB_WEBHOK_REPOSITORY_DISALLOWLIST|Comma-separated list of repositories from which webhook calls should be ignored. The list of disallowed repositories takes precedence over the list of allowed repositories.|
-|REDIS_URL|The URL to the Redis store.|
+<div align="center">
+<img width="600" src="https://github.com/shapehq/shape-docs/raw/main/wiki/home.png?raw=true" alt="Screenshot of Shape Docs"/>
+</div>
 
-Be aware that the GitHub private key must be PKCS8. GitHub creates PKCS1 keys, so we must manually convert the key from PKCS1 to PKCS8 before base64 encoding it. This can be done as follows:
+## 🚀 Getting Started
+
+Please refer to the following articles in [the wiki](https://github.com/shapehq/shape-docs/wiki) to get started with Shape Docs.
+
+- [Adding Documentation to Shape Docs](https://github.com/shapehq/shape-docs/wiki/Adding-Documentation-to-Shape-Docs)
+- [Browsing Documentation](https://github.com/shapehq/shape-docs/wiki/Browsing-Documentation)
+- [Updating Documentation](https://github.com/shapehq/shape-docs/wiki/Updating-Documentation)
+- [Deploying Shape Docs](https://github.com/shapehq/shape-docs/wiki/Deploying-Shape-Docs)
+
+## 👨‍🔧 How does it work?
+
+Shape Docs uses [OpenAPI specifications](https://swagger.io) from GitHub repositories. Users log in with their GitHub account to access documentation for projects they have access to. A repository only needs an OpenAPI spec to be recognized by Shape Docs, but customization is possible with a .shape-docs.yml file. Here's an example:
+
+<img width="650" src="https://github.com/shapehq/shape-docs/raw/main/wiki/example-openapi-repository-with-config.png?raw=true"/>
+
+Shape Docs supports spec-driven development by requiring OpenAPI specs in GitHub repos, ensuring version control and peer review. When a pull request is opened, Shape Docs comments with links to preview the documentation:
+
+<img width="760" src="https://github.com/shapehq/shape-docs/raw/main/wiki/pr-comment.png?raw=true"/>
+
+Learn more from the [Adding Documentation](https://github.com/shapehq/shape-docs/wiki/Adding-Documentation-to-Shape-Docs), [Browsing Documentation](https://github.com/shapehq/shape-docs/wiki/Browsing-Documentation), and [Updating Documentation](https://github.com/shapehq/shape-docs/wiki/Updating-Documentation) articles in the wiki.
+
+## 👩‍💻 How can I contribute?
+
+Pull requests with bugfixes and new features are much appreciated. We are happy to review PRs and merge them once they are ready, as long as they contain changes that fit within the vision of Shape Docs.
+
+Clone the repository and consult [the article on contributing](https://github.com/shapehq/shape-docs/wiki/Contributing) to get started working on the project.
 
 ```bash
-openssl pkcs8 -topk8 -inform PEM -outform PEM -nocrypt \
-  -in private-key-pkcs1.pem \
-  -out private-key-pkcs8.pem
+git clone git@github.com:shapehq/shape-docs.git
 ```
 
-The key can then be base 64 encoded and assigned to the GITHUB_PRIVATE_KEY_BASE_64 environment variable as follows:
+## ❤️ The Product of a Shape Weekend
 
-```bash
-base64 -i ~/Downloads/private-key-pkcs8.pem | pbcopy
-```
+Every year we go on Shape Weekend, three days where all employees in Shape get together for a hackathon to build amazing products. In 2023, a team of Shape developers with a passion for documentation and spec-driven development built Shape Docs and we've used it daily ever since!
 
-Run the app using the following command:
+---
 
-```
-npm run dev
-```
-
-Finally, open the application on https://dev.local:3000.
-
-## Database Schemas
-
-See `create-tables.sql`
-
-## 🚀 Deploying the App
-
-The app is hosted on Heroku in two different environments.
-
-|Environment|URL|Branch|
-|-|-|-|
-|Staging|[staging.docs.shapetools.io](https://staging.docs.shapetools.io)|develop|
-|Production|[docs.shapetools.io](https://docs.shapetools.io)|main|
-
-Each environment is deployed by merging changes into their respective branch. Heroku is responsible for observing changes to the repository and schedule a deployment when changes are observed.
-
-## 📖 Getting Started with Shape Docs
-
-Details on getting started showing documentation on Shape Docs can be [found on our Confluence](https://shapedk.atlassian.net/wiki/spaces/DEVELOPERS/pages/3795615745/Shape+Docs).
+Shape Docks is built with ❤️ by [Shape](https://shape.dk) in Denmark. Oh, and [we are hiring](https://careers.shape.dk) 🤗
