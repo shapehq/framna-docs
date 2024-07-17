@@ -3,7 +3,7 @@ on:
   pull_request:
     types: [opened, synchronize]
     paths: 
-    - dummy.txt
+    - .env.example
 env:
   COMMENT: ⚠️ It looks like the [.env.example](https://github.com/shapehq/shape-docs/blob/develop/.env.example) file has changed. Remember to update [the documentation of the environment variables](https://github.com/shapehq/shape-docs/wiki/Setting-Environment-Variables) accordingly.
 jobs:
