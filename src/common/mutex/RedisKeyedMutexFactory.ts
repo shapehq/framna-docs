@@ -20,13 +20,23 @@ class RedisMutex implements IMutex {
 }
 
 export default class RedisKeyedMutexFactory implements IKeyedMutexFactory {
-  private readonly redis: Redis
+  private readonly url: string
+  private _redis: Redis | undefined
   
   constructor(url: string) {
-    this.redis = new Redis(url)
+    this.url = url
   }
   
   makeMutex(key: string): IMutex {
     return new RedisMutex(this.redis, key)
+  }
+  
+  private get redis(): Redis {
+    if (this._redis) {
+      return this._redis
+    }
+    const redis = new Redis(this.url)
+    this._redis = redis
+    return redis
   }
 }

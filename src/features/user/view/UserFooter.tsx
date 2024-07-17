@@ -1,14 +1,15 @@
-import { useUser } from "@auth0/nextjs-auth0/client"
+import { useSession } from "next-auth/react"
 import { List, ListItem } from "@mui/material"
 import UserButton from "./UserButton"
 import UserSkeleton from "./UserSkeleton"
 
 const UserFooter = () => {
-  const { user, isLoading } = useUser()
+  const { data: session, status } = useSession()
+  const isLoading = status == "loading"
   return (
     <List disablePadding>
       <ListItem disablePadding>
-        {!isLoading && user && <UserButton user={user}/> }
+        {!isLoading && session && <UserButton session={session}/> }
         {isLoading && <UserSkeleton/>}
       </ListItem>
     </List>

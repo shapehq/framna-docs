@@ -1,98 +1,70 @@
-<p align="center">
-  <img height="300" src="/logo.png">
-</p>
+<div align="center">
+<img width="200" src="https://github.com/shapehq/shape-docs/raw/main/logo.png" alt="Shape Docs logo" />
+</div>
 
-# shape-docs
+<div align="center">
+<h3>👋 Welcome to Shape Docs</h3>
+<h4>Self-hosted web portal that collects OpenAPI documentation and facilitates spec-driven development, built with GitHub-based authorization.</h4>
+</div>
 
-Portal displaying our projects that are documented with OpenAPI. Hosted on [docs.shapetools.io](https://docs.shapetools.io) and [staging.docs.shapetools.io](https://staging.docs.shapetools.io).
+<div align="center">
+<a href="https://github.com/shapehq/shape-docs/actions/workflows/build.yml"><img src="https://github.com/shapehq/shape-docs/actions/workflows/build.yml/badge.svg"></a>
+<a href="https://github.com/shapehq/shape-docs/actions/workflows/test.yml"><img src="https://github.com/shapehq/shape-docs/actions/workflows/test.yml/badge.svg"></a>
+<a href="https://github.com/shapehq/shape-docs/actions/workflows/lint.yml"><img src="https://github.com/shapehq/shape-docs/actions/workflows/lint.yml/badge.svg"></a>
+</div>
 
-[![Build](https://github.com/shapehq/shape-docs/actions/workflows/build.yml/badge.svg)](https://github.com/shapehq/shape-docs/actions/workflows/build.yml)
-[![Test](https://github.com/shapehq/shape-docs/actions/workflows/test.yml/badge.svg)](https://github.com/shapehq/shape-docs/actions/workflows/test.yml)
-[![Lint](https://github.com/shapehq/shape-docs/actions/workflows/lint.yml/badge.svg)](https://github.com/shapehq/shape-docs/actions/workflows/lint.yml)
+---
 
-## 💻 Running the App Locally
+<div align="center">
+<a href="#-getting-started">🚀 Getting Started</a>&nbsp;&nbsp;&nbsp;&nbsp;
+<a href="#-how-does-it-work">👨‍🔧 How does it work?</a>&nbsp;&nbsp;&nbsp;&nbsp;
+<a href="#-how-can-i-contribute">👩‍💻 How can I contribute?</a>&nbsp;&nbsp;&nbsp;&nbsp;
+<a href="https://github.com/shapehq/shape-docs/wiki">📖 Wiki</a>
+</div>
 
-Create a file named `.env.local` in the root of the project with the following contents. Make sure to replace any placeholders and generate a random secret using OpenSSL.
+<hr />
 
-```
-NEXT_PUBLIC_SHAPE_DOCS_TITLE='Shape Docs'
-SHAPE_DOCS_BASE_URL='https://docs.shapetools.io'
-AUTH0_SECRET='use [openssl rand -hex 32] to generate a 32 bytes value'
-AUTH0_BASE_URL='http://dev.local:3000'
-AUTH0_ISSUER_BASE_URL='https://shape-docs-dev.eu.auth0.com'
-AUTH0_CLIENT_ID='Your client ID'
-AUTH0_CLIENT_SECRET='Your client secret'
-AUTH0_MANAGEMENT_DOMAIN='shape-docs-dev.eu.auth0.com'
-AUTH0_MANAGEMENT_CLIENT_ID='Your client ID'
-AUTH0_MANAGEMENT_CLIENT_SECRET='Your client secret'
-GITHUB_CLIENT_ID='GitHub App client ID'
-GITHUB_CLIENT_SECRET='GitHub App client secret'
-GITHUB_APP_ID='the GitHub App id'
-GITHUB_PRIVATE_KEY_BASE_64='base 64 encoded version of the private key'
-GITHUB_WEBHOOK_SECRET='preshared secret also put in app conf in GitHub'
-GITHUB_WEBHOK_REPOSITORY_ALLOWLIST=''
-GITHUB_WEBHOK_REPOSITORY_DISALLOWLIST=''
-GITHUB_ORGANIZATION_NAME='shapehq'
-REDIS_URL=''
-```
+Shape Docs makes managing and previewing OpenAPI documentation a breeze, streamlining spec-driven development. With GitHub-based authorization, you can easily control who accesses your docs. Shape Docs comments on pull requests that tweak your OpenAPI specs, giving you preview URLs to ensure every update is well-reviewed
 
-Each environment variable is described in the table below.
+<div align="center">
+<img width="600" src="https://github.com/shapehq/shape-docs/raw/main/wiki/home.png?raw=true" alt="Screenshot of Shape Docs"/>
+</div>
 
-|Environment Variable|Description|
-|-|-|
-|NEXT_PUBLIC_SHAPE_DOCS_TITLE|Title of the portal. Displayed to the user in the browser.|
-|SHAPE_DOCS_BASE_URL|The URL where Shape Docs is hosted.|
-|AUTH0_SECRET|A long secret value used to encrypt the session cookie. Generate it using `openssl rand -hex 32`.|AUTH0_BASE_URL|The base URL of your Auth0 application. `http://dev.local:3000` during development.|
-|AUTH0_ISSUER_BASE_URL|The URL of your Auth0 tenant domain.|
-|AUTH0_CLIENT_ID|The client ID of your default Auth0 application.|
-|AUTH0_CLIENT_SECRET|The client secret of your default Auth0 application.|
-|AUTH0_MANAGEMENT_DOMAIN|The URL of your Auth0 tenant domain. It is key that this does not contain "http" or "https".|
-|AUTH0_MANAGEMENT_CLIENT_ID|The client ID of your Auth0 Machine to Machine application.|
-|AUTH0_MANAGEMENT_CLIENT_SECRET|The client secret of your Machine to Machine Auth0 application.|
-|GITHUB_CLIENT_ID|The client ID of your GitHub app.|
-|GITHUB_CLIENT_SECRET|The client secret of your GitHub app.|
-|GITHUB_APP_ID|The ID of your GitHub app.|
-|GITHUB_PRIVATE_KEY_BASE_64|Your GitHub app's private key encoded to base 64. Can be created using `cat my-key.pem | base64 | pbcopy`.|
-|GITHUB_WEBHOOK_SECRET|Secret shared with the GitHub app to validate a webhook call.|
-|GITHUB_WEBHOK_REPOSITORY_ALLOWLIST|Comma-separated list of repositories from which webhook calls should be accepted. Leave empty to accept calls from all repositories.|
-|GITHUB_WEBHOK_REPOSITORY_DISALLOWLIST|Comma-separated list of repositories from which webhook calls should be ignored. The list of disallowed repositories takes precedence over the list of allowed repositories.|
-|GITHUB_ORGANIZATION_NAME|Name of the organization to show repositories for.|
-|REDIS_URL|The URL to the Redis store.|
+## 🚀 Getting Started
 
-You need the following two Auth0 apps.
+Please refer to the following articles in [the wiki](https://github.com/shapehq/shape-docs/wiki) to get started with Shape Docs.
 
-| |Type|Description|
-|-|-|-|
-|Default|Generic|Used to authenticate the user when they log in.|
-|Management|Machine to Machine|Used for making requests to [Auth0's Management API](https://auth0.com/docs/api/management/v2) to retrieve the access token for the identity provider that the user authorized with.|
+- [Adding Documentation to Shape Docs](https://github.com/shapehq/shape-docs/wiki/Adding-Documentation-to-Shape-Docs)
+- [Browsing Documentation](https://github.com/shapehq/shape-docs/wiki/Browsing-Documentation)
+- [Updating Documentation](https://github.com/shapehq/shape-docs/wiki/Updating-Documentation)
+- [Deploying Shape Docs](https://github.com/shapehq/shape-docs/wiki/Deploying-Shape-Docs)
 
-Modify your `/etc/hosts` file to add the following entry:
+## 👨‍🔧 How does it work?
 
-```
-127.0.0.1 dev.local
+Shape Docs uses [OpenAPI specifications](https://swagger.io) from GitHub repositories. Users log in with their GitHub account to access documentation for projects they have access to. A repository only needs an OpenAPI spec to be recognized by Shape Docs, but customization is possible with a .shape-docs.yml file. Here's an example:
+
+<img width="650" src="https://github.com/shapehq/shape-docs/raw/main/wiki/example-openapi-repository-with-config.png?raw=true"/>
+
+Shape Docs supports spec-driven development by requiring OpenAPI specs in GitHub repos, ensuring version control and peer review. When a pull request is opened, Shape Docs comments with links to preview the documentation:
+
+<img width="760" src="https://github.com/shapehq/shape-docs/raw/main/wiki/pr-comment.png?raw=true"/>
+
+Learn more from the [Adding Documentation](https://github.com/shapehq/shape-docs/wiki/Adding-Documentation-to-Shape-Docs), [Browsing Documentation](https://github.com/shapehq/shape-docs/wiki/Browsing-Documentation), and [Updating Documentation](https://github.com/shapehq/shape-docs/wiki/Updating-Documentation) articles in the wiki.
+
+## 👩‍💻 How can I contribute?
+
+Pull requests with bugfixes and new features are much appreciated. We are happy to review PRs and merge them once they are ready, as long as they contain changes that fit within the vision of Shape Docs.
+
+Clone the repository and consult [the article on contributing](https://github.com/shapehq/shape-docs/wiki/Contributing) to get started working on the project.
+
+```bash
+git clone git@github.com:shapehq/shape-docs.git
 ```
 
-We visit our local website by opening https://dev.local:3000 instead of https://localhost:3000 as this ensures that Auth0's flow will work correctly. Auth0 does some extra checks when localhost is included in the URL and we are generally not interested in those as they give a false impression of the flow the user will see.
+## ❤️ The Product of a Shape Weekend
 
-Run the app using the following command:
+Every year we go on Shape Weekend, three days where all employees in Shape get together for a hackathon to build amazing products. In 2023, a team of Shape developers with a passion for documentation and spec-driven development built Shape Docs and we've used it daily ever since!
 
-```
-npm run dev
-```
+---
 
-Finally, open the application on https://dev.local:3000.
-
-## 🚀 Deploying the App
-
-The app is hosted on Heroku in two different environments.
-
-|Environment|URL|Branch|
-|-|-|-|
-|Staging|[staging.docs.shapetools.io](https://staging.docs.shapetools.io)|develop|
-|Production|[docs.shapetools.io](https://docs.shapetools.io)|main|
-
-Each environment is deployed by merging changes into their respective branch. Heroku is responsible for observing changes to the repository and schedule a deployment when changes are observed.
-
-## 📖 Getting Started with Shape Docs
-
-Details on getting started showing documentation on Shape Docs can be [found on our Conflouence](https://shapedk.atlassian.net/wiki/spaces/DEVELOPERS/pages/3795615745/Shape+Docs).
+Shape Docks is built with ❤️ by [Shape](https://shape.dk) in Denmark. Oh, and [we are hiring](https://careers.shape.dk) 🤗

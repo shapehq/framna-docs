@@ -1,61 +1,58 @@
 import { PostCommentPullRequestEventHandler } from "../../src/features/hooks/domain"
 
-test("It adds a comment to the repository", async () => {
-  let didAddComment = false
+test("It comments when opening a pull request", async () => {
+  let didComment = false
   const sut = new PostCommentPullRequestEventHandler({
-    async getComments() {
-      return []
-    },
-    async addComment() {
-      didAddComment = true
+    pullRequestCommenter: {
+      async commentPullRequest(_request) {
+        didComment = true
+      }
     }
-  }, "https://docs.shapetools.io")
-  await sut.pullRequestOpened({
-    appInstallationId: 42,
-    repositoryOwner: "shapehq",
-    repositoryName: "foo",
-    ref: "bar",
-    pullRequestNumber: 1337
   })
-  expect(didAddComment).toBeTruthy()
+  await sut.pullRequestOpened({
+    appInstallationId: 1234,
+    pullRequestNumber: 42,
+    repositoryOwner: "acme",
+    repositoryName: "demo-openapi",
+    ref: "main"
+  })
+  expect(didComment).toBeTruthy()
 })
 
-test("It adds a comment containing a link to the documentation", async () => {
-  let commentBody: string | undefined
+test("It comments when reopening a pull request", async () => {
+  let didComment = false
   const sut = new PostCommentPullRequestEventHandler({
-    async getComments() {
-      return []
-    },
-    async addComment(operation) {
-      commentBody = operation.body
+    pullRequestCommenter: {
+      async commentPullRequest(_request) {
+        didComment = true
+      }
     }
-  }, "https://docs.shapetools.io")
-  await sut.pullRequestOpened({
-    appInstallationId: 42,
-    repositoryOwner: "shapehq",
-    repositoryName: "foo",
-    ref: "bar",
-    pullRequestNumber: 1337
   })
-  expect(commentBody).toContain("https://docs.shapetools.io/foo/bar")
+  await sut.pullRequestReopened({
+    appInstallationId: 1234,
+    pullRequestNumber: 42,
+    repositoryOwner: "acme",
+    repositoryName: "demo-openapi",
+    ref: "main"
+  })
+  expect(didComment).toBeTruthy()
 })
 
-test("It removes the \"openapi\" suffix of the repository name", async () => {
-  let commentBody: string | undefined
+test("It comments when synchronizing a pull request", async () => {
+  let didComment = false
   const sut = new PostCommentPullRequestEventHandler({
-    async getComments() {
-      return []
-    },
-    async addComment(operation) {
-      commentBody = operation.body
+    pullRequestCommenter: {
+      async commentPullRequest(_request) {
+        didComment = true
+      }
     }
-  }, "https://docs.shapetools.io")
-  await sut.pullRequestOpened({
-    appInstallationId: 42,
-    repositoryOwner: "shapehq",
-    repositoryName: "foo-openapi",
-    ref: "bar",
-    pullRequestNumber: 1337
   })
-  expect(commentBody).toContain("https://docs.shapetools.io/foo/bar")
+  await sut.pullRequestSynchronized({
+    appInstallationId: 1234,
+    pullRequestNumber: 42,
+    repositoryOwner: "acme",
+    repositoryName: "demo-openapi",
+    ref: "main"
+  })
+  expect(didComment).toBeTruthy()
 })

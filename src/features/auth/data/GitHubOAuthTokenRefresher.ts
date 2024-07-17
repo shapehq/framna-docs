@@ -1,4 +1,4 @@
-import { UnauthorizedError } from "@/common/errors"
+import { UnauthorizedError } from "@/common"
 import { OAuthToken, IOAuthTokenRefresher } from "../domain"
 
 export interface GitHubOAuthTokenRefresherConfig {
@@ -13,8 +13,11 @@ export default class GitHubOAuthTokenRefresher implements IOAuthTokenRefresher {
     this.config = config
   }
   
-  async refreshOAuthToken(oldRefreshToken: string): Promise<OAuthToken> {
-    const url = this.getAccessTokenURL(oldRefreshToken)
+  async refreshOAuthToken(oldOAuthToken: OAuthToken): Promise<OAuthToken> {
+    if (!oldOAuthToken.refreshToken) {
+      throw new Error("Cannot refresh OAuth token as it has no refresh token")
+    }
+    const url = this.getAccessTokenURL(oldOAuthToken.refreshToken)
     const response = await fetch(url, { method: "POST" })
     if (response.status != 200) {
       throw new UnauthorizedError(

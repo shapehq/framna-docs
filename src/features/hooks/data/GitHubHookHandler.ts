@@ -1,13 +1,14 @@
 import { NextRequest } from "next/server"
-import { Webhooks, EmitterWebhookEventName } from "@octokit/webhooks"
+import { Webhooks } from "@octokit/webhooks"
 import { IPullRequestEventHandler } from "../domain"
+import { WebhookEventName } from "@octokit/webhooks/dist-types/types"
 
 interface GitHubHookHandlerConfig {
   readonly secret: string
   readonly pullRequestEventHandler: IPullRequestEventHandler
 }
 
-class GitHubHookHandler {
+export default class GitHubHookHandler {
   private readonly webhooks: Webhooks
   private readonly pullRequestEventHandler: IPullRequestEventHandler
   
@@ -19,10 +20,10 @@ class GitHubHookHandler {
   
   async handle(req: NextRequest): Promise<void> {
     await this.webhooks.verifyAndReceive({
-      id: req.headers.get('X-GitHub-Delivery') as string,
-      name: req.headers.get('X-GitHub-Event') as EmitterWebhookEventName,
+      id: req.headers.get("X-GitHub-Delivery") as string,
+      name: req.headers.get("X-GitHub-Event") as WebhookEventName,
       payload: await req.text(),
-      signature: req.headers.get('X-Hub-Signature') as string,
+      signature: req.headers.get("X-Hub-Signature") as string,
     }).catch((error) => {
       console.error(`Error: ${error.message}`)
       return false
@@ -46,7 +47,19 @@ class GitHubHookHandler {
       if (!payload.installation) {
         throw new Error("Payload does not contain information about the app installation.")
       }
-      await this.pullRequestEventHandler.pullRequestOpened({
+      await this.pullRequestEventHandler.pullRequestReopened({
+        appInstallationId: payload.installation.id,
+        repositoryOwner: payload.repository.owner.login,
+        repositoryName: payload.repository.name,
+        ref: payload.pull_request.head.ref,
+        pullRequestNumber: payload.pull_request.number
+      })
+    })
+    this.webhooks.on("pull_request.synchronize", async ({ payload }) => {
+      if (!payload.installation) {
+        throw new Error("Payload does not contain information about the app installation.")
+      }
+      await this.pullRequestEventHandler.pullRequestSynchronized({
         appInstallationId: payload.installation.id,
         repositoryOwner: payload.repository.owner.login,
         repositoryName: payload.repository.name,
@@ -56,5 +69,3 @@ class GitHubHookHandler {
     })
   }
 }
-
-export default GitHubHookHandler

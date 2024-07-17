@@ -5,23 +5,16 @@ import IGitHubClient, {
   GraphQlQueryResponse,
   GetRepositoryContentRequest,
   GetPullRequestCommentsRequest,
+  GetPullRequestFilesRequest,
   AddCommentToPullRequestRequest,
-  GetOrganizationMembershipStatusRequest,
-  GetOrganizationMembershipStatusRequestResponse,
+  UpdatePullRequestCommentRequest,
   RepositoryContent,
-  PullRequestComment
+  PullRequestComment,
+  PullRequestFile
 } from "./IGitHubClient"
 
-type GitHubClientConfig = {
-  readonly appId: string
-  readonly clientId: string
-  readonly clientSecret: string
-  readonly privateKey: string
-  readonly accessTokenReader: IGitHubAccessTokenReader
-}
-
-interface IGitHubAccessTokenReader {
-  getAccessToken(): Promise<string>
+interface IGitHubOAuthTokenDataSource {
+  getOAuthToken(): Promise<{ accessToken: string }>
 }
 
 type GitHubContentItem = {download_url: string}
@@ -29,11 +22,17 @@ type GitHubContentItem = {download_url: string}
 type InstallationAuthenticator = (installationId: number) => Promise<{token: string}>
 
 export default class GitHubClient implements IGitHubClient {
-  private readonly accessTokenReader: IGitHubAccessTokenReader
+  private readonly oauthTokenDataSource: IGitHubOAuthTokenDataSource
   private readonly installationAuthenticator: InstallationAuthenticator
   
-  constructor(config: GitHubClientConfig) {
-    this.accessTokenReader = config.accessTokenReader
+  constructor(config: {
+    appId: string
+    clientId: string
+    clientSecret: string
+    privateKey: string
+    oauthTokenDataSource: IGitHubOAuthTokenDataSource
+  }) {
+    this.oauthTokenDataSource = config.oauthTokenDataSource
     const appAuth = createAppAuth({
       appId: config.appId,
       clientId: config.clientId,
@@ -46,14 +45,14 @@ export default class GitHubClient implements IGitHubClient {
   }
   
   async graphql(request: GraphQLQueryRequest): Promise<GraphQlQueryResponse> {
-    const accessToken = await this.accessTokenReader.getAccessToken()
-    const octokit = new Octokit({ auth: accessToken })
+    const oauthToken = await this.oauthTokenDataSource.getOAuthToken()
+    const octokit = new Octokit({ auth: oauthToken.accessToken })
     return await octokit.graphql(request.query, request.variables)
   }
   
   async getRepositoryContent(request: GetRepositoryContentRequest): Promise<RepositoryContent> {
-    const accessToken = await this.accessTokenReader.getAccessToken()
-    const octokit = new Octokit({ auth: accessToken })
+    const oauthToken = await this.oauthTokenDataSource.getOAuthToken()
+    const octokit = new Octokit({ auth: oauthToken.accessToken })
     const response = await octokit.rest.repos.getContent({
       owner: request.repositoryOwner,
       repo: request.repositoryName,
@@ -62,6 +61,19 @@ export default class GitHubClient implements IGitHubClient {
     })
     const item = response.data as GitHubContentItem
     return { downloadURL: item.download_url }
+  }
+  
+  async getPullRequestFiles(request: GetPullRequestFilesRequest): Promise<PullRequestFile[]> {
+    const auth = await this.installationAuthenticator(request.appInstallationId)
+    const octokit = new Octokit({ auth: auth.token })
+    const files = await octokit.paginate(octokit.rest.pulls.listFiles, {
+      owner: request.repositoryOwner,
+      repo: request.repositoryName,
+      pull_number: request.pullRequestNumber,
+    })
+    return files.map(file => {
+      return { filename: file.filename, status: file.status }
+    })
   }
   
   async getPullRequestComments(request: GetPullRequestCommentsRequest): Promise<PullRequestComment[]> {
@@ -74,10 +86,14 @@ export default class GitHubClient implements IGitHubClient {
     })
     const result: PullRequestComment[] = []
     for await (const comment of comments) {
-      result.push({
-        body: comment.body || "",
-        isFromBot: comment.user?.type == "Bot"
-      })
+      const id = comment.id
+      const body = comment.body
+      const isFromBot = comment.user?.type == "Bot"
+      let gitHubApp: { id: string } | undefined
+      if (comment.performed_via_github_app) {
+        gitHubApp = { id: comment.performed_via_github_app.id.toString() }
+      }
+      result.push({ id, body, isFromBot, gitHubApp })
     }
     return result
   }
@@ -93,14 +109,14 @@ export default class GitHubClient implements IGitHubClient {
     })
   }
   
-  async getOrganizationMembershipStatus(
-    request: GetOrganizationMembershipStatusRequest
-  ): Promise<GetOrganizationMembershipStatusRequestResponse> {
-    const accessToken = await this.accessTokenReader.getAccessToken()
-    const octokit = new Octokit({ auth: accessToken })
-    const response = await octokit.rest.orgs.getMembershipForAuthenticatedUser({
-      org: request.organizationName
+  async updatePullRequestComment(request: UpdatePullRequestCommentRequest): Promise<void> {
+    const auth = await this.installationAuthenticator(request.appInstallationId)
+    const octokit = new Octokit({ auth: auth.token })
+    await octokit.rest.issues.updateComment({
+      comment_id: request.commentId,
+      owner: request.repositoryOwner,
+      repo: request.repositoryName,
+      body: request.body
     })
-    return { state: response.data.state }
   }
 }

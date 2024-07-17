@@ -7,21 +7,19 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faPen } from "@fortawesome/free-solid-svg-icons"
 
 const TrailingToolbarItem = ({
-  enableGitHubLinks,
   project,
   version,
   specification,
   onSelectVersion,
   onSelectSpecification
 }: {
-  enableGitHubLinks: boolean,
   project: Project
   version: Version
   specification: OpenApiSpecification
   onSelectVersion: (versionId: string) => void,
   onSelectSpecification: (specificationId: string) => void
 }) => {
-  const projectNameURL = enableGitHubLinks ? version.url || project.url : undefined
+  const projectNameURL = version.url || project.url
   return (
     <>
       <Stack
@@ -29,18 +27,30 @@ const TrailingToolbarItem = ({
         alignItems="center"
         sx={{ display: { sm: "flex", md: "none" } }}
       >
-        <ProjectName text={project.name} url={projectNameURL} />
+        <RepositoryPathItem
+          text={project.owner}
+          url={project.ownerUrl}
+          sx={{ marginRight: 1 }}
+        />
+        <Typography variant="h6" sx={{ marginRight: 1 }}>/</Typography>
+        <RepositoryPathItem text={project.name} url={projectNameURL} />
       </Stack>
       <Stack
         direction="row"
         alignItems="center"
         sx={{ display: { xs: "none", sm: "none", md: "flex" } }}
       >
-        <ProjectName
+        <RepositoryPathItem
+          text={project.owner}
+          url={project.ownerUrl}
+          sx={{ marginRight: 1 }}
+        />
+        <Typography variant="h6" sx={{ marginRight: 1 }}>/</Typography>
+        <RepositoryPathItem
           text={project.name}
           url={projectNameURL}
           sx={{ marginRight: 1 }}
-        /> 
+        />
         <Typography variant="h6" sx={{ marginRight: 1 }}>/</Typography>
         <VersionSelector
           versions={project.versions}
@@ -55,7 +65,7 @@ const TrailingToolbarItem = ({
           onSelect={onSelectSpecification}
           sx={{ marginRight: 0.5 }}
         />
-        {enableGitHubLinks && specification.editURL &&
+        {specification.editURL &&
           <IconButton
             href={specification.editURL}
             target="_blank"
@@ -72,7 +82,7 @@ const TrailingToolbarItem = ({
 
 export default TrailingToolbarItem
 
-const ProjectName = ({
+const RepositoryPathItem = ({
   url,
   text,
   sx
@@ -97,7 +107,7 @@ const ProjectName = ({
   } else {
     return (
       <Typography variant="body1" sx={sx}>
-        {text}
+        Test {text}
       </Typography>
     )
   }

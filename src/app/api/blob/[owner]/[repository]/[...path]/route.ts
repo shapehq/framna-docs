@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server"
-import { userGitHubClient } from "@/composition"
+import { session, userGitHubClient } from "@/composition"
+import { makeUnauthenticatedAPIErrorResponse } from "@/common"
 
 interface GetBlobParams {
   owner: string
@@ -8,6 +9,10 @@ interface GetBlobParams {
 }
 
 export async function GET(req: NextRequest, { params }: { params: GetBlobParams }) {
+  const isAuthenticated = await session.getIsAuthenticated()
+  if (!isAuthenticated) {
+    return makeUnauthenticatedAPIErrorResponse()
+  }
   const path = params.path.join("/")
   const item = await userGitHubClient.getRepositoryContent({
     repositoryOwner: params.owner,

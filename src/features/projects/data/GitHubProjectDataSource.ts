@@ -1,32 +1,38 @@
 import GitHubProjectRepository, {
   GitHubProjectRepositoryRef
 } from "./GitHubProjectRepository"
+import IGitHubLoginDataSource from "./IGitHubLoginDataSource"
+import IGitHubGraphQLClient from "./IGitHubGraphQLClient"
 import {
   Project,
   Version,
   IProjectConfig,
   IProjectDataSource,
   ProjectConfigParser,
-  ProjectConfigRemoteVersion,
+  ProjectConfigRemoteVersion
 } from "../domain"
 
-interface IGitHubProjectRepositoryDataSource {
-  getRepositories(): Promise<GitHubProjectRepository[]>
-}
-
-type GitHubProjectDataSourceConfig = {
-  readonly dataSource: IGitHubProjectRepositoryDataSource
-}
-
 export default class GitHubProjectDataSource implements IProjectDataSource {
-  private dataSource: IGitHubProjectRepositoryDataSource
+  private readonly loginsDataSource: IGitHubLoginDataSource
+  private readonly graphQlClient: IGitHubGraphQLClient
+  private readonly repositoryNameSuffix: string
+  private readonly projectConfigurationFilename: string
   
-  constructor(config: GitHubProjectDataSourceConfig) {
-    this.dataSource = config.dataSource
+  constructor(config: {
+    loginsDataSource: IGitHubLoginDataSource,
+    graphQlClient: IGitHubGraphQLClient,
+    repositoryNameSuffix: string,
+    projectConfigurationFilename: string
+  }) {
+    this.loginsDataSource = config.loginsDataSource
+    this.graphQlClient = config.graphQlClient
+    this.repositoryNameSuffix = config.repositoryNameSuffix
+    this.projectConfigurationFilename = config.projectConfigurationFilename.replace(/\.ya?ml$/, "")
   }
   
   async getProjects(): Promise<Project[]> {
-    const repositories = await this.dataSource.getRepositories()
+    const logins = await this.loginsDataSource.getLogins()
+    const repositories = await this.getRepositories({ logins })
     return repositories.map(repository => {
       return this.mapProject(repository)
     })
@@ -58,13 +64,15 @@ export default class GitHubProjectDataSource implements IProjectDataSource {
     ).filter(version => {
       return version.specifications.length > 0
     })
-    const defaultName = repository.name.replace(/-openapi$/, "")
+    const defaultName = repository.name.replace(new RegExp(this.repositoryNameSuffix + "$"), "")
     return {
-      id: defaultName,
+      id: `${repository.owner.login}-${defaultName}`,
+      owner: repository.owner.login,
       name: defaultName,
       displayName: config?.name || defaultName,
       versions,
       imageURL: imageURL,
+      ownerUrl: `https://github.com/${repository.owner.login}`,
       url: `https://github.com/${repository.owner.login}/${repository.name}`
     }
   }
@@ -212,5 +220,129 @@ export default class GitHubProjectDataSource implements IProjectDataSource {
     return str
       .replace(/ /g, "-")
       .replace(/[^A-Za-z0-9-]/g, "")
+  }
+  
+  private async getRepositories({ logins }: { logins: string[] }): Promise<GitHubProjectRepository[]> {
+    let searchQueries: string[] = []
+    // Search for all private repositories the user has access to. This is needed to find
+    // repositories for external collaborators who do not belong to an organization.
+    searchQueries.push(`"${this.repositoryNameSuffix}" in:name is:private`)
+    // Search for public repositories belonging to a user or organization.
+    searchQueries = searchQueries.concat(logins.map(login => {
+      return `"${this.repositoryNameSuffix}" in:name user:${login} is:public`
+    }))
+    return await Promise.all(searchQueries.map(searchQuery => {
+      return this.getRepositoriesForSearchQuery({ searchQuery })
+    }))
+    .then(e => e.flat())
+    .then(repositories => {
+      // GitHub's search API does not enable searching for repositories whose name ends with "-openapi",
+      // only repositories whose names include "openapi" so we filter the results ourselves.
+      return repositories.filter(repository => {
+        return repository.name.endsWith(this.repositoryNameSuffix)
+      })
+    })
+    .then(repositories => {
+      // Ensure we don't have duplicates in the resulting repositories.
+      const uniqueIdentifiers = new Set<string>()
+      return repositories.filter(repository => {
+        const identifier = `${repository.owner.login}-${repository.name}`
+        const alreadyAdded = uniqueIdentifiers.has(identifier)
+        uniqueIdentifiers.add(identifier)
+        return !alreadyAdded
+      })
+    })
+  }
+  
+  private async getRepositoriesForSearchQuery(params: {
+    searchQuery: string,
+    cursor?: string
+  }): Promise<GitHubProjectRepository[]> {
+    const { searchQuery, cursor } = params
+    const request = {
+      query: `
+      query Repositories($searchQuery: String!, $cursor: String) {
+        search(query: $searchQuery, type: REPOSITORY, first: 100, after: $cursor) {
+          results: nodes {
+            ... on Repository {
+              name
+              owner {
+                login
+              }
+              defaultBranchRef {
+                name
+                target {
+                  ...on Commit {
+                    oid
+                  }
+                }
+              }
+              configYml: object(expression: "HEAD:${this.projectConfigurationFilename}.yml") {
+                ...ConfigParts
+              }
+              configYaml: object(expression: "HEAD:${this.projectConfigurationFilename}.yaml") {
+                ...ConfigParts
+              }
+              branches: refs(refPrefix: "refs/heads/", first: 100) {
+                ...RefConnectionParts
+              }
+              tags: refs(refPrefix: "refs/tags/", first: 100) {
+                ...RefConnectionParts
+              }
+            }
+          }
+          
+          pageInfo {
+            hasNextPage
+            endCursor
+          }
+        }
+      }
+      
+      fragment RefConnectionParts on RefConnection {
+        edges {
+          node {
+            name
+            ... on Ref {
+              name
+              target {
+                ... on Commit {
+                  oid
+                  tree {
+                    entries {
+                      name
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+      
+      fragment ConfigParts on GitObject {
+        ... on Blob {
+          text
+        }
+      }
+      `,
+      variables: { searchQuery, cursor }
+    }
+    const response = await this.graphQlClient.graphql(request)
+    if (!response.search || !response.search.results) {
+      return []
+    }
+    const pageInfo = response.search.pageInfo
+    if (!pageInfo) {
+      return response.search.results
+    }
+    if (!pageInfo.hasNextPage || !pageInfo.endCursor) {
+      return response.search.results
+    }
+    const nextResults = await this.getRepositoriesForSearchQuery({
+      searchQuery,
+      cursor: pageInfo.endCursor
+    })
+    return response.search.results.concat(nextResults)
   }
 }

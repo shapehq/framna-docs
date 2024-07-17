@@ -7,7 +7,7 @@ export default class ZodJSONCoder {
   }
   
   static decode<Schema extends ZodType, T>(schema: Schema, string: string): T {
-    /* eslint-disable-next-line  @typescript-eslint/no-explicit-any */
+    /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
     let obj: any | undefined
     try {
       obj = JSON.parse(string)
