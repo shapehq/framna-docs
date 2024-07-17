@@ -8,7 +8,7 @@ interface GitHubHookHandlerConfig {
   readonly pullRequestEventHandler: IPullRequestEventHandler
 }
 
-class GitHubHookHandler {
+export default class GitHubHookHandler {
   private readonly webhooks: Webhooks
   private readonly pullRequestEventHandler: IPullRequestEventHandler
   
@@ -69,5 +69,3 @@ class GitHubHookHandler {
     })
   }
 }
-
-export default GitHubHookHandler
