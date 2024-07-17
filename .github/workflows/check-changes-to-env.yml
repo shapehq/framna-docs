@@ -1,4 +1,4 @@
-name: Comment PR when File Changes
+name: Check Changes to Env
 on:
   pull_request:
     types: [opened, synchronize]
