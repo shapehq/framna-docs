@@ -11,7 +11,8 @@ import {
   KeyValueUserDataRepository,
   OAuthTokenRefreshingGitHubClient,
   PostgreSQLDB,
-  SessionMutexFactory
+  SessionMutexFactory,
+  listFromCommaSeparatedString
 } from "@/common"
 import {
   GitHubLoginDataSource,
@@ -37,9 +38,20 @@ import {
   PersistingOAuthTokenRefresher,
   UserDataCleanUpLogOutHandler
 } from "@/features/auth/domain"
+import {
+  GitHubHookHandler
+} from "@/features/hooks/data"
+import {
+  PostCommentPullRequestEventHandler,
+  FilteringPullRequestEventHandler,
+  RepositoryNameEventFilter,
+  PullRequestCommenter
+} from "@/features/hooks/domain"
 
 const {
+  SHAPE_DOCS_BASE_URL,
   SHAPE_DOCS_PROJECT_CONFIGURATION_FILENAME,
+  NEXT_PUBLIC_SHAPE_DOCS_TITLE,
   REPOSITORY_NAME_SUFFIX,
   GITHUB_APP_ID,
   GITHUB_CLIENT_ID,
@@ -49,8 +61,13 @@ const {
   POSTGRESQL_HOST,
   POSTGRESQL_USER,
   POSTGRESQL_PASSWORD,
-  POSTGRESQL_DB
+  POSTGRESQL_DB,
+  GITHUB_WEBHOOK_SECRET,
+  GITHUB_WEBHOK_REPOSITORY_ALLOWLIST,
+  GITHUB_WEBHOK_REPOSITORY_DISALLOWLIST
 } = process.env
+
+const projectConfigurationFilename = SHAPE_DOCS_PROJECT_CONFIGURATION_FILENAME || ".shape-docs.yml"
 
 const gitHubAppCredentials = {
   appId: GITHUB_APP_ID,
@@ -165,7 +182,7 @@ export const projectDataSource = new CachingProjectDataSource({
     }),
     graphQlClient: userGitHubClient,
     repositoryNameSuffix: REPOSITORY_NAME_SUFFIX,
-    projectConfigurationFilename: SHAPE_DOCS_PROJECT_CONFIGURATION_FILENAME
+    projectConfigurationFilename
   }),
   repository: projectRepository
 })
@@ -175,3 +192,24 @@ export const logOutHandler = new ErrorIgnoringLogOutHandler(
     new UserDataCleanUpLogOutHandler(session, projectUserDataRepository)
   ])
 )
+
+export const gitHubHookHandler = new GitHubHookHandler({
+  secret: GITHUB_WEBHOOK_SECRET,
+  pullRequestEventHandler: new FilteringPullRequestEventHandler({
+    filter: new RepositoryNameEventFilter({
+      repositoryNameSuffix: REPOSITORY_NAME_SUFFIX,
+      allowlist: listFromCommaSeparatedString(GITHUB_WEBHOK_REPOSITORY_ALLOWLIST),
+      disallowlist: listFromCommaSeparatedString(GITHUB_WEBHOK_REPOSITORY_DISALLOWLIST)
+    }),
+    eventHandler: new PostCommentPullRequestEventHandler({
+      pullRequestCommenter: new PullRequestCommenter({
+        siteName: NEXT_PUBLIC_SHAPE_DOCS_TITLE,
+        domain: SHAPE_DOCS_BASE_URL,
+        repositoryNameSuffix: REPOSITORY_NAME_SUFFIX,
+        projectConfigurationFilename,
+        gitHubAppId: GITHUB_APP_ID,
+        gitHubClient: gitHubClient
+      })
+    })
+  })
+})
