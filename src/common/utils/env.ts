@@ -16,7 +16,6 @@ const base: EnvMethods = {
     if (!value || value.length === 0) {
       throw new Error(`Environment variable "${key}" is not set`)
     }
-    console.log(`${key}=${value}`)
     return value
   }
 }

@@ -55,7 +55,7 @@ Learn more from the [Adding Documentation](https://github.com/shapehq/shape-docs
 
 Pull requests with bugfixes and new features are much appreciated. We are happy to review PRs and merge them once they are ready, as long as they contain changes that fit within the vision of Shape Docs.
 
-Clone the repository and consult [the article on contributing](https://github.com/shapehq/shape-docs/wiki/Contributing) to get started working on the project.
+Clone the repository and consult the articles on [running Shape Docs locally](https://github.com/shapehq/shape-docs/wiki/Running-Shape-Docs-Locally) and [contributing](https://github.com/shapehq/shape-docs/wiki/Contributing) to get started contributing changes the project.
 
 ```bash
 git clone git@github.com:shapehq/shape-docs.git
