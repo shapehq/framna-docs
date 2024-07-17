@@ -1,0 +1,29 @@
+name: Comment PR when File Changes
+on:
+  pull_request:
+    types: [opened, synchronize]
+    paths: 
+    - dummy.txt
+env:
+  COMMENT: ⚠️ It looks like the [.env.example](https://github.com/shapehq/shape-docs/blob/develop/.env.example) file has changed. Remember to update [the documentation of the environment variables](https://github.com/shapehq/shape-docs/wiki/Setting-Environment-Variables) accordingly.
+jobs:
+  playground:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Comment when .env.example changes
+      uses: actions/github-script@v7
+      with:
+        script: |
+          const commentBody = "${{ env.COMMENT }}"
+          const listComments = await github.rest.issues.listComments({
+            ...context.repo,
+            issue_number: context.issue.number
+          })
+          const commentExists = listComments.data.some(comment => comment.body === commentBody)
+          if (!commentExists) {
+            await github.rest.issues.createComment({
+              ...context.repo,
+              issue_number: context.issue.number,
+              body: commentBody
+            })
+          }
