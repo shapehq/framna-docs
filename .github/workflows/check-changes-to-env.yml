@@ -21,7 +21,7 @@ jobs:
           const filenameSha256 = await sha256(filename)
           const diffURL = "https://github.com/${{ github.repository }}/pull/${{ steps.get-pr-number.outputs.pr-number }}/files#diff-" + filenameSha256
           const docsURL = "https://github.com/${{ github.repository }}/wiki/Setting-Environment-Variables"
-          const commentBody = `⚠️ It looks like [${filename}](${diffURL}) has changed. Remember to update [the documentation of the environment variables](${docsURL}) accordingly.
+          const commentBody = `⚠️ It looks like [${filename}](${diffURL}) has changed. Remember to update [the documentation](${docsURL}) of the environment variables accordingly.`
           const listComments = await github.rest.issues.listComments({
             ...context.repo,
             issue_number: context.issue.number
