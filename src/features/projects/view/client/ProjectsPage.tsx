@@ -40,7 +40,7 @@ export default function ProjectsPage({
       version,
       specification
     })
-  }, [project, version, specification])
+  }, [project, version, specification, siteName])
   useEffect(() => {
     // Ensure the URL reflects the current selection of project, version, and specification.
     projectNavigator.navigateIfNeeded({

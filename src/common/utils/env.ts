@@ -24,6 +24,7 @@ const base: EnvMethods = {
 const env = new Proxy(base, {
   get(target, prop: string) {
     if (prop in target) {
+      /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
       return (target as any)[prop]
     }
     return target.get(prop)
