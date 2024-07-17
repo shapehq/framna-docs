@@ -31,10 +31,11 @@ export default function ProjectsPage({
   const { projects: clientProjects, error, isLoading: isClientLoading } = useProjects()
   const projects = isClientLoading ? (serverProjects || []) : clientProjects
   const { project, version, specification } = getSelection({ projects, path })
+  const siteName = process.env.NEXT_PUBLIC_SHAPE_DOCS_TITLE || ""
   useEffect(() => {
     updateWindowTitle({
       storage: document,
-      defaultTitle: process.env.NEXT_PUBLIC_SHAPE_DOCS_TITLE,
+      defaultTitle: siteName,
       project,
       version,
       specification

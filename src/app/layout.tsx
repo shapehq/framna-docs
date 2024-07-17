@@ -4,12 +4,13 @@ import { config as fontAwesomeConfig } from "@fortawesome/fontawesome-svg-core"
 import { CssBaseline } from "@mui/material"
 import ThemeRegistry from "@/common/theme/ThemeRegistry"
 import "@fortawesome/fontawesome-svg-core/styles.css"
+import { env } from "@/common"
 
 fontAwesomeConfig.autoAddCss = false
 
 export const metadata: Metadata = {
-  title: process.env.NEXT_PUBLIC_SHAPE_DOCS_TITLE,
-  description: process.env.NEXT_PUBLIC_SHAPE_DOCS_DESCRIPTION
+  title: env.getOrThrow("NEXT_PUBLIC_SHAPE_DOCS_TITLE"),
+  description: env.getOrThrow("NEXT_PUBLIC_SHAPE_DOCS_DESCRIPTION")
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

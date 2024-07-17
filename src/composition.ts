@@ -6,6 +6,7 @@ import RedisKeyedMutexFactory from "@/common/mutex/RedisKeyedMutexFactory"
 import RedisKeyValueStore from "@/common/key-value-store/RedisKeyValueStore"
 import {
   AuthjsSession,
+  env,
   GitHubClient,
   ISession,
   KeyValueUserDataRepository,
@@ -48,41 +49,20 @@ import {
   PullRequestCommenter
 } from "@/features/hooks/domain"
 
-const {
-  SHAPE_DOCS_BASE_URL,
-  SHAPE_DOCS_PROJECT_CONFIGURATION_FILENAME,
-  NEXT_PUBLIC_SHAPE_DOCS_TITLE,
-  REPOSITORY_NAME_SUFFIX,
-  GITHUB_APP_ID,
-  GITHUB_CLIENT_ID,
-  GITHUB_CLIENT_SECRET,
-  GITHUB_PRIVATE_KEY_BASE_64,
-  REDIS_URL,
-  POSTGRESQL_HOST,
-  POSTGRESQL_USER,
-  POSTGRESQL_PASSWORD,
-  POSTGRESQL_DB,
-  GITHUB_WEBHOOK_SECRET,
-  GITHUB_WEBHOK_REPOSITORY_ALLOWLIST,
-  GITHUB_WEBHOK_REPOSITORY_DISALLOWLIST
-} = process.env
-
-const projectConfigurationFilename = SHAPE_DOCS_PROJECT_CONFIGURATION_FILENAME || ".shape-docs.yml"
-
 const gitHubAppCredentials = {
-  appId: GITHUB_APP_ID,
-  clientId: GITHUB_CLIENT_ID,
-  clientSecret: GITHUB_CLIENT_SECRET,
+  appId: env.getOrThrow("GITHUB_APP_ID"),
+  clientId: env.getOrThrow("GITHUB_CLIENT_ID"),
+  clientSecret: env.getOrThrow("GITHUB_CLIENT_SECRET"),
   privateKey: Buffer
-    .from(GITHUB_PRIVATE_KEY_BASE_64, "base64")
+    .from(env.getOrThrow("GITHUB_PRIVATE_KEY_BASE_64"), "base64")
     .toString("utf-8")
 }
 
 const pool = new Pool({
-  host: POSTGRESQL_HOST,
-  user: POSTGRESQL_USER,
-  password: POSTGRESQL_PASSWORD,
-  database: POSTGRESQL_DB,
+  host: env.getOrThrow("POSTGRESQL_HOST"),
+  user: env.getOrThrow("POSTGRESQL_USER"),
+  password: env.get("POSTGRESQL_PASSWORD"),
+  database: env.getOrThrow("POSTGRESQL_DB"),
   max: 20,
   idleTimeoutMillis: 30000,
   connectionTimeoutMillis: 2000
@@ -99,7 +79,7 @@ const logInHandler = new LogInHandler({ oauthTokenRepository })
 
 export const auth = NextAuth({
   adapter: PostgresAdapter(pool),
-  secret: process.env.NEXTAUTH_SECRET,
+  secret: env.getOrThrow("NEXTAUTH_SECRET"),
   theme: {
     logo: "/images/logo.png",
     colorScheme: "light",
@@ -107,8 +87,8 @@ export const auth = NextAuth({
   },
   providers: [
     GithubProvider({
-      clientId: process.env.GITHUB_CLIENT_ID,
-      clientSecret: process.env.GITHUB_CLIENT_SECRET,
+      clientId: env.getOrThrow("GITHUB_CLIENT_ID"),
+      clientSecret: env.getOrThrow("GITHUB_CLIENT_SECRET"),
       authorization: {
         params: {
           scope: "repo"
@@ -140,7 +120,7 @@ const oauthTokenDataSource = new OAuthTokenDataSource({
 const oauthTokenRefresher = new LockingOAuthTokenRefresher({
   mutexFactory: new SessionMutexFactory({
     baseKey: "mutexLockingOAuthTokenRefresher",
-    mutexFactory: new RedisKeyedMutexFactory(REDIS_URL),
+    mutexFactory: new RedisKeyedMutexFactory(env.getOrThrow("REDIS_URL")),
     userIdReader: session
   }),
   oauthTokenRefresher: new PersistingOAuthTokenRefresher({
@@ -166,7 +146,7 @@ export const blockingSessionValidator = new OAuthTokenSessionValidator({
 })
 
 const projectUserDataRepository = new KeyValueUserDataRepository({
-  store: new RedisKeyValueStore(REDIS_URL),
+  store: new RedisKeyValueStore(env.getOrThrow("REDIS_URL")),
   baseKey: "projects"
 })
 
@@ -181,8 +161,8 @@ export const projectDataSource = new CachingProjectDataSource({
       graphQlClient: userGitHubClient
     }),
     graphQlClient: userGitHubClient,
-    repositoryNameSuffix: REPOSITORY_NAME_SUFFIX,
-    projectConfigurationFilename
+    repositoryNameSuffix: env.getOrThrow("REPOSITORY_NAME_SUFFIX"),
+    projectConfigurationFilename: env.getOrThrow("SHAPE_DOCS_PROJECT_CONFIGURATION_FILENAME")
   }),
   repository: projectRepository
 })
@@ -194,20 +174,20 @@ export const logOutHandler = new ErrorIgnoringLogOutHandler(
 )
 
 export const gitHubHookHandler = new GitHubHookHandler({
-  secret: GITHUB_WEBHOOK_SECRET,
+  secret: env.getOrThrow("GITHUB_WEBHOOK_SECRET"),
   pullRequestEventHandler: new FilteringPullRequestEventHandler({
     filter: new RepositoryNameEventFilter({
-      repositoryNameSuffix: REPOSITORY_NAME_SUFFIX,
-      allowlist: listFromCommaSeparatedString(GITHUB_WEBHOK_REPOSITORY_ALLOWLIST),
-      disallowlist: listFromCommaSeparatedString(GITHUB_WEBHOK_REPOSITORY_DISALLOWLIST)
+      repositoryNameSuffix: env.getOrThrow("REPOSITORY_NAME_SUFFIX"),
+      allowlist: listFromCommaSeparatedString(env.get("GITHUB_WEBHOK_REPOSITORY_ALLOWLIST")),
+      disallowlist: listFromCommaSeparatedString(env.get("GITHUB_WEBHOK_REPOSITORY_DISALLOWLIST"))
     }),
     eventHandler: new PostCommentPullRequestEventHandler({
       pullRequestCommenter: new PullRequestCommenter({
-        siteName: NEXT_PUBLIC_SHAPE_DOCS_TITLE,
-        domain: SHAPE_DOCS_BASE_URL,
-        repositoryNameSuffix: REPOSITORY_NAME_SUFFIX,
-        projectConfigurationFilename,
-        gitHubAppId: GITHUB_APP_ID,
+        siteName: env.getOrThrow("NEXT_PUBLIC_SHAPE_DOCS_TITLE"),
+        domain: env.getOrThrow("SHAPE_DOCS_BASE_URL"),
+        repositoryNameSuffix: env.getOrThrow("REPOSITORY_NAME_SUFFIX"),
+        projectConfigurationFilename: env.getOrThrow("SHAPE_DOCS_PROJECT_CONFIGURATION_FILENAME"),
+        gitHubAppId: env.getOrThrow("GITHUB_APP_ID"),
         gitHubClient: gitHubClient
       })
     })
