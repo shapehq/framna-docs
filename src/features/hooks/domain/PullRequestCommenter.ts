@@ -136,9 +136,9 @@ export default class PullRequestCommenter {
       const status = this.getStatusText(file)
       let button = ""
       if (file.status != "removed") {
-        let link = `${this.domain}/${owner}/${projectId}`
+        let link = `${this.domain}/${owner}/${projectId}/${ref}`
         if (!this.isProjectConfigurationFile(file.filename)) {
-          link += `/${ref}/${file.filename}`
+          link += `/${file.filename}`
         }
         button = ` <a href="${link}">Preview</a>`
       }
