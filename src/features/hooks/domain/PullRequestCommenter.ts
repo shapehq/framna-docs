@@ -1,4 +1,5 @@
 import { IGitHubClient, PullRequestFile } from "@/common"
+import { getBaseFilename } from "@/common/utils"
 
 export default class PullRequestCommenter {
   private readonly domain: string
@@ -7,7 +8,6 @@ export default class PullRequestCommenter {
   private readonly projectConfigurationFilename: string
   private readonly gitHubAppId: string
   private readonly gitHubClient: IGitHubClient
-  private readonly fileExtensionRegex = /\.ya?ml$/
   
   constructor(config: {
     domain: string
@@ -32,7 +32,7 @@ export default class PullRequestCommenter {
     ref: string
     pullRequestNumber: number
   }) {
-    const files = await this.getChangedYamlFiles(request)
+    const files = this.getChangedFiles(await this.getYamlFiles(request))
     const commentBody = this.makeCommentBody({
       files,
       owner: request.repositoryOwner,
@@ -59,7 +59,20 @@ export default class PullRequestCommenter {
     }
   }
   
-  private async getChangedYamlFiles(request: {
+  private getChangedFiles(files: PullRequestFile[]) {
+    return files
+      .filter(file => file.status != "unchanged")
+      .filter(file => {
+        // Do not include files that begins with a dot (.) unless it's the project configuration.
+        return !file.filename.startsWith(".") || this.isProjectConfigurationFile(file.filename)
+      })
+      .filter(file => {
+        // Do not include files in folders.
+        return file.filename.split("/").length === 1
+      })
+  }
+  
+  private async getYamlFiles(request: {
     appInstallationId: number,
     repositoryOwner: string
     repositoryName: string
@@ -71,9 +84,7 @@ export default class PullRequestCommenter {
       repositoryName: request.repositoryName,
       pullRequestNumber: request.pullRequestNumber
     })
-    return files
-      .filter(file => file.filename.match(this.fileExtensionRegex))
-      .filter(file => file.status != "unchanged")
+    return files.filter(file => file.filename.match(/\.ya?ml$/))
   }
   
   private async getExistingComment(request: {
@@ -120,15 +131,15 @@ export default class PullRequestCommenter {
     const { files, owner, repositoryName, ref } = params
     const rows: { filename: string, status: string, button: string }[] = []
     const projectId = this.getProjectId({ repositoryName })
-    // Make sure we don't include the project configuration file.
-    const baseConfigFilename = this.projectConfigurationFilename.replace(this.fileExtensionRegex, "")
-    const changedFiles = files.filter(file => file.filename.replace(this.fileExtensionRegex, "") != baseConfigFilename)
     // Create rows for each file
-    for (const file of changedFiles) {
+    for (const file of files) {
       const status = this.getStatusText(file)
       let button = ""
       if (file.status != "removed") {
-        const link = `${this.domain}/${owner}/${projectId}/${ref}/${file.filename}`
+        let link = `${this.domain}/${owner}/${projectId}`
+        if (!this.isProjectConfigurationFile(file.filename)) {
+          link += `/${ref}/${file.filename}`
+        }
         button = ` <a href="${link}">Preview</a>`
       }
       rows.push({ filename: file.filename, status, button })
@@ -158,5 +169,9 @@ export default class PullRequestCommenter {
   
   private getProjectId({ repositoryName }: { repositoryName: string }): string {
     return repositoryName.replace(new RegExp(this.repositoryNameSuffix + "$"), "")
+  }
+  
+  private isProjectConfigurationFile(filename: string) {
+    return getBaseFilename(filename) === getBaseFilename(this.projectConfigurationFilename)
   }
 }
