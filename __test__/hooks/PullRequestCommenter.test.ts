@@ -238,7 +238,7 @@ test("It skips updating comment when the body has not changed", async () => {
   expect(didUpdateComment).toBeFalsy()
 })
 
-test("It updates comment to remove file list  when all relevant file changes were removed from the PR", async () => {
+test("It updates comment to remove file list when all relevant file changes were removed from the PR", async () => {
   let didAddComment = false
   let didUpdateComment = false
   let addedCommentBody: string | undefined
