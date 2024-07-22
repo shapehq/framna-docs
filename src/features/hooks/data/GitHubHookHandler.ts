@@ -20,6 +20,7 @@ export default class GitHubHookHandler {
   async handle(req: NextRequest): Promise<void> {
     await this.webhooks.verifyAndReceive({
       id: req.headers.get("X-GitHub-Delivery") as string,
+      /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
       name: req.headers.get("X-GitHub-Event") as any,
       payload: await req.text(),
       signature: req.headers.get("X-Hub-Signature-256") as string,
