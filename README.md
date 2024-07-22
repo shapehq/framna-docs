@@ -11,6 +11,7 @@
 <a href="https://github.com/shapehq/shape-docs/actions/workflows/build.yml"><img src="https://github.com/shapehq/shape-docs/actions/workflows/build.yml/badge.svg"></a>
 <a href="https://github.com/shapehq/shape-docs/actions/workflows/test.yml"><img src="https://github.com/shapehq/shape-docs/actions/workflows/test.yml/badge.svg"></a>
 <a href="https://github.com/shapehq/shape-docs/actions/workflows/lint.yml"><img src="https://github.com/shapehq/shape-docs/actions/workflows/lint.yml/badge.svg"></a>
+<a href="https://github.com/shapehq/shape-docs/actions/workflows/build-docker-image"><img src="https://github.com/shapehq/shape-docs/actions/workflows/build-docker-image.yml/badge.svg"></a>
 </div>
 
 ---
@@ -24,7 +25,7 @@
 
 <hr />
 
-Shape Docs makes managing and previewing OpenAPI documentation a breeze, streamlining spec-driven development. With GitHub-based authorization, you can easily control who accesses your docs. Shape Docs comments on pull requests that tweak your OpenAPI specs, giving you preview URLs to ensure every update is well-reviewed
+Shape Docs makes managing and previewing OpenAPI documentation a breeze, streamlining spec-driven development. With GitHub-based authorization, you can easily control who accesses your docs. Shape Docs comments on pull requests that tweak your OpenAPI specs, giving you preview URLs to ensure every update is well-reviewed.
 
 <div align="center">
 <img width="600" src="https://github.com/shapehq/shape-docs/raw/main/wiki/home.png?raw=true" alt="Screenshot of Shape Docs"/>
