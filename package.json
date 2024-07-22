@@ -23,8 +23,8 @@
     "@mui/icons-material": "^5.16.4",
     "@mui/material": "^5.16.4",
     "@octokit/auth-app": "^7.1.0",
-    "@octokit/core": "^5.2.0",
-    "@octokit/webhooks": "^12.2.0",
+    "@octokit/core": "^6.1.2",
+    "@octokit/webhooks": "^13.3.0",
     "@stoplight/elements": "^8.3.4",
     "core-js": "^3.37.1",
     "encoding": "^0.1.13",
@@ -50,7 +50,7 @@
     "zod": "^3.23.8"
   },
   "devDependencies": {
-    "@auth/pg-adapter": "^0.5.3",
+    "@auth/pg-adapter": "^1.4.1",
     "@types/jest": "^29.5.12",
     "@types/node": "^20.14.11",
     "@types/nodemailer": "^6.4.15",
