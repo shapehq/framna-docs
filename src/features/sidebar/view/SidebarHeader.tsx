@@ -1,11 +1,15 @@
 import Image from "next/image"
-import { Box, Typography } from "@mui/material"
+import { Box, Typography, IconButton, Tooltip } from "@mui/material"
 import Link from "next/link"
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
+import { faPlus } from "@fortawesome/free-solid-svg-icons"
 
 export default function SidebarHeader() {
   const siteName = process.env.NEXT_PUBLIC_SHAPE_DOCS_TITLE
+  const projectWikiURL = process.env.NEXT_PUBLIC_SHAPE_DOCS_PROJECT_WIKI_URL || ""
+
   return (
-    <Box sx={{ padding: 2, paddingBottom: 4 }}>
+    <Box sx={{ padding: 2, paddingBottom: 4, display: "flex", justifyContent: "space-between", alignItems: "center"}}>
       <Link
         href={"/"}
         style={{
@@ -31,7 +35,14 @@ export default function SidebarHeader() {
         >
           {siteName}
         </Typography>
-      </Link> 
+      </Link>
+      <Tooltip title="Add new project">
+        <Link href={`${projectWikiURL}`} target="_blank">
+          <IconButton color="primary" size="small" aria-label="Add new project">
+            <FontAwesomeIcon icon={faPlus} size="xs" style={{ aspectRatio: 1, padding: 2 }} />
+          </IconButton>
+        </Link>
+      </Tooltip>
     </Box>
   )
 }
