@@ -238,7 +238,7 @@ test("It skips updating comment when the body has not changed", async () => {
   expect(didUpdateComment).toBeFalsy()
 })
 
-test("It updates comment to remove file list  when all relevant file changes were removed from the PR", async () => {
+test("It updates comment to remove file list when all relevant file changes were removed from the PR", async () => {
   let didAddComment = false
   let didUpdateComment = false
   let addedCommentBody: string | undefined
@@ -314,7 +314,7 @@ test("It updates comment to remove file list  when all relevant file changes wer
   expect(updatedCommentBody).not.toContain("openapi.yml")
 })
 
-test("It adds comment without file table if only project configuration was edited", async () => {
+test("It adds comment if only project configuration was edited", async () => {
   let didAddComment = false
   let commentBody: string | undefined
   const sut = new PullRequestCommenter({
@@ -364,6 +364,145 @@ test("It adds comment without file table if only project configuration was edite
     ref: "main"
   })
   expect(didAddComment).toBeTruthy()
-  expect(commentBody).not.toContain("<table>")
-  expect(commentBody).not.toContain(".demo-docs.yml")
+  expect(commentBody).toContain("<table>")
+  expect(commentBody).toContain(".demo-docs.yml")
+})
+
+test("It ignores files starting with a dot", async () => {
+  let didAddComment = false
+  let commentBody: string | undefined
+  const sut = new PullRequestCommenter({
+    domain: "https://example.com",
+    siteName: "Demo Docs",
+    repositoryNameSuffix: "-openapi",
+    projectConfigurationFilename: ".demo-docs.yml",
+    gitHubAppId: "appid1234",
+    gitHubClient: {
+      async graphql() {
+        return {}
+      },
+      async getRepositoryContent() {
+        return { downloadURL: "https://example.com" }
+      },
+      async getPullRequestFiles() {
+        return [{
+          filename: "openapi.yml",
+          status: "changed"
+        }, {
+          filename: ".foo,yml",
+          status: "changed"
+        }]
+      },
+      async getPullRequestComments() {
+        return []
+      },
+      async addCommentToPullRequest(request) {
+        didAddComment = true
+        commentBody = request.body
+      },
+      async updatePullRequestComment() {}
+    }
+  })
+  await sut.commentPullRequest({
+    appInstallationId: 1234,
+    pullRequestNumber: 42,
+    repositoryOwner: "acme",
+    repositoryName: "demo-openapi",
+    ref: "main"
+  })
+  expect(didAddComment).toBeTruthy()
+  expect(commentBody).toContain("<table>")
+  expect(commentBody).toContain("openapi.yml")
+  expect(commentBody).not.toContain(".foo.yml")
+})
+
+test("It ignores files in directories", async () => {
+  let didAddComment = false
+  let commentBody: string | undefined
+  const sut = new PullRequestCommenter({
+    domain: "https://example.com",
+    siteName: "Demo Docs",
+    repositoryNameSuffix: "-openapi",
+    projectConfigurationFilename: ".demo-docs.yml",
+    gitHubAppId: "appid1234",
+    gitHubClient: {
+      async graphql() {
+        return {}
+      },
+      async getRepositoryContent() {
+        return { downloadURL: "https://example.com" }
+      },
+      async getPullRequestFiles() {
+        return [{
+          filename: "openapi.yml",
+          status: "changed"
+        }, {
+          filename: "foo/bar,yml",
+          status: "changed"
+        }]
+      },
+      async getPullRequestComments() {
+        return []
+      },
+      async addCommentToPullRequest(request) {
+        didAddComment = true
+        commentBody = request.body
+      },
+      async updatePullRequestComment() {}
+    }
+  })
+  await sut.commentPullRequest({
+    appInstallationId: 1234,
+    pullRequestNumber: 42,
+    repositoryOwner: "acme",
+    repositoryName: "demo-openapi",
+    ref: "main"
+  })
+  expect(didAddComment).toBeTruthy()
+  expect(commentBody).toContain("<table>")
+  expect(commentBody).toContain("openapi.yml")
+  expect(commentBody).not.toContain("foo/bar.yml")
+})
+
+test("It does not post comment if changes only include ignored filenames", async () => {
+  let didAddComment = false
+  const sut = new PullRequestCommenter({
+    domain: "https://example.com",
+    siteName: "Demo Docs",
+    repositoryNameSuffix: "-openapi",
+    projectConfigurationFilename: ".demo-docs.yml",
+    gitHubAppId: "appid1234",
+    gitHubClient: {
+      async graphql() {
+        return {}
+      },
+      async getRepositoryContent() {
+        return { downloadURL: "https://example.com" }
+      },
+      async getPullRequestFiles() {
+        return [{
+          filename: ".foo.yml",
+          status: "changed"
+        }, {
+          filename: ".github/workflows/bar.yml",
+          status: "changed"
+        }]
+      },
+      async getPullRequestComments() {
+        return []
+      },
+      async addCommentToPullRequest(_request) {
+        didAddComment = true
+      },
+      async updatePullRequestComment() {}
+    }
+  })
+  await sut.commentPullRequest({
+    appInstallationId: 1234,
+    pullRequestNumber: 42,
+    repositoryOwner: "acme",
+    repositoryName: "demo-openapi",
+    ref: "main"
+  })
+  expect(didAddComment).toBeFalsy()
 })
