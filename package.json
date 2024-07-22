@@ -22,7 +22,7 @@
     "@fortawesome/react-fontawesome": "^0.2.2",
     "@mui/icons-material": "^5.16.4",
     "@mui/material": "^5.16.4",
-    "@octokit/auth-app": "^6.1.1",
+    "@octokit/auth-app": "^7.1.0",
     "@octokit/core": "^5.2.0",
     "@octokit/webhooks": "^12.2.0",
     "@stoplight/elements": "^8.3.4",
