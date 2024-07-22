@@ -11,8 +11,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint --max-warnings=0",
-    "test": "jest",
-    "testwatch": "jest --watch"
+    "test": "node --experimental-vm-modules ./node_modules/.bin/jest",
+    "testwatch": "node --experimental-vm-modules ./node_modules/.bin/jest --watch"
   },
   "dependencies": {
     "@emotion/react": "^11.13.0",
