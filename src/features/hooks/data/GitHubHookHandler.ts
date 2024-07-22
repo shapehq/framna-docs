@@ -22,7 +22,7 @@ export default class GitHubHookHandler {
       id: req.headers.get("X-GitHub-Delivery") as string,
       name: req.headers.get("X-GitHub-Event") as any,
       payload: await req.text(),
-      signature: req.headers.get("X-Hub-Signature") as string,
+      signature: req.headers.get("X-Hub-Signature-256") as string,
     }).catch((error) => {
       console.error(`Error: ${error.message}`)
       return false
