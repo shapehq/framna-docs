@@ -5,7 +5,8 @@ on:
     paths: 
     - .env.example
 jobs:
-  playground:
+  check:
+    name: Check Changes to Env
     runs-on: ubuntu-latest
     steps:
     - name: Get PR Number

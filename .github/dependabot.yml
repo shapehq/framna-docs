@@ -8,3 +8,6 @@ updates:
       fontawesome:
         patterns:
           - "@fortawesome/*"
+      octokit:
+        patterns:
+          - "@octokit/*"

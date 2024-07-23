@@ -1,7 +1,7 @@
-name: Test
+name: Run Unit Tests
 on:
-  workflow_dispatch: {}
-  pull_request: {}
+  workflow_dispatch:
+  pull_request:
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
@@ -9,7 +9,7 @@ env:
   NEXT_TELEMETRY_DISABLED: 1
 jobs:
   test:
-    name: Test
+    name: Run Unit Tests
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
@@ -20,5 +20,5 @@ jobs:
           node-version: 20
       - name: Install Dependencies
         run: npm install
-      - name: Test
+      - name: Run Unit Tests
         run: npm test
