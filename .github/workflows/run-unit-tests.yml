@@ -8,8 +8,8 @@ concurrency:
 env:
   NEXT_TELEMETRY_DISABLED: 1
 jobs:
-  run_unit_tests:
-    name: Test
+  test:
+    name: Run Unit Tests
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
