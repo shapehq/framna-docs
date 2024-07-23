@@ -3,7 +3,8 @@ on:
   workflow_dispatch:
   pull_request:
 jobs:
-  test_sql_queries:
+  test:
+    name: Test SQL Queries
     runs-on: ubuntu-latest
     services:
       postgres:
