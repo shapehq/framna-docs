@@ -15,8 +15,8 @@ test("It navigates to the correct path", async () => {
       replace: () => {}
     }
   })
-  sut.navigate("foo", "bar", "hello.yml")
-  expect(pushedPath).toEqual("/foo/bar/hello.yml")
+  sut.navigate("acme", "foo", "bar", "hello.yml")
+  expect(pushedPath).toEqual("/acme/foo/bar/hello.yml")
 })
 
 test("It navigates to first specification when changing version", async () => {
@@ -42,7 +42,9 @@ test("It navigates to first specification when changing version", async () => {
         name: "world.yml",
         url: "https://example.com/world.yml"
       }]
-    }]
+    }],
+    owner: "acme",
+    ownerUrl: "https://example.com/acme"
   }
   let pushedPath: string | undefined
   const sut = new ProjectNavigator({
@@ -59,7 +61,7 @@ test("It navigates to first specification when changing version", async () => {
     }
   })
   sut.navigateToVersion(project, "hello", "baz.yml")
-  expect(pushedPath).toEqual("/foo/hello/world.yml")
+  expect(pushedPath).toEqual("/acme/foo/hello/world.yml")
 })
 
 test("It finds a specification with the same name when changing version", async () => {
@@ -101,7 +103,9 @@ test("It finds a specification with the same name when changing version", async 
         name: "jupiter.yml",
         url: "https://example.com/jupiter.yml"
       }]
-    }]
+    }],
+    owner: "acme",
+    ownerUrl: "https://example.com/acme"
   }
   let pushedPath: string | undefined
   const sut = new ProjectNavigator({
@@ -118,7 +122,7 @@ test("It finds a specification with the same name when changing version", async 
     }
   })
   sut.navigateToVersion(project, "baz", "earth.yml")
-  expect(pushedPath).toEqual("/foo/baz/earth.yml")
+  expect(pushedPath).toEqual("/acme/foo/baz/earth.yml")
 })
 
 test("It skips navigating when URL matches selection", async () => {
@@ -126,7 +130,7 @@ test("It skips navigating when URL matches selection", async () => {
   const sut = new ProjectNavigator({
     pathnameReader: {
       get pathname() {
-        return "/foo/bar/baz"
+        return "/acme/foo/bar/baz"
       }
     },
     router: {
@@ -137,7 +141,8 @@ test("It skips navigating when URL matches selection", async () => {
     }
   })
   sut.navigateIfNeeded({
-    projectId: "foo",
+    projectOwner: "acme",
+    projectName: "foo",
     versionId: "bar",
     specificationId: "baz"
   })
@@ -160,7 +165,8 @@ test("It navigates when project ID in URL does not match ID of selected project"
     }
   })
   sut.navigateIfNeeded({
-    projectId: "foo",
+    projectOwner: "acme",
+    projectName: "foo",
     versionId: "bar",
     specificationId: "baz"
   })
@@ -183,7 +189,8 @@ test("It navigates when version ID in URL does not match ID of selected version"
     }
   })
   sut.navigateIfNeeded({
-    projectId: "foo",
+    projectOwner: "acme",
+    projectName: "foo",
     versionId: "bar",
     specificationId: "baz"
   })
@@ -206,7 +213,8 @@ test("It navigates when specification ID in URL does not match ID of selected sp
     }
   })
   sut.navigateIfNeeded({
-    projectId: "foo",
+    projectOwner: "acme",
+    projectName: "foo",
     versionId: "bar",
     specificationId: "baz"
   })

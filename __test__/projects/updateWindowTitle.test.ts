@@ -4,21 +4,23 @@ test("It uses default title when there is no selection", async () => {
   const store: { title: string } = { title: "" }
   updateWindowTitle({
     storage: store,
-    defaultTitle: "Shape Docs"
+    defaultTitle: "Demo Docs"
   })
-  expect(store.title).toEqual("Shape Docs")
+  expect(store.title).toEqual("Demo Docs")
 })
 
 test("It leaves out specification when the specification has a generic name", async () => {
   const store: { title: string } = { title: "" }
   updateWindowTitle({
     storage: store,
-    defaultTitle: "Shape Docs",
+    defaultTitle: "Demo Docs",
     project: {
       id: "foo",
       name: "foo",
       displayName: "foo",
-      versions: []
+      versions: [],
+      owner: "acme",
+      ownerUrl: "https://example.com/acme"
     },
     version: {
       id: "bar",
@@ -47,12 +49,14 @@ test("It leaves out version when it is the defualt version", async () => {
   const store: { title: string } = { title: "" }
   updateWindowTitle({
     storage: store,
-    defaultTitle: "Shape Docs",
+    defaultTitle: "Demo Docs",
     project: {
       id: "foo",
       name: "foo",
       displayName: "foo",
-      versions: []
+      versions: [],
+      owner: "acme",
+      ownerUrl: "https://example.com/acme"
     },
     version: {
       id: "bar",
@@ -77,12 +81,14 @@ test("It adds version when it is not the defualt version", async () => {
   const store: { title: string } = { title: "" }
   updateWindowTitle({
     storage: store,
-    defaultTitle: "Shape Docs",
+    defaultTitle: "Demo Docs",
     project: {
       id: "foo",
       name: "foo",
       displayName: "foo",
-      versions: []
+      versions: [],
+      owner: "acme",
+      ownerUrl: "https://example.com/acme"
     },
     version: {
       id: "bar",

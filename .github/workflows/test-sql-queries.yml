@@ -1,0 +1,38 @@
+name: Test SQL Queries
+on:
+  workflow_dispatch:
+  pull_request:
+jobs:
+  test:
+    name: Test SQL Queries
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:latest
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd="pg_isready -U postgres"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: testdb
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Wait for PostgreSQL to be ready
+        run: |
+          until pg_isready -h localhost -p 5432; do
+            sleep 1
+          done
+      - name: Run create-tables.sql
+        env:
+          PGPASSWORD: postgres
+        run: psql -h localhost -U postgres -d testdb -f create-tables.sql
+      - name: Run drop-tables.sql
+        env:
+          PGPASSWORD: postgres
+        run: psql -h localhost -U postgres -d testdb -f drop-tables.sql

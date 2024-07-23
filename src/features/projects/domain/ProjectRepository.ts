@@ -1,4 +1,4 @@
-import { IUserDataRepository, ZodJSONCoder } from "../../../common"
+import { IUserDataRepository, ZodJSONCoder } from "@/common"
 import IProjectRepository from "./IProjectRepository"
 import Project, { ProjectSchema } from "./Project"
 
@@ -6,15 +6,13 @@ interface IUserIDReader {
   getUserId(): Promise<string>
 }
 
-type Repository = IUserDataRepository<string>
-
 export default class ProjectRepository implements IProjectRepository {
   private readonly userIDReader: IUserIDReader
-  private readonly repository: Repository
+  private readonly repository: IUserDataRepository<string>
   
-  constructor(userIDReader: IUserIDReader, repository: Repository) {
-    this.userIDReader = userIDReader
-    this.repository = repository
+  constructor(config: { userIDReader: IUserIDReader, repository: IUserDataRepository<string> }) {
+    this.userIDReader = config.userIDReader
+    this.repository = config.repository
   }
   
   async get(): Promise<Project[] | undefined> {
@@ -23,7 +21,12 @@ export default class ProjectRepository implements IProjectRepository {
     if (!string) {
       return undefined
     }
-    return ZodJSONCoder.decode(ProjectSchema.array(), string)
+    try {
+      return ZodJSONCoder.decode(ProjectSchema.array(), string)
+    } catch (err) {
+      console.error(err)
+      return undefined
+    }
   }
   
   async set(projects: Project[]): Promise<void> {

@@ -5,10 +5,21 @@ import {
 test("It loads repositories from data source", async () => {
   let didLoadRepositories = false
   const sut = new GitHubProjectDataSource({
-    dataSource: {
-      async getRepositories() {
+    repositoryNameSuffix: "-openapi",
+    projectConfigurationFilename: ".demo-docs.yml",
+    loginsDataSource: {
+      async getLogins() {
+        return ["acme"]
+      }
+    },
+    graphQlClient: {
+      async graphql() {
         didLoadRepositories = true
-        return []
+        return {
+          search: {
+            results: []
+          }
+        }
       }
     }
   })
@@ -18,69 +29,80 @@ test("It loads repositories from data source", async () => {
 
 test("It maps projects including branches and tags", async () => {
   const sut = new GitHubProjectDataSource({
-    dataSource: {
-      async getRepositories() {
-        return [{
-          name: "foo",
-          owner: {
-            login: "acme"
-          },
-          defaultBranchRef: {
-            name: "main",
-            target: {
-              oid: "12345678"
-            }
-          },
-          branches: {
-            edges: [{
-              node: {
+    repositoryNameSuffix: "-openapi",
+    projectConfigurationFilename: ".demo-docs.yml",
+    loginsDataSource: {
+      async getLogins() {
+        return ["acme"]
+      }
+    },
+    graphQlClient: {
+      async graphql() {
+        return { 
+          search: {
+            results: [{
+              name: "foo-openapi",
+              owner: {
+                login: "acme"
+              },
+              defaultBranchRef: {
                 name: "main",
                 target: {
-                  oid: "12345678",
-                  tree: {
-                    entries: [{
-                      name: "openapi.yml"
-                    }]
-                  }
+                  oid: "12345678"
                 }
-              }
-            }]
-          },
-          tags: {
-            edges: [{
-              node: {
-                name: "1.0",
-                target: {
-                  oid: "12345678",
-                  tree: {
-                    entries: [{
-                      name: "openapi.yml"
-                    }]
+              },
+              branches: {
+                edges: [{
+                  node: {
+                    name: "main",
+                    target: {
+                      oid: "12345678",
+                      tree: {
+                        entries: [{
+                          name: "openapi.yml"
+                        }]
+                      }
+                    }
                   }
-                }
+                }]
+              },
+              tags: {
+                edges: [{
+                  node: {
+                    name: "1.0",
+                    target: {
+                      oid: "12345678",
+                      tree: {
+                        entries: [{
+                          name: "openapi.yml"
+                        }]
+                      }
+                    }
+                  }
+                }]
               }
             }]
           }
-        }]
+        }
       }
     }
   })
   const projects = await sut.getProjects()
   expect(projects).toEqual([{
-    id: "foo",
+    id: "acme-foo",
     name: "foo",
     displayName: "foo",
-    url: "https://github.com/acme/foo",
+    url: "https://github.com/acme/foo-openapi",
     versions: [{
       id: "main",
       name: "main",
       specifications: [{
         id: "openapi.yml",
         name: "openapi.yml",
-        url: "/api/blob/acme/foo/openapi.yml?ref=12345678",
-        editURL: "https://github.com/acme/foo/edit/main/openapi.yml"
+        url: "/api/blob/acme/foo-openapi/openapi.yml?ref=12345678",
+        editURL: "https://github.com/acme/foo-openapi/edit/main/openapi.yml"
       }],
-      url: "https://github.com/acme/foo/tree/main",
+      url: "https://github.com/acme/foo-openapi/tree/main",
       isDefault: true
     }, {
       id: "1.0",
@@ -88,149 +110,173 @@ test("It maps projects including branches and tags", async () => {
       specifications: [{
         id: "openapi.yml",
         name: "openapi.yml",
-        url: "/api/blob/acme/foo/openapi.yml?ref=12345678",
-        editURL: "https://github.com/acme/foo/edit/1.0/openapi.yml"
+        url: "/api/blob/acme/foo-openapi/openapi.yml?ref=12345678",
+        editURL: "https://github.com/acme/foo-openapi/edit/1.0/openapi.yml"
       }],
-      url: "https://github.com/acme/foo/tree/1.0",
+      url: "https://github.com/acme/foo-openapi/tree/1.0",
       isDefault: false
-    }]
+    }],
+    owner: "acme",
+    ownerUrl: "https://github.com/acme"
   }])
 })
 
 test("It removes \"-openapi\" suffix from project name", async () => {
   const sut = new GitHubProjectDataSource({
-    dataSource: {
-      async getRepositories() {
-        return [{
-          name: "foo-openapi",
-          owner: {
-            login: "acme"
-          },
-          defaultBranchRef: {
-            name: "main",
-            target: {
-              oid: "12345678"
-            }
-          },
-          branches: {
-            edges: [{
-              node: {
+    repositoryNameSuffix: "-openapi",
+    projectConfigurationFilename: ".demo-docs.yml",
+    loginsDataSource: {
+      async getLogins() {
+        return ["acme"]
+      }
+    },
+    graphQlClient: {
+      async graphql() {
+        return {
+          search: {
+            results: [{
+              name: "foo-openapi",
+              owner: {
+                login: "acme"
+              },
+              defaultBranchRef: {
                 name: "main",
                 target: {
-                  oid: "12345678",
-                  tree: {
-                    entries: [{
-                      name: "openapi.yml"
-                    }]
-                  }
+                  oid: "12345678"
                 }
-              }
-            }]
-          },
-          tags: {
-            edges: [{
-              node: {
-                name: "1.0",
-                target: {
-                  oid: "12345678",
-                  tree: {
-                    entries: [{
-                      name: "openapi.yml"
-                    }]
+              },
+              branches: {
+                edges: [{
+                  node: {
+                    name: "main",
+                    target: {
+                      oid: "12345678",
+                      tree: {
+                        entries: [{
+                          name: "openapi.yml"
+                        }]
+                      }
+                    }
                   }
-                }
+                }]
+              },
+              tags: {
+                edges: [{
+                  node: {
+                    name: "1.0",
+                    target: {
+                      oid: "12345678",
+                      tree: {
+                        entries: [{
+                          name: "openapi.yml"
+                        }]
+                      }
+                    }
+                  }
+                }]
               }
             }]
           }
-        }]
+        }
       }
     }
   })
   const projects = await sut.getProjects()
-  expect(projects[0].id).toEqual("foo")
+  expect(projects[0].id).toEqual("acme-foo")
   expect(projects[0].name).toEqual("foo")
   expect(projects[0].displayName).toEqual("foo")
 })
 
 test("It supports multiple OpenAPI specifications on a branch", async () => {
   const sut = new GitHubProjectDataSource({
-    dataSource: {
-      async getRepositories() {
-        return [{
-          name: "foo",
-          owner: {
-            login: "acme"
-          },
-          defaultBranchRef: {
-            name: "main",
-            target: {
-              oid: "12345678"
-            }
-          },
-          branches: {
-            edges: [{
-              node: {
+    repositoryNameSuffix: "-openapi",
+    projectConfigurationFilename: ".demo-docs.yml",
+    loginsDataSource: {
+      async getLogins() {
+        return ["acme"]
+      }
+    },
+    graphQlClient: {
+      async graphql() {
+        return {
+          search: {
+            results: [{
+              name: "foo-openapi",
+              owner: {
+                login: "acme"
+              },
+              defaultBranchRef: {
                 name: "main",
                 target: {
-                  oid: "12345678",
-                  tree: {
-                    entries: [{
-                      name: "foo-service.yml"
-                    }, {
-                      name: "bar-service.yml"
-                    }, {
-                      name: "baz-service.yml"
-                    }]
-                  }
+                  oid: "12345678"
                 }
-              }
-            }]
-          },
-          tags: {
-            edges: [{
-              node: {
-                name: "1.0",
-                target: {
-                  oid: "12345678",
-                  tree: {
-                    entries: [{
-                      name: "openapi.yml"
-                    }]
+              },
+              branches: {
+                edges: [{
+                  node: {
+                    name: "main",
+                    target: {
+                      oid: "12345678",
+                      tree: {
+                        entries: [{
+                          name: "foo-service.yml"
+                        }, {
+                          name: "bar-service.yml"
+                        }, {
+                          name: "baz-service.yml"
+                        }]
+                      }
+                    }
                   }
-                }
+                }]
+              },
+              tags: {
+                edges: [{
+                  node: {
+                    name: "1.0",
+                    target: {
+                      oid: "12345678",
+                      tree: {
+                        entries: [{
+                          name: "openapi.yml"
+                        }]
+                      }
+                    }
+                  }
+                }]
               }
             }]
           }
-        }]
+        }
       }
     }
   })
   const projects = await sut.getProjects()
   expect(projects).toEqual([{
-    id: "foo",
+    id: "acme-foo",
     name: "foo",
     displayName: "foo",
-    url: "https://github.com/acme/foo",
+    url: "https://github.com/acme/foo-openapi",
     versions: [{
       id: "main",
       name: "main",
       specifications: [{
         id: "foo-service.yml",
         name: "foo-service.yml",
-        url: "/api/blob/acme/foo/foo-service.yml?ref=12345678",
-        editURL: "https://github.com/acme/foo/edit/main/foo-service.yml"
+        url: "/api/blob/acme/foo-openapi/foo-service.yml?ref=12345678",
+        editURL: "https://github.com/acme/foo-openapi/edit/main/foo-service.yml"
       }, {
         id: "bar-service.yml",
         name: "bar-service.yml",
-        url: "/api/blob/acme/foo/bar-service.yml?ref=12345678",
-        editURL: "https://github.com/acme/foo/edit/main/bar-service.yml"
+        url: "/api/blob/acme/foo-openapi/bar-service.yml?ref=12345678",
+        editURL: "https://github.com/acme/foo-openapi/edit/main/bar-service.yml"
       }, {
         id: "baz-service.yml",
         name: "baz-service.yml",
-        url: "/api/blob/acme/foo/baz-service.yml?ref=12345678",
-        editURL: "https://github.com/acme/foo/edit/main/baz-service.yml"
+        url: "/api/blob/acme/foo-openapi/baz-service.yml?ref=12345678",
+        editURL: "https://github.com/acme/foo-openapi/edit/main/baz-service.yml"
       }],
-      url: "https://github.com/acme/foo/tree/main",
+      url: "https://github.com/acme/foo-openapi/tree/main",
       isDefault: true
     }, {
       id: "1.0",
@@ -238,92 +284,116 @@ test("It supports multiple OpenAPI specifications on a branch", async () => {
       specifications: [{
         id: "openapi.yml",
         name: "openapi.yml",
-        url: "/api/blob/acme/foo/openapi.yml?ref=12345678",
-        editURL: "https://github.com/acme/foo/edit/1.0/openapi.yml"
+        url: "/api/blob/acme/foo-openapi/openapi.yml?ref=12345678",
+        editURL: "https://github.com/acme/foo-openapi/edit/1.0/openapi.yml"
       }],
-      url: "https://github.com/acme/foo/tree/1.0",
+      url: "https://github.com/acme/foo-openapi/tree/1.0",
       isDefault: false
-    }]
+    }],
+    owner: "acme",
+    ownerUrl: "https://github.com/acme"
   }])
 })
 
 test("It removes \"-openapi\" suffix from project name", async () => {
   const sut = new GitHubProjectDataSource({
-    dataSource: {
-      async getRepositories() {
-        return [{
-          name: "foo-openapi",
-          owner: {
-            login: "acme"
-          },
-          defaultBranchRef: {
-            name: "main",
-            target: {
-              oid: "12345678"
-            }
-          },
-          branches: {
-            edges: [{
-              node: {
+    repositoryNameSuffix: "-openapi",
+    projectConfigurationFilename: ".demo-docs.yml",
+    loginsDataSource: {
+      async getLogins() {
+        return ["acme"]
+      }
+    },
+    graphQlClient: {
+      async graphql() {
+        return {
+          search: {
+            results: [{
+              name: "foo-openapi",
+              owner: {
+                login: "acme"
+              },
+              defaultBranchRef: {
                 name: "main",
                 target: {
-                  oid: "12345678",
-                  tree: {
-                    entries: [{
-                      name: "openapi.yml"
-                    }]
-                  }
+                  oid: "12345678"
                 }
-              }
-            }]
-          },
-          tags: {
-            edges: [{
-              node: {
-                name: "1.0",
-                target: {
-                  oid: "12345678",
-                  tree: {
-                    entries: [{
-                      name: "openapi.yml"
-                    }]
+              },
+              branches: {
+                edges: [{
+                  node: {
+                    name: "main",
+                    target: {
+                      oid: "12345678",
+                      tree: {
+                        entries: [{
+                          name: "openapi.yml"
+                        }]
+                      }
+                    }
                   }
-                }
+                }]
+              },
+              tags: {
+                edges: [{
+                  node: {
+                    name: "1.0",
+                    target: {
+                      oid: "12345678",
+                      tree: {
+                        entries: [{
+                          name: "openapi.yml"
+                        }]
+                      }
+                    }
+                  }
+                }]
               }
             }]
           }
-        }]
+        }
       }
     }
   })
   const projects = await sut.getProjects()
-  expect(projects[0].id).toEqual("foo")
+  expect(projects[0].id).toEqual("acme-foo")
   expect(projects[0].name).toEqual("foo")
   expect(projects[0].displayName).toEqual("foo")
 })
 
 test("It filters away projects with no versions", async () => {
   const sut = new GitHubProjectDataSource({
-    dataSource: {
-      async getRepositories() {
-        return [{
-          name: "foo",
-          owner: {
-            login: "acme"
-          },
-          defaultBranchRef: {
-            name: "main",
-            target: {
-              oid: "12345678"
-            }
-          },
-          branches: {
-            edges: []
-          },
-          tags: {
-            edges: []
+    repositoryNameSuffix: "-openapi",
+    projectConfigurationFilename: ".demo-docs.yml",
+    loginsDataSource: {
+      async getLogins() {
+        return ["acme"]
+      }
+    },
+    graphQlClient: {
+      async graphql() {
+        return {
+          search: {
+            results: [{
+              name: "foo",
+              owner: {
+                login: "acme"
+              },
+              defaultBranchRef: {
+                name: "main",
+                target: {
+                  oid: "12345678"
+                }
+              },
+              branches: {
+                edges: []
+              },
+              tags: {
+                edges: []
+              }
+            }]
           }
-        }]
+        }
       }
     }
   })
@@ -333,50 +403,61 @@ test("It filters away projects with no versions", async () => {
 
 test("It filters away branches with no specifications", async () => {
   const sut = new GitHubProjectDataSource({
-    dataSource: {
-      async getRepositories() {
-        return [{
-          name: "foo-openapi",
-          owner: {
-            login: "acme"
-          },
-          defaultBranchRef: {
-            name: "main",
-            target: {
-              oid: "12345678"
-            }
-          },
-          branches: {
-            edges: [{
-              node: {
+    repositoryNameSuffix: "-openapi",
+    projectConfigurationFilename: ".demo-docs.yml",
+    loginsDataSource: {
+      async getLogins() {
+        return ["acme"]
+      }
+    },
+    graphQlClient: {
+      async graphql() {
+        return {
+          search: {
+            results: [{
+              name: "foo-openapi",
+              owner: {
+                login: "acme"
+              },
+              defaultBranchRef: {
                 name: "main",
                 target: {
-                  oid: "12345678",
-                  tree: {
-                    entries: [{
-                      name: "openapi.yml"
-                    }]
-                  }
+                  oid: "12345678"
                 }
-              }
-            }, {
-              node: {
-                name: "bugfix",
-                target: {
-                  oid: "12345678",
-                  tree: {
-                    entries: [{
-                      name: "foo.txt"
-                    }]
+              },
+              branches: {
+                edges: [{
+                  node: {
+                    name: "main",
+                    target: {
+                      oid: "12345678",
+                      tree: {
+                        entries: [{
+                          name: "openapi.yml"
+                        }]
+                      }
+                    }
                   }
-                }
+                }, {
+                  node: {
+                    name: "bugfix",
+                    target: {
+                      oid: "12345678",
+                      tree: {
+                        entries: [{
+                          name: "foo.txt"
+                        }]
+                      }
+                    }
+                  }
+                }]
+              },
+              tags: {
+                edges: []
               }
             }]
-          },
-          tags: {
-            edges: []
           }
-        }]
+        }
       }
     }
   })
@@ -386,62 +467,73 @@ test("It filters away branches with no specifications", async () => {
 
 test("It filters away tags with no specifications", async () => {
   const sut = new GitHubProjectDataSource({
-    dataSource: {
-      async getRepositories() {
-        return [{
-          name: "foo-openapi",
-          owner: {
-            login: "acme"
-          },
-          defaultBranchRef: {
-            name: "main",
-            target: {
-              oid: "12345678"
-            }
-          },
-          branches: {
-            edges: [{
-              node: {
+    repositoryNameSuffix: "-openapi",
+    projectConfigurationFilename: ".demo-docs.yml",
+    loginsDataSource: {
+      async getLogins() {
+        return ["acme"]
+      }
+    },
+    graphQlClient: {
+      async graphql() {
+        return {
+          search: {
+            results: [{
+              name: "foo-openapi",
+              owner: {
+                login: "acme"
+              },
+              defaultBranchRef: {
                 name: "main",
                 target: {
-                  oid: "12345678",
-                  tree: {
-                    entries: [{
-                      name: "openapi.yml"
-                    }]
-                  }
+                  oid: "12345678"
                 }
-              }
-            }]
-          },
-          tags: {
-            edges: [{
-              node: {
-                name: "1.0",
-                target: {
-                  oid: "12345678",
-                  tree: {
-                    entries: [{
-                      name: "openapi.yml"
-                    }]
+              },
+              branches: {
+                edges: [{
+                  node: {
+                    name: "main",
+                    target: {
+                      oid: "12345678",
+                      tree: {
+                        entries: [{
+                          name: "openapi.yml"
+                        }]
+                      }
+                    }
                   }
-                }
-              }
-            }, {
-              node: {
-                name: "1.1",
-                target: {
-                  oid: "12345678",
-                  tree: {
-                    entries: [{
-                      name: "foo.txt"
-                    }]
+                }]
+              },
+              tags: {
+                edges: [{
+                  node: {
+                    name: "1.0",
+                    target: {
+                      oid: "12345678",
+                      tree: {
+                        entries: [{
+                          name: "openapi.yml"
+                        }]
+                      }
+                    }
                   }
-                }
+                }, {
+                  node: {
+                    name: "1.1",
+                    target: {
+                      oid: "12345678",
+                      tree: {
+                        entries: [{
+                          name: "foo.txt"
+                        }]
+                      }
+                    }
+                  }
+                }]
               }
             }]
           }
-        }]
+        }
       }
     }
   })
@@ -449,43 +541,54 @@ test("It filters away tags with no specifications", async () => {
   expect(projects[0].versions.length).toEqual(2)
 })
 
-test("It reads image from .shape-config.yml", async () => {
+test("It reads image from configuration file with .yml extension", async () => {
   const sut = new GitHubProjectDataSource({
-    dataSource: {
-      async getRepositories() {
-        return [{
-          name: "foo-openapi",
-          owner: {
-            login: "acme"
-          },
-          defaultBranchRef: {
-            name: "main",
-            target: {
-              oid: "12345678"
-            }
-          },
-          configYml: {
-            text: "image: icon.png"
-          },
-          branches: {
-            edges: [{
-              node: {
+    repositoryNameSuffix: "-openapi",
+    projectConfigurationFilename: ".demo-docs.yml",
+    loginsDataSource: {
+      async getLogins() {
+        return ["acme"]
+      }
+    },
+    graphQlClient: {
+      async graphql() {
+        return {
+          search: {
+            results: [{
+              name: "foo-openapi",
+              owner: {
+                login: "acme"
+              },
+              defaultBranchRef: {
                 name: "main",
                 target: {
-                  oid: "12345678",
-                  tree: {
-                    entries: [{
-                      name: "openapi.yml"
-                    }]
-                  }
+                  oid: "12345678"
                 }
+              },
+              configYml: {
+                text: "image: icon.png"
+              },
+              branches: {
+                edges: [{
+                  node: {
+                    name: "main",
+                    target: {
+                      oid: "12345678",
+                      tree: {
+                        entries: [{
+                          name: "openapi.yml"
+                        }]
+                      }
+                    }
+                  }
+                }]
+              },
+              tags: {
+                edges: []
               }
             }]
-          },
-          tags: {
-            edges: []
           }
-        }]
+        }
       }
     }
   })
@@ -495,62 +598,73 @@ test("It reads image from .shape-config.yml", async () => {
 
 test("It filters away tags with no specifications", async () => {
   const sut = new GitHubProjectDataSource({
-    dataSource: {
-      async getRepositories() {
-        return [{
-          name: "foo-openapi",
-          owner: {
-            login: "acme"
-          },
-          defaultBranchRef: {
-            name: "main",
-            target: {
-              oid: "12345678"
-            }
-          },
-          branches: {
-            edges: [{
-              node: {
+    repositoryNameSuffix: "-openapi",
+    projectConfigurationFilename: ".demo-docs.yml",
+    loginsDataSource: {
+      async getLogins() {
+        return ["acme"]
+      }
+    },
+    graphQlClient: {
+      async graphql() {
+        return {
+          search: {
+            results: [{
+              name: "foo-openapi",
+              owner: {
+                login: "acme"
+              },
+              defaultBranchRef: {
                 name: "main",
                 target: {
-                  oid: "12345678",
-                  tree: {
-                    entries: [{
-                      name: "openapi.yml"
-                    }]
-                  }
+                  oid: "12345678"
                 }
-              }
-            }]
-          },
-          tags: {
-            edges: [{
-              node: {
-                name: "1.0",
-                target: {
-                  oid: "12345678",
-                  tree: {
-                    entries: [{
-                      name: "openapi.yml"
-                    }]
+              },
+              branches: {
+                edges: [{
+                  node: {
+                    name: "main",
+                    target: {
+                      oid: "12345678",
+                      tree: {
+                        entries: [{
+                          name: "openapi.yml"
+                        }]
+                      }
+                    }
                   }
-                }
-              }
-            }, {
-              node: {
-                name: "1.1",
-                target: {
-                  oid: "12345678",
-                  tree: {
-                    entries: [{
-                      name: "foo.txt"
-                    }]
+                }]
+              },
+              tags: {
+                edges: [{
+                  node: {
+                    name: "1.0",
+                    target: {
+                      oid: "12345678",
+                      tree: {
+                        entries: [{
+                          name: "openapi.yml"
+                        }]
+                      }
+                    }
                   }
-                }
+                }, {
+                  node: {
+                    name: "1.1",
+                    target: {
+                      oid: "12345678",
+                      tree: {
+                        entries: [{
+                          name: "foo.txt"
+                        }]
+                      }
+                    }
+                  }
+                }]
               }
             }]
           }
-        }]
+        }
       }
     }
   })
@@ -558,89 +672,111 @@ test("It filters away tags with no specifications", async () => {
   expect(projects[0].versions.length).toEqual(2)
 })
 
-test("It reads display name from .shape-config.yml", async () => {
+test("It reads display name from configuration file with .yml extension", async () => {
   const sut = new GitHubProjectDataSource({
-    dataSource: {
-      async getRepositories() {
-        return [{
-          name: "foo-openapi",
-          owner: {
-            login: "acme"
-          },
-          defaultBranchRef: {
-            name: "main",
-            target: {
-              oid: "12345678"
-            }
-          },
-          configYml: {
-            text: "name: Hello World"
-          },
-          branches: {
-            edges: [{
-              node: {
+    repositoryNameSuffix: "-openapi",
+    projectConfigurationFilename: ".demo-docs.yml",
+    loginsDataSource: {
+      async getLogins() {
+        return ["acme"]
+      }
+    },
+    graphQlClient: {
+      async graphql() {
+        return {
+          search: {
+            results: [{
+              name: "foo-openapi",
+              owner: {
+                login: "acme"
+              },
+              defaultBranchRef: {
                 name: "main",
                 target: {
-                  oid: "12345678",
-                  tree: {
-                    entries: [{
-                      name: "openapi.yml"
-                    }]
-                  }
+                  oid: "12345678"
                 }
+              },
+              configYml: {
+                text: "name: Hello World"
+              },
+              branches: {
+                edges: [{
+                  node: {
+                    name: "main",
+                    target: {
+                      oid: "12345678",
+                      tree: {
+                        entries: [{
+                          name: "openapi.yml"
+                        }]
+                      }
+                    }
+                  }
+                }]
+              },
+              tags: {
+                edges: []
               }
             }]
-          },
-          tags: {
-            edges: []
           }
-        }]
+        }
       }
     }
   })
   const projects = await sut.getProjects()
-  expect(projects[0].id).toEqual("foo")
+  expect(projects[0].id).toEqual("acme-foo")
   expect(projects[0].name).toEqual("foo")
   expect(projects[0].displayName).toEqual("Hello World")
 })
 
-test("It reads image from .shape-config.yml", async () => {
+test("It reads image from configuration file with .yml extension", async () => {
   const sut = new GitHubProjectDataSource({
-    dataSource: {
-      async getRepositories() {
-        return [{
-          name: "foo-openapi",
-          owner: {
-            login: "acme"
-          },
-          defaultBranchRef: {
-            name: "main",
-            target: {
-              oid: "12345678"
-            }
-          },
-          configYml: {
-            text: "image: icon.png"
-          },
-          branches: {
-            edges: [{
-              node: {
+    repositoryNameSuffix: "-openapi",
+    projectConfigurationFilename: ".demo-docs.yml",
+    loginsDataSource: {
+      async getLogins() {
+        return ["acme"]
+      }
+    },
+    graphQlClient: {
+      async graphql() {
+        return {
+          search: {
+            results: [{
+              name: "foo-openapi",
+              owner: {
+                login: "acme"
+              },
+              defaultBranchRef: {
                 name: "main",
                 target: {
-                  oid: "12345678",
-                  tree: {
-                    entries: [{
-                      name: "openapi.yml"
-                    }]
-                  }
+                  oid: "12345678"
                 }
+              },
+              configYml: {
+                text: "image: icon.png"
+              },
+              branches: {
+                edges: [{
+                  node: {
+                    name: "main",
+                    target: {
+                      oid: "12345678",
+                      tree: {
+                        entries: [{
+                          name: "openapi.yml"
+                        }]
+                      }
+                    }
+                  }
+                }]
+              },
+              tags: {
+                edges: []
               }
             }]
-          },
-          tags: {
-            edges: []
           }
-        }]
+        }
       }
     }
   })
@@ -648,89 +784,111 @@ test("It reads image from .shape-config.yml", async () => {
   expect(projects[0].imageURL).toEqual("/api/blob/acme/foo-openapi/icon.png?ref=12345678")
 })
 
-test("It reads display name from .shape-config.yaml", async () => {
+test("It reads display name from configuration file with .yaml extension", async () => {
   const sut = new GitHubProjectDataSource({
-    dataSource: {
-      async getRepositories() {
-        return [{
-          name: "foo-openapi",
-          owner: {
-            login: "acme"
-          },
-          defaultBranchRef: {
-            name: "main",
-            target: {
-              oid: "12345678"
-            }
-          },
-          configYaml: {
-            text: "name: Hello World"
-          },
-          branches: {
-            edges: [{
-              node: {
+    repositoryNameSuffix: "-openapi",
+    projectConfigurationFilename: ".demo-docs.yml",
+    loginsDataSource: {
+      async getLogins() {
+        return ["acme"]
+      }
+    },
+    graphQlClient: {
+      async graphql() {
+        return {
+          search: {
+            results: [{
+              name: "foo-openapi",
+              owner: {
+                login: "acme"
+              },
+              defaultBranchRef: {
                 name: "main",
                 target: {
-                  oid: "12345678",
-                  tree: {
-                    entries: [{
-                      name: "openapi.yml"
-                    }]
-                  }
+                  oid: "12345678"
                 }
+              },
+              configYaml: {
+                text: "name: Hello World"
+              },
+              branches: {
+                edges: [{
+                  node: {
+                    name: "main",
+                    target: {
+                      oid: "12345678",
+                      tree: {
+                        entries: [{
+                          name: "openapi.yml"
+                        }]
+                      }
+                    }
+                  }
+                }]
+              },
+              tags: {
+                edges: []
               }
             }]
-          },
-          tags: {
-            edges: []
           }
-        }]
+        }
       }
     }
   })
   const projects = await sut.getProjects()
-  expect(projects[0].id).toEqual("foo")
+  expect(projects[0].id).toEqual("acme-foo")
   expect(projects[0].name).toEqual("foo")
   expect(projects[0].displayName).toEqual("Hello World")
 })
 
-test("It reads image from .shape-config.yaml", async () => {
+test("It reads image from configuration file with .yaml extension", async () => {
   const sut = new GitHubProjectDataSource({
-    dataSource: {
-      async getRepositories() {
-        return [{
-          name: "foo-openapi",
-          owner: {
-            login: "acme"
-          },
-          defaultBranchRef: {
-            name: "main",
-            target: {
-              oid: "12345678"
-            }
-          },
-          configYaml: {
-            text: "image: icon.png"
-          },
-          branches: {
-            edges: [{
-              node: {
+    repositoryNameSuffix: "-openapi",
+    projectConfigurationFilename: ".demo-docs.yml",
+    loginsDataSource: {
+      async getLogins() {
+        return ["acme"]
+      }
+    },
+    graphQlClient: {
+      async graphql() {
+        return {
+          search: {
+            results: [{
+              name: "foo-openapi",
+              owner: {
+                login: "acme"
+              },
+              defaultBranchRef: {
                 name: "main",
                 target: {
-                  oid: "12345678",
-                  tree: {
-                    entries: [{
-                      name: "openapi.yml"
-                    }]
-                  }
+                  oid: "12345678"
                 }
+              },
+              configYaml: {
+                text: "image: icon.png"
+              },
+              branches: {
+                edges: [{
+                  node: {
+                    name: "main",
+                    target: {
+                      oid: "12345678",
+                      tree: {
+                        entries: [{
+                          name: "openapi.yml"
+                        }]
+                      }
+                    }
+                  }
+                }]
+              },
+              tags: {
+                edges: []
               }
             }]
-          },
-          tags: {
-            edges: []
           }
-        }]
+        }
       }
     }
   })
@@ -740,96 +898,107 @@ test("It reads image from .shape-config.yaml", async () => {
 
 test("It sorts projects alphabetically", async () => {
   const sut = new GitHubProjectDataSource({
-    dataSource: {
-      async getRepositories() {
-        return [{
-          name: "cathrine",
-          owner: {
-            login: "acme"
-          },
-          defaultBranchRef: {
-            name: "main",
-            target: {
-              oid: "12345678"
-            }
-          },
-          branches: {
-            edges: [{
-              node: {
+    repositoryNameSuffix: "-openapi",
+    projectConfigurationFilename: ".demo-docs.yml",
+    loginsDataSource: {
+      async getLogins() {
+        return ["acme"]
+      }
+    },
+    graphQlClient: {
+      async graphql() {
+        return {
+          search: {
+            results: [{
+              name: "cathrine-openapi",
+              owner: {
+                login: "acme"
+              },
+              defaultBranchRef: {
                 name: "main",
                 target: {
-                  oid: "12345678",
-                  tree: {
-                    entries: [{
-                      name: "openapi.yml"
-                    }]
-                  }
+                  oid: "12345678"
                 }
+              },
+              branches: {
+                edges: [{
+                  node: {
+                    name: "main",
+                    target: {
+                      oid: "12345678",
+                      tree: {
+                        entries: [{
+                          name: "openapi.yml"
+                        }]
+                      }
+                    }
+                  }
+                }]
+              },
+              tags: {
+                edges: []
               }
-            }]
-          },
-          tags: {
-            edges: []
-          }
-        }, {
-          name: "anne",
-          owner: {
-            login: "acme"
-          },
-          defaultBranchRef: {
-            name: "main",
-            target: {
-              oid: "12345678"
-            }
-          },
-          branches: {
-            edges: [{
-              node: {
+            }, {
+              name: "anne-openapi",
+              owner: {
+                login: "acme"
+              },
+              defaultBranchRef: {
                 name: "main",
                 target: {
-                  oid: "12345678",
-                  tree: {
-                    entries: [{
-                      name: "openapi.yml"
-                    }]
-                  }
+                  oid: "12345678"
                 }
+              },
+              branches: {
+                edges: [{
+                  node: {
+                    name: "main",
+                    target: {
+                      oid: "12345678",
+                      tree: {
+                        entries: [{
+                          name: "openapi.yml"
+                        }]
+                      }
+                    }
+                  }
+                }]
+              },
+              tags: {
+                edges: []
               }
-            }]
-          },
-          tags: {
-            edges: []
-          }
-        }, {
-          name: "bobby",
-          owner: {
-            login: "acme"
-          },
-          defaultBranchRef: {
-            name: "main",
-            target: {
-              oid: "12345678"
-            }
-          },
-          branches: {
-            edges: [{
-              node: {
+            }, {
+              name: "bobby-openapi",
+              owner: {
+                login: "acme"
+              },
+              defaultBranchRef: {
                 name: "main",
                 target: {
-                  oid: "12345678",
-                  tree: {
-                    entries: [{
-                      name: "openapi.yml"
-                    }]
-                  }
+                  oid: "12345678"
                 }
+              },
+              branches: {
+                edges: [{
+                  node: {
+                    name: "main",
+                    target: {
+                      oid: "12345678",
+                      tree: {
+                        entries: [{
+                          name: "openapi.yml"
+                        }]
+                      }
+                    }
+                  }
+                }]
+              },
+              tags: {
+                edges: []
               }
             }]
-          },
-          tags: {
-            edges: []
           }
-        }]
+        }
       }
     }
   })
@@ -841,74 +1010,85 @@ test("It sorts projects alphabetically", async () => {
 
 test("It sorts versions alphabetically", async () => {
   const sut = new GitHubProjectDataSource({
-    dataSource: {
-      async getRepositories() {
-        return [{
-          name: "foo",
-          owner: {
-            login: "acme"
-          },
-          defaultBranchRef: {
-            name: "main",
-            target: {
-              oid: "12345678"
-            }
-          },
-          branches: {
-            edges: [{
-              node: {
-                name: "bobby",
+    repositoryNameSuffix: "-openapi",
+    projectConfigurationFilename: ".demo-docs.yml",
+    loginsDataSource: {
+      async getLogins() {
+        return ["acme"]
+      }
+    },
+    graphQlClient: {
+      async graphql() {
+        return {
+          search: {
+            results: [{
+              name: "foo-openapi",
+              owner: {
+                login: "acme"
+              },
+              defaultBranchRef: {
+                name: "main",
                 target: {
-                  oid: "12345678",
-                  tree: {
-                    entries: [{
-                      name: "openapi.yml"
-                    }]
-                  }
+                  oid: "12345678"
                 }
-              }
-            }, {
-              node: {
-                name: "anne",
-                target: {
-                  oid: "12345678",
-                  tree: {
-                    entries: [{
-                      name: "openapi.yml"
-                    }]
+              },
+              branches: {
+                edges: [{
+                  node: {
+                    name: "bobby",
+                    target: {
+                      oid: "12345678",
+                      tree: {
+                        entries: [{
+                          name: "openapi.yml"
+                        }]
+                      }
+                    }
                   }
-                }
-              }
-            }]
-          },
-          tags: {
-            edges: [{
-              node: {
-                name: "1.0",
-                target: {
-                  oid: "12345678",
-                  tree: {
-                    entries: [{
-                      name: "openapi.yml"
-                    }]
+                }, {
+                  node: {
+                    name: "anne",
+                    target: {
+                      oid: "12345678",
+                      tree: {
+                        entries: [{
+                          name: "openapi.yml"
+                        }]
+                      }
+                    }
                   }
-                }
-              }
-            }, {
-              node: {
-                name: "cathrine",
-                target: {
-                  oid: "12345678",
-                  tree: {
-                    entries: [{
-                      name: "openapi.yml"
-                    }]
+                }]
+              },
+              tags: {
+                edges: [{
+                  node: {
+                    name: "1.0",
+                    target: {
+                      oid: "12345678",
+                      tree: {
+                        entries: [{
+                          name: "openapi.yml"
+                        }]
+                      }
+                    }
                   }
-                }
+                }, {
+                  node: {
+                    name: "cathrine",
+                    target: {
+                      oid: "12345678",
+                      tree: {
+                        entries: [{
+                          name: "openapi.yml"
+                        }]
+                      }
+                    }
+                  }
+                }]
               }
             }]
           }
-        }]
+        }
       }
     }
   })
@@ -921,98 +1101,109 @@ test("It sorts versions alphabetically", async () => {
 
 test("It prioritizes main, master, develop, and development branch names when sorting verisons", async () => {
   const sut = new GitHubProjectDataSource({
-    dataSource: {
-      async getRepositories() {
-        return [{
-          name: "foo",
-          owner: {
-            login: "acme"
-          },
-          defaultBranchRef: {
-            name: "main",
-            target: {
-              oid: "12345678"
-            }
-          },
-          branches: {
-            edges: [{
-              node: {
-                name: "anne",
-                target: {
-                  oid: "12345678",
-                  tree: {
-                    entries: [{
-                      name: "openapi.yml"
-                    }]
-                  }
-                }
-              }
-            }, {
-              node: {
-                name: "develop",
-                target: {
-                  oid: "12345678",
-                  tree: {
-                    entries: [{
-                      name: "openapi.yml"
-                    }]
-                  }
-                }
-              }
-            }, {
-              node: {
+    repositoryNameSuffix: "-openapi",
+    projectConfigurationFilename: ".demo-docs.yml",
+    loginsDataSource: {
+      async getLogins() {
+        return ["acme"]
+      }
+    },
+    graphQlClient: {
+      async graphql() {
+        return {
+          search: {
+            results: [{
+              name: "foo-openapi",
+              owner: {
+                login: "acme"
+              },
+              defaultBranchRef: {
                 name: "main",
                 target: {
-                  oid: "12345678",
-                  tree: {
-                    entries: [{
-                      name: "openapi.yml"
-                    }]
-                  }
+                  oid: "12345678"
                 }
-              }
-            }, {
-              node: {
-                name: "development",
-                target: {
-                  oid: "12345678",
-                  tree: {
-                    entries: [{
-                      name: "openapi.yml"
-                    }]
+              },
+              branches: {
+                edges: [{
+                  node: {
+                    name: "anne",
+                    target: {
+                      oid: "12345678",
+                      tree: {
+                        entries: [{
+                          name: "openapi.yml"
+                        }]
+                      }
+                    }
                   }
-                }
-              }
-            }, {
-              node: {
-                name: "master",
-                target: {
-                  oid: "12345678",
-                  tree: {
-                    entries: [{
-                      name: "openapi.yml"
-                    }]
+                }, {
+                  node: {
+                    name: "develop",
+                    target: {
+                      oid: "12345678",
+                      tree: {
+                        entries: [{
+                          name: "openapi.yml"
+                        }]
+                      }
+                    }
                   }
-                }
-              }
-            }]
-          },
-          tags: {
-            edges: [{
-              node: {
-                name: "1.0",
-                target: {
-                  oid: "12345678",
-                  tree: {
-                    entries: [{
-                      name: "openapi.yml"
-                    }]
+                }, {
+                  node: {
+                    name: "main",
+                    target: {
+                      oid: "12345678",
+                      tree: {
+                        entries: [{
+                          name: "openapi.yml"
+                        }]
+                      }
+                    }
                   }
-                }
+                }, {
+                  node: {
+                    name: "development",
+                    target: {
+                      oid: "12345678",
+                      tree: {
+                        entries: [{
+                          name: "openapi.yml"
+                        }]
+                      }
+                    }
+                  }
+                }, {
+                  node: {
+                    name: "master",
+                    target: {
+                      oid: "12345678",
+                      tree: {
+                        entries: [{
+                          name: "openapi.yml"
+                        }]
+                      }
+                    }
+                  }
+                }]
+              },
+              tags: {
+                edges: [{
+                  node: {
+                    name: "1.0",
+                    target: {
+                      oid: "12345678",
+                      tree: {
+                        entries: [{
+                          name: "openapi.yml"
+                        }]
+                      }
+                    }
+                  }
+                }]
               }
             }]
           }
-        }]
+        }
       }
     }
   })
@@ -1027,62 +1218,73 @@ test("It prioritizes main, master, develop, and development branch names when so
 
 test("It identifies the default branch in returned versions", async () => {
   const sut = new GitHubProjectDataSource({
-    dataSource: {
-      async getRepositories() {
-        return [{
-          name: "foo",
-          owner: {
-            login: "acme"
-          },
-          defaultBranchRef: {
-            name: "development",
-            target: {
-              oid: "12345678"
-            }
-          },
-          branches: {
-            edges: [{
-              node: {
-                name: "anne",
-                target: {
-                  oid: "12345678",
-                  tree: {
-                    entries: [{
-                      name: "openapi.yml"
-                    }]
-                  }
-                }
-              }
-            }, {
-              node: {
-                name: "main",
-                target: {
-                  oid: "12345678",
-                  tree: {
-                    entries: [{
-                      name: "openapi.yml"
-                    }]
-                  }
-                }
-              }
-            }, {
-              node: {
+    repositoryNameSuffix: "-openapi",
+    projectConfigurationFilename: ".demo-docs.yml",
+    loginsDataSource: {
+      async getLogins() {
+        return ["acme"]
+      }
+    },
+    graphQlClient: {
+      async graphql() {
+        return {
+          search: {
+            results: [{
+              name: "foo-openapi",
+              owner: {
+                login: "acme"
+              },
+              defaultBranchRef: {
                 name: "development",
                 target: {
-                  oid: "12345678",
-                  tree: {
-                    entries: [{
-                      name: "openapi.yml"
-                    }]
-                  }
+                  oid: "12345678"
                 }
+              },
+              branches: {
+                edges: [{
+                  node: {
+                    name: "anne",
+                    target: {
+                      oid: "12345678",
+                      tree: {
+                        entries: [{
+                          name: "openapi.yml"
+                        }]
+                      }
+                    }
+                  }
+                }, {
+                  node: {
+                    name: "main",
+                    target: {
+                      oid: "12345678",
+                      tree: {
+                        entries: [{
+                          name: "openapi.yml"
+                        }]
+                      }
+                    }
+                  }
+                }, {
+                  node: {
+                    name: "development",
+                    target: {
+                      oid: "12345678",
+                      tree: {
+                        entries: [{
+                          name: "openapi.yml"
+                        }]
+                      }
+                    }
+                  }
+                }]
+              },
+              tags: {
+                edges: []
               }
             }]
-          },
-          tags: {
-            edges: []
           }
-        }]
+        }
       }
     }
   })
@@ -1109,29 +1311,40 @@ test("It adds remote versions from the project configuration", async () => {
         url: https://example.com/louie.yml
   `
   const sut = new GitHubProjectDataSource({
-    dataSource: {
-      async getRepositories() {
-        return [{
-          name: "foo",
-          owner: {
-            login: "acme"
-          },
-          defaultBranchRef: {
-            name: "main",
-            target: {
-              oid: "12345678"
-            }
-          },
-          configYml: {
-            text: rawProjectConfig
-          },
-          branches: {
-            edges: []
-          },
-          tags: {
-            edges: []
+    repositoryNameSuffix: "-openapi",
+    projectConfigurationFilename: ".demo-docs.yml",
+    loginsDataSource: {
+      async getLogins() {
+        return ["acme"]
+      }
+    },
+    graphQlClient: {
+      async graphql() {
+        return {
+          search: {
+            results: [{
+              name: "foo-openapi",
+              owner: {
+                login: "acme"
+              },
+              defaultBranchRef: {
+                name: "main",
+                target: {
+                  oid: "12345678"
+                }
+              },
+              configYml: {
+                text: rawProjectConfig
+              },
+              branches: {
+                edges: []
+              },
+              tags: {
+                edges: []
+              }
+            }]
           }
-        }]
+        }
       }
     }
   })
@@ -1174,41 +1387,52 @@ test("It modifies ID of remote version if the ID already exists", async () => {
         url: https://example.com/hello.yml
   `
   const sut = new GitHubProjectDataSource({
-    dataSource: {
-      async getRepositories() {
-        return [{
-          name: "foo",
-          owner: {
-            login: "acme"
-          },
-          defaultBranchRef: {
-            name: "bar",
-            target: {
-              oid: "12345678"
-            }
-          },
-          configYml: {
-            text: rawProjectConfig
-          },
-          branches: {
-            edges: [{
-              node: {
+    repositoryNameSuffix: "-openapi",
+    projectConfigurationFilename: ".demo-docs.yml",
+    loginsDataSource: {
+      async getLogins() {
+        return ["acme"]
+      }
+    },
+    graphQlClient: {
+      async graphql() {
+        return {
+          search: {
+            results: [{
+              name: "foo-openapi",
+              owner: {
+                login: "acme"
+              },
+              defaultBranchRef: {
                 name: "bar",
                 target: {
-                  oid: "12345678",
-                  tree: {
-                    entries: [{
-                      name: "openapi.yml"
-                    }]
-                  }
+                  oid: "12345678"
                 }
+              },
+              configYml: {
+                text: rawProjectConfig
+              },
+              branches: {
+                edges: [{
+                  node: {
+                    name: "bar",
+                    target: {
+                      oid: "12345678",
+                      tree: {
+                        entries: [{
+                          name: "openapi.yml"
+                        }]
+                      }
+                    }
+                  }
+                }]
+              },
+              tags: {
+                edges: []
               }
             }]
-          },
-          tags: {
-            edges: []
           }
-        }]
+        }
       }
     }
   })
@@ -1216,13 +1440,13 @@ test("It modifies ID of remote version if the ID already exists", async () => {
   expect(projects[0].versions).toEqual([{
     id: "bar",
     name: "bar",
-    url: "https://github.com/acme/foo/tree/bar",
+    url: "https://github.com/acme/foo-openapi/tree/bar",
     isDefault: true,
     specifications: [{
       id: "openapi.yml",
       name: "openapi.yml",
-      url: "/api/blob/acme/foo/openapi.yml?ref=12345678",
-      editURL: "https://github.com/acme/foo/edit/bar/openapi.yml"
+      url: "/api/blob/acme/foo-openapi/openapi.yml?ref=12345678",
+      editURL: "https://github.com/acme/foo-openapi/edit/bar/openapi.yml"
     }]
   }, {
     id: "bar1",
@@ -1255,29 +1479,40 @@ test("It lets users specify the ID of a remote version", async () => {
         url: https://example.com/baz.yml
   `
   const sut = new GitHubProjectDataSource({
-    dataSource: {
-      async getRepositories() {
-        return [{
-          name: "foo",
-          owner: {
-            login: "acme"
-          },
-          defaultBranchRef: {
-            name: "bar",
-            target: {
-              oid: "12345678"
-            }
-          },
-          configYml: {
-            text: rawProjectConfig
-          },
-          branches: {
-            edges: []
-          },
-          tags: {
-            edges: []
+    repositoryNameSuffix: "-openapi",
+    projectConfigurationFilename: ".demo-docs.yml",
+    loginsDataSource: {
+      async getLogins() {
+        return ["acme"]
+      }
+    },
+    graphQlClient: {
+      async graphql() {
+        return {
+          search: {
+            results: [{
+              name: "foo-openapi",
+              owner: {
+                login: "acme"
+              },
+              defaultBranchRef: {
+                name: "bar",
+                target: {
+                  oid: "12345678"
+                }
+              },
+              configYml: {
+                text: rawProjectConfig
+              },
+              branches: {
+                edges: []
+              },
+              tags: {
+                edges: []
+              }
+            }]
           }
-        }]
+        }
       }
     }
   })
@@ -1304,29 +1539,40 @@ test("It lets users specify the ID of a remote specification", async () => {
         url: https://example.com/baz.yml
   `
   const sut = new GitHubProjectDataSource({
-    dataSource: {
-      async getRepositories() {
-        return [{
-          name: "foo",
-          owner: {
-            login: "acme"
-          },
-          defaultBranchRef: {
-            name: "bar",
-            target: {
-              oid: "12345678"
-            }
-          },
-          configYml: {
-            text: rawProjectConfig
-          },
-          branches: {
-            edges: []
-          },
-          tags: {
-            edges: []
+    repositoryNameSuffix: "-openapi",
+    projectConfigurationFilename: ".demo-docs.yml",
+    loginsDataSource: {
+      async getLogins() {
+        return ["acme"]
+      }
+    },
+    graphQlClient: {
+      async graphql() {
+        return {
+          search: {
+            results: [{
+              name: "foo-openapi",
+              owner: {
+                login: "acme"
+              },
+              defaultBranchRef: {
+                name: "bar",
+                target: {
+                  oid: "12345678"
+                }
+              },
+              configYml: {
+                text: rawProjectConfig
+              },
+              branches: {
+                edges: []
+              },
+              tags: {
+                edges: []
+              }
+            }]
           }
-        }]
+        }
       }
     }
   })
@@ -1341,4 +1587,113 @@ test("It lets users specify the ID of a remote specification", async () => {
       url: `/api/proxy?url=${encodeURIComponent("https://example.com/baz.yml")}`
     }]
   }])
+})
+
+test("It queries for both .yml and .yaml file extension with specifying .yml extension", async () => {
+  let query: string | undefined
+  const sut = new GitHubProjectDataSource({
+    repositoryNameSuffix: "-openapi",
+    projectConfigurationFilename: ".demo-docs.yml",
+    loginsDataSource: {
+      async getLogins() {
+        return ["acme"]
+      }
+    },
+    graphQlClient: {
+      async graphql(request) {
+        query = request.query
+        return {
+          search: {
+            results: []
+          }
+        }
+      }
+    }
+  })
+  await sut.getProjects()
+  expect(query).toContain(".demo-docs.yml")
+  expect(query).toContain(".demo-docs.yaml")
+})
+
+test("It queries for both .yml and .yaml file extension with specifying .yaml extension", async () => {
+  let query: string | undefined
+  const sut = new GitHubProjectDataSource({
+    repositoryNameSuffix: "-openapi",
+    projectConfigurationFilename: ".demo-docs.yml",
+    loginsDataSource: {
+      async getLogins() {
+        return ["acme"]
+      }
+    },
+    graphQlClient: {
+      async graphql(request) {
+        query = request.query
+        return {
+          search: {
+            results: []
+          }
+        }
+      }
+    }
+  })
+  await sut.getProjects()
+  expect(query).toContain(".demo-docs.yml")
+  expect(query).toContain(".demo-docs.yaml")
+})
+
+test("It queries for both .yml and .yaml file extension with no extension", async () => {
+  let query: string | undefined
+  const sut = new GitHubProjectDataSource({
+    repositoryNameSuffix: "-openapi",
+    projectConfigurationFilename: ".demo-docs",
+    loginsDataSource: {
+      async getLogins() {
+        return ["acme"]
+      }
+    },
+    graphQlClient: {
+      async graphql(request) {
+        query = request.query
+        return {
+          search: {
+            results: []
+          }
+        }
+      }
+    }
+  })
+  await sut.getProjects()
+  expect(query).toContain(".demo-docs.yml")
+  expect(query).toContain(".demo-docs.yaml")
+})
+
+test("It loads projects for all logins", async () => {
+  let searchQueries: string[] = []
+  const sut = new GitHubProjectDataSource({
+    repositoryNameSuffix: "-openapi",
+    projectConfigurationFilename: ".demo-docs",
+    loginsDataSource: {
+      async getLogins() {
+        return ["acme", "somecorp", "techsystems"]
+      }
+    },
+    graphQlClient: {
+      async graphql(request) {
+        if (request.variables?.searchQuery) {
+          searchQueries.push(request.variables.searchQuery)
+        }
+        return {
+          search: {
+            results: []
+          }
+        }
+      }
+    }
+  })
+  await sut.getProjects()
+  expect(searchQueries.length).toEqual(4)
+  expect(searchQueries).toContain("\"-openapi\" in:name is:private")
+  expect(searchQueries).toContain("\"-openapi\" in:name user:acme is:public")
+  expect(searchQueries).toContain("\"-openapi\" in:name user:somecorp is:public")
+  expect(searchQueries).toContain("\"-openapi\" in:name user:techsystems is:public")
 })

@@ -23,7 +23,9 @@ test("It caches projects read from the data source", async () => {
         name: "world.yml",
         url: "https://example.com/world.yml"
       }]
-    }]
+    }],
+    owner: "acme",
+    ownerUrl: "https://example.com/acme"
   }]
   let cachedProjects: Project[] | undefined
   const sut = new CachingProjectDataSource({

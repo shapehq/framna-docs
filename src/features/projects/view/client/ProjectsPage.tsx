@@ -18,11 +18,9 @@ import {
 } from "../../domain"
 
 export default function ProjectsPage({
-  enableGitHubLinks,
   projects: serverProjects,
   path
 }: {
-  enableGitHubLinks: boolean
   projects?: Project[]
   path: string
 }) {
@@ -33,19 +31,21 @@ export default function ProjectsPage({
   const { projects: clientProjects, error, isLoading: isClientLoading } = useProjects()
   const projects = isClientLoading ? (serverProjects || []) : clientProjects
   const { project, version, specification } = getSelection({ projects, path })
+  const siteName = process.env.NEXT_PUBLIC_SHAPE_DOCS_TITLE || ""
   useEffect(() => {
     updateWindowTitle({
       storage: document,
-      defaultTitle: process.env.NEXT_PUBLIC_SHAPE_DOCS_TITLE,
+      defaultTitle: siteName,
       project,
       version,
       specification
     })
-  }, [project, version, specification])
+  }, [project, version, specification, siteName])
   useEffect(() => {
     // Ensure the URL reflects the current selection of project, version, and specification.
     projectNavigator.navigateIfNeeded({
-      projectId: project?.id,
+      projectOwner: project?.owner,
+      projectName: project?.name,
       versionId: version?.id,
       specificationId: specification?.id
     })
@@ -62,13 +62,13 @@ export default function ProjectsPage({
     }
     const version = project.versions[0]
     const specification = version.specifications[0]
-    projectNavigator.navigate(project.id, version.id, specification.id)
+    projectNavigator.navigate(project.owner, project.name, version.id, specification.id)
   }
   const selectVersion = (versionId: string) => {
     projectNavigator.navigateToVersion(project!, versionId, specification!.name)
   }
   const selectSpecification = (specificationId: string) => {
-    projectNavigator.navigate(project!.id, version!.id, specificationId)
+    projectNavigator.navigate(project!.owner, project!.name, version!.id, specificationId)
   }
   const canCloseSidebar = project !== undefined
   const toggleSidebar = (isOpen: boolean) => {
@@ -93,7 +93,6 @@ export default function ProjectsPage({
       }
       toolbarTrailingItem={project && version && specification &&
         <TrailingToolbarItem
-          enableGitHubLinks={enableGitHubLinks}
           project={project}
           version={version}
           specification={specification}

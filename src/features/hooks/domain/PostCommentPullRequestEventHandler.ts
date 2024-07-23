@@ -1,29 +1,35 @@
-import IPullRequestEventHandler, { IPullRequestOpenedEvent } from "./IPullRequestEventHandler"
-import IPullRequestCommentRepository from "./IPullRequestCommentRepository"
-import GitHubCommentFactory from "./GitHubCommentFactory"
+import IPullRequestEventHandler, {
+  IPullRequestOpenedEvent,
+  IPullRequestReopenedEvent,
+  IPullRequestSynchronizedEvent
+} from "./IPullRequestEventHandler"
+
+interface IPullRequestCommenter {
+  commentPullRequest(request: {
+    appInstallationId: number
+    repositoryOwner: string
+    repositoryName: string
+    ref: string
+    pullRequestNumber: number
+  }): Promise<void>
+}
 
 export default class PostCommentPullRequestEventHandler implements IPullRequestEventHandler {
-  private readonly commentRepository: IPullRequestCommentRepository
-  private readonly domain: string
+  private readonly pullRequestCommenter: IPullRequestCommenter
   
-  constructor(
-    commentRepository: IPullRequestCommentRepository,
-    domain: string
-  ) {
-    this.commentRepository = commentRepository
-    this.domain = domain
+  constructor(config: { pullRequestCommenter: IPullRequestCommenter }) {
+    this.pullRequestCommenter = config.pullRequestCommenter
   }
   
   async pullRequestOpened(event: IPullRequestOpenedEvent): Promise<void> {
-    const projectId = event.repositoryName.replace(/-openapi$/, "")
-    const link = `${this.domain}/${projectId}/${event.ref}`
-    const commentBody = GitHubCommentFactory.makeDocumentationPreviewReadyComment(link)
-    await this.commentRepository.addComment({
-      appInstallationId: event.appInstallationId,
-      repositoryOwner: event.repositoryOwner,
-      repositoryName: event.repositoryName,
-      pullRequestNumber: event.pullRequestNumber,
-      body: commentBody
-    })
+    await this.pullRequestCommenter.commentPullRequest(event)
+  }
+  
+  async pullRequestReopened(event: IPullRequestReopenedEvent) {
+    await this.pullRequestCommenter.commentPullRequest(event)
+  }
+  
+  async pullRequestSynchronized(event: IPullRequestSynchronizedEvent) {
+    await this.pullRequestCommenter.commentPullRequest(event)
   }
 }

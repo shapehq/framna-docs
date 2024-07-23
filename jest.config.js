@@ -3,8 +3,12 @@ module.exports = {
   moduleFileExtensions: ["js", "ts"],
   testEnvironment: "node",
   testMatch: ["**/*.test.ts"],
+  extensionsToTreatAsEsm: [".ts"],
   transform: {
-    "^.+\\.ts$": "ts-jest"
+    "^.+\\.tsx?$": ["ts-jest", { useESM: true }]
+  },
+  moduleNameMapper: {
+    "^@/(.*)$": "<rootDir>/src/$1"
   },
   verbose: true
 }

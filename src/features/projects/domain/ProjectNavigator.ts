@@ -9,16 +9,11 @@ export interface IRouter {
   replace(path: string): void
 }
 
-type ProjectNavigatorConfig = {
-  readonly pathnameReader: IPathnameReader
-  readonly router: IRouter
-}
-
 export default class ProjectNavigator {
   private readonly pathnameReader: IPathnameReader
   private readonly router: IRouter
   
-  constructor(config: ProjectNavigatorConfig) {
+  constructor(config: { pathnameReader: IPathnameReader, router: IRouter }) {
     this.pathnameReader = config.pathnameReader
     this.router = config.router
   }
@@ -39,32 +34,32 @@ export default class ProjectNavigator {
       return e.name == preferredSpecificationName
     })
     if (candidateSpecification) {
-      this.router.push(`/${project.id}/${newVersion.id}/${candidateSpecification.id}`)
+      this.router.push(`/${project.owner}/${project.name}/${newVersion.id}/${candidateSpecification.id}`)
     } else {
       const firstSpecification = newVersion.specifications[0]
-      this.router.push(`/${project.id}/${newVersion.id}/${firstSpecification.id}`)
+      this.router.push(`/${project.owner}/${project.name}/${newVersion.id}/${firstSpecification.id}`)
     }
   }
   
   navigate(
-    projectId: string,
+    projectOwner: string,
+    projectName: string,
     versionId: string,
     specificationId: string
   ) {
-    this.router.push(`/${projectId}/${versionId}/${specificationId}`)
+    this.router.push(`/${projectOwner}/${projectName}/${versionId}/${specificationId}`)
   }
   
-  navigateIfNeeded(
-    selection: {
-      projectId?: string,
-      versionId?: string,
-      specificationId?: string
-    }
-  ) {
-    if (!selection.projectId || !selection.versionId || !selection.specificationId) {
+  navigateIfNeeded(selection: {
+    projectOwner?: string
+    projectName?: string
+    versionId?: string
+    specificationId?: string
+  }) {
+    if (!selection.projectOwner || !selection.projectName || !selection.versionId || !selection.specificationId) {
       return
     }
-    const path = `/${selection.projectId}/${selection.versionId}/${selection.specificationId}`
+    const path = `/${selection.projectOwner}/${selection.projectName}/${selection.versionId}/${selection.specificationId}`
     if (path !== this.pathnameReader.pathname) {
       this.router.replace(path)
     }

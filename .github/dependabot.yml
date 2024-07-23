@@ -4,3 +4,10 @@ updates:
     directory: "/"
     schedule:
       interval: "weekly"
+    groups:
+      fontawesome:
+        patterns:
+          - "@fortawesome/*"
+      octokit:
+        patterns:
+          - "@octokit/*"

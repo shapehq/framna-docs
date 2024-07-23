@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { UserProfile } from "@auth0/nextjs-auth0/client"
+import { Session } from "next-auth"
 import {
   Avatar,
   Box,
@@ -13,7 +13,7 @@ import { faEllipsis } from "@fortawesome/free-solid-svg-icons"
 import MenuItemHover from "@/common/ui/MenuItemHover"
 import SettingsList from "./SettingsList"
 
-const UserButton = ({ user }: { user: UserProfile }) => {
+const UserButton = ({ session }: { session: Session }) => {
   const [popoverAnchorElement, setPopoverAnchorElement] = useState<HTMLDivElement | null>(null)
   const handlePopoverClick = (event: React.MouseEvent<HTMLDivElement>) => {
     setPopoverAnchorElement(event.currentTarget)
@@ -23,6 +23,7 @@ const UserButton = ({ user }: { user: UserProfile }) => {
   }
   const isPopoverOpen = Boolean(popoverAnchorElement)
   const id = isPopoverOpen ? "settings-popover" : undefined
+  const user = session.user
   return (
     <>
       <Popover
@@ -49,13 +50,13 @@ const UserButton = ({ user }: { user: UserProfile }) => {
       >
         <MenuItemHover>
           <Stack direction="row" alignItems="center">
-            {user.picture && 
-              <Avatar src={user.picture} sx={{ width: 40, height: 40 }} alt={user.name || ""} />
+            {user && 
+              <Avatar src={user.image} sx={{ width: 40, height: 40 }} alt={user.name || user.email} />
             }
             <Box sx={{ marginLeft: "10px" }}>
               {user &&
                 <Typography sx={{ fontWeight: 600 }}>
-                  {user.name}
+                  {user.name || user.email}
                 </Typography>
               }
             </Box>

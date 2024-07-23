@@ -1,0 +1,44 @@
+name: Check Changes to Env
+on:
+  pull_request:
+    types: [opened, synchronize]
+    paths: 
+    - .env.example
+jobs:
+  check:
+    name: Check Changes to Env
+    runs-on: ubuntu-latest
+    steps:
+    - name: Get PR Number
+      id: get-pr-number
+      run: |
+        PR_NUMBER=$(echo "${{ github.ref }}" | awk 'BEGIN { FS = "/" } ; { print $3 }')
+        echo "pr-number=${PR_NUMBER}" >> $GITHUB_OUTPUT
+    - name: Comment when dummy.txt changes
+      uses: actions/github-script@v7
+      with:
+        script: |
+          const filename = ".env.example"
+          const filenameSha256 = await sha256(filename)
+          const diffURL = "https://github.com/${{ github.repository }}/pull/${{ steps.get-pr-number.outputs.pr-number }}/files#diff-" + filenameSha256
+          const docsURL = "https://github.com/${{ github.repository }}/wiki/Setting-Environment-Variables"
+          const commentBody = `⚠️ It looks like [${filename}](${diffURL}) has changed. Remember to update the [Setting Environment Variables](${docsURL}) article accordingly.`
+          const listComments = await github.rest.issues.listComments({
+            ...context.repo,
+            issue_number: context.issue.number
+          })
+          const commentExists = listComments.data.some(comment => comment.body === commentBody)
+          if (!commentExists) {
+            await github.rest.issues.createComment({
+              ...context.repo,
+              issue_number: context.issue.number,
+              body: commentBody
+            })
+          }
+
+          async function sha256(message) {
+            const msgBuffer = new TextEncoder().encode(message)
+            const hashBuffer = await crypto.subtle.digest("SHA-256", msgBuffer)
+            const hashArray = Array.from(new Uint8Array(hashBuffer))
+            return hashArray.map(b => b.toString(16).padStart(2, "0")).join("")
+          }
