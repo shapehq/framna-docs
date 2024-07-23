@@ -9,7 +9,8 @@
 
 <div align="center">
 <a href="https://github.com/shapehq/shape-docs/actions/workflows/build.yml"><img src="https://github.com/shapehq/shape-docs/actions/workflows/build.yml/badge.svg"></a>
-<a href="https://github.com/shapehq/shape-docs/actions/workflows/test.yml"><img src="https://github.com/shapehq/shape-docs/actions/workflows/test.yml/badge.svg"></a>
+<a href="https://github.com/shapehq/shape-docs/actions/workflows/run-unit-tests.yml"><img src="https://github.com/shapehq/shape-docs/actions/workflows/run-unit-tests.yml/badge.svg"></a>
+<a href="https://github.com/shapehq/shape-docs/actions/workflows/test-sql-queries.yml"><img src="https://github.com/shapehq/shape-docs/actions/workflows/test-sql-queries.yml/badge.svg"></a>
 <a href="https://github.com/shapehq/shape-docs/actions/workflows/lint.yml"><img src="https://github.com/shapehq/shape-docs/actions/workflows/lint.yml/badge.svg"></a>
 <a href="https://github.com/shapehq/shape-docs/actions/workflows/build-docker-image"><img src="https://github.com/shapehq/shape-docs/actions/workflows/build-docker-image.yml/badge.svg"></a>
 </div>
