@@ -26,26 +26,28 @@ export default function SecondaryHeader({
       sx={{
         ...sx,
         backgroundColor: theme.palette.background.default,
-        color: theme.palette.text.primary
+        color: theme.palette.text.primary,
       }}
     >
-      <Box sx={{ display: "flex", alignItems: "center", padding: 2 }}>
+      <Box sx={{ display: "flex", alignItems: "center", padding: 2, maxWidth: "1460px", margin: "auto", height: 80 }}>
         {showOpenSidebar &&
           <IconButton
+            size="medium"
             color="primary"
             onClick={() => onToggleSidebarOpen(true)}
             edge="start"
           >
-            <FontAwesomeIcon icon={faBars} size="sm" style={{ aspectRatio: 1 }} />
+            <FontAwesomeIcon icon={faBars} size="sm" style={{ aspectRatio: 1, padding: 2 }} />
           </IconButton>
         }
         {showCloseSidebar &&
           <IconButton
+            size="small"
             color="primary"
             onClick={() => onToggleSidebarOpen(false)}
             edge="start"
           >
-            <FontAwesomeIcon icon={faChevronLeft} size="sm" style={{ aspectRatio: 1 }} />
+            <FontAwesomeIcon icon={faChevronLeft} size="sm" style={{ aspectRatio: 1, padding: 2 }} />
           </IconButton>
         }
         <Box sx={{ display: "flex", flexGrow: 1, justifyContent: "end" }}> 

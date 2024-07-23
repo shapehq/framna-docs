@@ -9,7 +9,7 @@ export default function SidebarHeader() {
   const projectWikiURL = process.env.NEXT_PUBLIC_SHAPE_DOCS_PROJECT_WIKI_URL || ""
 
   return (
-    <Box sx={{ padding: 2, paddingBottom: 4, display: "flex", justifyContent: "space-between", alignItems: "center"}}>
+    <Box sx={{ padding: 2, height: 80, marginBottom: 2, display: "flex", justifyContent: "space-between", alignItems: "center"}}>
       <Link
         href={"/"}
         style={{
