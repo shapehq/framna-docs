@@ -12,7 +12,8 @@ const useKeyboardShortcut = (
     return () => {
       window.removeEventListener("keydown", handleKeyDown)
     }
-  }, dependencies)
+  /* eslint-disable-next-line react-hooks/exhaustive-deps */
+  }, [handleKeyDown, ...dependencies])
 }
 
 export default useKeyboardShortcut
