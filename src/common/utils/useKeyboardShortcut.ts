@@ -4,6 +4,7 @@ import { useEffect } from "react"
 
 const useKeyboardShortcut = (
   handleKeyDown: (event: KeyboardEvent) => void,
+  /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
   dependencies: any[]
 ) => {
   useEffect(() => {
