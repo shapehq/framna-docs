@@ -1,5 +1,5 @@
 import { SxProps } from "@mui/system"
-import { Stack, IconButton, Typography, Link } from "@mui/material"
+import { Stack, IconButton, Typography, Link, Tooltip } from "@mui/material"
 import { Project, Version, OpenApiSpecification } from "../../domain"
 import VersionSelector from "./VersionSelector"
 import SpecificationSelector from "./SpecificationSelector"
@@ -66,14 +66,16 @@ const TrailingToolbarItem = ({
           sx={{ marginRight: 0.5 }}
         />
         {specification.editURL &&
-          <IconButton
-            href={specification.editURL}
-            target="_blank"
-            color="primary"
-            edge="end"
-          >
-            <FontAwesomeIcon icon={faPen} size="xs" style={{ aspectRatio: 1, padding: 2 }} />
-          </IconButton>
+          <Tooltip title={`Edit ${specification.name}`}>
+            <IconButton
+              href={specification.editURL}
+              target="_blank"
+              color="primary"
+              edge="end"
+            >
+              <FontAwesomeIcon icon={faPen} size="xs" style={{ aspectRatio: 1, padding: 2 }} />
+            </IconButton>
+          </Tooltip>
         }
       </Stack>
     </>
