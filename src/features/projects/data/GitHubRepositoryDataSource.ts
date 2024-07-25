@@ -1,6 +1,9 @@
-import IGitHubLoginDataSource from "./IGitHubLoginDataSource"
-import IGitHubGraphQLClient from "./IGitHubGraphQLClient"
-import { GitHubRepository, IGitHubRepositoryDataSource } from "../domain"
+import {
+  GitHubRepository,
+  IGitHubRepositoryDataSource,
+  IGitHubLoginDataSource,
+  IGitHubGraphQLClient
+} from "../domain"
 
 type GraphQLGitHubRepository = {
   readonly name: string
