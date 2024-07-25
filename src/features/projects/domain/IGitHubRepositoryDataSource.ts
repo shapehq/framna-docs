@@ -1,4 +1,4 @@
-type GitHubProjectRepository = {
+export type GitHubRepository = {
   readonly name: string
   readonly owner: {
     readonly login: string
@@ -15,11 +15,9 @@ type GitHubProjectRepository = {
   readonly configYaml?: {
     readonly text: string
   }
-  readonly branches: EdgesContainer<GitHubProjectRepositoryRef>
-  readonly tags: EdgesContainer<GitHubProjectRepositoryRef>
+  readonly branches: EdgesContainer<GitHubRepositoryRef>
+  readonly tags: EdgesContainer<GitHubRepositoryRef>
 }
-
-export default GitHubProjectRepository
 
 type EdgesContainer<T> = {
   readonly edges: Edge<T>[]
@@ -29,16 +27,20 @@ type Edge<T> = {
   readonly node: T
 }
 
-export type GitHubProjectRepositoryRef = {
+export type GitHubRepositoryRef = {
   readonly name: string
   readonly target: {
     readonly oid: string
     readonly tree: {
-      readonly entries: GitHubProjectRepositoryFile[]
+      readonly entries: GitHubRepositoryFile[]
     }
   }
 }
 
-export type GitHubProjectRepositoryFile = {
+export type GitHubRepositoryFile = {
   readonly name: string
+}
+
+export default interface IGitHubRepositoryDataSource {
+  getRepositories(): Promise<GitHubRepository[]>
 }
