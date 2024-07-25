@@ -45,7 +45,7 @@ const SettingsList = () => {
         paddingRight: 0.5
       }} />
       <ThickDivider sx={{ marginLeft: -2, marginRight: -2 }} />
-      {helpURL && helpURL.length > 0 &&
+      {helpURL &&
         <Link href={`${helpURL}`} target="_blank">
           <SettingsItem icon={faQuestionCircle}>
             <Typography>
