@@ -1,5 +1,4 @@
-import IGitHubLoginDataSource, { GitHubLogin } from "./IGitHubLoginDataSource"
-import IGitHubGraphQLClient from "./IGitHubGraphQLClient"
+import { IGitHubLoginDataSource, IGitHubGraphQLClient } from "../domain"
 
 export default class GitHubLoginDataSource implements IGitHubLoginDataSource {
   private readonly graphQlClient: IGitHubGraphQLClient
