@@ -22,6 +22,7 @@ import {
 } from "@/features/projects/data"
 import {
   CachingProjectDataSource,
+  FilteringGitHubRepositoryDataSource,
   ProjectRepository
 } from "@/features/projects/domain"
 import {
@@ -158,13 +159,16 @@ export const projectRepository = new ProjectRepository({
 
 export const projectDataSource = new CachingProjectDataSource({
   dataSource: new GitHubProjectDataSource({
-    repositoryDataSource: new GitHubRepositoryDataSource({
-      loginsDataSource: new GitHubLoginDataSource({
-        graphQlClient: userGitHubClient
-      }),
-      graphQlClient: userGitHubClient,
-      repositoryNameSuffix: env.getOrThrow("REPOSITORY_NAME_SUFFIX"),
-      projectConfigurationFilename: env.getOrThrow("SHAPE_DOCS_PROJECT_CONFIGURATION_FILENAME")
+    repositoryDataSource: new FilteringGitHubRepositoryDataSource({
+      hiddenRepositories: listFromCommaSeparatedString(env.get("HIDDEN_REPOSITORIES")),
+      dataSource: new GitHubRepositoryDataSource({
+        loginsDataSource: new GitHubLoginDataSource({
+          graphQlClient: userGitHubClient
+        }),
+        graphQlClient: userGitHubClient,
+        repositoryNameSuffix: env.getOrThrow("REPOSITORY_NAME_SUFFIX"),
+        projectConfigurationFilename: env.getOrThrow("SHAPE_DOCS_PROJECT_CONFIGURATION_FILENAME")
+      })
     }),
     repositoryNameSuffix: env.getOrThrow("REPOSITORY_NAME_SUFFIX")
   }),
