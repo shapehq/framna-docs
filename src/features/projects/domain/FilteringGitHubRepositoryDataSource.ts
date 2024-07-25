@@ -1,6 +1,7 @@
 import IGitHubRepositoryDataSource, {
   GitHubRepository
 } from "./IGitHubRepositoryDataSource"
+import { splitOwnerAndRepository } from "@/common"
 
 export default class FilteringGitHubRepositoryDataSource implements IGitHubRepositoryDataSource {
   private readonly dataSource: IGitHubRepositoryDataSource
@@ -16,18 +17,9 @@ export default class FilteringGitHubRepositoryDataSource implements IGitHubRepos
   
   async getRepositories(): Promise<GitHubRepository[]> {
     const repositories = await this.dataSource.getRepositories()
-    // Split full repository names into owner and repository.
-    // shapehq/foo becomes { owner: "shapehq", "repository": "foo" }
-    const hiddenOwnerAndRepoNameList = this.hiddenRepositories.map(str => {
-      const index = str.indexOf("/")
-      if (index === -1) {
-        return { owner: str, repository: "" }
-      }
-      const owner = str.substring(0, index)
-      const repository = str.substring(index + 1) 
-      return { owner, repository }
-    })
-    // Only return repositories that are not on the hidden list.
+    const hiddenOwnerAndRepoNameList = this.hiddenRepositories
+      .map(splitOwnerAndRepository)
+      .filter(e => e !== undefined)
     return repositories.filter(repository => {
       const hiddenMatch = hiddenOwnerAndRepoNameList.find(e => 
         e.owner == repository.owner && e.repository == repository.name
