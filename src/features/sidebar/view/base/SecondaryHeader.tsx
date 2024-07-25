@@ -32,7 +32,7 @@ export default function SecondaryHeader({
       }
     }
   }, [showOpenSidebar, showCloseSidebar, onToggleSidebarOpen])
-  const openCloseShortcutString = isMac() ? " (⌘ + .)" : "(^ + .)"
+  const openCloseShortcutString = isMac() ? " (⌘ + .)" : " (^ + .)"
   const theme = useTheme()
   return (
     <Box
