@@ -30,7 +30,7 @@ export default class FilteringGitHubRepositoryDataSource implements IGitHubRepos
     // Only return repositories that are not on the hidden list.
     return repositories.filter(repository => {
       const hiddenMatch = hiddenOwnerAndRepoNameList.find(e => 
-        e.owner == repository.owner.login && e.repository == repository.name
+        e.owner == repository.owner && e.repository == repository.name
       )
       return hiddenMatch === undefined
     })

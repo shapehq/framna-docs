@@ -1,13 +1,9 @@
 export type GitHubRepository = {
   readonly name: string
-  readonly owner: {
-    readonly login: string
-  }
+  readonly owner: string
   readonly defaultBranchRef: {
+    readonly id: string
     readonly name: string
-    readonly target: {
-      readonly oid: string
-    }
   }
   readonly configYml?: {
     readonly text: string
@@ -15,30 +11,20 @@ export type GitHubRepository = {
   readonly configYaml?: {
     readonly text: string
   }
-  readonly branches: EdgesContainer<GitHubRepositoryRef>
-  readonly tags: EdgesContainer<GitHubRepositoryRef>
-}
-
-type EdgesContainer<T> = {
-  readonly edges: Edge<T>[]
-}
-
-type Edge<T> = {
-  readonly node: T
+  readonly branches: GitHubRepositoryRef[]
+  readonly tags: GitHubRepositoryRef[]
 }
 
 export type GitHubRepositoryRef = {
-  readonly name: string
-  readonly target: {
-    readonly oid: string
-    readonly tree: {
-      readonly entries: GitHubRepositoryFile[]
-    }
-  }
+  readonly id: string
+  readonly name: string  
+  readonly files: {
+    readonly name: string
+  }[]
 }
 
-export type GitHubRepositoryFile = {
-  readonly name: string
+export default interface IGitHubRepositoryDataSource {
+  getRepositories(): Promise<GitHubRepository[]>
 }
 
 export default interface IGitHubRepositoryDataSource {

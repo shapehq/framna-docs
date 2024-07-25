@@ -2,6 +2,47 @@ import IGitHubLoginDataSource from "./IGitHubLoginDataSource"
 import IGitHubGraphQLClient from "./IGitHubGraphQLClient"
 import { GitHubRepository, IGitHubRepositoryDataSource } from "../domain"
 
+type GraphQLGitHubRepository = {
+  readonly name: string
+  readonly owner: {
+    readonly login: string
+  }
+  readonly defaultBranchRef: {
+    readonly name: string
+    readonly target: {
+      readonly oid: string
+    }
+  }
+  readonly configYml?: {
+    readonly text: string
+  }
+  readonly configYaml?: {
+    readonly text: string
+  }
+  readonly branches: EdgesContainer<GraphQLGitHubRepositoryRef>
+  readonly tags: EdgesContainer<GraphQLGitHubRepositoryRef>
+}
+
+type EdgesContainer<T> = {
+  readonly edges: Edge<T>[]
+}
+
+type Edge<T> = {
+  readonly node: T
+}
+
+type GraphQLGitHubRepositoryRef = {
+  readonly name: string
+  readonly target: {
+    readonly oid: string
+    readonly tree: {
+      readonly entries: {
+        readonly name: string
+      }[]
+    }
+  }
+}
+
 export default class GitHubProjectDataSource implements IGitHubRepositoryDataSource {
   private readonly loginsDataSource: IGitHubLoginDataSource
   private readonly graphQlClient: IGitHubGraphQLClient
@@ -59,12 +100,41 @@ export default class GitHubProjectDataSource implements IGitHubRepositoryDataSou
         return !alreadyAdded
       })
     })
+    .then(repositories => {
+      // Map from the internal model to the public model.
+      return repositories.map(repository => {
+        return {
+          name: repository.name,
+          owner: repository.owner.login,
+          defaultBranchRef: {
+            id: repository.defaultBranchRef.target.oid,
+            name: repository.defaultBranchRef.name
+          },
+          configYml: repository.configYml,
+          configYaml: repository.configYaml,
+          branches: repository.branches.edges.map(branch => {
+            return {
+              id: branch.node.target.oid,
+              name: branch.node.name,
+              files: branch.node.target.tree.entries
+            }
+          }),
+          tags: repository.tags.edges.map(branch => {
+            return {
+              id: branch.node.target.oid,
+              name: branch.node.name,
+              files: branch.node.target.tree.entries
+            }
+          })
+        }
+      })
+    })
   }
   
   private async getRepositoriesForSearchQuery(params: {
     searchQuery: string,
     cursor?: string
-  }): Promise<GitHubRepository[]> {
+  }): Promise<GraphQLGitHubRepository[]> {
     const { searchQuery, cursor } = params
     const request = {
       query: `

@@ -40,10 +40,10 @@ export default class GitHubProjectDataSource implements IProjectDataSource {
     let imageURL: string | undefined
     if (config && config.image) {
       imageURL = this.getGitHubBlobURL({
-        ownerName: repository.owner.login,
+        ownerName: repository.owner,
         repositoryName: repository.name,
         path: config.image,
-        ref: repository.defaultBranchRef.target.oid
+        ref: repository.defaultBranchRef.id
       })
     }
     const versions = this.sortVersions(
@@ -57,14 +57,14 @@ export default class GitHubProjectDataSource implements IProjectDataSource {
     })
     const defaultName = repository.name.replace(new RegExp(this.repositoryNameSuffix + "$"), "")
     return {
-      id: `${repository.owner.login}-${defaultName}`,
-      owner: repository.owner.login,
+      id: `${repository.owner}-${defaultName}`,
+      owner: repository.owner,
       name: defaultName,
       displayName: config?.name || defaultName,
       versions,
       imageURL: imageURL,
-      ownerUrl: `https://github.com/${repository.owner.login}`,
-      url: `https://github.com/${repository.owner.login}/${repository.name}`
+      ownerUrl: `https://github.com/${repository.owner}`,
+      url: `https://github.com/${repository.owner}/${repository.name}`
     }
   }
   
@@ -78,20 +78,20 @@ export default class GitHubProjectDataSource implements IProjectDataSource {
   }
   
   private getVersions(repository: GitHubRepository): Version[] {
-    const branchVersions = repository.branches.edges.map(edge => {
-      const isDefaultRef = edge.node.name == repository.defaultBranchRef.name
+    const branchVersions = repository.branches.map(branch => {
+      const isDefaultRef = branch.name == repository.defaultBranchRef.name
       return this.mapVersionFromRef({
-        ownerName: repository.owner.login,
+        ownerName: repository.owner,
         repositoryName: repository.name,
-        ref: edge.node,
+        ref: branch,
         isDefaultRef
       })
     })
-    const tagVersions = repository.tags.edges.map(edge => {
+    const tagVersions = repository.tags.map(tag => {
       return this.mapVersionFromRef({
-        ownerName: repository.owner.login,
+        ownerName: repository.owner,
         repositoryName: repository.name,
-        ref: edge.node
+        ref: tag
       })
     })
     return branchVersions.concat(tagVersions)
@@ -108,7 +108,7 @@ export default class GitHubProjectDataSource implements IProjectDataSource {
     ref: GitHubRepositoryRef
     isDefaultRef?: boolean
   }): Version {
-    const specifications = ref.target.tree.entries.filter(file => {
+    const specifications = ref.files.filter(file => {
       return this.isOpenAPISpecification(file.name)
     }).map(file => {
       return {
@@ -118,7 +118,7 @@ export default class GitHubProjectDataSource implements IProjectDataSource {
           ownerName,
           repositoryName,
           path: file.name,
-          ref: ref.target.oid
+          ref: ref.id
         }),
         editURL: `https://github.com/${ownerName}/${repositoryName}/edit/${ref.name}/${file.name}`
       }

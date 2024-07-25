@@ -89,46 +89,26 @@ test("It maps repositories from GraphQL to the GitHubRepository model", async ()
   })
   const repositories = await sut.getRepositories()
   expect(repositories).toEqual([{
-    "name": "foo-openapi",
-    "owner": {
-      "login": "acme"
+    name: "foo-openapi",
+    owner: "acme",
+    defaultBranchRef: {
+      id: "12345678",
+      name: "main"
     },
-    "defaultBranchRef": {
-      "name": "main",
-      "target": {
-        "oid": "12345678"
-      }
-    },
-    "branches": {
-      "edges": [{
-        "node": {
-          "name": "main",
-          "target": {
-            "oid": "12345678",
-            "tree": {
-              "entries": [{
-                "name": "openapi.yml"
-              }]
-            }
-          }
-        }
+    branches: [{
+      id: "12345678",
+      name: "main",
+      files: [{
+        name: "openapi.yml"
       }]
-    },
-    "tags": {
-      "edges": [{
-          "node": {
-          "name": "1.0",
-          "target": {
-            "oid": "12345678",
-            "tree": {
-              "entries": [{
-                "name": "openapi.yml"
-              }]
-            }
-          }
-        }
+    }],
+    tags: [{
+      id: "12345678",
+      name: "1.0",
+      files: [{
+        name: "openapi.yml"
       }]
-    }
+    }]
   }])
 })
 
