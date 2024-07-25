@@ -9,10 +9,7 @@ test("It loads repositories from data source", async () => {
     projectConfigurationFilename: ".demo-docs.yml",
     loginsDataSource: {
       async getLogins() {
-        return [{
-          name: "acme",
-          avatarUrl: "https://example.com/avatar.png"
-        }]
+        return ["acme"]
       }
     },
     graphQlClient: {
@@ -36,10 +33,7 @@ test("It maps repositories from GraphQL to the GitHubRepository model", async ()
     projectConfigurationFilename: ".demo-docs.yml",
     loginsDataSource: {
       async getLogins() {
-        return [{
-          name: "acme",
-          avatarUrl: "https://example.com/avatar.png"
-        }]
+        return ["acme"]
       }
     },
     graphQlClient: {
@@ -125,10 +119,7 @@ test("It queries for both .yml and .yaml file extension with specifying .yml ext
     projectConfigurationFilename: ".demo-docs.yml",
     loginsDataSource: {
       async getLogins() {
-        return [{
-          name: "acme",
-          avatarUrl: "https://example.com/avatar.png"
-        }]
+        return ["acme"]
       }
     },
     graphQlClient: {
@@ -154,10 +145,7 @@ test("It queries for both .yml and .yaml file extension with specifying .yaml ex
     projectConfigurationFilename: ".demo-docs.yml",
     loginsDataSource: {
       async getLogins() {
-        return [{
-          name: "acme",
-          avatarUrl: "https://example.com/avatar.png"
-        }]
+        return ["acme"]
       }
     },
     graphQlClient: {
@@ -183,10 +171,7 @@ test("It queries for both .yml and .yaml file extension with no extension", asyn
     projectConfigurationFilename: ".demo-docs",
     loginsDataSource: {
       async getLogins() {
-        return [{
-          name: "acme",
-          avatarUrl: "https://example.com/avatar.png"
-        }]
+        return ["acme"]
       }
     },
     graphQlClient: {
@@ -212,16 +197,7 @@ test("It loads repositories for all logins", async () => {
     projectConfigurationFilename: ".demo-docs",
     loginsDataSource: {
       async getLogins() {
-        return [{
-          name: "acme",
-          avatarUrl: "https://example.com/avatar.png"
-        }, {
-          name: "somecorp",
-          avatarUrl: "https://example.com/avatar.png"
-        }, {
-          name: "techsystems",
-          avatarUrl: "https://example.com/avatar.png"
-        }]
+        return ["acme", "somecorp", "techsystems"]
       }
     },
     graphQlClient: {
