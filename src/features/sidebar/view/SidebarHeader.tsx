@@ -8,7 +8,14 @@ import Link from "next/link"
 export default function SidebarHeader() {
   const siteName = process.env.NEXT_PUBLIC_SHAPE_DOCS_TITLE
   return (
-    <Box sx={{ padding: 2, height: 80, marginBottom: 2, display: "flex", justifyContent: "space-between", alignItems: "center"}}>
+    <Box sx={{
+      padding: 2,
+      height: 80,
+      marginBottom: 2,
+      display: "flex",
+      justifyContent: "space-between",
+      alignItems: "center"
+    }}>
       <Link
         href={"/"}
         style={{
