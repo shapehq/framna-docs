@@ -42,7 +42,14 @@ export default function SecondaryHeader({
         color: theme.palette.text.primary,
       }}
     >
-      <Box sx={{ display: "flex", alignItems: "center", padding: 2, maxWidth: "1460px", margin: "auto", height: 80 }}>
+      <Box sx={{ 
+        display: "flex",
+        alignItems: "center",
+        padding: 2,
+        maxWidth: "1460px",
+        margin: "auto",
+        height: 80 
+      }}>
         {showOpenSidebar &&
           <Tooltip title={`Show Projects${openCloseShortcutString}`}>
             <IconButton
