@@ -160,7 +160,7 @@ export const projectRepository = new ProjectRepository({
 export const projectDataSource = new CachingProjectDataSource({
   dataSource: new GitHubProjectDataSource({
     repositoryDataSource: new FilteringGitHubRepositoryDataSource({
-      hiddenRepositories: listFromCommaSeparatedString(env.getOrThrow("HIDDEN_REPOSITORIES")),
+      hiddenRepositories: listFromCommaSeparatedString(env.get("HIDDEN_REPOSITORIES")),
       dataSource: new GitHubRepositoryDataSource({
         loginsDataSource: new GitHubLoginDataSource({
           graphQlClient: userGitHubClient
