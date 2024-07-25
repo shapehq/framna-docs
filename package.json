@@ -52,7 +52,7 @@
   "devDependencies": {
     "@auth/pg-adapter": "^1.4.1",
     "@types/jest": "^29.5.12",
-    "@types/node": "^20.14.11",
+    "@types/node": "^20.14.12",
     "@types/nodemailer": "^6.4.15",
     "@types/pg": "^8.11.6",
     "@types/react": "^18.3.3",
