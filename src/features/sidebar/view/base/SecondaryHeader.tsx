@@ -57,8 +57,8 @@ export default function SecondaryHeader({
         }
         {showCloseSidebar &&
           <Tooltip title={`Hide Projects${openCloseShortcutString}`}>
-          	<IconButton
-           	  size="small"
+            <IconButton
+              size="small"
               color="primary"
               onClick={() => onToggleSidebarOpen(false)}
               edge="start"
