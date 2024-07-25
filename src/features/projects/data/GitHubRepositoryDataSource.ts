@@ -69,7 +69,7 @@ export default class GitHubProjectDataSource implements IGitHubRepositoryDataSou
   private async getRepositoriesForLogins({
     logins
   }: {
-    logins: string[]
+    logins: { name: string }[]
   }): Promise<GitHubRepository[]> {
     let searchQueries: string[] = []
     // Search for all private repositories the user has access to. This is needed to find
@@ -77,7 +77,7 @@ export default class GitHubProjectDataSource implements IGitHubRepositoryDataSou
     searchQueries.push(`"${this.repositoryNameSuffix}" in:name is:private`)
     // Search for public repositories belonging to a user or organization.
     searchQueries = searchQueries.concat(logins.map(login => {
-      return `"${this.repositoryNameSuffix}" in:name user:${login} is:public`
+      return `"${this.repositoryNameSuffix}" in:name user:${login.name} is:public`
     }))
     return await Promise.all(searchQueries.map(searchQuery => {
       return this.getRepositoriesForSearchQuery({ searchQuery })

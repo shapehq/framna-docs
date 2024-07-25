@@ -1,4 +1,4 @@
-import IGitHubLoginDataSource from "./IGitHubLoginDataSource"
+import IGitHubLoginDataSource, { GitHubLogin } from "./IGitHubLoginDataSource"
 import IGitHubGraphQLClient from "./IGitHubGraphQLClient"
 
 export default class GitHubLoginDataSource implements IGitHubLoginDataSource {
@@ -8,15 +8,17 @@ export default class GitHubLoginDataSource implements IGitHubLoginDataSource {
     this.graphQlClient = config.graphQlClient
   }
   
-  async getLogins(): Promise<string[]> {
+  async getLogins(): Promise<GitHubLogin[]> {
     const request = {
       query: `
       query {
         viewer {
           login
+          avatarUrl
           organizations(first: 100) {
             nodes {
               login
+              avatarUrl
             }
           }
         }
@@ -33,7 +35,18 @@ export default class GitHubLoginDataSource implements IGitHubLoginDataSource {
       throw new Error("organizations property not found on viewer in response")
     }
     const viewer = response.viewer
-    const organizations = viewer.organizations.nodes.map((e: { login: string }) => e.login)
-    return [viewer.login].concat(organizations)
+    const personalLogin: GitHubLogin = {
+      name: viewer.login,
+      avatarUrl: viewer.avatarUrl
+    }
+    const organizationLogins: GitHubLogin[] = viewer
+      .organizations
+      .nodes
+      .map((e: { login: string, avatarUrl: string }) => {
+        const name = e.login
+        const avatarUrl = e.avatarUrl
+        return { name, avatarUrl }
+      })
+    return [personalLogin].concat(organizationLogins)
   }
 }
