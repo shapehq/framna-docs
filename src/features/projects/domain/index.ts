@@ -1,5 +1,4 @@
 export { default as CachingProjectDataSource } from "./CachingProjectDataSource"
-export { default as FilteringGitHubRepositoryDataSource } from "./FilteringGitHubRepositoryDataSource"
 export { default as getSelection } from "./getSelection"
 export type { default as IGitHubRepositoryDataSource } from "./IGitHubRepositoryDataSource"
 export * from "./IGitHubRepositoryDataSource"
