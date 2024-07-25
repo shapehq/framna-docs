@@ -17,11 +17,9 @@ export default class GitHubLoginDataSource implements IGitHubLoginDataSource {
       query {
         viewer {
           login
-          avatarUrl
           organizations(first: 100) {
             nodes {
               login
-              avatarUrl
             }
           }
         }
@@ -39,16 +37,13 @@ export default class GitHubLoginDataSource implements IGitHubLoginDataSource {
     }
     const viewer = response.viewer
     const personalLogin: GitHubLogin = {
-      name: viewer.login,
-      avatarUrl: viewer.avatarUrl
+      name: viewer.login
     }
     const organizationLogins: GitHubLogin[] = viewer
       .organizations
       .nodes
-      .map((e: { login: string, avatarUrl: string }) => {
-        const name = e.login
-        const avatarUrl = e.avatarUrl
-        return { name, avatarUrl }
+      .map((e: { login: string }) => {
+        return { name: e.login }
       })
     return [personalLogin].concat(organizationLogins)
   }

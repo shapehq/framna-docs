@@ -10,8 +10,7 @@ test("It loads repositories from data source", async () => {
     loginsDataSource: {
       async getLogins() {
         return [{
-          name: "acme",
-          avatarUrl: "https://example.com/avatar.png"
+          name: "acme"
         }]
       }
     },
@@ -37,8 +36,7 @@ test("It maps repositories from GraphQL to the GitHubRepository model", async ()
     loginsDataSource: {
       async getLogins() {
         return [{
-          name: "acme",
-          avatarUrl: "https://example.com/avatar.png"
+          name: "acme"
         }]
       }
     },
@@ -126,8 +124,7 @@ test("It queries for both .yml and .yaml file extension with specifying .yml ext
     loginsDataSource: {
       async getLogins() {
         return [{
-          name: "acme",
-          avatarUrl: "https://example.com/avatar.png"
+          name: "acme"
         }]
       }
     },
@@ -155,8 +152,7 @@ test("It queries for both .yml and .yaml file extension with specifying .yaml ex
     loginsDataSource: {
       async getLogins() {
         return [{
-          name: "acme",
-          avatarUrl: "https://example.com/avatar.png"
+          name: "acme"
         }]
       }
     },
@@ -184,8 +180,7 @@ test("It queries for both .yml and .yaml file extension with no extension", asyn
     loginsDataSource: {
       async getLogins() {
         return [{
-          name: "acme",
-          avatarUrl: "https://example.com/avatar.png"
+          name: "acme"
         }]
       }
     },
@@ -213,14 +208,11 @@ test("It loads repositories for all logins", async () => {
     loginsDataSource: {
       async getLogins() {
         return [{
-          name: "acme",
-          avatarUrl: "https://example.com/avatar.png"
+          name: "acme"
         }, {
-          name: "somecorp",
-          avatarUrl: "https://example.com/avatar.png"
+          name: "somecorp"
         }, {
-          name: "techsystems",
-          avatarUrl: "https://example.com/avatar.png"
+          name: "techsystems"
         }]
       }
     },
