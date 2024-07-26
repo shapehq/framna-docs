@@ -3,16 +3,20 @@
 import { useEffect } from "react"
 import { Stack } from "@mui/material"
 import { isMac, useKeyboardShortcut } from "@/common"
-import { useProjectSelection } from "@/features/projects/data"
 import { useSidebarOpen } from "../data"
 import PrimaryContainer from "./internal/primary/Container"
 import SecondaryContainer from "./internal/secondary/Container"
 import Sidebar from "./internal/sidebar/Sidebar"
 
-const SplitView = ({ children }: { children?: React.ReactNode }) => {
+const SplitView = ({
+  canToggleSidebar: _canToggleSidebar,
+  children
+}: {
+  canToggleSidebar?: boolean
+  children?: React.ReactNode
+}) => {
   const [isSidebarOpen, setSidebarOpen] = useSidebarOpen()
-  const { project } = useProjectSelection()
-  const canToggleSidebar = project !== undefined
+  const canToggleSidebar = _canToggleSidebar || true
   useEffect(() => {
     // Show the sidebar if no project is selected.
     if (!canToggleSidebar) {

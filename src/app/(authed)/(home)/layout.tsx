@@ -2,7 +2,7 @@
  
 import { useContext } from "react"
 import { SplitView } from "@/features/sidebar/view"
-import { useProjects } from "@/features/projects/data"
+import { useProjects, useProjectSelection } from "@/features/projects/data"
 import {
   ProjectsContainerContext,
   ServerSideCachedProjectsContext
@@ -19,9 +19,18 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   }
   return (
     <ProjectsContainerContext.Provider value={newProjectsContainer}>
-      <SplitView>
+      <SplitViewWrapper>
         {children}
-      </SplitView>
+      </SplitViewWrapper>
     </ProjectsContainerContext.Provider>
+  )
+}
+
+const SplitViewWrapper = ({ children }: { children: React.ReactNode }) => {
+  const { project } = useProjectSelection()
+  return (
+    <SplitView canToggleSidebar={project !== undefined}>
+      {children}
+    </SplitView>
   )
 }
