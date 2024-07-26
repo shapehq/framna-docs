@@ -1,5 +1,11 @@
 import { SxProps } from "@mui/system"
-import {  Select, MenuItem, SelectChangeEvent, FormControl } from "@mui/material"
+import {
+  Select,
+  MenuItem,
+  SelectChangeEvent,
+  FormControl,
+  Typography
+} from "@mui/material"
 import MenuItemHover from "@/common/ui/MenuItemHover"
 import { Version } from "../../domain"
 
@@ -26,7 +32,13 @@ const VersionSelector = ({
         {versions.map(version => 
           <MenuItem key={version.id} value={version.id}>
             <MenuItemHover>
-              {version.name}
+              <Typography sx={{
+                overflow: "hidden",
+                whiteSpace: "nowrap",
+                textOverflow: "ellipsis"
+              }}>
+                {version.name}
+              </Typography>
             </MenuItemHover>
           </MenuItem>
         )}
