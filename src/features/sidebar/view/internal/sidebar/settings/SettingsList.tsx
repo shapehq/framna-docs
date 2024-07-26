@@ -1,4 +1,3 @@
-import { ReactNode } from "react"
 import { signOut } from "next-auth/react"
 import Link from "next/link"
 import { List, Button, Stack, Typography } from "@mui/material"
@@ -11,7 +10,7 @@ import { faQuestionCircle, faRightFromBracket } from "@fortawesome/free-solid-sv
 const SettingsItem = ({ onClick, icon, children }: {
   onClick?: () => void
   icon?: IconProp
-  children?: ReactNode
+  children?: React.ReactNode
 }) => {
   return (
     <Button

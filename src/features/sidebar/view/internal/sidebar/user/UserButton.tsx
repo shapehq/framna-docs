@@ -1,7 +1,7 @@
 "use client"
 
 import { useSession } from "next-auth/react"
-import { useState, ReactNode } from "react"
+import { useState } from "react"
 import { Session } from "next-auth"
 import {
   Avatar,
@@ -18,7 +18,7 @@ import { faEllipsis } from "@fortawesome/free-solid-svg-icons"
 import MenuItemHover from "@/common/ui/MenuItemHover"
 import UserSkeleton from "./UserSkeleton"
 
-const UserButton = ({ children }: { children: ReactNode }) => {
+const UserButton = ({ children }: { children: React.ReactNode }) => {
   const { data: session, status } = useSession()
   const isLoading = status == "loading"
   return (
@@ -42,7 +42,7 @@ const UserButtonWithSession = ({
   children
 }: {
   session: Session
-  children?: ReactNode
+  children?: React.ReactNode
 }) => {
   const [popoverAnchorElement, setPopoverAnchorElement] = useState<HTMLDivElement | null>(null)
   const handlePopoverClick = (event: React.MouseEvent<HTMLDivElement>) => {

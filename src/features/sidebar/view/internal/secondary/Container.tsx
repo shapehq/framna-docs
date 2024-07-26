@@ -1,4 +1,3 @@
-import { ReactNode } from "react"
 import { SxProps } from "@mui/system"
 import { Stack } from "@mui/material"
 import { styled } from "@mui/material/styles"
@@ -10,7 +9,7 @@ const SecondaryContainer = ({
 }: {
   sidebarWidth: number
   offsetContent: boolean
-  children?: ReactNode
+  children?: React.ReactNode
 }) => {
   const sx = { overflow: "hidden" }
   return (
@@ -65,7 +64,7 @@ const _SecondaryContainer = ({
 }: {
   sidebarWidth: number
   isSidebarOpen: boolean
-  children: ReactNode
+  children: React.ReactNode
   sx?: SxProps
 }) => {
   return (

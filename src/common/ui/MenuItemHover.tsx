@@ -1,4 +1,3 @@
-import { ReactNode } from "react"
 import { SxProps } from "@mui/system"
 import { Box } from "@mui/material"
 import useMediaQuery from "@mui/material/useMediaQuery"
@@ -9,7 +8,7 @@ const MenuItemHover = ({
   sx
 }: {
   disabled?: boolean
-  children: ReactNode
+  children: React.ReactNode
   sx?: SxProps
 }) => {
   const isHoverSupported = useMediaQuery("(hover: hover)")

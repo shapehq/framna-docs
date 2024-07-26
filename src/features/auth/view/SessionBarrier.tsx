@@ -1,4 +1,3 @@
-import { ReactNode } from "react"
 import { redirect } from "next/navigation"
 import { blockingSessionValidator } from "@/composition"
 import { SessionValidity } from "../domain"
@@ -6,7 +5,7 @@ import { SessionValidity } from "../domain"
 export default async function SessionBarrier({
   children
 }: {
-  children: ReactNode
+  children: React.ReactNode
 }) {
   const sessionValidity = await blockingSessionValidator.validateSession()
   switch (sessionValidity) {

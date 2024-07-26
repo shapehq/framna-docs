@@ -1,4 +1,3 @@
-import { ReactNode } from "react"
 import { SxProps } from "@mui/system"
 import { Drawer as MuiDrawer } from "@mui/material"
 
@@ -11,7 +10,7 @@ const PrimaryContainer = ({
   width: number
   isOpen: boolean
   onClose?: () => void
-  children?: ReactNode
+  children?: React.ReactNode
 }) => {
   return (
     <>
@@ -55,7 +54,7 @@ const _PrimaryContainer = ({
   onClose?: () => void
   keepMounted?: boolean
   sx: SxProps,
-  children?: ReactNode
+  children?: React.ReactNode
 }) => {
   return (
     <MuiDrawer
