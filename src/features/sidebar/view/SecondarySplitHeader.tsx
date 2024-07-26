@@ -24,7 +24,7 @@ const Header = ({
   useEffect(() => {
     // checkIsMac uses window so we delay the check.
     setIsMac(checkIsMac())
-  }, [isMac, setIsMac, checkIsMac])
+  }, [isMac, setIsMac])
   const openCloseKeyboardShortcut = `(${isMac ? "⌘" : "^"} + .)`
   const theme = useTheme()
   return (
