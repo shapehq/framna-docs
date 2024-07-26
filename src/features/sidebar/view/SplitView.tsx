@@ -15,7 +15,7 @@ const SplitView = ({ children }: { children?: React.ReactNode }) => {
   const canToggleSidebar = project !== undefined
   useEffect(() => {
     // Show the sidebar if no project is selected.
-    if (canToggleSidebar) {
+    if (!canToggleSidebar) {
       setSidebarOpen(true)
     }
   }, [canToggleSidebar, setSidebarOpen])
