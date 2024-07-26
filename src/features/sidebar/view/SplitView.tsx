@@ -2,11 +2,11 @@
 
 import { useEffect } from "react"
 import { Stack } from "@mui/material"
-import PrimaryContainer from "./internal/PrimaryContainer"
-import SecondaryContainer from "./internal/SecondaryContainer"
 import { useProjectSelection } from "@/features/projects/data"
+import PrimaryContainer from "./internal/primary/Container"
+import SecondaryContainer from "./internal/secondary/Container"
+import Sidebar from "./internal/sidebar/Sidebar"
 import { useSidebarOpen } from "../data"
-import Sidebar from "./Sidebar"
 
 const SplitView = ({ children }: { children?: React.ReactNode }) => {
   const [isSidebarOpen, setSidebarOpen] = useSidebarOpen()
