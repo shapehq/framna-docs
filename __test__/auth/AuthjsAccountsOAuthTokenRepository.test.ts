@@ -1,4 +1,4 @@
-import { AuthjsAccountsOAuthTokenRepository } from "../../src/features/auth/domain"
+import { AuthjsAccountsOAuthTokenRepository } from "@/features/auth/domain"
 
 test("It gets token for user ID and provider", async () => {
   let queryUserId: string | undefined

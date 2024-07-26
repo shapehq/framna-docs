@@ -1,4 +1,4 @@
-import { PersistingOAuthTokenRefresher, OAuthToken } from "../../src/features/auth/domain"
+import { PersistingOAuthTokenRefresher, OAuthToken } from "@/features/auth/domain"
 
 test("It refreshes OAuth token using provided refresh token", async () => {
   let usedRefreshToken: string | undefined

@@ -1,10 +1,10 @@
-import { OAuthTokenRefreshingGitHubClient } from "@/common"
 import {
+  OAuthTokenRefreshingGitHubClient,
   GraphQLQueryRequest,
   GetRepositoryContentRequest,
   GetPullRequestCommentsRequest,
   AddCommentToPullRequestRequest
-} from "@/common/github/IGitHubClient"
+} from "@/common"
 
 test("It forwards a GraphQL request", async () => {
   let forwardedRequest: GraphQLQueryRequest | undefined
