@@ -4,9 +4,9 @@ import { useContext, useEffect } from "react"
 import { ProjectsContainerContext } from "@/common"
 import DelayedLoadingIndicator from "@/common/ui/DelayedLoadingIndicator"
 import ErrorMessage from "@/common/ui/ErrorMessage"
+import { updateWindowTitle } from "@/features/projects/domain"
 import { useProjectSelection } from "@/features/projects/data"
 import Documentation from "@/features/projects/view/Documentation"
-import { updateWindowTitle } from "@/features/projects/domain"
 
 export default function Page() {
   const { error, isLoading } = useContext(ProjectsContainerContext)
