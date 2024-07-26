@@ -1,6 +1,6 @@
 // Split full repository names into owner and repository.
 // shapehq/foo becomes { owner: "shapehq", "repository": "foo" }
-export default (str: string) => {
+const splitOwnerAndRepository = (str: string) => {
   const index = str.indexOf("/")
   if (index === -1) {
     return undefined
@@ -12,3 +12,5 @@ export default (str: string) => {
   }
   return { owner, repository }
 }
+
+export default splitOwnerAndRepository

@@ -1,9 +1,8 @@
 import { redirect } from "next/navigation"
 import { SessionProvider } from "next-auth/react"
-import { session } from "@/composition"
+import { session, projectRepository } from "@/composition"
 import ErrorHandler from "@/common/ui/ErrorHandler"
 import SessionBarrier from "@/features/auth/view/SessionBarrier"
-import { projectRepository } from "@/composition"
 import ServerSideCachedProjectsProvider from "@/features/projects/view/ServerSideCachedProjectsProvider"
 
 export default async function Layout({ children }: { children: React.ReactNode }) {

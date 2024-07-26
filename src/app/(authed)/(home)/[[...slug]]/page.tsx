@@ -14,7 +14,7 @@ export default function Page() {
   // Ensure the URL reflects the current selection of project, version, and specification.
   useEffect(() => {
     navigateToSelectionIfNeeded()
-  }, [project, version, specification])
+  }, [project, version, specification, navigateToSelectionIfNeeded])
   // Update the window title to match selected project.
   const siteName = process.env.NEXT_PUBLIC_SHAPE_DOCS_TITLE || ""
   useEffect(() => {

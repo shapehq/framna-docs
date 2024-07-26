@@ -1,6 +1,5 @@
 import Link from "next/link"
-import { splitOwnerAndRepository } from "@/common"
-import { env } from "@/common"
+import { env, splitOwnerAndRepository } from "@/common"
 
 const Page = () => {
   const repositoryNameSuffix = env.getOrThrow("REPOSITORY_NAME_SUFFIX")

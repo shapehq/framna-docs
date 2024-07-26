@@ -19,7 +19,7 @@ export default function useProjectSelection() {
     }
   }
   const projectNavigator = new ProjectNavigator({ router, pathnameReader })
-  const [_isSidebarOpen, setSidebarOpen] = useSidebarOpen()
+  const [, setSidebarOpen] = useSidebarOpen()
   const theme = useTheme()
   const isDesktopLayout = useMediaQuery(theme.breakpoints.up("sm"))
   return {

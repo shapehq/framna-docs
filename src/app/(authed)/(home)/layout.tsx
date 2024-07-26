@@ -16,7 +16,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   const { projects, error, isLoading } = useProjects()
   // Update projects provided to child components, using cached projects from the server if needed.
   const serverSideCachedProjects = useContext(ServerSideCachedProjectsContext)
-  let newProjectsContainer = { projects, error, isLoading }
+  const newProjectsContainer = { projects, error, isLoading }
   if (isLoading && serverSideCachedProjects) {
     newProjectsContainer.isLoading = false
     newProjectsContainer.projects = serverSideCachedProjects
