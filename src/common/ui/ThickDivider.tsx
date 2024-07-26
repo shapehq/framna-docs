@@ -2,11 +2,7 @@ import { SxProps } from "@mui/system"
 import { Box } from "@mui/material"
 import { useTheme } from "@mui/material/styles"
 
-const ThickDivider = ({
-  sx
-}: {
-  sx?: SxProps
-}) => {
+const ThickDivider = ({ sx }: { sx?: SxProps }) => {
   const theme = useTheme()
   return (
     <Box sx={{

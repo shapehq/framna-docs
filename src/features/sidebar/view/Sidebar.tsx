@@ -1,18 +1,19 @@
-import { ReactNode } from "react"
 import { Box } from "@mui/material"
-import SidebarHeader from "./SidebarHeader"
-import UserFooter from "@/features/user/view/UserFooter"
+import Header from "./internal/sidebar-content/Header"
+import UserButton from "./internal/sidebar-content/user/UserButton"
+import SettingsList from "./internal/sidebar-content/settings/SettingsList"
+import ProjectList from "./internal/sidebar-content/projects/ProjectList"
 
-const Sidebar = ({ children }: { children: ReactNode }) => {
-  return (
-    <>
-      <SidebarHeader/>
-      <Box sx={{ overflow: "auto", flex: 1 }}>
-        {children}
-      </Box>
-      <UserFooter/>
-    </>
-  )
+const Sidebar = () => {
+  return <>
+    <Header/>
+    <Box sx={{ overflow: "auto", flex: 1 }}>
+      <ProjectList/>
+    </Box>
+    <UserButton>
+      <SettingsList/>
+    </UserButton>
+  </>
 }
 
 export default Sidebar
