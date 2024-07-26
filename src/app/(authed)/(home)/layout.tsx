@@ -3,10 +3,6 @@
 import { useContext } from "react"
 import { SplitView } from "@/features/sidebar/view"
 import { useProjects } from "@/features/projects/data"
-// import MainContent from "@/features/projects/view/MainContent"
-// import MobileToolbar from "@/features/projects/view/toolbar/MobileToolbar"
-// import TrailingToolbarItem from "@/features/projects/view/toolbar/TrailingToolbarItem"
-
 import {
   ProjectsContainerContext,
   ServerSideCachedProjectsContext
