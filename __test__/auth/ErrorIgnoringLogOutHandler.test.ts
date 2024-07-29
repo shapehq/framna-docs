@@ -1,4 +1,4 @@
-import { ErrorIgnoringLogOutHandler } from "../../src/features/auth/domain"
+import { ErrorIgnoringLogOutHandler } from "@/features/auth/domain"
 
 test("It ignores errors", async () => {
   const sut = new ErrorIgnoringLogOutHandler({

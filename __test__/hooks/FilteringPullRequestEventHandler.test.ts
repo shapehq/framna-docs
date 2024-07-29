@@ -1,4 +1,4 @@
-import { FilteringPullRequestEventHandler } from "../../src/features/hooks/domain"
+import { FilteringPullRequestEventHandler } from "@/features/hooks/domain"
 
 test("It calls pullRequestOpened(_:) when event is included", async () => {
   let didCall = false

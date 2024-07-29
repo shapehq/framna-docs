@@ -1,5 +1,4 @@
-import IGitHubLoginDataSource from "./IGitHubLoginDataSource"
-import IGitHubGraphQLClient from "./IGitHubGraphQLClient"
+import { IGitHubLoginDataSource, IGitHubGraphQLClient } from "../domain"
 
 export default class GitHubLoginDataSource implements IGitHubLoginDataSource {
   private readonly graphQlClient: IGitHubGraphQLClient
@@ -33,7 +32,8 @@ export default class GitHubLoginDataSource implements IGitHubLoginDataSource {
       throw new Error("organizations property not found on viewer in response")
     }
     const viewer = response.viewer
-    const organizations = viewer.organizations.nodes.map((e: { login: string }) => e.login)
-    return [viewer.login].concat(organizations)
+    const organizationLogins = viewer.organizations.nodes
+      .map((e: { login: string }) => e.login)
+    return [viewer.login].concat(organizationLogins)
   }
 }

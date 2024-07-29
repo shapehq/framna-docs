@@ -1,21 +1,21 @@
+"use client"
+
 import { Stack } from "@mui/material"
-import { Project, Version, OpenApiSpecification } from "../../domain"
 import VersionSelector from "./VersionSelector"
 import SpecificationSelector from "./SpecificationSelector"
+import { useProjectSelection } from "../../data"
 
-const MobileToolbar = ({
-  project,
-  version,
-  specification,
-  onSelectVersion,
-  onSelectSpecification
-}: {
-  project: Project
-  version: Version
-  specification: OpenApiSpecification
-  onSelectVersion: (versionId: string) => void,
-  onSelectSpecification: (specificationId: string) => void
-}) => {
+const MobileToolbar = () => {
+  const {
+    project,
+    version,
+    specification,
+    selectVersion,
+    selectSpecification
+  } = useProjectSelection()
+  if (!project || !version || !specification) {
+    return <></>
+  }
   return (
     <Stack
       direction="column"
@@ -25,13 +25,13 @@ const MobileToolbar = ({
       <VersionSelector
         versions={project.versions}
         selection={version.id}
-        onSelect={onSelectVersion}
+        onSelect={selectVersion}
         sx={{ width: "100%" }}
       />
       <SpecificationSelector
         specifications={version.specifications}
         selection={specification.id}
-        onSelect={onSelectSpecification}
+        onSelect={selectSpecification}
         sx={{ width: "100%" }}
       />
     </Stack>
