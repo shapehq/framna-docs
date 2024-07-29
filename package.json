@@ -50,7 +50,7 @@
     "zod": "^3.23.8"
   },
   "devDependencies": {
-    "@auth/pg-adapter": "^1.4.1",
+    "@auth/pg-adapter": "^1.4.2",
     "@types/jest": "^29.5.12",
     "@types/node": "^22.0.0",
     "@types/nodemailer": "^6.4.15",
