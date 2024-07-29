@@ -33,7 +33,7 @@
     "ioredis": "^5.4.1",
     "mobx": "^6.13.1",
     "next": "^14.2.5",
-    "next-auth": "^5.0.0-beta.19",
+    "next-auth": "^5.0.0-beta.20",
     "nodemailer": "^6.9.14",
     "npm": "^10.8.2",
     "octokit": "^4.0.2",
