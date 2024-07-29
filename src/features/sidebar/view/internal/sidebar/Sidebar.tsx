@@ -29,27 +29,15 @@ const Sidebar = () => {
   }, [])
   return <>
     <Header/>
-    <AnimatedDivider isVisible={!isScrolledToTop} />
+    <Divider sx={{ opacity: isScrolledToTop ? 0 : 1 }} />
     <Box sx={{ overflow: "auto", flex: 1 }} ref={projectListRef}>
       <ProjectList/>
     </Box>
-    <AnimatedDivider isVisible={!isScrolledToBottom} />
+    <Divider sx={{ opacity: isScrolledToBottom ? 0 : 1 }} />
     <UserButton>
       <SettingsList/>
     </UserButton>
   </>
-}
-
-const AnimatedDivider = ({ isVisible }: { isVisible: boolean }) => {
-  return (
-    <Divider
-      sx={{
-        opacity: isVisible ? 1 : 0,
-        marginLeft: 1,
-        marginRight: 1.5
-      }}
-    />
-  )
 }
 
 export default Sidebar
