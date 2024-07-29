@@ -1,4 +1,4 @@
-import { LogInHandler } from "../../src/features/auth/domain"
+import { LogInHandler } from "@/features/auth/domain"
 
 test("It disallows logging in when account is undefined", async () => {
   const sut = new LogInHandler({

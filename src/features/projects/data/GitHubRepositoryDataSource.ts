@@ -69,11 +69,7 @@ export default class GitHubProjectDataSource implements IGitHubRepositoryDataSou
     return await this.getRepositoriesForLogins({ logins })
   }
   
-  private async getRepositoriesForLogins({
-    logins
-  }: {
-    logins: string[]
-  }): Promise<GitHubRepository[]> {
+  private async getRepositoriesForLogins({ logins }: { logins: string[] }): Promise<GitHubRepository[]> {
     let searchQueries: string[] = []
     // Search for all private repositories the user has access to. This is needed to find
     // repositories for external collaborators who do not belong to an organization.

@@ -1,4 +1,4 @@
-import saneParseInt from "@/common/utils/saneParseInt"
+import { saneParseInt } from "@/common"
 
 test("It parses an integer", async () => {
   // @ts-ignore

@@ -1,6 +1,4 @@
-import {
-  GitHubRepositoryDataSource
- } from "../../src/features/projects/data"
+import { GitHubRepositoryDataSource } from "@/features/projects/data"
 
 test("It loads repositories from data source", async () => {
   let didLoadRepositories = false

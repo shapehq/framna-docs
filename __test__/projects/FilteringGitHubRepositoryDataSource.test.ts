@@ -1,4 +1,4 @@
-import { FilteringGitHubRepositoryDataSource } from "../../src/features/projects/domain"
+import { FilteringGitHubRepositoryDataSource } from "@/features/projects/domain"
 
 test("It returns all repositories when no hidden repositories are provided", async () => {
   const sut = new FilteringGitHubRepositoryDataSource({

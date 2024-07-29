@@ -1,4 +1,4 @@
-import listFromCommaSeparatedString from "@/common/utils/listFromCommaSeparatedString"
+import { listFromCommaSeparatedString } from "@/common"
 
 test("It returns an empty list given undefined", async () => {
   const result = listFromCommaSeparatedString(undefined)
