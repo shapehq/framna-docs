@@ -1,4 +1,4 @@
-import { LockingOAuthTokenRefresher } from "../../src/features/auth/domain"
+import { LockingOAuthTokenRefresher } from "@/features/auth/domain"
 
 test("It acquires a lock", async () => {
   let didAcquireLock = false

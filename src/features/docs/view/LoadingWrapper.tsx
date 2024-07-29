@@ -1,13 +1,12 @@
-import { ReactNode } from "react"
 import { Box } from "@mui/material"
-import LoadingIndicator from "@/common/loading/LoadingIndicator"
+import LoadingIndicator from "@/common/ui/LoadingIndicator"
 
 const LoadingWrapper = ({
   showLoadingIndicator,
   children
 }: {
   showLoadingIndicator: boolean,
-  children: ReactNode
+  children: React.ReactNode
 }) => {
   return (
     <Box sx={{

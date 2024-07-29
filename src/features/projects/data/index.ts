@@ -1,6 +1,6 @@
 export { default as GitHubProjectDataSource } from "./GitHubProjectDataSource"
 export * from "./GitHubProjectDataSource"
 export { default as useProjects } from "./useProjects"
-export type { default as IGitHubLoginDataSource } from "./IGitHubLoginDataSource"
+export { default as useProjectSelection } from "./useProjectSelection"
 export { default as GitHubLoginDataSource } from "./GitHubLoginDataSource"
-export * from "./IGitHubGraphQLClient"
+export { default as GitHubRepositoryDataSource } from "./GitHubRepositoryDataSource"

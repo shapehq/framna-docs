@@ -1,4 +1,4 @@
-import { PullRequestCommenter } from "../../src/features/hooks/domain"
+import { PullRequestCommenter } from "@/features/hooks/domain"
 
 test("It adds comment when none exist", async () => {
   let didAddComment = false
