@@ -1,4 +1,5 @@
 import {
+  Box,
   ListItem,
   ListItemButton,
   ListItemText,
@@ -26,16 +27,27 @@ const ProjectListItem = ({
         disableGutters
         sx={{ padding: 0 }}
       >
-        <MenuItemHover sx={{ marginTop: 0.5, marginBottom: 0.5 }}>
-          <Stack direction="row" alignItems="center" spacing={1}>
-            <ProjectAvatar project={project} width={40} height={40} />
+        <MenuItemHover
+          sx={{
+            ".avatar": {
+              transform: "scale(1)",
+              transition: "transform 0.3s ease-in-out"
+            },
+            "&:hover .avatar": {
+              transform: "scale(1.08)"
+            }
+          }}>
+          <Stack direction="row" alignItems="center" spacing={1.5}>
+            <Box className="avatar">
+              <ProjectAvatar project={project} width={40} height={40} />
+            </Box>
             <ListItemText
               primary={
                 <Typography
                   style={{
                     fontSize: "1.1em",
                     fontWeight: isSelected ? 800 : 500,
-                    letterSpacing: 0.3,
+                    letterSpacing: 0.1,
                     whiteSpace: "nowrap",
                     overflow: "hidden",
                     textOverflow: "ellipsis"
