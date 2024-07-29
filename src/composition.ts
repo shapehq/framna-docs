@@ -17,7 +17,8 @@ import {
 } from "@/common"
 import {
   GitHubLoginDataSource,
-  GitHubProjectDataSource
+  GitHubProjectDataSource,
+  GitHubRepositoryDataSource
 } from "@/features/projects/data"
 import {
   CachingProjectDataSource,
@@ -157,12 +158,15 @@ export const projectRepository = new ProjectRepository({
 
 export const projectDataSource = new CachingProjectDataSource({
   dataSource: new GitHubProjectDataSource({
-    loginsDataSource: new GitHubLoginDataSource({
-      graphQlClient: userGitHubClient
+    repositoryDataSource: new GitHubRepositoryDataSource({
+      loginsDataSource: new GitHubLoginDataSource({
+        graphQlClient: userGitHubClient
+      }),
+      graphQlClient: userGitHubClient,
+      repositoryNameSuffix: env.getOrThrow("REPOSITORY_NAME_SUFFIX"),
+      projectConfigurationFilename: env.getOrThrow("SHAPE_DOCS_PROJECT_CONFIGURATION_FILENAME")
     }),
-    graphQlClient: userGitHubClient,
-    repositoryNameSuffix: env.getOrThrow("REPOSITORY_NAME_SUFFIX"),
-    projectConfigurationFilename: env.getOrThrow("SHAPE_DOCS_PROJECT_CONFIGURATION_FILENAME")
+    repositoryNameSuffix: env.getOrThrow("REPOSITORY_NAME_SUFFIX")
   }),
   repository: projectRepository
 })
