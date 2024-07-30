@@ -3,7 +3,7 @@
 import { Box, Typography, SxProps } from "@mui/material"
 import { useEffect, useState, useMemo } from "react"
 
-const SignInTexts = () => {
+const SignInTexts = ({ prefix }: { prefix: string }) => {
   const getRandomTextColor = ({ excluding }: { excluding?: string }) => {
     const colors = ["#01BBFE", "#00AE47", "#FCB23D"]
       .filter(e => e !== excluding)
@@ -42,8 +42,9 @@ const SignInTexts = () => {
   return (
     <>
       <Box sx={{ position: "relative" }}>
-        <Text text={longestText} sx={{ visibility: "hidden" }} />
+        <Text prefix={prefix} text={longestText} sx={{ visibility: "hidden" }} />
         <Text
+          prefix={prefix}
           text={displayedText}
           textColor={textColor}
           sx={{ position: "absolute", top: 0, left: 0, right: 0 }}
@@ -69,11 +70,13 @@ const SignInTexts = () => {
 export default SignInTexts
 
 const Text = ({ 
+  prefix,
   text,
   textColor,
   children,
   sx
 }: {
+  prefix: string,
   text: string,
   textColor?: string,
   children?: React.ReactNode,
@@ -85,7 +88,7 @@ const Text = ({
       paddingLeft: { md: 5, lg: 10 },
       paddingRight: { md: 5, lg: 10 }
     }}>
-      Shape Docs <span style={{ color: textColor }}>{text}</span>
+      {prefix} <span style={{ color: textColor }}>{text}</span>
       {children}
     </Typography>
   )
