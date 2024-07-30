@@ -5,7 +5,6 @@ import { useEffect, useState } from "react"
 
 const SignInTexts = () => {
   const getRandomTextColor = ({ excluding }: { excluding?: string }) => {
-    console.log(excluding)
     const colors = ["#01BBFE", "#00AE47", "#FCB23D"]
       .filter(e => e !== excluding)
     return colors[Math.floor(Math.random() * colors.length)]
