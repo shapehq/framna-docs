@@ -1,7 +1,7 @@
 "use client"
 
 import { Box, Typography, SxProps } from "@mui/material"
-import { useEffect, useState } from "react"
+import { useEffect, useState, useMemo } from "react"
 
 const SignInTexts = () => {
   const getRandomTextColor = ({ excluding }: { excluding?: string }) => {
@@ -13,12 +13,12 @@ const SignInTexts = () => {
   const [textIndex, setTextIndex] = useState(0)
   const [displayedText, setDisplayedText] = useState("")
   const [textColor, setTextColor] = useState(getRandomTextColor({}))
-  const texts = [
+  const texts = useMemo(() => [
     "is a great OpenAPI viewer",
     "facilitates spec-driven development",
     "puts your documentation in one place",
     "adds documentation previews to pull requests"
-  ]
+  ], [])
   useEffect(() => {
     const interval = setInterval(() => {
       setDisplayedText("")
@@ -27,7 +27,7 @@ const SignInTexts = () => {
       setTextIndex((prevIndex) => (prevIndex + 1) % texts.length)
     }, 5000)
     return () => clearInterval(interval)
-  }, [textColor])
+  }, [texts.length, textColor])
   useEffect(() => {
     const interval = setInterval(() => {
       setCharacterIndex(characterIndex + 1)
@@ -37,7 +37,7 @@ const SignInTexts = () => {
       }
     }, 50)
     return () => clearInterval(interval)
-  }, [textIndex, characterIndex])
+  }, [texts, textIndex, characterIndex])
   const longestText = texts.reduce((a, b) => (a.length > b.length ? a : b))
   return (
     <>
