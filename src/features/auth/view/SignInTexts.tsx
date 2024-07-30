@@ -81,7 +81,11 @@ const Text = ({
   sx?: SxProps
 }) => {
   return (
-    <Typography variant="h4" sx={{ ...sx, paddingLeft: 10, paddingRight: 10 }}>
+    <Typography variant="h4" sx={{
+      ...sx,
+      paddingLeft: { md: 5, lg: 10 },
+      paddingRight: { md: 5, lg: 10 }
+    }}>
       Shape Docs <span style={{ color: textColor }}>{text}</span>
       {children}
     </Typography>
