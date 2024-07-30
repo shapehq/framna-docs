@@ -87,6 +87,9 @@ export const { signIn, auth, handlers: authHandlers } = NextAuth({
     colorScheme: "light",
     brandColor: "black"
   },
+  pages: {
+    signIn: "/auth/signin"
+  },
   providers: [
     GithubProvider({
       clientId: env.getOrThrow("GITHUB_CLIENT_ID"),
