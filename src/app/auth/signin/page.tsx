@@ -23,7 +23,7 @@ const InfoColumn = () => {
   return (
     <Box
       flex={1}
-      sx={{ display: { xs: "none", sm: "flex" } }}
+      sx={{ display: { sm: "none", md: "flex" } }}
       alignItems="center"
       bgcolor="#000"
       color="#fff"
@@ -46,7 +46,7 @@ const SignInColumn = () => {
     >
       <Box display="flex" flex={1} justifyContent="center" alignItems="center">
         <Stack direction="column" sx={{
-          alignItems: { xs: "center", sm: "flex-start" },
+          alignItems: { sm: "center", md: "flex-start" },
           padding: 4
         }}>
           <Box sx={{ marginBottom: 8 }}>
@@ -59,14 +59,14 @@ const SignInColumn = () => {
             />
           </Box>
           <Typography variant="h6" sx={{
-            display: { xs: "flex", sm: "none" },
+            display: { sm: "flex", md: "none" },
             marginBottom: 3,
             textAlign: "center"
           }}>
             {title}
           </Typography>
           <Typography variant="h4" sx={{
-            display: { xs: "none", sm: "flex" },
+            display: { sm: "none", md: "flex" },
             marginBottom: 3
           }}>
             {title}
