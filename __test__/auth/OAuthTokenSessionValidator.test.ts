@@ -1,4 +1,4 @@
-import { OAuthTokenSessionValidator, SessionValidity } from "../../src/features/auth/domain"
+import { OAuthTokenSessionValidator, SessionValidity } from "@/features/auth/domain"
 
 test("It reads the access token", async () => {
   let didReadOAuthToken = false

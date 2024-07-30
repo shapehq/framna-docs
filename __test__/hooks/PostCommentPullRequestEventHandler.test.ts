@@ -1,4 +1,4 @@
-import { PostCommentPullRequestEventHandler } from "../../src/features/hooks/domain"
+import { PostCommentPullRequestEventHandler } from "@/features/hooks/domain"
 
 test("It comments when opening a pull request", async () => {
   let didComment = false

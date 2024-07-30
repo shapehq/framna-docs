@@ -11,3 +11,6 @@ updates:
       octokit:
         patterns:
           - "@octokit/*"
+      mui:
+        patterns:
+          - "@mui/*"

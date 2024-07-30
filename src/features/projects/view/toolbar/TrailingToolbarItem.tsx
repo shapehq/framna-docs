@@ -1,24 +1,24 @@
+"use client"
+
 import { SxProps } from "@mui/system"
 import { Stack, IconButton, Typography, Link, Tooltip } from "@mui/material"
-import { Project, Version, OpenApiSpecification } from "../../domain"
 import VersionSelector from "./VersionSelector"
 import SpecificationSelector from "./SpecificationSelector"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faPen } from "@fortawesome/free-solid-svg-icons"
+import { useProjectSelection } from "../../data"
 
-const TrailingToolbarItem = ({
-  project,
-  version,
-  specification,
-  onSelectVersion,
-  onSelectSpecification
-}: {
-  project: Project
-  version: Version
-  specification: OpenApiSpecification
-  onSelectVersion: (versionId: string) => void,
-  onSelectSpecification: (specificationId: string) => void
-}) => {
+const TrailingToolbarItem = () => {
+  const {
+    project,
+    version,
+    specification,
+    selectVersion,
+    selectSpecification
+  } = useProjectSelection()
+  if (!project || !version || !specification) {
+    return <></>
+  }
   const projectNameURL = version.url || project.url
   return (
     <>
@@ -55,14 +55,14 @@ const TrailingToolbarItem = ({
         <VersionSelector
           versions={project.versions}
           selection={version.id}
-          onSelect={onSelectVersion}
+          onSelect={selectVersion}
           sx={{ marginRight: 1 }}
         />
         <Typography variant="h6" sx={{ marginRight: 1 }}>/</Typography>
         <SpecificationSelector
           specifications={version.specifications}
           selection={specification.id}
-          onSelect={onSelectSpecification}
+          onSelect={selectSpecification}
           sx={{ marginRight: 0.5 }}
         />
         {specification.editURL &&

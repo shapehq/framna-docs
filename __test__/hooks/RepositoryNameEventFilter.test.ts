@@ -1,4 +1,4 @@
-import { RepositoryNameEventFilter } from "../../src/features/hooks/domain"
+import { RepositoryNameEventFilter } from "@/features/hooks/domain"
 
 test("It does not include repositories that do not have the \"-openapi\" suffix", async () => {
   const sut = new RepositoryNameEventFilter({

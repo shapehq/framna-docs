@@ -1,4 +1,4 @@
-import { OAuthTokenDataSource } from "../../src/features/auth/domain"
+import { OAuthTokenDataSource } from "@/features/auth/domain"
 
 test("It reads OAuth token for user's ID", async () => {
   let readUserId: string | undefined
