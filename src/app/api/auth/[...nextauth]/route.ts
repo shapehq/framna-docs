@@ -1,3 +1,3 @@
-import { auth } from "@/composition"
+import { authHandlers } from "@/composition"
 
-export const { GET, POST } = auth.handlers
+export const { GET, POST } = authHandlers

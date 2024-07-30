@@ -79,7 +79,7 @@ const oauthTokenRepository = new FallbackOAuthTokenRepository({
 
 const logInHandler = new LogInHandler({ oauthTokenRepository })
 
-export const auth = NextAuth({
+export const { signIn, auth, handlers: authHandlers } = NextAuth({
   adapter: PostgresAdapter(pool),
   secret: env.getOrThrow("NEXTAUTH_SECRET"),
   theme: {
