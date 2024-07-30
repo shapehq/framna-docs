@@ -17,13 +17,16 @@ const ProjectList = () => {
             <ProjectListItemPlaceholder key={index}/>
           ))
         }
-        {!isLoading && projects.map(project => (
-          <ProjectListItem
-            key={project.id}
-            project={project}
-            isSelected={project.id === projectSelection.project?.id}
-            onSelectProject={projectSelection.selectProject}
-          />
+        {!isLoading && projects.map((project, idx) => (
+          <Box key={project.id} sx={{
+            marginBottom: idx < projects.length - 1 ? 0.5 : 0
+          }}>
+            <ProjectListItem
+              project={project}
+              isSelected={project.id === projectSelection.project?.id}
+              onSelectProject={projectSelection.selectProject}
+            />
+          </Box>
         ))}
       </List>
     )
