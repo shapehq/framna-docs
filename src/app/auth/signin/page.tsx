@@ -95,7 +95,7 @@ const SignInWithGitHub = () => {
       }}
     >
       <Button variant="outlined" type="submit">
-        <Stack direction="row" alignItems="center" spacing={1}>
+        <Stack direction="row" alignItems="center" spacing={1} padding={1}>
           <FontAwesomeIcon icon={faGithub} size="2xl" />
             <Typography variant="h6" sx={{ display: "flex" }}>
               Sign in with GitHub
