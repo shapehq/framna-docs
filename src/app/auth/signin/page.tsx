@@ -28,7 +28,7 @@ const InfoColumn = () => {
       bgcolor="#000"
       color="#fff"
     >
-      <SignInTexts />
+      <SignInTexts prefix={SITE_NAME} />
     </Box>
   )
 }
