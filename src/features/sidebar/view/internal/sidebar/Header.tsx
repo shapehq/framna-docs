@@ -1,9 +1,8 @@
 import Image from "next/image"
 import Link from "next/link"
-import { Box, Typography } from "@mui/material"
-// import { Box, Typography, IconButton, Tooltip } from "@mui/material"
-// import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
-// import { faPlus } from "@fortawesome/free-solid-svg-icons"
+import { Box, Typography, IconButton, Tooltip } from "@mui/material"
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
+import { faPlus } from "@fortawesome/free-solid-svg-icons"
 
 const Header = () => {
   const siteName = process.env.NEXT_PUBLIC_SHAPE_DOCS_TITLE
@@ -41,13 +40,13 @@ const Header = () => {
           {siteName}
         </Typography>
       </Link>
-      {/* <Tooltip title="New Project">
+      <Tooltip title="New Project">
         <Link href="/new">
           <IconButton color="primary" size="small" aria-label="New Project">
             <FontAwesomeIcon icon={faPlus} size="xs" style={{ aspectRatio: 1, padding: 2 }} />
           </IconButton>
         </Link>
-      </Tooltip> */}
+      </Tooltip>
     </Box>
   )
 }
