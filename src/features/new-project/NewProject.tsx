@@ -1,10 +1,11 @@
 import {
   Box,
-  Typography,
 } from "@mui/material"
 import NewProjectSteps from "./view/NewProjectSteps"
 import { env } from "@/common"
 import MessageLinkFooter from "@/common/ui/MessageLinkFooter"
+import AnimatedHighlight from "@/common/ui/AnimatedHighlight"
+import { BASE_COLORS } from "@/common/theme/theme"
 
 const SITE_NAME = env.getOrThrow("NEXT_PUBLIC_SHAPE_DOCS_TITLE")
 const HELP_URL = env.get("NEXT_PUBLIC_SHAPE_DOCS_HELP_URL")
@@ -24,12 +25,13 @@ const NewProject = ({
 
 return (
     <Box display="flex" alignItems="start" justifyContent="center" flexDirection="column" height="100vh" gap={6}>
-      <Typography variant="h4" sx={{
-        display: { xs: "none", sm: "none", md: "flex" },
-      }}>
-        {title}
-        {SITE_NAME}
-      </Typography>
+        <AnimatedHighlight
+          content={`${title} ${SITE_NAME}`}
+          highlight={SITE_NAME}
+          color={BASE_COLORS[0]}
+          variant="h4"
+          waitForHover={false}
+        />
       <NewProjectSteps 
         repositoryNameSuffix={repositoryNameSuffix}
         templateName={templateName}

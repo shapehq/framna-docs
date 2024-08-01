@@ -5,6 +5,8 @@ import {
 import NewProjectForm from "./NewProjectForm"
 import { splitOwnerAndRepository } from "@/common"
 import Link from "next/link"
+import AnimatedHighlight from "@/common/ui/AnimatedHighlight"
+import { BASE_COLORS } from "@/common/theme/theme"
 
 interface NewProjectStepsProps {
   repositoryNameSuffix: string
@@ -54,13 +56,22 @@ const NewProjectSteps = ({
 
   const getStepContent = (step: StepType, index: number) => (
     <Box display="flex" flexDirection="row" alignItems="center" gap={2}>
-      <Typography sx={{
-        display: { xs: "none", sm: "none", md: "flex" },
-        fontSize: 20
-      }}>
-        {`${index + 1}. `}
-        {step.content}
-      </Typography>
+      {step.highlight ? 
+        <AnimatedHighlight
+          content={`${index + 1}. ${step.content}`}
+          highlight={step.highlight}
+          color={BASE_COLORS[2]}
+          sx={{ fontSize: 20 }}
+          waitForHover={false}
+        /> :
+        <Typography sx={{
+          display: { xs: "none", sm: "none", md: "flex" },
+          fontSize: 20
+        }}>
+          {`${index + 1}. `}
+          {step.content}
+        </Typography>
+      }
       {step.helpURL && <Link
           style={{ 
             fontSize: 14,
