@@ -2,6 +2,8 @@ import { createTheme } from "@mui/material/styles"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faCaretDown } from "@fortawesome/free-solid-svg-icons"
 
+export const BASE_COLORS = ["#01BBFE", "#00AE47", "#FCB23D"]
+
 export const softPaperSx = {
   boxShadow: "0px 5px 15px rgba(0, 0, 0, 0.1)",
   border: "1px solid rgba(0, 0, 0, 0.05)",
