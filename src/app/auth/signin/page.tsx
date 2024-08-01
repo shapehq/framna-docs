@@ -86,12 +86,7 @@ const SignInWithGitHub = () => {
     <form
       action={async () => {
         "use server"
-          try {
-            await signIn("github", { redirectTo: "/" })
-          } catch (error) {
-            console.error(error)
-            throw error
-          }
+          await signIn("github", { redirectTo: "/" })
       }}
     >
       <Button variant="outlined" type="submit">
