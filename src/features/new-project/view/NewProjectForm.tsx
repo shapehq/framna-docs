@@ -8,10 +8,11 @@ import {
   Tooltip,
   Button,
 } from "@mui/material"
-import LockIcon from '@mui/icons-material/Lock';
+import LockIcon from '@mui/icons-material/Lock'
 import { useState } from 'react'
-import { makeFullRepositoryName, makeNewGitHubRepositoryLink } from "../data";
-import Link from "next/link";
+import { makeFullRepositoryName } from "@/common/utils/makeFullRepositoryName"
+import { makeNewGitHubRepositoryLink } from "@/common/utils/makeNewGitHubRepositoryLink"
+import Link from "next/link"
 
 interface NewProjectFormProps {
   repositoryNameSuffix: string
