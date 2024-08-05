@@ -3,51 +3,45 @@ import React from "react"
 import { SxProps, Typography, TypographyVariant } from "@mui/material"
 import styled from "@emotion/styled"
 
-interface AnimatedHighlightProps {
+interface HighlightTextProps {
   content: string
   highlight: string
   color: string
-  waitForHover: boolean
+  height?: string
+  isSolidOpacity?: boolean
+  isBoldText?: boolean
   variant?: TypographyVariant
   sx?: SxProps
 }
 
-const HighlightSpan = styled.span<{ color: string; waitForHover: boolean }>`
+const HighlightSpan = styled.span<{ color: string; isSolidOpacity: boolean; height: string; isBoldText: boolean }>`
   position: relative;
   display: inline-block;
+  ${({ isBoldText }) => isBoldText && "font-weight: 600"};
   &::before {
     content: '';
     position: absolute;
     left: 0;
     bottom: 0;
-    height: 50%;
+    height: ${({ height }) => height};
     width: 105%;
     background-color: ${({ color }) => color};
-    transition: transform 0.5s ease, opacity 0.5s ease;
-    transform-origin: right;
-    transform: scaleX(0);
     z-index: -10;
-    opacity: ${({ waitForHover }) => (waitForHover ? .2 : .7)};
-    ${({ waitForHover }) => !waitForHover && `transform: scaleX(1);`}
+    opacity: ${({ isSolidOpacity }) => isSolidOpacity ? .7 : .3};
+    transform: scaleX(1);
   }
-  &:hover::before {
-    ${({ waitForHover }) =>
-      waitForHover &&
-      `
-      transform: scaleX(1);
-      opacity: .7;
-    `}
-  }
-`;
+}`;
 
-const AnimatedHighlight = ({
+const HighlightText = ({
   content,
   highlight,
   color,
-  waitForHover,
+  height="50%",
+  isSolidOpacity=false,
+  isBoldText=false,
   variant,
   sx
-}: AnimatedHighlightProps) => {
+}: HighlightTextProps) => {
   const parts = content.split(new RegExp(`(${highlight})`, 'gi'))
 
   return (
@@ -61,7 +55,12 @@ const AnimatedHighlight = ({
     >
       {parts.map((part, index) =>
         part.toLowerCase() === highlight.toLowerCase() ? (
-          <HighlightSpan key={index} color={color} waitForHover={waitForHover}>
+          <HighlightSpan
+            key={`highlight-span-${index}`}
+            color={color}
+            isSolidOpacity={isSolidOpacity}
+            height={height}
+            isBoldText={isBoldText}>
             {part}
           </HighlightSpan>
         ) : (
@@ -72,4 +71,4 @@ const AnimatedHighlight = ({
   );
 };
 
-export default AnimatedHighlight;
+export default HighlightText;

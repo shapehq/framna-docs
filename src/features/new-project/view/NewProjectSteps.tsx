@@ -1,3 +1,4 @@
+"use client"
 import {
   Box,
   Typography,
@@ -5,7 +6,7 @@ import {
 import NewProjectForm from "./NewProjectForm"
 import { splitOwnerAndRepository } from "@/common"
 import Link from "next/link"
-import AnimatedHighlight from "@/common/ui/AnimatedHighlight"
+import HighlightText from "@/common/ui/HighlightText"
 import { BASE_COLORS } from "@/common/theme/theme"
 
 interface NewProjectStepsProps {
@@ -32,12 +33,12 @@ const NewProjectSteps = ({
     {
       id: "create-new-repository",
       content: `Create a new repository using our ${templateName ? splitOwnerAndRepository(templateName)?.repository : ""} template`,
-      highlight: `${templateName ? splitOwnerAndRepository(templateName)?.repository : ""}`,
+      highlight: "Create a new repository",
       helpURL: helpURL ? `${helpURL}/Adding-Documentation-to-Shape-Docs#create-a-repository` : undefined
     },
     {
       content: "Add OpenAPI specification",
-      highlight: "OpenAPI",
+      highlight: "Add OpenAPI",
       helpURL: helpURL ? `${helpURL}/Adding-Documentation-to-Shape-Docs#add-an-openapi-specification` : undefined
     },
     {
@@ -57,12 +58,13 @@ const NewProjectSteps = ({
   const getStepContent = (step: StepType, index: number) => (
     <Box display="flex" flexDirection="row" alignItems="center" gap={2}>
       {step.highlight ? 
-        <AnimatedHighlight
+        <HighlightText
           content={`${index + 1}. ${step.content}`}
           highlight={step.highlight}
           color={BASE_COLORS[2]}
+          height="80%"
           sx={{ fontSize: 20 }}
-          waitForHover={false}
+          isBoldText
         /> :
         <Typography sx={{
           display: { xs: "none", sm: "none", md: "flex" },

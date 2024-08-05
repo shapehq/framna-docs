@@ -4,7 +4,7 @@ import {
 import NewProjectSteps from "./view/NewProjectSteps"
 import { env } from "@/common"
 import MessageLinkFooter from "@/common/ui/MessageLinkFooter"
-import AnimatedHighlight from "@/common/ui/AnimatedHighlight"
+import HighlightText from "@/common/ui/HighlightText"
 import { BASE_COLORS } from "@/common/theme/theme"
 
 const SITE_NAME = env.getOrThrow("NEXT_PUBLIC_SHAPE_DOCS_TITLE")
@@ -25,12 +25,12 @@ const NewProject = ({
 
 return (
     <Box display="flex" alignItems="start" justifyContent="center" flexDirection="column" height="100vh" gap={6}>
-        <AnimatedHighlight
+        <HighlightText
           content={`${title} ${SITE_NAME}`}
           highlight={SITE_NAME}
           color={BASE_COLORS[0]}
           variant="h4"
-          waitForHover={false}
+          isSolidOpacity
         />
       <NewProjectSteps 
         repositoryNameSuffix={repositoryNameSuffix}
