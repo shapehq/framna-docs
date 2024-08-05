@@ -39,9 +39,10 @@ return (
         helpURL={HELP_URL}
       />
       {HELP_URL && 
-        <MessageLinkFooter 
+        <MessageLinkFooter
           url={HELP_URL}
           content={`Read more about Adding Documentation to ${SITE_NAME}`}
+          sx={{ position: "absolute", bottom: 30 }}
         />
       }
     </Box>

@@ -1,18 +1,17 @@
 "use client"
 
 import {
-  TextField,
   Box,
   OutlinedInput,
   InputAdornment,
-  Tooltip,
   Button,
+  FormHelperText,
 } from "@mui/material"
-import LockIcon from '@mui/icons-material/Lock'
 import { useState } from 'react'
 import { makeFullRepositoryName } from "@/common/utils/makeFullRepositoryName"
 import { makeNewGitHubRepositoryLink } from "@/common/utils/makeNewGitHubRepositoryLink"
 import Link from "next/link"
+import KeyboardDoubleArrowDownIcon from '@mui/icons-material/KeyboardDoubleArrowDown'
 
 interface NewProjectFormProps {
   repositoryNameSuffix: string
@@ -20,12 +19,23 @@ interface NewProjectFormProps {
   ownerRepository?: string
 }
 
+const validateProjectName = (name: string): boolean => {
+  const regex = /^[a-zA-Z0-9]([a-zA-Z0-9-_]){0,99}$/;
+  return regex.test(name);
+}
+
 const NewProjectForm = ({
   repositoryNameSuffix,
   templateName,
-  ownerRepository
 }: NewProjectFormProps) => {
   const [projectName, setProjectName] = useState("")
+  const [isValid, setIsValid] = useState(true)
+
+  const handleProjectNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setProjectName(value);
+    setIsValid(validateProjectName(value));
+  }
 
   const suffixedRepositoryName = makeFullRepositoryName({
     name: projectName,
@@ -38,56 +48,74 @@ const NewProjectForm = ({
   })
 
 return (
-    <Box display="flex" flexDirection="column" gap={2} width={550}>
-      <Box display="flex" flexDirection="row" gap={2}>
-        <Tooltip title="If is another one, change it on next step">
-          <TextField
-            disabled
-            id="owner-repository"
-            value={ownerRepository || ""}
-            InputProps={{
-              endAdornment: (
-                <InputAdornment position="end">
-                  <LockIcon />
-                </InputAdornment>
-              ),
-            }}
-            variant="outlined"
-            sx={{ width: 300 }}
-          />
-        </Tooltip>
-        <OutlinedInput
-          id="project-name"
-          endAdornment={
-            <InputAdornment position="end" sx={{ marginRight: 2 }}>
-              {repositoryNameSuffix}
-            </InputAdornment>
-          }
-          aria-describedby="repository-namet"
-          inputProps={{
-            'aria-label': 'repository-name',
-          }}
-          placeholder="project-name"
-          value={projectName}
-          onChange={(e) => setProjectName(e.target.value)}
-          fullWidth
-          sx={{ paddingLeft: 2 }}
-        />
-      </Box>
-      <Button
-        disabled={projectName.length == 0}
-        type="button"
-        component={Link}
-        href={newGitHubRepositoryLink}
-        target="_blank" 
-        rel="noopener noreferrer"
-        variant="contained"
-        color="primary"
-        size="large"
-        sx={{ width: 1, height: 56 }}
+    <Box
+      display="flex"
+      flexDirection="column"
+      justifyContent="space-between"
+      gap={2}
+      sx={{ width: { xs: 1, sm: 1, md: 1 } }}
+    >
+      <OutlinedInput
+        id="project-name"
+        endAdornment={
+          <InputAdornment position="end" sx={{ marginRight: 2 }}>
+            {repositoryNameSuffix}
+          </InputAdornment>
+        }
+        aria-describedby="repository-namet"
+        inputProps={{
+          'aria-label': 'repository-name',
+        }}
+        placeholder="project-name"
+        value={projectName}
+        onChange={handleProjectNameChange}
+        error={!isValid && projectName.length > 0}
+        sx={{ paddingLeft: 2, width: 1 }}
+      />
+      <Box
+        display="flex"
+        flexDirection="column"
+        gap={2}
       >
-        Create Repository
-      </Button>
+        {!isValid && projectName.length > 0 && (
+          <FormHelperText
+            error
+            id="repository-name-helper"
+            sx={{ width: 1, height: 60, margin: 0 }}>
+            - Project name must start with an alphanumeric character.
+            <br/>
+            - Can contain hyphens and underscores.
+            <br/>
+            - Length must be between 1 and 100 characters.
+          </FormHelperText>
+        )}
+        <Button
+          id="create-repository"
+          disabled={projectName.length == 0 || !isValid}
+          type="button"
+          component={Link}
+          href={newGitHubRepositoryLink}
+          target="_blank" 
+          rel="noopener noreferrer"
+          variant="contained"
+          color="primary"
+          size="large"
+          sx={{ height: 56, width: 1 }}
+        >
+          Create Repository
+        </Button>
+        {(isValid || projectName.length == 0 ) && (
+          <Box
+            width={1}
+            height={60}
+            display="flex"
+            alignItems="center"
+            justifyContent="center"
+          >
+            <KeyboardDoubleArrowDownIcon color="disabled" sx={{ marginTop: 2 }} />
+          </Box>
+        )}
+      </Box>
     </Box>
   )}
 
