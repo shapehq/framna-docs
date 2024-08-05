@@ -57,11 +57,11 @@ const NewProjectSteps = ({
 
   const getStepContent = (step: StepType, index: number) => (
     <Box
-      display="flex"
+      display={{ xs: "inline", md: "flex"}}
       flexDirection="row"
       alignItems="center"
       gap={2}
-      sx={{ width: { xs: 1, sm: 1, md: 1 } }}
+      width={1}
     >
       {step.highlight ? 
         <HighlightText
@@ -69,29 +69,33 @@ const NewProjectSteps = ({
           highlight={step.highlight}
           color={BASE_COLORS[2]}
           height="80%"
-          sx={{ fontSize: 20 }}
+          sx={{ fontSize: 20, marginRight: { xs: 1 } }}
           isBoldText
         /> :
         <Typography sx={{
-          display: { xs: "none", sm: "none", md: "flex" },
-          fontSize: 20
+          display: { md: "flex" },
+          fontSize: 20,
+          marginRight: { xs: 4 }
         }}>
           {`${index + 1}. `}
           {step.content}
         </Typography>
       }
-      {step.helpURL && <Link
-          style={{ 
-            fontSize: 14,
-            color: "gray"
+      {step.helpURL && 
+        <Typography
+          sx={{ 
+            fontSize: { xs: 16, sm: 14 },
+            color: "gray",
           }}
+          component={Link}
           aria-label="help"
           href={step.helpURL}
           target="_blank" 
           rel="noopener noreferrer"  
         >
           (?)
-        </Link>}
+        </Typography>
+      }
     </Box>
   )
 

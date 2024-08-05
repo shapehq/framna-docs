@@ -51,7 +51,7 @@ const HighlightText = ({
       variant={variant}
       sx={{
         ...sx,
-        display: { xs: "box", sm: "box", md: "flex" },
+        display: "inline",
         gap: 1,
       }}
     >
