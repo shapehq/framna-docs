@@ -56,7 +56,13 @@ const NewProjectSteps = ({
   const isCreateRepositoryStep = (step: StepType) => step.id && step.id === steps[0].id
 
   const getStepContent = (step: StepType, index: number) => (
-    <Box display="flex" flexDirection="row" alignItems="center" gap={2}>
+    <Box
+      display="flex"
+      flexDirection="row"
+      alignItems="center"
+      gap={2}
+      sx={{ width: { xs: 1, sm: 1, md: 1 } }}
+    >
       {step.highlight ? 
         <HighlightText
           content={`${index + 1}. ${step.content}`}

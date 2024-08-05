@@ -14,7 +14,9 @@ interface HighlightTextProps {
   sx?: SxProps
 }
 
-const HighlightSpan = styled.span<{ color: string; isSolidOpacity: boolean; height: string; isBoldText: boolean }>`
+const HighlightSpan = styled.span<{
+    color: string; isSolidOpacity: boolean; height: string; isBoldText: boolean 
+  }>`
   position: relative;
   display: inline-block;
   ${({ isBoldText }) => isBoldText && "font-weight: 600"};
@@ -49,7 +51,7 @@ const HighlightText = ({
       variant={variant}
       sx={{
         ...sx,
-        display: { xs: "none", sm: "none", md: "flex" },
+        display: { xs: "box", sm: "box", md: "flex" },
         gap: 1,
       }}
     >

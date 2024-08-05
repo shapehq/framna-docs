@@ -1,21 +1,24 @@
 import {
   Typography,
-  Stack
+  Stack,
+  SxProps,
 } from "@mui/material"
 import Link from "next/link"
 
 interface MessageLinkFooterProps {
   url: string
   content: string
+  sx?: SxProps
 }
 
 const MessageLinkFooter = ({
   url,
   content,
+  sx,
 }: MessageLinkFooterProps) => {
 
 return (
-  <Stack direction="row">
+  <Stack direction="row" sx={{ ...sx }}>
     <Link href={url} target="_blank" rel="noopener">
       <Typography variant="body2" sx={{
         opacity: 0.5,
