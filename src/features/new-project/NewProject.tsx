@@ -24,14 +24,22 @@ const NewProject = ({
   const title = "Add a new project to "
 
 return (
-    <Box display="flex" alignItems="start" justifyContent="center" flexDirection="column" height="100vh" gap={6}>
-        <HighlightText
-          content={`${title} ${SITE_NAME}`}
-          highlight={SITE_NAME}
-          color={BASE_COLORS[0]}
-          variant="h4"
-          isSolidOpacity
-        />
+    <Box
+      display="flex"
+      alignItems={{ xs: "start", md: "center"}}
+      justifyContent={{ xs: "start", md: "center"}}
+      flexDirection="column"
+      height={1}
+      width={1}
+      gap={6}
+    >
+      <HighlightText
+        content={`${title} ${SITE_NAME}`}
+        highlight={SITE_NAME}
+        color={BASE_COLORS[0]}
+        variant="h4"
+        isSolidOpacity
+      />
       <NewProjectSteps 
         repositoryNameSuffix={repositoryNameSuffix}
         templateName={templateName}
@@ -42,7 +50,6 @@ return (
         <MessageLinkFooter
           url={HELP_URL}
           content={`Read more about Adding Documentation to ${SITE_NAME}`}
-          sx={{ position: "absolute", bottom: 30 }}
         />
       }
     </Box>

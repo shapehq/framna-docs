@@ -1,5 +1,4 @@
 import { env, splitOwnerAndRepository } from "@/common"
-import { Box } from "@mui/material"
 import NewProject from "@/features/new-project/NewProject";
 
 const Page = () => {
@@ -8,13 +7,11 @@ const Page = () => {
   const ownerRepository = templateName ? splitOwnerAndRepository(templateName)?.owner : undefined
 
 return (
-    <Box display="flex" alignItems="center" justifyContent="center" height="100vh">
-      <NewProject
-        repositoryNameSuffix={repositoryNameSuffix}
-        templateName={templateName}
-        ownerRepository={ownerRepository}
-      />
-    </Box>
-  )}
+  <NewProject
+    repositoryNameSuffix={repositoryNameSuffix}
+    templateName={templateName}
+    ownerRepository={ownerRepository}
+  />
+)}
 
 export default Page
