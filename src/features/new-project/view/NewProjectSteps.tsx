@@ -8,6 +8,7 @@ import { splitOwnerAndRepository } from "@/common"
 import Link from "next/link"
 import HighlightText from "@/common/ui/HighlightText"
 import { BASE_COLORS } from "@/common/theme/theme"
+import { Fragment } from "react"
 
 interface NewProjectStepsProps {
   repositoryNameSuffix: string
@@ -102,7 +103,7 @@ const NewProjectSteps = ({
 return (
     <Box display="flex" alignItems="start" justifyContent="center" flexDirection="column" gap={4}>
         {steps.map((step: StepType, index: number) => 
-          <>
+          <Fragment key={`box-step-${index}`}>
             {isCreateRepositoryStep(step) ? 
               <Box display="flex" flexDirection="column" gap={2}>
                   {getStepContent(step, index)}
@@ -114,7 +115,7 @@ return (
               </Box> :
               getStepContent(step, index)
             }
-          </>
+          </Fragment>
         )}
     </Box>
   )}
