@@ -9,7 +9,16 @@ import NotFound from "@/features/projects/view/NotFound"
 export default function Page({ children }: { children: React.ReactNode }) {
   const { project } = useProjectSelection()
   if (!project) {
-    return <NotFound />
+    return (
+      <>
+        <SecondarySplitHeader showDivider={false} >
+          <TrailingToolbarItem/>
+        </SecondarySplitHeader>
+        <main style={{ flexGrow: "1", overflowY: "auto" }}>
+          <NotFound />
+        </main>
+      </>
+    )
   }
   return (
     <>
