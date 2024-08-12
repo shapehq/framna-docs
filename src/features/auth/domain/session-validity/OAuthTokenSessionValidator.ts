@@ -12,7 +12,7 @@ export default class OAuthTokenSessionValidator {
     try {
       await this.oauthTokenDataSource.getOAuthToken()
       return SessionValidity.VALID
-    } catch (error) {
+    } catch {
       return SessionValidity.INVALID_ACCESS_TOKEN
     }
   }
