@@ -14,3 +14,6 @@ updates:
       mui:
         patterns:
           - "@mui/*"
+      typescript-eslint:
+        patterns:
+          - "@typescript-eslint/*"
