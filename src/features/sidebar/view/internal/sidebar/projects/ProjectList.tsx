@@ -25,6 +25,7 @@ const ProjectList = () => {
       <SpacedList itemSpacing={itemSpacing}>
         {projects.map(project => (
           <ProjectListItem
+            key={project.id}
             project={project}
             isSelected={project.id === projectSelection.project?.id}
             onSelectProject={projectSelection.selectProject}
