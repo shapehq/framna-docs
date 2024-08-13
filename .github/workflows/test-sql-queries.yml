@@ -31,8 +31,8 @@ jobs:
       - name: Run create-tables.sql
         env:
           PGPASSWORD: postgres
-        run: psql -h localhost -U postgres -d testdb -f create-tables.sql
+        run: psql -v ON_ERROR_STOP=1 -h localhost -U postgres -d testdb -f create-tables.sql
       - name: Run drop-tables.sql
         env:
           PGPASSWORD: postgres
-        run: psql -h localhost -U postgres -d testdb -f drop-tables.sql
+        run: psql -v ON_ERROR_STOP=1 -h localhost -U postgres -d testdb -f drop-tables.sql
