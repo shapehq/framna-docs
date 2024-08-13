@@ -4,6 +4,7 @@ on:
   pull_request:
 env:
   PGPASSWORD: postgres
+  DATABASE_NAME: testdb
 jobs:
   test:
     name: Test SQL Queries
