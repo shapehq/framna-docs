@@ -1,6 +1,7 @@
 import { useContext } from "react"
-import { List, Box, Typography } from "@mui/material"
-import { ProjectsContainerContext } from "@/common"
+import { Box, Typography } from "@mui/material"
+import {  ProjectsContainerContext } from "@/common"
+import SpacedList from "@/common/ui/SpacedList"
 import { useProjectSelection } from "@/features/projects/data"
 import ProjectListItem from "./ProjectListItem"
 import ProjectListItemPlaceholder from "./ProjectListItemPlaceholder"
@@ -8,32 +9,28 @@ import ProjectListItemPlaceholder from "./ProjectListItemPlaceholder"
 const ProjectList = () => {
   const { projects, isLoading } = useContext(ProjectsContainerContext)
   const projectSelection = useProjectSelection()
-  const loadingItemCount = 6
   const itemSpacing = 1
-  if (isLoading || projects.length > 0) {
+  if (isLoading) {
     return (
-      <List disablePadding sx={{ margin: 0 }}>
-        {isLoading && 
-          [...new Array(loadingItemCount)].map((_, idx) => (
-            <Box key={idx} sx={{
-              marginBottom: idx < loadingItemCount - 1 ? itemSpacing : 0
-            }}>
-              <ProjectListItemPlaceholder/>
-            </Box>
+      <SpacedList itemSpacing={itemSpacing}>
+        {
+          [...new Array(6)].map((_, idx) => (
+            <ProjectListItemPlaceholder key={idx} />
           ))
         }
-        {!isLoading && projects.map((project, idx) => (
-          <Box key={project.id} sx={{
-            marginBottom: idx < projects.length - 1 ? itemSpacing : 0
-          }}>
-            <ProjectListItem
-              project={project}
-              isSelected={project.id === projectSelection.project?.id}
-              onSelectProject={projectSelection.selectProject}
-            />
-          </Box>
+      </SpacedList>
+    )
+  } else if (projects.length > 0) {
+    return (
+      <SpacedList itemSpacing={itemSpacing}>
+        {projects.map(project => (
+          <ProjectListItem
+            project={project}
+            isSelected={project.id === projectSelection.project?.id}
+            onSelectProject={projectSelection.selectProject}
+          />
         ))}
-      </List>
+      </SpacedList>
     )
   } else {
     return (
