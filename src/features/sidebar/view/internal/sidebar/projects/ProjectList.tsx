@@ -1,10 +1,9 @@
 import { useContext } from "react"
 import { Box, Typography } from "@mui/material"
-import {  ProjectsContainerContext } from "@/common"
+import { ProjectsContainerContext } from "@/common"
 import SpacedList from "@/common/ui/SpacedList"
 import { useProjectSelection } from "@/features/projects/data"
-import ProjectListItem from "./ProjectListItem"
-import ProjectListItemPlaceholder from "./ProjectListItemPlaceholder"
+import ProjectListItem, { Skeleton as ProjectListItemSkeleton } from "./ProjectListItem"
 
 const ProjectList = () => {
   const { projects, isLoading } = useContext(ProjectsContainerContext)
@@ -15,7 +14,7 @@ const ProjectList = () => {
       <SpacedList itemSpacing={itemSpacing}>
         {
           [...new Array(6)].map((_, idx) => (
-            <ProjectListItemPlaceholder key={idx} />
+            <ProjectListItemSkeleton key={idx} />
           ))
         }
       </SpacedList>
@@ -27,8 +26,8 @@ const ProjectList = () => {
           <ProjectListItem
             key={project.id}
             project={project}
-            isSelected={project.id === projectSelection.project?.id}
-            onSelectProject={projectSelection.selectProject}
+            selected={project.id === projectSelection.project?.id}
+            onSelect={() => projectSelection.selectProject(project)}
           />
         ))}
       </SpacedList>
