@@ -3,6 +3,8 @@ import React from "react"
 import { SxProps, Typography, TypographyVariant } from "@mui/material"
 import styled from "@emotion/styled"
 
+type CustomTypographyVariant = TypographyVariant | 'body0' | 'body3';
+
 interface HighlightTextProps {
   content: string
   highlight: string
@@ -10,7 +12,7 @@ interface HighlightTextProps {
   height?: string
   isSolidOpacity?: boolean
   isBoldText?: boolean
-  variant?: TypographyVariant
+  variant?: CustomTypographyVariant
   sx?: SxProps
 }
 

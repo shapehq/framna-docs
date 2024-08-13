@@ -57,14 +57,17 @@ const NewProjectSteps = ({
           highlight={step.highlight}
           color={BASE_COLORS[2]}
           height="80%"
-          sx={{ fontSize: 20, marginRight: { xs: 1 } }}
+          variant="body3"
+          sx={{ marginRight: { xs: 1 } }}
           isBoldText
         /> :
-        <Typography sx={{
-          display: { md: "flex" },
-          fontSize: 20,
-          marginRight: { xs: 4 }
-        }}>
+        <Typography
+          variant="body3"
+          sx={{
+            display: { md: "flex" },
+            marginRight: { xs: 4 }
+          }}
+        >
           {`${index + 1}. `}
           {step.content}
         </Typography>
