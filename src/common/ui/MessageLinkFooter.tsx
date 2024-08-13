@@ -20,7 +20,7 @@ const MessageLinkFooter = ({
 return (
   <Stack direction="row" sx={{ ...sx }}>
     <Link href={url} target="_blank" rel="noopener">
-      <Typography variant="body2" sx={{
+      <Typography variant="body0" sx={{
         opacity: 0.5,
         transition: "opacity 0.3s ease",
         "&:hover": {
