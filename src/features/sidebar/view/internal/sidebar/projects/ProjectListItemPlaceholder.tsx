@@ -6,29 +6,12 @@ const ProjectListItemPlaceholder = () => {
   return (
     <ListItem>
       <MenuItemHover disabled>
-        <Stack
-          direction="row" alignItems="center" spacing={1}
-          sx={{
-            padding: 0,
-            marginTop: 0.5,
-            marginBottom: 0.5
-          }}
-        >
-          <ProjectAvatarSquircle
-            width={42}
-            height={42}
-            sx={{
-              // Offset the squircle to make it align with
-              // the border of the actual avatar when loaded.
-              position: "relative",
-              left: "-1px",
-              top: "-1px"
-          }}
-          >
+        <Stack direction="row" alignItems="center" spacing={1.5}>
+          <ProjectAvatarSquircle width={40} height={40}>
             <Skeleton
               variant="rectangular"
               animation="wave"
-              sx={{ width: 42, height: 42 }}
+              sx={{ width: 40, height: 40 }}
             />
           </ProjectAvatarSquircle>
           <ListItemText

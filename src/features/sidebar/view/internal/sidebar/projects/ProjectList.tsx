@@ -9,17 +9,22 @@ const ProjectList = () => {
   const { projects, isLoading } = useContext(ProjectsContainerContext)
   const projectSelection = useProjectSelection()
   const loadingItemCount = 6
+  const itemSpacing = 1
   if (isLoading || projects.length > 0) {
     return (
       <List disablePadding sx={{ margin: 0 }}>
         {isLoading && 
-          [...new Array(loadingItemCount)].map((_, index) => (
-            <ProjectListItemPlaceholder key={index}/>
+          [...new Array(loadingItemCount)].map((_, idx) => (
+            <Box key={idx} sx={{
+              marginBottom: idx < loadingItemCount - 1 ? itemSpacing : 0
+            }}>
+              <ProjectListItemPlaceholder/>
+            </Box>
           ))
         }
         {!isLoading && projects.map((project, idx) => (
           <Box key={project.id} sx={{
-            marginBottom: idx < projects.length - 1 ? 0.5 : 0
+            marginBottom: idx < projects.length - 1 ? itemSpacing : 0
           }}>
             <ProjectListItem
               project={project}
