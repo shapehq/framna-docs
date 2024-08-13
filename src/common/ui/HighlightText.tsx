@@ -23,14 +23,14 @@ const HighlightSpan = styled.span<{
   &::before {
     content: '';
     position: absolute;
-    left: 0;
+    left: -1%;
     bottom: 0;
     height: ${({ height }) => height};
-    width: 105%;
+    width: 102%;
     background-color: ${({ color }) => color};
     z-index: -10;
     opacity: ${({ isSolidOpacity }) => isSolidOpacity ? .7 : .3};
-    transform: scaleX(1);
+    transform: skewX(-2deg);
   }
 }`;
 

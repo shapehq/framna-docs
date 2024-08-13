@@ -26,8 +26,8 @@ const NewProject = ({
 return (
     <Box
       display="flex"
-      alignItems={{ xs: "start", md: "center"}}
-      justifyContent={{ xs: "start", md: "center"}}
+      alignItems="center"
+      justifyContent="center"
       flexDirection="column"
       height={1}
       width={1}
@@ -44,12 +44,11 @@ return (
         repositoryNameSuffix={repositoryNameSuffix}
         templateName={templateName}
         ownerRepository={ownerRepository}
-        helpURL={HELP_URL}
       />
       {HELP_URL && 
         <MessageLinkFooter
           url={HELP_URL}
-          content={`Read more about Adding Documentation to ${SITE_NAME}`}
+          content="Need help? Explore our wiki for more info"
         />
       }
     </Box>
