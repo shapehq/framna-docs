@@ -27,8 +27,13 @@ const ProjectListItem = ({
     <Template
       selected={selected}
       onSelect={onSelect}
-      avatar={<ProjectAvatar project={project} width={40} height={40} />}
-    >
+      avatar={
+        <ProjectAvatar
+          project={project}
+          width={AVATAR_SIZE.width}
+          height={AVATAR_SIZE.height}
+        />
+    }>
       <ListItemText
         primary={
           <Typography
