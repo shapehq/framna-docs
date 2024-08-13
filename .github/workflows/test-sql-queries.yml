@@ -35,8 +35,8 @@ jobs:
         run: psql -v ON_ERROR_STOP=1 -h localhost -U postgres -d ${{ env.DATABASE_NAME }} -f create-tables.sql
       - name: Ensure tables were created
         run: |
-          COUNT=$(psql -h localhost -U postgres -d ${{ env.DATABASE_NAME }} -t -A -c "SELECT count(*) FROM information_schema.tables WHERE table_schema = 'public';")
-          if [ "$count" -eq 0 ]; then
+          COUNT=$(psql -v ON_ERROR_STOP=1 -h localhost -U postgres -d ${{ env.DATABASE_NAME }} -t -A -c "SELECT count(*) FROM information_schema.tables WHERE table_schema = 'public';")
+          if [ "$COUNT" -eq 0 ]; then
             echo "No tables found. Exiting with error."
             exit 1
           fi
@@ -44,8 +44,8 @@ jobs:
         run: psql -v ON_ERROR_STOP=1 -h localhost -U postgres -d ${{ env.DATABASE_NAME }} -f drop-tables.sql
       - name: Ensure all tables were dropped
         run: |
-          COUNT=$(psql -h localhost -U postgres -d ${{ env.DATABASE_NAME }} -t -A -c "SELECT count(*) FROM information_schema.tables WHERE table_schema = 'public';")
-          if [ "$count" -gt 0 ]; then
+          COUNT=$(psql -v ON_ERROR_STOP=1 -h localhost -U postgres -d ${{ env.DATABASE_NAME }} -t -A -c "SELECT count(*) FROM information_schema.tables WHERE table_schema = 'public';")
+          if [ "$COUNT" -gt 0 ]; then
             echo "Tables found: $count. Exiting with error."
             exit 1
           fi
