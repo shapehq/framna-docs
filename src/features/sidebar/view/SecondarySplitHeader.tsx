@@ -14,10 +14,12 @@ export const HEIGHT_HEADER = 80
 
 const Header = ({
   mobileToolbar,
-  children
+  children,
+  showDivider=true,
 }: {
   mobileToolbar?: React.ReactNode
-  children?: React.ReactNode
+  children?: React.ReactNode,
+  showDivider?: boolean,
 }) => {
   const [isSidebarOpen, setSidebarOpen] = useSidebarOpen()
   const [isMac, setIsMac] = useState(false)
@@ -41,6 +43,7 @@ const Header = ({
         display: "flex",
         alignItems: "center",
         padding: 2,
+        paddingLeft: { xs: 4, md: 2 },
         maxWidth: "1460px",
         margin: "auto",
         height: HEIGHT_HEADER
@@ -100,7 +103,8 @@ const Header = ({
           </Box>
         </Collapse>
       }
-      <Divider/>
+      {showDivider && <Divider />}
+      
     </Box>
   )
 }
