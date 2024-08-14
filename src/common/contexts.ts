@@ -1,9 +1,8 @@
 "use client"
 
 import { createContext } from "react"
-import { Project, } from "@/features/projects/domain"
+import { Project } from "@/features/projects/domain"
 
-export const SidebarContext = createContext<{ isToggleable: boolean }>({ isToggleable: true })
 
 type ProjectsContainer = {
   readonly projects: Project[]

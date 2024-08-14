@@ -1,12 +1,12 @@
 "use client"
 
-import { useState, useEffect, useContext } from "react"
+import { useState, useEffect } from "react"
 import { useSessionStorage } from "usehooks-ts"
 import { Box, IconButton, Stack, Tooltip, Divider, Collapse } from "@mui/material"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faBars, faChevronLeft } from "@fortawesome/free-solid-svg-icons"
 import { useTheme } from "@mui/material/styles"
-import { SidebarContext, isMac as checkIsMac } from "@/common"
+import { isMac as checkIsMac } from "@/common"
 import { useSidebarOpen } from "@/features/sidebar/data"
 import ToggleMobileToolbarButton from "./internal/secondary/ToggleMobileToolbarButton"
 
@@ -23,7 +23,6 @@ const Header = ({
 }) => {
   const [isSidebarOpen, setSidebarOpen] = useSidebarOpen()
   const [isMac, setIsMac] = useState(false)
-  const { isToggleable: isSidebarToggleable } = useContext(SidebarContext)
   const [isMobileToolbarVisible, setMobileToolbarVisible] = useSessionStorage("isMobileToolbarVisible", true)
   useEffect(() => {
     // checkIsMac uses window so we delay the check.
@@ -31,7 +30,6 @@ const Header = ({
   }, [isMac, setIsMac])
   const openCloseKeyboardShortcut = `(${isMac ? "⌘" : "^"} + .)`
   const theme = useTheme()
-
   return (
     <Box
       sx={{
@@ -48,7 +46,7 @@ const Header = ({
         margin: "auto",
         height: HEIGHT_HEADER
       }}>
-        {isSidebarToggleable && !isSidebarOpen &&
+        {!isSidebarOpen &&
           <Tooltip title={`Show Projects ${openCloseKeyboardShortcut}`}>
             <IconButton
               size="medium"
@@ -64,7 +62,7 @@ const Header = ({
             </IconButton>
           </Tooltip>
         }
-        {isSidebarToggleable && isSidebarOpen &&
+        {isSidebarOpen &&
           <Tooltip title={`Hide Projects ${openCloseKeyboardShortcut}`}>
             <IconButton
               size="small"
@@ -104,7 +102,6 @@ const Header = ({
         </Collapse>
       }
       {showDivider && <Divider />}
-      
     </Box>
   )
 }
