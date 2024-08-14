@@ -1,19 +1,8 @@
-"use client"
-
-import { createContext, useState } from "react"
+import { useState } from "react"
+import { ProjectsContext } from "@/common"
 import { Project } from "@/features/projects/domain"
 
-type ProjectsContextValue = {
-  projects: Project[],
-  setProjects: (projects: Project[]) => void
-}
-
-export const ProjectsContext = createContext<ProjectsContextValue>({
-  projects: [],
-  setProjects: () => {}
-})
-
-export const ProjectsContextProvider = ({
+const ProjectsContextProvider = ({
   initialProjects,
   children
 }: {
@@ -27,3 +16,5 @@ export const ProjectsContextProvider = ({
     </ProjectsContext.Provider>
   )
 }
+
+export default ProjectsContextProvider
