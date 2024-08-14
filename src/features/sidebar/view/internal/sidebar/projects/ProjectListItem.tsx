@@ -1,3 +1,5 @@
+"use client"
+
 import {
   Box,
   ListItem,
@@ -11,22 +13,17 @@ import MenuItemHover from "@/common/ui/MenuItemHover"
 import { Project } from "@/features/projects/domain"
 import ProjectAvatar from "./ProjectAvatar"
 import ProjectAvatarSquircle from "./ProjectAvatarSquircle"
+import { useProjectSelection } from "@/features/projects/data"
 
 const AVATAR_SIZE = { width: 40, height: 40 }
 
-const ProjectListItem = ({
-  project,
-  selected,
-  onSelect
-}: {
-  project: Project
-  selected: boolean
-  onSelect: () => void
-}) => {
+const ProjectListItem = ({ project }: { project: Project }) => {
+  const { project: selectedProject, selectProject } = useProjectSelection()
+  const selected = project.id === selectedProject?.id
   return (
     <Template
       selected={selected}
-      onSelect={onSelect}
+      onSelect={() => selectProject(project)}
       avatar={
         <ProjectAvatar
           project={project}
