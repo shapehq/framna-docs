@@ -9,8 +9,7 @@ const SITE_NAME = env.getOrThrow("NEXT_PUBLIC_SHAPE_DOCS_TITLE")
 const WelcomeContent = () => {
   const title = "Welcome to "
   const description = [
-    "Easily manage and preview your OpenAPI documentation with GitHub integration",
-    "Simple, efficient, and collaborative"
+    "Centralizes your OpenAPI documentation and streamlines spec-driven development"
   ]
 
   return (

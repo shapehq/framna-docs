@@ -13,7 +13,6 @@ import { ProjectsContainerContext } from "@/common"
 const ShowSectionsLayer = () => {
   const { data: session, status } = useSession()
   const { projects, isLoading } = useContext(ProjectsContainerContext)
-
   const isLoadingSession = status == "loading"
 
   return (
@@ -45,7 +44,7 @@ const ShowSectionsLayer = () => {
           left: 0
 
         }}>
-          Check all the cool features here!
+          Find your projects here!
         </Typography>
       </Box>
       
@@ -97,7 +96,7 @@ const ShowSectionsLayer = () => {
               style={{ objectFit: "contain" }}
             />
           </Box>
-          {projects.length > 0 ? 
+          {projects.length > 0 && 
             <Typography sx={{
               fontSize: 16,
               fontStyle: "italic",
@@ -105,35 +104,8 @@ const ShowSectionsLayer = () => {
               top: 28,
               left: 100
             }}>
-              Find all your project docs here
-            </Typography> : 
-            <>
-              <Box
-                width={70}
-                height={80}
-                position="absolute"
-                top={-60}
-                left={310}
-                mr={1}
-                sx={{ transform: "rotate(70deg) " }}
-              >
-                <Image
-                  src={ARROW_26}
-                  alt="arrow"
-                  fill
-                  style={{ objectFit: "contain" }}
-                />
-              </Box>
-              <Typography sx={{
-                fontSize: 16,
-                fontStyle: "italic",
-                position: "absolute",
-                top: 28,
-                left: 100
-              }}>
-                Oops, it looks like you don&apos;t have any project set up yet
-              </Typography>
-            </>
+              Find your projects here
+            </Typography>
           }
         </Box>
       }
