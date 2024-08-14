@@ -39,11 +39,11 @@ const ProjectListItem = ({
           <Typography
             variant="body2"
             style={{
-                fontWeight: isSelected ? 800 : 500,
-                letterSpacing: 0.1,
-                whiteSpace: "nowrap",
-                overflow: "hidden",
-                textOverflow: "ellipsis"
+              fontWeight: selected ? 800 : 500,
+              letterSpacing: 0.1,
+              whiteSpace: "nowrap",
+              overflow: "hidden",
+              textOverflow: "ellipsis"
             }}
           >
             {project.displayName}
