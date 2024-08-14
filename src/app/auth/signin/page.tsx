@@ -1,11 +1,11 @@
 import Image from "next/image"
-import Link from "next/link"
 import { Box, Button, Stack, Typography } from "@mui/material"
 import { signIn } from "@/composition"
 import { env } from "@/common"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faGithub } from "@fortawesome/free-brands-svg-icons"
 import SignInTexts from "@/features/auth/view/SignInTexts"
+import MessageLinkFooter from "@/common/ui/MessageLinkFooter"
 
 const SITE_NAME = env.getOrThrow("NEXT_PUBLIC_SHAPE_DOCS_TITLE")
 const HELP_URL = env.get("NEXT_PUBLIC_SHAPE_DOCS_HELP_URL")
@@ -74,9 +74,14 @@ const SignInColumn = () => {
           <SignInWithGitHub />
         </Stack>
       </Box>
-      <Box sx={{ marginBottom: 2 }}>
-        <Footer/>
-      </Box>
+      {HELP_URL && (
+        <Box sx={{ marginBottom: 2 }}>
+          <MessageLinkFooter 
+            url={HELP_URL}
+            content={`Learn more about ${SITE_NAME}`}
+          />
+        </Box>
+      )}  
     </Box>
   )
 }
@@ -98,25 +103,5 @@ const SignInWithGitHub = () => {
         </Stack>
       </Button>
     </form>
-  )
-}
-
-const Footer = () => {
-  return (
-    <Stack direction="row">
-      {HELP_URL && 
-        <Link href={HELP_URL} target="_blank" rel="noopener">
-          <Typography variant="body2" sx={{
-            opacity: 0.5,
-            transition: "opacity 0.3s ease",
-            "&:hover": {
-              opacity: 1
-            }
-          }}>
-            Learn more about {SITE_NAME}
-          </Typography>
-        </Link>
-      }
-    </Stack>
   )
 }

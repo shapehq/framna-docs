@@ -10,12 +10,16 @@ import { SidebarContext, isMac as checkIsMac } from "@/common"
 import { useSidebarOpen } from "@/features/sidebar/data"
 import ToggleMobileToolbarButton from "./internal/secondary/ToggleMobileToolbarButton"
 
+export const HEIGHT_HEADER = 80
+
 const Header = ({
   mobileToolbar,
-  children
+  children,
+  showDivider=true,
 }: {
   mobileToolbar?: React.ReactNode
-  children?: React.ReactNode
+  children?: React.ReactNode,
+  showDivider?: boolean,
 }) => {
   const [isSidebarOpen, setSidebarOpen] = useSidebarOpen()
   const [isMac, setIsMac] = useState(false)
@@ -27,6 +31,7 @@ const Header = ({
   }, [isMac, setIsMac])
   const openCloseKeyboardShortcut = `(${isMac ? "⌘" : "^"} + .)`
   const theme = useTheme()
+
   return (
     <Box
       sx={{
@@ -38,9 +43,10 @@ const Header = ({
         display: "flex",
         alignItems: "center",
         padding: 2,
+        paddingLeft: { xs: 4, md: 2 },
         maxWidth: "1460px",
         margin: "auto",
-        height: 80 
+        height: HEIGHT_HEADER
       }}>
         {isSidebarToggleable && !isSidebarOpen &&
           <Tooltip title={`Show Projects ${openCloseKeyboardShortcut}`}>
@@ -97,7 +103,8 @@ const Header = ({
           </Box>
         </Collapse>
       }
-      <Divider/>
+      {showDivider && <Divider />}
+      
     </Box>
   )
 }

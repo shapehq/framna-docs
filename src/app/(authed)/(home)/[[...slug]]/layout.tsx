@@ -12,7 +12,7 @@ export default function Page({ children }: { children: React.ReactNode }) {
   }
   return (
     <>
-      <SecondarySplitHeader mobileToolbar=<MobileToolbar/>>
+      <SecondarySplitHeader mobileToolbar={<MobileToolbar/>}>
         <TrailingToolbarItem/>
       </SecondarySplitHeader>
       <main style={{ flexGrow: "1", overflowY: "auto" }}>
