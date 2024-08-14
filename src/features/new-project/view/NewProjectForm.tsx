@@ -84,7 +84,7 @@ return (
             sx={{ width: 1, height: 60, margin: 0 }}>
             - Project name must start with an alphanumeric character.
             <br/>
-            - Can only contain hyphens as non-alphanumeric character.
+            - Can only contain hyphens and non-alphanumeric character.
             <br/>
             - Length must be between 1 and 100 characters.
           </FormHelperText>
