@@ -1,3 +1,5 @@
+"use client"
+
 import { useState } from "react"
 import { ProjectsContext } from "@/common"
 import { Project } from "@/features/projects/domain"
