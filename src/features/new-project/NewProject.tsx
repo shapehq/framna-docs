@@ -23,7 +23,7 @@ const NewProject = ({
 }: NewProjectProps) => {
   const title = "Add a new project to "
 
-return (
+  return (
     <Box
       display="flex"
       alignItems="center"
