@@ -8,9 +8,9 @@ import "@fontsource/poppins/700.css"
 export const BASE_COLORS = ["#01BBFE", "#00AE47", "#FCB23D"]
 
 export const softPaperSx = {
-  boxShadow: "0px 5px 15px rgba(0, 0, 0, 0.1)",
+  boxShadow: "0px 5px 15px rgba(0, 0, 0, 0.08)",
   border: "1px solid rgba(0, 0, 0, 0.05)",
-  borderRadius: "12px"
+  borderRadius: "18px"
 }
 
 declare module "@mui/material/styles" {
