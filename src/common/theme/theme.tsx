@@ -99,10 +99,10 @@ const theme = () => createTheme({
               borderWidth: "1px"
             },
             ".MuiOutlinedInput-notchedOutline": {
-              borderColor: "#f2f2f2"
+              borderColor: "#c4c4c4"
             },
             "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-              borderColor: "#f2f2f2",
+              borderColor: "#c4c4c4",
               borderWidth: "1px"
             }
           })
