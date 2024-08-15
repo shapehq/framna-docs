@@ -1,4 +1,5 @@
 import { Suspense } from "react"
+import { Typography } from "@mui/material"
 import ProjectListFallback from "./ProjectListFallback"
 import PopulatedProjectList from "./PopulatedProjectList"
 import { IProjectDataSource } from "@/features/projects/domain"
@@ -23,5 +24,24 @@ const DataFetchingProjectList = async ({
   projectDataSource: IProjectDataSource
 }) => {
   const projects = await projectDataSource.getProjects()
-  return <PopulatedProjectList projects={projects} />
+  if (projects.length > 0) {
+    return <PopulatedProjectList projects={projects} />
+  } else {
+    return <EmptyProjectList/>
+  }
+}
+
+const EmptyProjectList = () => {
+  return (
+    <Typography
+      variant="body2"
+        sx={{
+        margin: 2,
+        marginLeft: 4,
+        marginRight: 4
+      }}
+    >
+      Your list of projects is empty.
+    </Typography>
+  )
 }
