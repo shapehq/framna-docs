@@ -85,7 +85,7 @@ const UserButtonWithSession = ({
             }
             <Box sx={{ marginLeft: "10px" }}>
               {user &&
-                <Typography sx={{ fontWeight: 600 }}>
+                <Typography sx={{ fontWeight: 500 }}>
                   {user.name || user.email}
                 </Typography>
               }

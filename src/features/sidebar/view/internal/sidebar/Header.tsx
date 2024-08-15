@@ -31,10 +31,7 @@ const Header = () => {
         />
         <Typography
           variant="h6"
-          sx={{
-            fontWeight: 700,
-            letterSpacing: 1
-          }}
+          sx={{ fontWeight: 500 }}
         >
           {siteName}
         </Typography>

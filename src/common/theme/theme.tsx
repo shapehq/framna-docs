@@ -3,7 +3,6 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faCaretDown } from "@fortawesome/free-solid-svg-icons"
 import "@fontsource/poppins/400.css"
 import "@fontsource/poppins/500.css"
-import "@fontsource/poppins/600.css"
 import "@fontsource/poppins/700.css"
 
 export const BASE_COLORS = ["#01BBFE", "#00AE47", "#FCB23D"]
@@ -145,7 +144,7 @@ const theme = () => createTheme({
             },
             "& li.Mui-selected": {
               background: "transparent",
-              fontWeight: "bold"
+              fontWeight: 700
             },
             "& li:hover, & li.Mui-selected.Mui-focusVisible, & li.Mui-selected:hover, && .Mui-selected, && .Mui-selected:hover, & .MuiListItemButton-root:hover": { 
               background: "transparent"
