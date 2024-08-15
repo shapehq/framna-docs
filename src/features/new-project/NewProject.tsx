@@ -48,7 +48,7 @@ const NewProject = ({
       {HELP_URL && 
         <MessageLinkFooter
           url={HELP_URL}
-          content="Need help? Explore our wiki for more info"
+          content="Need help? Explore our wiki for more info."
         />
       }
     </Box>
