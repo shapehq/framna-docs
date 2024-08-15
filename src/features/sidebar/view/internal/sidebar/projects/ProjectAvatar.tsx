@@ -13,7 +13,7 @@ function ProjectAvatar({
   height: number
 }) {
   return (
-    <StrokedSquircle width={width} height={height}>
+    <Squircle width={width} height={height} strokeWidth={0.5}>
       <Placeholder
         text={project.displayName}
         sx={{ position: "absolute", zIndex: 500 }}
@@ -26,7 +26,7 @@ function ProjectAvatar({
           style={{ position: "absolute", zIndex: 1000 }}
         />
       }
-    </StrokedSquircle>
+    </Squircle>
   )
 }
 
@@ -40,18 +40,19 @@ const Placeholder = ({ text, sx }: { text: string, sx?: SxProps }) => {
   )
 }
 
-const StrokedSquircle = ({
+export const Squircle = ({
   width,
   height,
   children,
+  strokeWidth=0,
   sx
 }: {
-  width: number,
-  height: number,
-  children?: React.ReactNode,
+  width: number
+  height: number
+  strokeWidth?: number
+  children?: React.ReactNode
   sx?: SxProps
 }) => {
-  const strokeWidth = 0.5
   const svgPath = getSvgPath({
     width: width - strokeWidth, 
     height: height - strokeWidth,

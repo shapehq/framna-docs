@@ -11,8 +11,10 @@ import {
 } from "@mui/material"
 import MenuItemHover from "@/common/ui/MenuItemHover"
 import { Project } from "@/features/projects/domain"
-import ProjectAvatar from "./ProjectAvatar"
 import { useProjectSelection } from "@/features/projects/data"
+import ProjectAvatar, {
+  Squircle as ProjectAvatarSquircle
+} from "./ProjectAvatar"
 
 const AVATAR_SIZE = { width: 40, height: 40 }
 
@@ -40,11 +42,13 @@ export default ProjectListItem
 export const Skeleton = () => {
   return (
     <Template disabled avatar={
-      <MuiSkeleton
-        variant="rectangular"
-        animation="wave"
-        sx={{ width: "100%", height: "100%" }}
-      />
+      <ProjectAvatarSquircle width={AVATAR_SIZE.width} height={AVATAR_SIZE.height}>
+        <MuiSkeleton
+          variant="rectangular"
+          animation="wave"
+          sx={{ width: "100%", height: "100%" }}
+        />
+      </ProjectAvatarSquircle>
     }>
       <MuiSkeleton variant="text" animation="wave" width={100} />
     </Template>
