@@ -87,6 +87,18 @@ const theme = () => createTheme({
           disableRipple: true
         }
       },
+      MuiInputBase: {
+        styleOverrides: {
+          root: () => ({
+            ".MuiOutlinedInput-notchedOutline": {
+              borderColor: "#c4c4c4"
+            },
+            "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+              borderWidth: "1px !important"
+            }
+          })
+        }
+      },
       MuiSelect: {
         styleOverrides: {
           root: () => ({
