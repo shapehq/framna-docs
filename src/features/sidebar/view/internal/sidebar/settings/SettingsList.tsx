@@ -5,7 +5,8 @@ import ThickDivider from "@/common/ui/ThickDivider"
 import DocumentationVisualizationPicker from "./DocumentationVisualizationPicker"
 import { IconProp } from "@fortawesome/fontawesome-svg-core"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
-import { faQuestionCircle, faRightFromBracket } from "@fortawesome/free-solid-svg-icons"
+import { faArrowRightFromBracket } from "@fortawesome/free-solid-svg-icons"
+import { faQuestionCircle } from "@fortawesome/free-regular-svg-icons"
   
 const SettingsItem = ({ onClick, icon, children }: {
   onClick?: () => void
@@ -53,7 +54,7 @@ const SettingsList = () => {
           </SettingsItem>
         </Link>
       }
-      <SettingsItem onClick={() => signOut()} icon={faRightFromBracket}>
+      <SettingsItem onClick={() => signOut()} icon={faArrowRightFromBracket}>
         <Typography>
           Log out
         </Typography>
