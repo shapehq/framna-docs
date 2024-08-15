@@ -24,8 +24,16 @@ const SpecificationSelector = ({
     onSelect(event.target.value)
   }
   return (
-    <FormControl sx={{ m: 1, minWidth: 120, margin: 0, ...sx }} size="small">
-      <Select defaultValue={selection} onChange={handleVersionChange}>
+    <FormControl sx={{ m: 1, margin: 0, ...sx }} size="small">
+      <Select
+        defaultValue={selection}
+        onChange={handleVersionChange}
+        sx={{ padding: 1, paddingLeft: 1.5, paddingRight: 1.5 }}
+        inputProps={{
+          IconComponent: () => null,
+          sx: { padding: "0 !important" }
+        }}
+      >
         {specifications.map(specification =>
           <MenuItem key={specification.id} value={specification.id}>
             <MenuItemHover>

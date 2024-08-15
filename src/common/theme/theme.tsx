@@ -92,13 +92,17 @@ const theme = () => createTheme({
           root: () => ({
             borderRadius: "20px",
             "&:hover": {
-              background: "rgba(0, 0, 0, 0.05)"
+              background: "#f2f2f2"
+            },
+            "&:hover .MuiOutlinedInput-notchedOutline": {
+              borderColor: "#f2f2f2",
+              borderWidth: "1px"
             },
             ".MuiOutlinedInput-notchedOutline": {
-              borderColor: "black"
+              borderColor: "#f2f2f2"
             },
             "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-              borderColor: "black",
+              borderColor: "#f2f2f2",
               borderWidth: "1px"
             }
           })
