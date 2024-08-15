@@ -5,7 +5,7 @@ import { Stack, IconButton, Typography, Link, Tooltip, Divider } from "@mui/mate
 import VersionSelector from "./VersionSelector"
 import SpecificationSelector from "./SpecificationSelector"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
-import { faPenToSquare } from "@fortawesome/free-solid-svg-icons"
+import { faPenToSquare } from "@fortawesome/free-regular-svg-icons"
 import { useProjectSelection } from "../../data"
 
 const TrailingToolbarItem = () => {
