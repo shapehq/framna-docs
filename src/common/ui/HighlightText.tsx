@@ -30,9 +30,9 @@ const HighlightSpan = styled.span<{
     height: ${({ height }) => height};
     width: 102%;
     background-color: ${({ color }) => color};
-    z-index: -10;
     opacity: ${({ isSolidOpacity }) => isSolidOpacity ? .7 : .3};
     transform: skewX(-2deg);
+    mix-blend-mode: multiply;
   }
 }`;
 
