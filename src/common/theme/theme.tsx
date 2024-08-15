@@ -107,7 +107,7 @@ const theme = () => createTheme({
               background: "#f2f2f2"
             },
             "&:hover .MuiOutlinedInput-notchedOutline": {
-              borderColor: "#f2f2f2",
+              borderColor: "#f2f2f2 !important",
               borderWidth: "1px"
             },
             ".MuiOutlinedInput-notchedOutline": {
