@@ -31,7 +31,7 @@ const Header = ({
       <Box sx={{ 
         display: "flex",
         alignItems: "center",
-        paddingLeft: { xs: 4, md: 2 },
+        paddingLeft: 2,
         paddingRight: 2,
         maxWidth: "1460px",
         height: 64,

@@ -7,7 +7,7 @@ const Header = () => {
   return (
     <Box sx={{
       marginTop: 2,
-      paddingLeft: 3,
+      paddingLeft: { xs: 2, sm: 3 },
       minHeight: 64,
       display: "flex",
       justifyContent: "space-between",

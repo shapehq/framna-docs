@@ -16,7 +16,7 @@ const Sidebar = ({ children }: { children?: React.ReactNode }) => {
           flexDirection: "column",
           height: "100vh",
           background: "white",
-          marginLeft: 2,
+          marginLeft: { xs: 1, sm: 2 },
           marginRight: 1,
           borderRadius: "18px",
           boxShadow: "0 4px 8px rgba(0, 0, 0, 0.08)",

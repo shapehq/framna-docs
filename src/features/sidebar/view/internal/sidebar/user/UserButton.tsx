@@ -76,7 +76,10 @@ const UserButtonWithSession = ({
         onClick={handlePopoverClick}
         aria-describedby={id}
         disableGutters
-        sx={{ padding: 0 }}
+        sx={{
+          padding: 0,
+          paddingLeft: { xs: 0, sm: 1 }
+        }}
       >
         <MenuItemHover>
           <Stack direction="row" alignItems="center">
