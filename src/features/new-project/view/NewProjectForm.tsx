@@ -101,6 +101,7 @@ return (
           color="primary"
           size="large"
           sx={{ height: 56, width: 1 }}
+          disableElevation
         >
           Create Repository
         </Button>
