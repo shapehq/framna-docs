@@ -43,9 +43,9 @@ const theme = () => createTheme({
         main: "#000000"
       },
       background: {
-        default: "#f9f9f9"
+        default: "#f8f8f8"
       },
-      divider: "#f9f9f9"
+      divider: "#f8f8f8"
     },
     typography: {
       fontFamily: [
