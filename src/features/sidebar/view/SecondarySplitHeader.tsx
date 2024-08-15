@@ -5,12 +5,9 @@ import { useSessionStorage } from "usehooks-ts"
 import { Box, IconButton, Stack, Tooltip, Divider, Collapse } from "@mui/material"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faBars, faChevronLeft } from "@fortawesome/free-solid-svg-icons"
-import { useTheme } from "@mui/material/styles"
 import { isMac as checkIsMac } from "@/common"
 import { useSidebarOpen } from "@/features/sidebar/data"
 import ToggleMobileToolbarButton from "./internal/secondary/ToggleMobileToolbarButton"
-
-export const HEIGHT_HEADER = 80
 
 const Header = ({
   mobileToolbar,
@@ -29,22 +26,16 @@ const Header = ({
     setIsMac(checkIsMac())
   }, [isMac, setIsMac])
   const openCloseKeyboardShortcut = `(${isMac ? "⌘" : "^"} + .)`
-  const theme = useTheme()
   return (
-    <Box
-      sx={{
-        backgroundColor: theme.palette.background.default,
-        color: theme.palette.text.primary,
-      }}
-    >
+    <Box>
       <Box sx={{ 
         display: "flex",
         alignItems: "center",
-        padding: 2,
         paddingLeft: { xs: 4, md: 2 },
+        paddingRight: 2,
         maxWidth: "1460px",
-        margin: "auto",
-        height: HEIGHT_HEADER
+        height: 64,
+        margin: "auto"
       }}>
         {!isSidebarOpen &&
           <Tooltip title={`Show Projects ${openCloseKeyboardShortcut}`}>

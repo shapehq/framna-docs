@@ -66,13 +66,15 @@ const _PrimaryContainer = ({
         keepMounted: keepMounted || false
       }}
       sx={{ 
-       ...sx,
-       width: width,
-       flexShrink: 0,
-       "& .MuiDrawer-paper": {
-         width: width,
-         boxSizing: "border-box"
-       }
+        ...sx,
+        width: width,
+        flexShrink: 0,
+        "& .MuiDrawer-paper": {
+          width: width,
+          boxSizing: "border-box",
+          borderRight: 0,
+          background: "transparent"
+        }
      }}
     >
       {children}

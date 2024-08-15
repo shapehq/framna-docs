@@ -1,23 +1,24 @@
-"use client"
-
-import SecondarySplitHeader from "@/features/sidebar/view/SecondarySplitHeader"
-import TrailingToolbarItem from "@/features/projects/view/toolbar/TrailingToolbarItem"
-import MobileToolbar from "@/features/projects/view/toolbar/MobileToolbar"
-import { useProjectSelection } from "@/features/projects/data"
+import { Box } from "@mui/material"
 
 export default function Page({ children }: { children: React.ReactNode }) {
-  const { project } = useProjectSelection()
-  if (!project) {
-    return <></>
-  }
   return (
-    <>
-      <SecondarySplitHeader mobileToolbar={<MobileToolbar/>}>
-        <TrailingToolbarItem/>
-      </SecondarySplitHeader>
-      <main style={{ flexGrow: "1", overflowY: "auto" }}>
-        {children}
-      </main>
-    </>
+    <main style={{ flexGrow: "1" }}>
+      <Box sx={{
+        height: "100%",
+        paddingTop: 2,
+        marginLeft: 1,
+        marginRight: 2
+      }}>
+        <Box sx={{
+          height: "100%",
+          background: "white",
+          boxShadow: "0 4px 8px rgba(0, 0, 0, 0.08)",
+          borderTopLeftRadius: "18px",
+          borderTopRightRadius: "18px"
+        }}>
+          {children}
+        </Box>
+      </Box>
+    </main>
   )
 }

@@ -1,6 +1,10 @@
 import { createTheme } from "@mui/material/styles"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faCaretDown } from "@fortawesome/free-solid-svg-icons"
+import "@fontsource/poppins/400.css"
+import "@fontsource/poppins/500.css"
+import "@fontsource/poppins/600.css"
+import "@fontsource/poppins/700.css"
 
 export const BASE_COLORS = ["#01BBFE", "#00AE47", "#FCB23D"]
 
@@ -38,17 +42,25 @@ const theme = () => createTheme({
       },
       secondary: {
         main: "#000000"
-      }
+      },
+      background: {
+        default: "#f9f9f9"
+      },
+      divider: "#f9f9f9"
     },
     typography: {
       fontFamily: [
-        "-apple-system",
-        "BlinkMacSystemFont",
-        "\"Segoe UI\"",
-        "Roboto",
-        "\"Helvetica Neue\"",
-        "Arial",
-        "sans-serif"
+        'Poppins',
+        '-apple-system',
+        'BlinkMacSystemFont',
+        '"Segoe UI"',
+        'Roboto',
+        '"Helvetica Neue"',
+        'Arial',
+        'sans-serif',
+        '"Apple Color Emoji"',
+        '"Segoe UI Emoji"',
+        '"Segoe UI Symbol"'
       ].join(","),
       button: {
         textTransform: "none"

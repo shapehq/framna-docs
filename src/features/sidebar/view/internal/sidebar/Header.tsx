@@ -1,15 +1,14 @@
 import Image from "next/image"
 import Link from "next/link"
-import { Box, Typography, IconButton, Tooltip } from "@mui/material"
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
-import { faPlus } from "@fortawesome/free-solid-svg-icons"
+import { Box, Typography } from "@mui/material"
 
 const Header = () => {
   const siteName = process.env.NEXT_PUBLIC_SHAPE_DOCS_TITLE
   return (
     <Box sx={{
-      padding: 2,
-      height: 80,
+      marginTop: 2,
+      paddingLeft: 3,
+      minHeight: 64,
       display: "flex",
       justifyContent: "space-between",
       alignItems: "center"
@@ -40,13 +39,6 @@ const Header = () => {
           {siteName}
         </Typography>
       </Link>
-      <Tooltip title="New Project">
-        <Link href="/new">
-          <IconButton color="primary" size="small" aria-label="New Project">
-            <FontAwesomeIcon icon={faPlus} size="xs" style={{ aspectRatio: 1, padding: 2 }} />
-          </IconButton>
-        </Link>
-      </Tooltip>
     </Box>
   )
 }
