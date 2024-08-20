@@ -35,10 +35,10 @@ return (
     >
       <HighlightText
         content={`${title} ${SITE_NAME}`}
-        highlight={SITE_NAME}
-        color={BASE_COLORS[0]}
+        highlight={[SITE_NAME]}
+        color={[BASE_COLORS[0]]}
         variant="h4"
-        isSolidOpacity
+        opacity={7}
       />
       <NewProjectSteps 
         repositoryNameSuffix={repositoryNameSuffix}
