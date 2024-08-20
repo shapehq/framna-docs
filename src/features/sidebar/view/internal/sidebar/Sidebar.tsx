@@ -24,8 +24,8 @@ const Sidebar = ({ children }: { children?: React.ReactNode }) => {
           }
         }}
       >
-        <NewProjectButton/>
         {children}
+        <NewProjectButton/>
       </Box>
       <SidebarDivider/>
       <UserButton>
@@ -34,7 +34,5 @@ const Sidebar = ({ children }: { children?: React.ReactNode }) => {
     </>
   )
 }
-
-
 
 export default Sidebar
