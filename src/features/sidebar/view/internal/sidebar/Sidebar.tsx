@@ -1,12 +1,34 @@
 "use client"
 
-import { Box, Divider } from "@mui/material"
+import { useRef, useEffect, useState } from "react"
+import { Box } from "@mui/material"
+import { useTheme } from "@mui/material/styles"
 import Header from "./Header"
 import UserButton from "./user/UserButton"
 import SettingsList from "./settings/SettingsList"
 import NewProjectButton from "./NewProjectButton"
 
 const Sidebar = ({ children }: { children?: React.ReactNode }) => {
+  const theme = useTheme()
+  const [isScrolledToTop, setScrolledToTop] = useState(true)
+  const scrollableAreaRef = useRef<HTMLDivElement | null>(null)
+  const handleScroll = () => {
+    const element = scrollableAreaRef.current
+    if (!element) {
+      return
+    }
+    setScrolledToTop(element.scrollTop < 10)
+  }
+  useEffect(() => {
+    const element = scrollableAreaRef.current
+    if (element) {
+      element.addEventListener("scroll", handleScroll)
+      handleScroll()
+      return () => {
+        element.removeEventListener("scroll", handleScroll)
+      }
+    }
+  }, [])
   return (
     <>
       <Header/>
@@ -15,17 +37,23 @@ const Sidebar = ({ children }: { children?: React.ReactNode }) => {
           display: "flex",
           flexDirection: "column",
           height: "100vh",
-          background: "white",
           marginLeft: { xs: 1, sm: 2 },
           marginRight: 1,
+          border: `0.5px solid ${theme.palette.divider}`,
           borderRadius: "18px",
-          boxShadow: "0 4px 8px rgba(0, 0, 0, 0.08)",
           overflow: "hidden"
         }}
       >
         <NewProjectButton/>
-        <Divider sx={{ marginLeft: 1, marginRight: 1 }} />
-        <Box 
+        <Box sx={{
+          height: "0.5px",
+          marginLeft: 1,
+          marginRight: 1,
+          background: theme.palette.divider,
+          opacity: isScrolledToTop ? 0 : 1
+        }} />
+        <Box
+          ref={scrollableAreaRef}
           sx={{
             flex: 1,
             overflowY: "auto",

@@ -2,7 +2,8 @@
 
 import { useState, useEffect } from "react"
 import { useSessionStorage } from "usehooks-ts"
-import { Box, IconButton, Stack, Tooltip, Divider, Collapse } from "@mui/material"
+import { Box, IconButton, Stack, Tooltip, Collapse } from "@mui/material"
+import { useTheme } from "@mui/material/styles"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faBars, faChevronLeft } from "@fortawesome/free-solid-svg-icons"
 import { isMac as checkIsMac } from "@/common"
@@ -26,6 +27,7 @@ const Header = ({
     setIsMac(checkIsMac())
   }, [isMac, setIsMac])
   const openCloseKeyboardShortcut = `(${isMac ? "⌘" : "^"} + .)`
+  const theme = useTheme()
   return (
     <Box>
       <Box sx={{ 
@@ -92,7 +94,9 @@ const Header = ({
           </Box>
         </Collapse>
       }
-      {showDivider && <Divider />}
+      {showDivider &&
+        <Box sx={{ height: "0.5px", background: theme.palette.divider }} />
+      }
     </Box>
   )
 }
