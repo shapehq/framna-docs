@@ -3,7 +3,8 @@ import { SessionProvider } from "next-auth/react"
 import { session, projectRepository } from "@/composition"
 import ErrorHandler from "@/common/ui/ErrorHandler"
 import SessionBarrier from "@/features/auth/view/SessionBarrier"
-import ServerSideCachedProjectsProvider from "@/features/projects/view/ServerSideCachedProjectsProvider"
+import ProjectsContextProvider from "@/features/projects/view/ProjectsContextProvider"
+import { SplitView } from "@/features/sidebar/view"
 
 export default async function Layout({ children }: { children: React.ReactNode }) {
   const isAuthenticated = await session.getIsAuthenticated()
@@ -15,9 +16,11 @@ export default async function Layout({ children }: { children: React.ReactNode }
     <ErrorHandler>
       <SessionProvider>
         <SessionBarrier>
-          <ServerSideCachedProjectsProvider projects={projects}>
-            {children}
-          </ServerSideCachedProjectsProvider>
+          <ProjectsContextProvider initialProjects={projects}>
+            <SplitView>
+              {children}
+            </SplitView>
+          </ProjectsContextProvider>
         </SessionBarrier>
       </SessionProvider>
     </ErrorHandler>

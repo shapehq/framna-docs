@@ -1,51 +1,47 @@
-import { useContext } from "react"
+import { Suspense } from "react"
+import ProjectListFallback from "./ProjectListFallback"
 import { Box, Typography } from "@mui/material"
-import { ProjectsContainerContext } from "@/common"
-import SpacedList from "@/common/ui/SpacedList"
-import { useProjectSelection } from "@/features/projects/data"
-import ProjectListItem, { Skeleton as ProjectListItemSkeleton } from "./ProjectListItem"
+import PopulatedProjectList from "./PopulatedProjectList"
+import { IProjectDataSource } from "@/features/projects/domain"
 
-const ProjectList = () => {
-  const { projects, isLoading } = useContext(ProjectsContainerContext)
-  const projectSelection = useProjectSelection()
-  const itemSpacing = 1
-  if (isLoading) {
-    return (
-      <SpacedList itemSpacing={itemSpacing}>
-        {
-          [...new Array(6)].map((_, idx) => (
-            <ProjectListItemSkeleton key={idx} />
-          ))
-        }
-      </SpacedList>
-    )
-  } else if (projects.length > 0) {
-    return (
-      <SpacedList itemSpacing={itemSpacing}>
-        {projects.map(project => (
-          <ProjectListItem
-            key={project.id}
-            project={project}
-            selected={project.id === projectSelection.project?.id}
-            onSelect={() => projectSelection.selectProject(project)}
-          />
-        ))}
-      </SpacedList>
-    )
-  } else {
-    return (
-      <Box sx={{
-        display: "flex",
-        justifyContent: "center",
-        padding: "15px",
-        marginTop: "15px"
-      }}>
-        <Typography variant="h5" align="center">
-          Your list of projects is empty.
-        </Typography>
-      </Box>
-    )
-  }
+const ProjectList = ({
+  projectDataSource
+}: {
+  projectDataSource: IProjectDataSource
+}) => {
+  return (
+    <Suspense fallback={<ProjectListFallback/>}>
+      <DataFetchingProjectList projectDataSource={projectDataSource}/>
+    </Suspense>
+  )
 }
 
 export default ProjectList
+
+const DataFetchingProjectList = async ({
+  projectDataSource
+}: {
+  projectDataSource: IProjectDataSource
+}) => {
+  const projects = await projectDataSource.getProjects()
+  if (projects.length > 0) {
+    return <PopulatedProjectList projects={projects} />
+  } else {
+    return <EmptyProjectList/>
+  }
+}
+
+const EmptyProjectList = () => {
+  return (
+    <Box sx={{
+      display: "flex",
+      justifyContent: "center",
+      padding: "15px",
+      marginTop: "15px"
+    }}>
+      <Typography variant="h5" align="center">
+        Your list of projects is empty.
+      </Typography>
+    </Box>
+  )
+}

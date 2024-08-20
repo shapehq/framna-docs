@@ -8,11 +8,11 @@ import ARROW_04 from "../../../../public/images/arrow_04.png"
 import ARROW_07 from "../../../../public/images/arrow_07.png"
 import { useSession } from "next-auth/react"
 import { useContext } from "react"
-import { ProjectsContainerContext } from "@/common"
+import { ProjectsContext } from "@/common"
 
 const ShowSectionsLayer = () => {
   const { data: session, status } = useSession()
-  const { projects, isLoading } = useContext(ProjectsContainerContext)
+  const { projects } = useContext(ProjectsContext)
   const isLoadingSession = status == "loading"
 
   return (
@@ -76,7 +76,7 @@ const ShowSectionsLayer = () => {
           </Typography>
       </Box>
 
-      {!isLoading &&
+      {projects.length > 0 &&
         <Box
           position="absolute"
           display={{ xs: "none", sm: "none", md: "flex"}}

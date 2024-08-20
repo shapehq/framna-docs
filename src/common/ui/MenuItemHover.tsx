@@ -1,3 +1,5 @@
+"use client"
+
 import { SxProps } from "@mui/system"
 import { Box } from "@mui/material"
 import useMediaQuery from "@mui/material/useMediaQuery"

@@ -4,14 +4,14 @@ import { useRouter, usePathname } from "next/navigation"
 import { useContext } from "react"
 import useMediaQuery from "@mui/material/useMediaQuery"
 import { useTheme } from "@mui/material/styles"
-import { ProjectsContainerContext } from "@/common"
+import { ProjectsContext } from "@/common"
 import { Project, ProjectNavigator, getProjectSelectionFromPath } from "../domain"
 import { useSidebarOpen } from "@/features/sidebar/data"
 
 export default function useProjectSelection() {
   const router = useRouter()
   const pathname = usePathname()
-  const { projects } = useContext(ProjectsContainerContext)
+  const { projects } = useContext(ProjectsContext)
   const selection = getProjectSelectionFromPath({ projects, path: pathname })
   const pathnameReader = {
     get pathname() {
