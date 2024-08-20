@@ -1,3 +1,5 @@
+"use client"
+
 import { SxProps } from "@mui/system"
 import { FormControl, Select, MenuItem, SelectChangeEvent } from "@mui/material"
 import MenuItemHover from "@/common/ui/MenuItemHover"
