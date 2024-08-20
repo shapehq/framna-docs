@@ -28,10 +28,14 @@ const VersionSelector = ({
       <Select
         defaultValue={selection}
         onChange={handleVersionChange}
-        sx={{ padding: 1, paddingLeft: 1.5, paddingRight: 1.5 }}
         inputProps={{
           IconComponent: () => null,
-          sx: { padding: "0 !important" }
+          sx: {
+              paddingTop: { xs: "10px !important", sm: "6px !important" },
+              paddingBottom: { xs: "10px !important", sm: "6px !important" },
+              paddingLeft: { xs: "15px !important", sm: "12px !important" },
+              paddingRight: { xs: "15px !important", sm: "12px !important" },
+          }
         }}
       >
         {versions.map(version => 
