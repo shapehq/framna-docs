@@ -13,8 +13,6 @@ import {
   Popover,
   Typography
 } from "@mui/material"
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
-import { faEllipsis } from "@fortawesome/free-solid-svg-icons"
 import MenuItemHover from "@/common/ui/MenuItemHover"
 import UserSkeleton from "./UserSkeleton"
 
@@ -90,12 +88,6 @@ const UserButtonWithSession = ({
                 </Typography>
               }
             </Box>
-            {user &&
-              <>
-                <Box sx={{flex: 1}} />
-                <FontAwesomeIcon icon={faEllipsis}/>
-              </>
-            }
           </Stack>
         </MenuItemHover>
       </ListItemButton>
