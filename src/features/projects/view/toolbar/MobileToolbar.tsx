@@ -1,8 +1,7 @@
 "use client"
 
 import { Stack } from "@mui/material"
-import VersionSelector from "./VersionSelector"
-import SpecificationSelector from "./SpecificationSelector"
+import Selector from "./Selector"
 import { useProjectSelection } from "../../data"
 
 const MobileToolbar = () => {
@@ -22,14 +21,14 @@ const MobileToolbar = () => {
       spacing={1}
       sx={{ display: { sm: "block", md: "none" } }}
     >
-      <VersionSelector
-        versions={project.versions}
+      <Selector
+        items={project.versions}
         selection={version.id}
         onSelect={selectVersion}
         sx={{ width: "100%" }}
       />
-      <SpecificationSelector
-        specifications={version.specifications}
+      <Selector
+        items={version.specifications}
         selection={specification.id}
         onSelect={selectSpecification}
         sx={{ width: "100%" }}

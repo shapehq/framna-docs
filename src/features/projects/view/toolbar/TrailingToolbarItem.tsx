@@ -2,8 +2,7 @@
 
 import { SxProps } from "@mui/system"
 import { Stack, IconButton, Typography, Link, Tooltip, Divider } from "@mui/material"
-import VersionSelector from "./VersionSelector"
-import SpecificationSelector from "./SpecificationSelector"
+import Selector from "./Selector"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faPenToSquare } from "@fortawesome/free-regular-svg-icons"
 import { useProjectSelection } from "../../data"
@@ -52,15 +51,15 @@ const TrailingToolbarItem = () => {
           sx={{ marginRight: 1 }}
         />
         <Typography variant="h6" sx={{ marginRight: 1 }}>/</Typography>
-        <VersionSelector
-          versions={project.versions}
+        <Selector
+          items={project.versions}
           selection={version.id}
           onSelect={selectVersion}
           sx={{ marginRight: 1 }}
         />
         <Typography variant="h6" sx={{ marginRight: 1 }}>/</Typography>
-        <SpecificationSelector
-          specifications={version.specifications}
+        <Selector
+          items={version.specifications}
           selection={specification.id}
           onSelect={selectSpecification}
           sx={{ marginRight: 0.5 }}

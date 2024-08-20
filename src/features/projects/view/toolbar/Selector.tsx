@@ -7,27 +7,34 @@ import {
   Typography
 } from "@mui/material"
 import MenuItemHover from "@/common/ui/MenuItemHover"
-import { Version } from "../../domain"
 
-const VersionSelector = ({
-  versions,
+interface SelectorItem {
+  readonly id: string
+  readonly name: string
+}
+
+interface SelectorProps {
+  items: SelectorItem[]
+  selection: string
+  onSelect: (itemId: string) => void
+  sx?: SxProps
+}
+
+const Selector = ({
+  items,
   selection,
   onSelect,
   sx
-}: {
-  versions: Version[]
-  selection: string
-  onSelect: (versionId: string) => void,
-  sx?: SxProps
-}) => {
-  const handleVersionChange = (event: SelectChangeEvent) => {
+}: SelectorProps) => {
+  const handleChange = (event: SelectChangeEvent) => {
     onSelect(event.target.value)
   }
+
   return (
     <FormControl sx={{ m: 1, margin: 0, ...sx }} size="small">
       <Select
         defaultValue={selection}
-        onChange={handleVersionChange}
+        onChange={handleChange}
         inputProps={{
           IconComponent: () => null,
           sx: {
@@ -38,22 +45,22 @@ const VersionSelector = ({
           }
         }}
       >
-        {versions.map(version => 
-          <MenuItem key={version.id} value={version.id}>
+        {items.map(item => (
+          <MenuItem key={item.id} value={item.id}>
             <MenuItemHover>
               <Typography sx={{
                 overflow: "hidden",
                 whiteSpace: "nowrap",
                 textOverflow: "ellipsis"
               }}>
-                {version.name}
+                {item.name}
               </Typography>
             </MenuItemHover>
           </MenuItem>
-        )}
+        ))}
       </Select>
     </FormControl>
   )
 }
 
-export default VersionSelector
+export default Selector
