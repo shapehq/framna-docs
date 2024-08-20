@@ -35,10 +35,9 @@ const EmptyProjectList = () => {
   return (
     <Typography
       variant="body2"
-        sx={{
+      sx={{
         margin: 2,
-        marginLeft: 4,
-        marginRight: 4
+        marginBottom: 4
       }}
     >
       Your list of projects is empty.
