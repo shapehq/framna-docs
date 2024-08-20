@@ -6,7 +6,8 @@ const Header = () => {
   const siteName = process.env.NEXT_PUBLIC_SHAPE_DOCS_TITLE
   return (
     <Box sx={{
-      marginTop: 2,
+      marginTop: 1.5,
+      marginBottom: 0.5,
       paddingLeft: { xs: 2, sm: 3 },
       minHeight: 64,
       display: "flex",
@@ -15,10 +16,8 @@ const Header = () => {
     }}>
       <Link
         href={"/"}
-        style={{
-          display: "flex",
+        sx={{
           alignItems: "center",
-          gap: "6px",
           width: "max-content"
         }}
       >
@@ -29,12 +28,6 @@ const Header = () => {
           height={45}
           priority={true}
         />
-        <Typography
-          variant="h6"
-          sx={{ fontWeight: 500 }}
-        >
-          {siteName}
-        </Typography>
       </Link>
     </Box>
   )
