@@ -7,18 +7,18 @@ type CustomTypographyVariant = TypographyVariant | 'body0' | 'body3';
 
 interface HighlightTextProps {
   content: string
-  highlight: string
-  color: string
+  highlight: string[]
+  color: string[]
   height?: string
-  isSolidOpacity?: boolean
+  opacity?: number
   isBoldText?: boolean
   variant?: CustomTypographyVariant
   sx?: SxProps
 }
 
 const HighlightSpan = styled.span<{
-    color: string; isSolidOpacity: boolean; height: string; isBoldText: boolean 
-  }>`
+  color: string; opacity: number; height: string; isBoldText: boolean 
+}>`
   position: relative;
   display: inline-block;
   ${({ isBoldText }) => isBoldText && "font-weight: 600"};
@@ -30,7 +30,7 @@ const HighlightSpan = styled.span<{
     height: ${({ height }) => height};
     width: 102%;
     background-color: ${({ color }) => color};
-    opacity: ${({ isSolidOpacity }) => isSolidOpacity ? .7 : .3};
+    opacity: ${({ opacity }) => opacity};
     transform: skewX(-2deg);
     mix-blend-mode: multiply;
   }
@@ -41,12 +41,21 @@ const HighlightText = ({
   highlight,
   color,
   height="50%",
-  isSolidOpacity=false,
+  opacity=3,
   isBoldText=false,
   variant,
   sx
 }: HighlightTextProps) => {
-  const parts = content.split(new RegExp(`(${highlight})`, 'gi'))
+  if (!highlight.length || !color.length) {
+    return (
+      <Typography variant={variant} sx={{ ...sx }}>
+        {content}
+      </Typography>
+    );
+  }
+
+  const parts = content.split(new RegExp(`(${highlight.join('|')})`, 'gi'));
+  const getColor = (index: number) => color[index % color.length];
 
   return (
     <Typography
@@ -57,12 +66,13 @@ const HighlightText = ({
         gap: 1,
       }}
     >
-      {parts.map((part, index) =>
-        part.toLowerCase() === highlight.toLowerCase() ? (
+      {parts.map((part, index) => {
+        const highlightIndex = highlight.findIndex(h => h.toLowerCase() === part.toLowerCase());
+        return highlightIndex !== -1 ? (
           <HighlightSpan
             key={`highlight-span-${index}`}
-            color={color}
-            isSolidOpacity={isSolidOpacity}
+            color={getColor(highlightIndex)}
+            opacity={opacity}
             height={height}
             isBoldText={isBoldText}>
             {part}
@@ -70,7 +80,7 @@ const HighlightText = ({
         ) : (
           part
         )
-      )}
+      })}
     </Typography>
   );
 };
