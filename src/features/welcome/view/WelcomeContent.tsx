@@ -1,8 +1,6 @@
-import HighlightText from "@/common/ui/HighlightText"
 import { Box, Typography } from "@mui/material"
-import { BASE_COLORS } from "@/common/theme/theme"
-import { env } from "@/common"
 import { grey } from "@mui/material/colors"
+import { env } from "@/common"
 
 const SITE_NAME = env.getOrThrow("NEXT_PUBLIC_SHAPE_DOCS_TITLE")
 
