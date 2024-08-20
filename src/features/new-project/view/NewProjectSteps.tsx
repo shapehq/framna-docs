@@ -54,8 +54,8 @@ const NewProjectSteps = ({
       {step.highlight ? 
         <HighlightText
           content={`${index + 1}. ${step.content}`}
-          highlight={step.highlight}
-          color={BASE_COLORS[2]}
+          highlight={[step.highlight]}
+          color={[BASE_COLORS[2]]}
           height="80%"
           variant="body3"
           sx={{ marginRight: { xs: 1 } }}
