@@ -1,9 +1,11 @@
 import { Box, Typography } from "@mui/material"
-import NewProjectSteps from "@/features/new-project/view/NewProjectSteps"
 import { env, splitOwnerAndRepository } from "@/common"
 import MessageLinkFooter from "@/common/ui/MessageLinkFooter"
+import dynamic from 'next/dynamic'
 
 const HELP_URL = env.get("FRAMNA_DOCS_HELP_URL")
+
+const NewProjectSteps = dynamic(() => import("@/features/new-project/view/NewProjectSteps"))
 
 const Page = () => {
   const repositoryNameSuffix = env.getOrThrow("REPOSITORY_NAME_SUFFIX")
