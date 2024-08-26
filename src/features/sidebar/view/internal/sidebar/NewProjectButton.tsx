@@ -6,12 +6,10 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faPlus } from "@fortawesome/free-solid-svg-icons"
 import { Template as ProjectListItemTemplate } from "./projects/ProjectListItem"
 import { Squircle as ProjectAvatarSquircle } from "./projects/ProjectAvatar"
-import { useTheme } from "@mui/material/styles"
 
 const NewProjectButton = () => {
   const router = useRouter()
   const pathname = usePathname()
-  const theme = useTheme()
   return (
     <List disablePadding>
       <ProjectListItemTemplate
