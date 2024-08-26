@@ -27,7 +27,7 @@
     "@octokit/core": "^6.1.2",
     "@octokit/webhooks": "^13.3.0",
     "@stoplight/elements": "^8.4.0",
-    "core-js": "^3.38.0",
+    "core-js": "^3.38.1",
     "encoding": "^0.1.13",
     "figma-squircle": "^0.3.1",
     "install": "^0.13.0",
