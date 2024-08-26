@@ -1,6 +1,5 @@
 import Image from "next/image"
-import Link from "next/link"
-import { Box } from "@mui/material"
+import { Link, Box } from "@mui/material"
 
 const Header = () => {
   const siteName = process.env.NEXT_PUBLIC_SHAPE_DOCS_TITLE
