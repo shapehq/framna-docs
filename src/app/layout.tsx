@@ -5,6 +5,7 @@ import { CssBaseline } from "@mui/material"
 import ThemeRegistry from "@/common/theme/ThemeRegistry"
 import "@fortawesome/fontawesome-svg-core/styles.css"
 import { env } from "@/common"
+import NextTopLoader from 'nextjs-toploader'
 
 fontAwesomeConfig.autoAddCss = false
 
@@ -17,9 +18,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en">
       <ThemeRegistry options={{ key: "mui" }}>
-        <body style={{ overflow: "hidden" }}>
+        <body>
           <CssBaseline/>
-          {children}
+            <NextTopLoader color="#000" height={1} showSpinner={false} speed={600} zIndex={1600} />
+            {children}
         </body>
       </ThemeRegistry>
     </html>
