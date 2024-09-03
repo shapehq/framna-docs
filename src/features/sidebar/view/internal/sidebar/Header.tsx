@@ -1,5 +1,5 @@
 import Image from "next/image"
-import { Link, Box } from "@mui/material"
+import { Box, Link, Typography } from "@mui/material"
 
 const Header = () => {
   const siteName = process.env.NEXT_PUBLIC_SHAPE_DOCS_TITLE
@@ -15,9 +15,12 @@ const Header = () => {
     }}>
       <Link
         href={"/"}
-        sx={{
+        style={{
+          display: "flex",
           alignItems: "center",
-          width: "max-content"
+          gap: "6px",
+          width: "max-content",
+          textDecoration: "none"
         }}
       >
         <Image
@@ -27,6 +30,9 @@ const Header = () => {
           height={45}
           priority={true}
         />
+        <Typography variant="h6">
+          {siteName}
+        </Typography>
       </Link>
     </Box>
   )
