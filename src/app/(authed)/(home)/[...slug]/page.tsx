@@ -1,11 +1,8 @@
 "use client"
 
 import { useEffect } from "react"
-import { Box, Stack } from "@mui/material"
+import { Box } from "@mui/material"
 import ErrorMessage from "@/common/ui/ErrorMessage"
-import SecondarySplitHeader from "@/features/sidebar/view/SecondarySplitHeader"
-import TrailingToolbarItem from "@/features/projects/view/toolbar/TrailingToolbarItem"
-import MobileToolbar from "@/features/projects/view/toolbar/MobileToolbar"
 import { updateWindowTitle } from "@/features/projects/domain"
 import { useProjectSelection } from "@/features/projects/data"
 import Documentation from "@/features/projects/view/Documentation"
@@ -28,23 +25,16 @@ export default function Page() {
     })
   }, [siteName, project, version, specification])
   return (
-    <Stack sx={{ height: "100%" }}>
-      {project &&
-        <SecondarySplitHeader mobileToolbar={<MobileToolbar/>}>
-          <TrailingToolbarItem/>
-        </SecondarySplitHeader>
+    <>
+      {project && version && specification &&
+        <Documentation url={specification.url} />
       }
-      <Box sx={{ flexGrow: 1, overflowY: "auto" }}>
-        {project && version && specification &&
-          <Documentation url={specification.url} />
-        }
-        {project && !version &&
-          <ErrorMessage text="The selected branch or tag was not found."/>
-        }
-        {project && !specification &&
-          <ErrorMessage text="The selected specification was not found."/>
-        }
-      </Box>
-    </Stack>
+      {project && !version &&
+        <ErrorMessage text="The selected branch or tag was not found."/>
+      }
+      {project && !specification &&
+        <ErrorMessage text="The selected specification was not found."/>
+      }
+    </>
   )
 }
