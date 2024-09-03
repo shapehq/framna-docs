@@ -24,8 +24,8 @@ const Sidebar = ({ children }: { children?: React.ReactNode }) => {
           }
         }}
       >
-        {children}
         <NewProjectButton/>
+        {children}
       </Box>
       <SidebarDivider/>
       <UserButton>
