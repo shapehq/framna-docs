@@ -15,6 +15,8 @@ import {
 } from "@mui/material"
 import MenuItemHover from "@/common/ui/MenuItemHover"
 import UserSkeleton from "./UserSkeleton"
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
+import { faEllipsis } from "@fortawesome/free-solid-svg-icons"
 
 const UserButton = ({ children }: { children: React.ReactNode }) => {
   const { data: session, status } = useSession()
@@ -88,6 +90,12 @@ const UserButtonWithSession = ({
                 </Typography>
               }
             </Box>
+            {user &&
+              <>
+                <Box sx={{flex: 1}} />
+                <FontAwesomeIcon icon={faEllipsis}/>
+              </>
+            }
           </Stack>
         </MenuItemHover>
       </ListItemButton>
