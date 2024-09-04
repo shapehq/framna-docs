@@ -6,10 +6,12 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faPlus } from "@fortawesome/free-solid-svg-icons"
 import { Template as ProjectListItemTemplate } from "./projects/ProjectListItem"
 import { Squircle as ProjectAvatarSquircle } from "./projects/ProjectAvatar"
+import useCloseSidebarOnSelection from "@/features/sidebar/data/useCloseSidebarOnSelection"
 
 const NewProjectButton = () => {
   const router = useRouter()
   const pathname = usePathname()
+  const { closeSidebarIfNeeded } = useCloseSidebarOnSelection()
   return (
     <List disablePadding sx={{ margin: 0 }}>
       <ProjectListItemTemplate
@@ -27,6 +29,7 @@ const NewProjectButton = () => {
           </ProjectAvatarSquircle>
         }
         onSelect={() => {
+          closeSidebarIfNeeded()
           router.push("/new")
         }}
       />

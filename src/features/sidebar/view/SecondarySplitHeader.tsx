@@ -1,33 +1,23 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useContext } from "react"
 import { useSessionStorage } from "usehooks-ts"
 import { Box, IconButton, Stack, Tooltip, Collapse } from "@mui/material"
-import { useTheme } from "@mui/material/styles"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faBars, faChevronLeft } from "@fortawesome/free-solid-svg-icons"
-import { isMac as checkIsMac } from "@/common"
+import { isMac as checkIsMac, SidebarTogglableContext } from "@/common"
 import { useSidebarOpen } from "@/features/sidebar/data"
 import ToggleMobileToolbarButton from "./internal/secondary/ToggleMobileToolbarButton"
 
 const SecondarySplitHeader = ({
   mobileToolbar,
-  children,
-  showDivider=true,
+  children
 }: {
   mobileToolbar?: React.ReactNode
-  children?: React.ReactNode,
-  showDivider?: boolean,
+  children?: React.ReactNode
 }) => {
   const [isSidebarOpen, setSidebarOpen] = useSidebarOpen()
-  const [isMac, setIsMac] = useState(false)
   const [isMobileToolbarVisible, setMobileToolbarVisible] = useSessionStorage("isMobileToolbarVisible", true)
-  useEffect(() => {
-    // checkIsMac uses window so we delay the check.
-    setIsMac(checkIsMac())
-  }, [isMac, setIsMac])
-  const openCloseKeyboardShortcut = `(${isMac ? "⌘" : "^"} + .)`
-  const theme = useTheme()
   return (
     <Box>
       <Box sx={{ 
@@ -39,38 +29,10 @@ const SecondarySplitHeader = ({
         height: 64,
         margin: "auto"
       }}>
-        {!isSidebarOpen &&
-          <Tooltip title={`Show Projects ${openCloseKeyboardShortcut}`}>
-            <IconButton
-              size="medium"
-              color="primary"
-              onClick={() => setSidebarOpen(true)}
-              edge="start"
-            >
-              <FontAwesomeIcon
-                icon={faBars}
-                size="sm"
-                style={{ aspectRatio: 1, padding: 2 }}
-              />
-            </IconButton>
-          </Tooltip>
-        }
-        {isSidebarOpen &&
-          <Tooltip title={`Hide Projects ${openCloseKeyboardShortcut}`}>
-            <IconButton
-              size="small"
-              color="primary"
-              onClick={() => setSidebarOpen(false)}
-              edge="start"
-            >
-            <FontAwesomeIcon
-              icon={faChevronLeft}
-              size="sm"
-              style={{ aspectRatio: 1, padding: 2 }}
-            />
-          </IconButton>
-          </Tooltip>
-        }
+        <ToggleSidebarButton
+          isSidebarOpen={isSidebarOpen}
+          onClick={setSidebarOpen}
+        />
         <Box sx={{ display: "flex", flexGrow: 1, justifyContent: "end" }}> 
           <Stack direction="row" alignItems="center">
             {children}
@@ -94,11 +56,43 @@ const SecondarySplitHeader = ({
           </Box>
         </Collapse>
       }
-      {showDivider &&
-        <Box sx={{ height: "0.5px", background: theme.palette.divider }} />
-      }
     </Box>
   )
 }
 
 export default SecondarySplitHeader
+
+const ToggleSidebarButton = ({
+  isSidebarOpen,
+  onClick
+}: {
+  isSidebarOpen: boolean,
+  onClick: (isSidebarOpen: boolean) => void
+}) => {
+  const [isMac, setIsMac] = useState(false)
+  useEffect(() => {
+    // checkIsMac uses window so we delay the check.
+    setIsMac(checkIsMac())
+  }, [isMac, setIsMac])
+  const isSidebarTogglable = useContext(SidebarTogglableContext)
+  const openCloseKeyboardShortcut = `(${isMac ? "⌘" : "^"} + .)`
+  const tooltip = isSidebarOpen ? "Show Projects" : "Hide Projects" 
+  return (
+    <Box sx={{ display: isSidebarTogglable ? "block" : "none" }}>
+    <Tooltip title={`${tooltip} ${openCloseKeyboardShortcut}`}>
+      <IconButton
+        size="medium"
+        color="primary"
+        onClick={() => onClick(!isSidebarOpen)}
+        edge="start"
+      >
+        <FontAwesomeIcon
+          icon={isSidebarOpen ? faChevronLeft : faBars}
+          size="sm"
+          style={{ aspectRatio: 1, padding: 2 }}
+        />
+      </IconButton>
+    </Tooltip>
+    </Box>
+  )
+}

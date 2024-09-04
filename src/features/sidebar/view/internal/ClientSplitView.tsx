@@ -1,10 +1,9 @@
 "use client"
 
-import { useEffect } from "react"
+import { useEffect, useContext } from "react"
 import { Stack } from "@mui/material"
-import { isMac, useKeyboardShortcut } from "@/common"
+import { isMac, useKeyboardShortcut, SidebarTogglableContext } from "@/common"
 import { useSidebarOpen } from "../../data"
-import { useProjectSelection } from "@/features/projects/data"
 import PrimaryContainer from "./primary/Container"
 import SecondaryContainer from "./secondary/Container"
 
@@ -16,23 +15,21 @@ const ClientSplitView = ({
   children?: React.ReactNode
 }) => {
   const [isSidebarOpen, setSidebarOpen] = useSidebarOpen()
-  const { project } = useProjectSelection()
-  const canToggleSidebar = project !== undefined
+  const isSidebarTogglable = useContext(SidebarTogglableContext)
   useEffect(() => {
-    // Show the sidebar if no project is selected.
-    if (!canToggleSidebar) {
+    if (!isSidebarTogglable && !isSidebarOpen) {
       setSidebarOpen(true)
     }
-  }, [canToggleSidebar, setSidebarOpen])
+  }, [isSidebarOpen, isSidebarTogglable])
   useKeyboardShortcut(event => {
     const isActionKey = isMac() ? event.metaKey : event.ctrlKey
     if (isActionKey && event.key === ".") {
       event.preventDefault()
-      if (canToggleSidebar) {
+      if (isSidebarTogglable) {
         setSidebarOpen(!isSidebarOpen)
       }
     }
-  }, [canToggleSidebar, setSidebarOpen])
+  }, [isSidebarTogglable, setSidebarOpen])
   const sidebarWidth = 320
   return (
     <Stack direction="row" spacing={0} sx={{ width: "100%", height: "100%" }}>

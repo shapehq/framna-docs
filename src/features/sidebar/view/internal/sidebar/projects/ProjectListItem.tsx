@@ -12,19 +12,22 @@ import {
 import MenuItemHover from "@/common/ui/MenuItemHover"
 import { Project } from "@/features/projects/domain"
 import { useProjectSelection } from "@/features/projects/data"
-import ProjectAvatar, {
-  Squircle as ProjectAvatarSquircle
-} from "./ProjectAvatar"
+import ProjectAvatar, { Squircle as ProjectAvatarSquircle } from "./ProjectAvatar"
+import { useCloseSidebarOnSelection } from "@/features/sidebar/data"
 
 const AVATAR_SIZE = { width: 40, height: 40 }
 
 const ProjectListItem = ({ project }: { project: Project }) => {
   const { project: selectedProject, selectProject } = useProjectSelection()
   const selected = project.id === selectedProject?.id
+  const { closeSidebarIfNeeded } = useCloseSidebarOnSelection()
   return (
     <Template
       selected={selected}
-      onSelect={() => selectProject(project)}
+      onSelect={() => {
+        closeSidebarIfNeeded()
+        selectProject(project)
+      }}
       avatar={
         <ProjectAvatar
           project={project}

@@ -16,7 +16,6 @@ const Sidebar = ({ children }: { children?: React.ReactNode }) => {
     if (!element) {
       return
     }
-    console.log(element.scrollTop)
     const threshold = 10
     setScrolledToTop(element.scrollTop < threshold)
     setScrolledToBottom(element.scrollHeight - element.scrollTop - element.clientHeight < threshold)

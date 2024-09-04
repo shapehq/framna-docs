@@ -1,26 +1,36 @@
+"use client"
+
 import Image from "next/image"
-import { Box, Link, Typography } from "@mui/material"
+import { Box, Button, Typography } from "@mui/material"
+import { useRouter } from "next/navigation"
+import { useCloseSidebarOnSelection } from "@/features/sidebar/data"
 
 const Header = () => {
   const siteName = process.env.NEXT_PUBLIC_SHAPE_DOCS_TITLE
+  const router = useRouter()
+  const { closeSidebarIfNeeded } = useCloseSidebarOnSelection()
   return (
     <Box sx={{
       marginTop: 1.5,
       marginBottom: 0.5,
-      paddingLeft: { xs: 2, sm: 3 },
+      paddingLeft: 2.1,
       minHeight: 64,
       display: "flex",
       justifyContent: "space-between",
       alignItems: "center"
     }}>
-      <Link
-        href={"/"}
-        style={{
+      <Button
+        sx={{
           display: "flex",
-          alignItems: "center",
+          padding: 0,
           gap: "6px",
-          width: "max-content",
-          textDecoration: "none"
+          "&:hover": {
+            backgroundColor: "transparent"
+          }
+        }}
+        onClick={() => {
+          closeSidebarIfNeeded()
+          router.push("/")
         }}
       >
         <Image
@@ -33,7 +43,7 @@ const Header = () => {
         <Typography variant="h6">
           {siteName}
         </Typography>
-      </Link>
+      </Button>
     </Box>
   )
 }

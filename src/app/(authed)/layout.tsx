@@ -5,7 +5,7 @@ import { Box } from "@mui/material"
 import ErrorHandler from "@/common/ui/ErrorHandler"
 import SessionBarrier from "@/features/auth/view/SessionBarrier"
 import ProjectsContextProvider from "@/features/projects/view/ProjectsContextProvider"
-import { SplitView } from "@/features/sidebar/view"
+import { SidebarTogglableContextProvider, SplitView } from "@/features/sidebar/view"
 
 export default async function Layout({ children }: { children: React.ReactNode }) {
   const isAuthenticated = await session.getIsAuthenticated()
@@ -18,11 +18,13 @@ export default async function Layout({ children }: { children: React.ReactNode }
       <SessionProvider>
         <SessionBarrier>
           <ProjectsContextProvider initialProjects={projects}>
-            <SplitView>
-              <RaisedMainContent>
-                {children}
-              </RaisedMainContent>
-            </SplitView>
+            <SidebarTogglableContextProvider>
+              <SplitView>
+                <RaisedMainContent>
+                  {children}
+                </RaisedMainContent>
+              </SplitView>
+            </SidebarTogglableContextProvider>
           </ProjectsContextProvider>
         </SessionBarrier>
       </SessionProvider>

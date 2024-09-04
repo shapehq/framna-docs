@@ -4,8 +4,15 @@ import SecondarySplitHeader from "@/features/sidebar/view/SecondarySplitHeader"
 export default function Page({ children }: { children: React.ReactNode }) {
   return (
     <Stack sx={{ height: "100%" }}>
-      <SecondarySplitHeader showDivider={false} />
-      <Box sx={{ flexGrow: 1, overflowY: "auto" }}>
+      <SecondarySplitHeader/>
+      <Box
+        sx={{
+          flexGrow: 1,
+          overflowY: "auto",
+          paddingLeft: 2,
+          paddingRight: 2
+        }}
+      >
         {children}
       </Box>
     </Stack>
