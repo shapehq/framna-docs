@@ -35,7 +35,7 @@ const Header = ({
         alignItems: "center",
         paddingLeft: 2,
         paddingRight: 2,
-        maxWidth: "1460px",
+        maxWidth: !isSidebarOpen ? "1460px" : undefined,
         height: 64,
         margin: "auto"
       }}>
