@@ -25,7 +25,6 @@ const SecondarySplitHeader = ({
         alignItems: "center",
         paddingLeft: 2,
         paddingRight: 2,
-        maxWidth: !isSidebarOpen ? "1460px" : undefined,
         height: 64,
         margin: "auto"
       }}>
