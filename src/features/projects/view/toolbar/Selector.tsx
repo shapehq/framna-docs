@@ -13,19 +13,17 @@ interface SelectorItem {
   readonly name: string
 }
 
-interface SelectorProps {
-  items: SelectorItem[]
-  selection: string
-  onSelect: (itemId: string) => void
-  sx?: SxProps
-}
-
 const Selector = ({
   items,
   selection,
   onSelect,
   sx
-}: SelectorProps) => {
+}: {
+  items: SelectorItem[]
+  selection: string
+  onSelect: (itemId: string) => void
+  sx?: SxProps
+}) => {
   const handleChange = (event: SelectChangeEvent) => {
     onSelect(event.target.value)
   }
