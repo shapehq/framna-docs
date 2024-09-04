@@ -11,7 +11,7 @@ const PopulatedProjectList = ({ projects }: { projects: Project[] }) => {
   const { setProjects } = useContext(ProjectsContext)
   useEffect(() => {
     setProjects(projects)
-  }, [])
+  }, [projects, setProjects])
   return (
     <SpacedList itemSpacing={1}>
       {projects.map(project => (

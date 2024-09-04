@@ -20,7 +20,7 @@ const ClientSplitView = ({
     if (!isSidebarTogglable && !isSidebarOpen) {
       setSidebarOpen(true)
     }
-  }, [isSidebarOpen, isSidebarTogglable])
+  }, [isSidebarOpen, isSidebarTogglable, setSidebarOpen])
   useKeyboardShortcut(event => {
     const isActionKey = isMac() ? event.metaKey : event.ctrlKey
     if (isActionKey && event.key === ".") {
