@@ -38,10 +38,10 @@ const Selector = ({
         inputProps={{
           IconComponent: () => null,
           sx: {
-              paddingTop: { xs: "10px !important", sm: "6px !important" },
-              paddingBottom: { xs: "10px !important", sm: "6px !important" },
-              paddingLeft: { xs: "15px !important", sm: "12px !important" },
-              paddingRight: { xs: "15px !important", sm: "12px !important" },
+            paddingTop: { xs: "10px !important", sm: "6px !important" },
+            paddingBottom: { xs: "10px !important", sm: "6px !important" },
+            paddingLeft: { xs: "15px !important", sm: "12px !important" },
+            paddingRight: { xs: "15px !important", sm: "12px !important" },
           }
         }}
       >
