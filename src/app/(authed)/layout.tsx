@@ -36,7 +36,7 @@ const RaisedMainContent = ({ children }: { children?: React.ReactNode }) => {
       <Box sx={{
         height: "100%",
         paddingTop: { xs: 0, sm: 2 },
-        marginLeft: { xs: 0, sm: 1 },
+        marginLeft: { xs: 0, sm: 2 },
         marginRight: { xs: 0, sm: 2 }
       }}>
         <Box sx={{
