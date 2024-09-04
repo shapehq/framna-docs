@@ -12,7 +12,7 @@ interface HighlightTextProps {
   sx?: SxProps
 }
 
-const HighlightSpan = styled.span<{}>`
+const HighlightSpan = styled.span`
   position: relative;
   display: inline-block;
   font-weight: 600;

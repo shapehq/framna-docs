@@ -1,7 +1,6 @@
 "use client"
 
 import { useEffect } from "react"
-import { Box } from "@mui/material"
 import ErrorMessage from "@/common/ui/ErrorMessage"
 import { updateWindowTitle } from "@/features/projects/domain"
 import { useProjectSelection } from "@/features/projects/data"
