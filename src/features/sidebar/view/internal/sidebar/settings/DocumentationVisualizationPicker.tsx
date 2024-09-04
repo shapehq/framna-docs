@@ -15,7 +15,7 @@ const DocumentationVisualizationPicker = ({ sx }: { sx?: SxProps }) => {
   return (
     <FormControl fullWidth sx={{ m: 1, minWidth: 120, margin: 0, ...sx }} size="small">
       <Select
-        defaultValue={value.toString()}
+        value={value.toString()}
         onChange={handleChange}
         MenuProps={{
           sx: {
