@@ -2,11 +2,19 @@
 
 import { Box, Stack } from "@mui/material"
 import { useTheme } from "@mui/material/styles"
-import SecondarySplitHeader from "@/features/sidebar/view/SecondarySplitHeader"
 import TrailingToolbarItem from "@/features/projects/view/toolbar/TrailingToolbarItem"
 import MobileToolbar from "@/features/projects/view/toolbar/MobileToolbar"
 import { useProjectSelection } from "@/features/projects/data"
 import NotFound from "@/features/projects/view/NotFound"
+import dynamic from "next/dynamic"
+import SecondaryHeaderPlaceholder from "@/features/sidebar/view/SecondarySplitHeaderPlaceholder"
+
+const SecondarySplitHeader = dynamic(() => import("@/features/sidebar/view/SecondarySplitHeader"),
+  {
+    loading: () => <SecondaryHeaderPlaceholder />,
+    ssr: false,
+  }
+)
 
 export default function Page({ children }: { children: React.ReactNode }) {
   const { project } = useProjectSelection()
