@@ -41,6 +41,7 @@ const Sidebar = ({ children }: { children?: React.ReactNode }) => {
           sx={{ 
             position: "absolute",
             top: 0,
+            zIndex: 100,
             transition: "opacity 0.2s ease",
             opacity: isScrolledToTop ? 0 : 1
           }}
@@ -66,7 +67,8 @@ const Sidebar = ({ children }: { children?: React.ReactNode }) => {
         <Shadow
           sx={{ 
             position: "absolute", 
-            bottom: 0, 
+            bottom: 0,
+            zIndex: 100,
             transform: "rotateX(180deg)",
             transition: "opacity 0.2s ease",
             opacity: isScrolledToBottom ? 0 : 1
