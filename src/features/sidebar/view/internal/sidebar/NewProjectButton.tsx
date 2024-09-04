@@ -20,7 +20,7 @@ const NewProjectButton = () => {
             width={40}
             height={40}
             sx={{ background: "#dfdfdf" }}
-            >
+          >
             <Stack sx={{ height: "100%" }} justifyContent="center">
               <FontAwesomeIcon icon={faPlus} size="lg" color="#bababa" />
             </Stack>
