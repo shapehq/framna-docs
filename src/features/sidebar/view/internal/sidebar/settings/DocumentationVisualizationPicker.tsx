@@ -7,11 +7,7 @@ import { softPaperSx } from "@/common/theme/theme"
 import { DocumentationVisualizer } from "@/features/settings/domain"
 import { useDocumentationVisualizer } from "@/features/settings/data"
 
-const DocumentationVisualizationPicker = ({
-  sx
-}: {
-  sx?: SxProps
-}) => {
+const DocumentationVisualizationPicker = ({ sx }: { sx?: SxProps }) => {
   const [value, setValue] = useDocumentationVisualizer()
   const handleChange = (event: SelectChangeEvent) => {
     setValue(parseInt(event.target.value))
