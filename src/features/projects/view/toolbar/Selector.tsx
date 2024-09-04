@@ -29,7 +29,6 @@ const Selector = ({
   const handleChange = (event: SelectChangeEvent) => {
     onSelect(event.target.value)
   }
-
   return (
     <FormControl sx={{ m: 1, margin: 0, ...sx }} size="small">
       <Select
