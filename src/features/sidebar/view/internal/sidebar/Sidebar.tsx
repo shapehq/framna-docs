@@ -9,12 +9,7 @@ const Sidebar = ({ children }: { children?: React.ReactNode }) => {
   return (
     <>
       <Header />
-      <Box sx={{
-        position: "relative",
-        flex: 1,
-        overflow: "hidden",
-        marginRight: "5px"
-      }}>
+      <Box sx={{ overflow: "hidden" }}>
         <SidebarScrollableArea>
           <NewProjectButton/>
           {children}
