@@ -10,7 +10,7 @@ import { isMac as checkIsMac } from "@/common"
 import { useSidebarOpen } from "@/features/sidebar/data"
 import ToggleMobileToolbarButton from "./internal/secondary/ToggleMobileToolbarButton"
 
-const Header = ({
+const SecondarySplitHeader = ({
   mobileToolbar,
   children,
   showDivider=true,
@@ -101,4 +101,4 @@ const Header = ({
   )
 }
 
-export default Header
+export default SecondarySplitHeader
