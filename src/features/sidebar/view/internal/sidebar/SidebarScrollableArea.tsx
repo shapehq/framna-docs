@@ -48,7 +48,7 @@ const SidebarScrollableArea = ({ children }: { children?: React.ReactNode }) => 
           top: 0,
           zIndex: 1,
           opacity: isScrolledToTop ? 0 : 1,
-          transition: "opacity 0.3s ease"
+          transition: "opacity 0.2s ease"
         }}
       />
       {children}
@@ -59,7 +59,7 @@ const SidebarScrollableArea = ({ children }: { children?: React.ReactNode }) => 
           zIndex: 1,
           transform: "rotateX(180deg)",
           opacity: isScrolledToBottom ? 0 : 1,
-          transition: "opacity 0.3s ease"
+          transition: "opacity 0.2s ease"
         }}
       />
     </Box>
