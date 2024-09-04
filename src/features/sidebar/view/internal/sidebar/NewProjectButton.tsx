@@ -11,7 +11,7 @@ const NewProjectButton = () => {
   const router = useRouter()
   const pathname = usePathname()
   return (
-    <List disablePadding>
+    <List disablePadding sx={{ margin: 0 }}>
       <ProjectListItemTemplate
         title="New Project"
         selected={pathname === "/new"}
