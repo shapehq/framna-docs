@@ -35,7 +35,8 @@ const Sidebar = ({ children }: { children?: React.ReactNode }) => {
       <Header />
       <Box sx={{
         position: "relative",
-        overflow: "hidden"
+        overflow: "hidden",
+        height: "100%"
       }}>
         <Shadow
           sx={{ 
