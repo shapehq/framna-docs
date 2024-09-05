@@ -1,21 +1,20 @@
+import { Box, Stack } from "@mui/material"
 import SecondarySplitHeader from "@/features/sidebar/view/SecondarySplitHeader"
-import { Box } from "@mui/material"
 
 export default function Page({ children }: { children: React.ReactNode }) {
   return (
-    <>
-      <Box width={1} display={{ xs: "flex", sm: "flex", md: "none"}}>
-        <SecondarySplitHeader showDivider={false} />
-      </Box>
+    <Stack sx={{ height: "100%" }}>
+      <SecondarySplitHeader/>
       <Box
-        display="flex"
-        alignItems="center"
-        justifyContent="center"
-        padding={{ xs: 4 }}
-        height={1}
+        sx={{
+          flexGrow: 1,
+          overflowY: "auto",
+          paddingLeft: 2,
+          paddingRight: 2
+        }}
       >
         {children}
       </Box>
-    </>
+    </Stack>
   )
 }

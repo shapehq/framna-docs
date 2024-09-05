@@ -13,10 +13,10 @@ import {
   Popover,
   Typography
 } from "@mui/material"
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
-import { faEllipsis } from "@fortawesome/free-solid-svg-icons"
 import MenuItemHover from "@/common/ui/MenuItemHover"
 import UserSkeleton from "./UserSkeleton"
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
+import { faEllipsis } from "@fortawesome/free-solid-svg-icons"
 
 const UserButton = ({ children }: { children: React.ReactNode }) => {
   const { data: session, status } = useSession()
@@ -85,7 +85,7 @@ const UserButtonWithSession = ({
             }
             <Box sx={{ marginLeft: "10px" }}>
               {user &&
-                <Typography sx={{ fontWeight: 600 }}>
+                <Typography sx={{ fontWeight: 500 }}>
                   {user.name || user.email}
                 </Typography>
               }

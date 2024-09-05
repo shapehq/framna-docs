@@ -2,11 +2,8 @@
 
 import { useRouter, usePathname } from "next/navigation"
 import { useContext } from "react"
-import useMediaQuery from "@mui/material/useMediaQuery"
-import { useTheme } from "@mui/material/styles"
 import { ProjectsContext } from "@/common"
 import { Project, ProjectNavigator, getProjectSelectionFromPath } from "../domain"
-import { useSidebarOpen } from "@/features/sidebar/data"
 
 export default function useProjectSelection() {
   const router = useRouter()
@@ -19,9 +16,6 @@ export default function useProjectSelection() {
     }
   }
   const projectNavigator = new ProjectNavigator({ router, pathnameReader })
-  const [, setSidebarOpen] = useSidebarOpen()
-  const theme = useTheme()
-  const isDesktopLayout = useMediaQuery(theme.breakpoints.up("sm"))
   return {
     get project() {
       return selection.project
@@ -33,9 +27,6 @@ export default function useProjectSelection() {
       return selection.specification
     },
     selectProject: (project: Project) => {
-      if (!isDesktopLayout) {
-        setSidebarOpen(false)
-      }
       const version = project.versions[0]
       const specification = version.specifications[0]
       projectNavigator.navigate(

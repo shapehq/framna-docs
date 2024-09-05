@@ -1,15 +1,17 @@
 import React from "react"
-import { List, Box } from "@mui/material"
+import { List, Box, SxProps } from "@mui/material"
 
 const SpacedList = ({
-  children,
-  itemSpacing
+  itemSpacing,
+  sx,
+  children
 }: {
-  children: React.ReactNode
   itemSpacing: number
+  sx?: SxProps
+  children?: React.ReactNode
 }) => {
   return (
-    <List disablePadding sx={{ margin: 0 }}>
+    <List disablePadding sx={{ ...sx }}>
       {React.Children.map(children, (child, idx) => (
         <Box sx={{
           marginBottom: idx < React.Children.count(children) - 1 ? itemSpacing : 0

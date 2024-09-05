@@ -6,7 +6,6 @@ import {
 import NewProjectForm from "./NewProjectForm"
 import { splitOwnerAndRepository } from "@/common"
 import HighlightText from "@/common/ui/HighlightText"
-import { BASE_COLORS } from "@/common/theme/theme"
 import { Fragment } from "react"
 
 interface NewProjectStepsProps {
@@ -29,21 +28,16 @@ const NewProjectSteps = ({
   const steps: StepType[] = [
     {
       id: "create-new-repository",
-      content: `Create a new repository using our ${templateName ? splitOwnerAndRepository(templateName)?.repository : ""} template`,
+      content: `Create a new repository using our ${templateName ? splitOwnerAndRepository(templateName)?.repository : ""} template.`,
       highlight: "Create a new repository",
     },
     {
-      content: "Add OpenAPI specification",
-      highlight: "Add OpenAPI",
+      content: "Add your OpenAPI specification.",
+      highlight: "OpenAPI specification",
     },
     {
-      content: "Customize Your Project",
-      highlight: "Customize",
-
-    },
-    {
-      content: "Ready to start!",
-      highlight: "",
+      content: "Ready to browse documentation! 🚀",
+      highlight: "Ready",
     }
   ]
 
@@ -55,11 +49,8 @@ const NewProjectSteps = ({
         <HighlightText
           content={`${index + 1}. ${step.content}`}
           highlight={[step.highlight]}
-          color={[BASE_COLORS[2]]}
-          height="80%"
           variant="body3"
           sx={{ marginRight: { xs: 1 } }}
-          isBoldText
         /> :
         <Typography
           variant="body3"

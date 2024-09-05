@@ -1,5 +1,7 @@
 "use client"
 
+import { Box, Stack } from "@mui/material"
+import { useTheme } from "@mui/material/styles"
 import SecondarySplitHeader from "@/features/sidebar/view/SecondarySplitHeader"
 import TrailingToolbarItem from "@/features/projects/view/toolbar/TrailingToolbarItem"
 import MobileToolbar from "@/features/projects/view/toolbar/MobileToolbar"
@@ -8,26 +10,30 @@ import NotFound from "@/features/projects/view/NotFound"
 
 export default function Page({ children }: { children: React.ReactNode }) {
   const { project } = useProjectSelection()
-  if (!project) {
-    return (
-      <>
-        <SecondarySplitHeader showDivider={false} >
-          <TrailingToolbarItem/>
-        </SecondarySplitHeader>
-        <main style={{ flexGrow: "1", overflowY: "auto" }}>
-          <NotFound />
-        </main>
-      </>
-    )
-  }
+  const theme = useTheme()
   return (
-    <>
-      <SecondarySplitHeader mobileToolbar={<MobileToolbar/>}>
-        <TrailingToolbarItem/>
-      </SecondarySplitHeader>
-      <main style={{ flexGrow: "1", overflowY: "auto" }}>
-        {children}
-      </main>
-    </>
+    <Stack sx={{ height: "100%" }}>
+      {!project &&
+        <>
+          <SecondarySplitHeader>
+            <TrailingToolbarItem/>
+          </SecondarySplitHeader>
+          <main style={{ flexGrow: "1", overflowY: "auto" }}>
+            <NotFound />
+          </main>
+        </>
+      }
+      {project &&
+        <>
+          <SecondarySplitHeader mobileToolbar={<MobileToolbar/>}>
+            <TrailingToolbarItem/>
+          </SecondarySplitHeader>
+          <Box sx={{ height: "0.5px", background: theme.palette.divider }} />
+          <main style={{ flexGrow: "1", overflowY: "auto" }}>
+            {children}
+          </main>
+        </>
+      }
+    </Stack>
   )
 }

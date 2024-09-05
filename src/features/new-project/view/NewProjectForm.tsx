@@ -97,10 +97,11 @@ return (
           href={newGitHubRepositoryLink}
           target="_blank" 
           rel="noopener noreferrer"
-          variant="contained"
+          variant="outlined"
           color="primary"
           size="large"
           sx={{ height: 56, width: 1 }}
+          disableElevation
         >
           Create Repository
         </Button>

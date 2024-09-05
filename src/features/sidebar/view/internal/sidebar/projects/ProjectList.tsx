@@ -1,6 +1,6 @@
 import { Suspense } from "react"
+import { Typography } from "@mui/material"
 import ProjectListFallback from "./ProjectListFallback"
-import { Box, Typography } from "@mui/material"
 import PopulatedProjectList from "./PopulatedProjectList"
 import { IProjectDataSource } from "@/features/projects/domain"
 
@@ -33,15 +33,14 @@ const DataFetchingProjectList = async ({
 
 const EmptyProjectList = () => {
   return (
-    <Box sx={{
-      display: "flex",
-      justifyContent: "center",
-      padding: "15px",
-      marginTop: "15px"
-    }}>
-      <Typography variant="h5" align="center">
-        Your list of projects is empty.
-      </Typography>
-    </Box>
+    <Typography
+      variant="body2"
+      sx={{
+        margin: 2,
+        marginBottom: 4
+      }}
+    >
+      Your list of projects is empty.
+    </Typography>
   )
 }

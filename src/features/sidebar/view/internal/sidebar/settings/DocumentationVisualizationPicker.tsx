@@ -1,3 +1,5 @@
+"use client"
+
 import { SxProps } from "@mui/system"
 import { FormControl, Select, MenuItem, SelectChangeEvent } from "@mui/material"
 import MenuItemHover from "@/common/ui/MenuItemHover"
@@ -5,11 +7,7 @@ import { softPaperSx } from "@/common/theme/theme"
 import { DocumentationVisualizer } from "@/features/settings/domain"
 import { useDocumentationVisualizer } from "@/features/settings/data"
 
-const DocumentationVisualizationPicker = ({
-  sx
-}: {
-  sx?: SxProps
-}) => {
+const DocumentationVisualizationPicker = ({ sx }: { sx?: SxProps }) => {
   const [value, setValue] = useDocumentationVisualizer()
   const handleChange = (event: SelectChangeEvent) => {
     setValue(parseInt(event.target.value))
@@ -17,7 +15,7 @@ const DocumentationVisualizationPicker = ({
   return (
     <FormControl fullWidth sx={{ m: 1, minWidth: 120, margin: 0, ...sx }} size="small">
       <Select
-        defaultValue={value.toString()}
+        value={value.toString()}
         onChange={handleChange}
         MenuProps={{
           sx: {

@@ -1,13 +1,16 @@
 import { createTheme } from "@mui/material/styles"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faCaretDown } from "@fortawesome/free-solid-svg-icons"
+import "@fontsource/poppins/400.css"
+import "@fontsource/poppins/500.css"
+import "@fontsource/poppins/700.css"
 
 export const BASE_COLORS = ["#01BBFE", "#00AE47", "#FCB23D"]
 
 export const softPaperSx = {
-  boxShadow: "0px 5px 15px rgba(0, 0, 0, 0.1)",
+  boxShadow: "0px 5px 15px rgba(0, 0, 0, 0.08)",
   border: "1px solid rgba(0, 0, 0, 0.05)",
-  borderRadius: "12px"
+  borderRadius: "18px"
 }
 
 declare module "@mui/material/styles" {
@@ -38,17 +41,25 @@ const theme = () => createTheme({
       },
       secondary: {
         main: "#000000"
-      }
+      },
+      background: {
+        default: "#f8f8f8"
+      },
+      divider: "#dbdbdb"
     },
     typography: {
       fontFamily: [
-        "-apple-system",
-        "BlinkMacSystemFont",
-        "\"Segoe UI\"",
-        "Roboto",
-        "\"Helvetica Neue\"",
-        "Arial",
-        "sans-serif"
+        'Poppins',
+        '-apple-system',
+        'BlinkMacSystemFont',
+        '"Segoe UI"',
+        'Roboto',
+        '"Helvetica Neue"',
+        'Arial',
+        'sans-serif',
+        '"Apple Color Emoji"',
+        '"Segoe UI Emoji"',
+        '"Segoe UI Symbol"'
       ].join(","),
       button: {
         textTransform: "none"
@@ -76,18 +87,34 @@ const theme = () => createTheme({
           disableRipple: true
         }
       },
+      MuiInputBase: {
+        styleOverrides: {
+          root: () => ({
+            ".MuiOutlinedInput-notchedOutline": {
+              borderColor: "#c4c4c4"
+            },
+            "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+              borderWidth: "1px !important"
+            }
+          })
+        }
+      },
       MuiSelect: {
         styleOverrides: {
           root: () => ({
             borderRadius: "20px",
             "&:hover": {
-              background: "rgba(0, 0, 0, 0.05)"
+              background: "#f2f2f2"
+            },
+            "&:hover .MuiOutlinedInput-notchedOutline": {
+              borderColor: "#f2f2f2 !important",
+              borderWidth: "1px"
             },
             ".MuiOutlinedInput-notchedOutline": {
-              borderColor: "black"
+              borderColor: "#c4c4c4"
             },
             "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-              borderColor: "black",
+              borderColor: "#c4c4c4",
               borderWidth: "1px"
             }
           })
@@ -133,7 +160,7 @@ const theme = () => createTheme({
             },
             "& li.Mui-selected": {
               background: "transparent",
-              fontWeight: "bold"
+              fontWeight: 700
             },
             "& li:hover, & li.Mui-selected.Mui-focusVisible, & li.Mui-selected:hover, && .Mui-selected, && .Mui-selected:hover, & .MuiListItemButton-root:hover": { 
               background: "transparent"
