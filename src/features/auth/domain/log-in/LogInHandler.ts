@@ -45,7 +45,7 @@ export default class LogInHandler implements ILogInHandler {
     try {
       await this.oauthTokenRepository.set(`${userId}`, { accessToken, refreshToken })
       return true
-    } catch (error) {
+    } catch {
       return false
     }
   }

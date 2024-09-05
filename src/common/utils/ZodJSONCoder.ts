@@ -11,7 +11,7 @@ export default class ZodJSONCoder {
     let obj: any | undefined
     try {
       obj = JSON.parse(string)
-    } catch(error) {
+    } catch {
       throw new Error("Could not parse JSON.")
     }
     return schema.parse(obj)

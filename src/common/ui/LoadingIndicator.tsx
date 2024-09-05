@@ -2,10 +2,8 @@
 
 import { useState, useEffect } from "react" 
 import { Box, Typography } from "@mui/material"
-import { useTheme } from "@mui/material/styles"
 
 const LoadingIndicator = () => {
-  const theme = useTheme()
   const [count, setCount] = useState(0)
   useEffect(() => {
     const timer = setInterval(() => {
@@ -23,8 +21,7 @@ const LoadingIndicator = () => {
       justifyContent: "center",
       alignItems: "center",
       height: "100%",
-      width: "100%",
-      background: theme.palette.background.default
+      width: "100%"
     }}>
       {Array.from(Array(3).keys()).map((e) => {
         return (

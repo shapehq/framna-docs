@@ -2,6 +2,9 @@ name: Test SQL Queries
 on:
   workflow_dispatch:
   pull_request:
+env:
+  PGPASSWORD: postgres
+  DATABASE_NAME: testdb
 jobs:
   test:
     name: Test SQL Queries
@@ -18,8 +21,8 @@ jobs:
           --health-retries=5
         env:
           POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: postgres
-          POSTGRES_DB: testdb
+          POSTGRES_PASSWORD: ${{ env.PGPASSWORD }}
+          POSTGRES_DB: ${{ env.DATABASE_NAME }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -29,10 +32,20 @@ jobs:
             sleep 1
           done
       - name: Run create-tables.sql
-        env:
-          PGPASSWORD: postgres
-        run: psql -h localhost -U postgres -d testdb -f create-tables.sql
+        run: psql -v ON_ERROR_STOP=1 -h localhost -U postgres -d ${{ env.DATABASE_NAME }} -f create-tables.sql
+      - name: Ensure tables were created
+        run: |
+          COUNT=$(psql -v ON_ERROR_STOP=1 -h localhost -U postgres -d ${{ env.DATABASE_NAME }} -t -A -c "SELECT count(*) FROM information_schema.tables WHERE table_schema = 'public';")
+          if [ "$COUNT" -eq 0 ]; then
+            echo "No tables found. Exiting with error."
+            exit 1
+          fi
       - name: Run drop-tables.sql
-        env:
-          PGPASSWORD: postgres
-        run: psql -h localhost -U postgres -d testdb -f drop-tables.sql
+        run: psql -v ON_ERROR_STOP=1 -h localhost -U postgres -d ${{ env.DATABASE_NAME }} -f drop-tables.sql
+      - name: Ensure all tables were dropped
+        run: |
+          COUNT=$(psql -v ON_ERROR_STOP=1 -h localhost -U postgres -d ${{ env.DATABASE_NAME }} -t -A -c "SELECT count(*) FROM information_schema.tables WHERE table_schema = 'public';")
+          if [ "$COUNT" -gt 0 ]; then
+            echo "Tables found: $count. Exiting with error."
+            exit 1
+          fi

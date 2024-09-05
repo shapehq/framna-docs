@@ -1,19 +1,16 @@
 "use client"
 
 import { createContext } from "react"
-import { Project, } from "@/features/projects/domain"
+import { Project } from "@/features/projects/domain"
 
-export const SidebarContext = createContext<{ isToggleable: boolean }>({ isToggleable: true })
+export const SidebarTogglableContext = createContext<boolean>(true)
 
-type ProjectsContainer = {
-  readonly projects: Project[]
-  readonly isLoading: boolean
-  readonly error?: Error
+type ProjectsContextValue = {
+  projects: Project[],
+  setProjects: (projects: Project[]) => void
 }
 
-export const ProjectsContainerContext = createContext<ProjectsContainer>({
-  isLoading: true,
-  projects: []
+export const ProjectsContext = createContext<ProjectsContextValue>({
+  projects: [],
+  setProjects: () => {}
 })
-
-export const ServerSideCachedProjectsContext = createContext<Project[] | undefined>(undefined)

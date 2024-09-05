@@ -1,11 +1,12 @@
 "use client"
 
+import { BASE_COLORS } from "@/common/theme/theme"
 import { Box, Typography, SxProps } from "@mui/material"
 import { useEffect, useState, useMemo } from "react"
 
 const SignInTexts = ({ prefix }: { prefix: string }) => {
   const getRandomTextColor = ({ excluding }: { excluding?: string }) => {
-    const colors = ["#01BBFE", "#00AE47", "#FCB23D"]
+    const colors = BASE_COLORS
       .filter(e => e !== excluding)
     return colors[Math.floor(Math.random() * colors.length)]
   }

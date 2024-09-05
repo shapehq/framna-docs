@@ -1,5 +1,8 @@
+"use client"
+
 import { SxProps } from "@mui/system"
 import { Drawer as MuiDrawer } from "@mui/material"
+import { useTheme } from "@mui/material/styles"
 
 const PrimaryContainer = ({
   width,
@@ -56,6 +59,7 @@ const _PrimaryContainer = ({
   sx: SxProps,
   children?: React.ReactNode
 }) => {
+  const theme = useTheme()
   return (
     <MuiDrawer
       variant={variant}
@@ -66,13 +70,15 @@ const _PrimaryContainer = ({
         keepMounted: keepMounted || false
       }}
       sx={{ 
-       ...sx,
-       width: width,
-       flexShrink: 0,
-       "& .MuiDrawer-paper": {
-         width: width,
-         boxSizing: "border-box"
-       }
+        ...sx,
+        width: width,
+        flexShrink: 0,
+        "& .MuiDrawer-paper": {
+          width: width,
+          boxSizing: "border-box",
+          borderRight: 0,
+          background: theme.palette.background.default
+        }
      }}
     >
       {children}

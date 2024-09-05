@@ -1,11 +1,10 @@
 "use client"
 
 import { SxProps } from "@mui/system"
-import { Stack, IconButton, Typography, Link, Tooltip } from "@mui/material"
-import VersionSelector from "./VersionSelector"
-import SpecificationSelector from "./SpecificationSelector"
+import { Stack, IconButton, Typography, Link, Tooltip, Divider } from "@mui/material"
+import Selector from "./Selector"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
-import { faPen } from "@fortawesome/free-solid-svg-icons"
+import { faPenToSquare } from "@fortawesome/free-regular-svg-icons"
 import { useProjectSelection } from "../../data"
 
 const TrailingToolbarItem = () => {
@@ -52,28 +51,35 @@ const TrailingToolbarItem = () => {
           sx={{ marginRight: 1 }}
         />
         <Typography variant="h6" sx={{ marginRight: 1 }}>/</Typography>
-        <VersionSelector
-          versions={project.versions}
+        <Selector
+          items={project.versions}
           selection={version.id}
           onSelect={selectVersion}
           sx={{ marginRight: 1 }}
         />
         <Typography variant="h6" sx={{ marginRight: 1 }}>/</Typography>
-        <SpecificationSelector
-          specifications={version.specifications}
+        <Selector
+          items={version.specifications}
           selection={specification.id}
           onSelect={selectSpecification}
           sx={{ marginRight: 0.5 }}
         />
         {specification.editURL &&
+          <Divider orientation="vertical" flexItem sx={{ marginLeft: 1, marginRight: 1 }} />
+        }
+        {specification.editURL &&
           <Tooltip title={`Edit ${specification.name}`}>
             <IconButton
               href={specification.editURL}
               target="_blank"
-              color="primary"
+              color="secondary"
               edge="end"
             >
-              <FontAwesomeIcon icon={faPen} size="xs" style={{ aspectRatio: 1, padding: 2 }} />
+              <FontAwesomeIcon
+                icon={faPenToSquare}
+                size="xs"
+                style={{ aspectRatio: 1, padding: 2 }}
+              />
             </IconButton>
           </Tooltip>
         }

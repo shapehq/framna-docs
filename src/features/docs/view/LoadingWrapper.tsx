@@ -24,7 +24,6 @@ const LoadingWrapper = ({
         width: "100%",
         height: "100%",
         position: "absolute",
-        background: "white",
         opacity: showLoadingIndicator ? 0 : 1
       }}>
         {children}

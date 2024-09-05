@@ -2,15 +2,14 @@
 
 import { useState, useEffect, useContext } from "react"
 import { useSessionStorage } from "usehooks-ts"
-import { Box, IconButton, Stack, Tooltip, Divider, Collapse } from "@mui/material"
+import { Box, IconButton, Stack, Tooltip, Collapse } from "@mui/material"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faBars, faChevronLeft } from "@fortawesome/free-solid-svg-icons"
-import { useTheme } from "@mui/material/styles"
-import { SidebarContext, isMac as checkIsMac } from "@/common"
+import { isMac as checkIsMac, SidebarTogglableContext } from "@/common"
 import { useSidebarOpen } from "@/features/sidebar/data"
 import ToggleMobileToolbarButton from "./internal/secondary/ToggleMobileToolbarButton"
 
-const Header = ({
+const SecondarySplitHeader = ({
   mobileToolbar,
   children
 }: {
@@ -18,62 +17,21 @@ const Header = ({
   children?: React.ReactNode
 }) => {
   const [isSidebarOpen, setSidebarOpen] = useSidebarOpen()
-  const [isMac, setIsMac] = useState(false)
-  const { isToggleable: isSidebarToggleable } = useContext(SidebarContext)
   const [isMobileToolbarVisible, setMobileToolbarVisible] = useSessionStorage("isMobileToolbarVisible", true)
-  useEffect(() => {
-    // checkIsMac uses window so we delay the check.
-    setIsMac(checkIsMac())
-  }, [isMac, setIsMac])
-  const openCloseKeyboardShortcut = `(${isMac ? "⌘" : "^"} + .)`
-  const theme = useTheme()
   return (
-    <Box
-      sx={{
-        backgroundColor: theme.palette.background.default,
-        color: theme.palette.text.primary,
-      }}
-    >
+    <Box>
       <Box sx={{ 
         display: "flex",
         alignItems: "center",
-        padding: 2,
-        maxWidth: "1460px",
-        margin: "auto",
-        height: 80 
+        paddingLeft: 2,
+        paddingRight: 2,
+        height: 64,
+        margin: "auto"
       }}>
-        {isSidebarToggleable && !isSidebarOpen &&
-          <Tooltip title={`Show Projects ${openCloseKeyboardShortcut}`}>
-            <IconButton
-              size="medium"
-              color="primary"
-              onClick={() => setSidebarOpen(true)}
-              edge="start"
-            >
-              <FontAwesomeIcon
-                icon={faBars}
-                size="sm"
-                style={{ aspectRatio: 1, padding: 2 }}
-              />
-            </IconButton>
-          </Tooltip>
-        }
-        {isSidebarToggleable && isSidebarOpen &&
-          <Tooltip title={`Hide Projects ${openCloseKeyboardShortcut}`}>
-            <IconButton
-              size="small"
-              color="primary"
-              onClick={() => setSidebarOpen(false)}
-              edge="start"
-            >
-            <FontAwesomeIcon
-              icon={faChevronLeft}
-              size="sm"
-              style={{ aspectRatio: 1, padding: 2 }}
-            />
-          </IconButton>
-          </Tooltip>
-        }
+        <ToggleSidebarButton
+          isSidebarOpen={isSidebarOpen}
+          onClick={setSidebarOpen}
+        />
         <Box sx={{ display: "flex", flexGrow: 1, justifyContent: "end" }}> 
           <Stack direction="row" alignItems="center">
             {children}
@@ -97,9 +55,43 @@ const Header = ({
           </Box>
         </Collapse>
       }
-      <Divider/>
     </Box>
   )
 }
 
-export default Header
+export default SecondarySplitHeader
+
+const ToggleSidebarButton = ({
+  isSidebarOpen,
+  onClick
+}: {
+  isSidebarOpen: boolean,
+  onClick: (isSidebarOpen: boolean) => void
+}) => {
+  const [isMac, setIsMac] = useState(false)
+  useEffect(() => {
+    // checkIsMac uses window so we delay the check.
+    setIsMac(checkIsMac())
+  }, [isMac, setIsMac])
+  const isSidebarTogglable = useContext(SidebarTogglableContext)
+  const openCloseKeyboardShortcut = `(${isMac ? "⌘" : "^"} + .)`
+  const tooltip = isSidebarOpen ? "Show Projects" : "Hide Projects" 
+  return (
+    <Box sx={{ display: isSidebarTogglable ? "block" : "none" }}>
+    <Tooltip title={`${tooltip} ${openCloseKeyboardShortcut}`}>
+      <IconButton
+        size="medium"
+        color="primary"
+        onClick={() => onClick(!isSidebarOpen)}
+        edge="start"
+      >
+        <FontAwesomeIcon
+          icon={isSidebarOpen ? faChevronLeft : faBars}
+          size="sm"
+          style={{ aspectRatio: 1, padding: 2 }}
+        />
+      </IconButton>
+    </Tooltip>
+    </Box>
+  )
+}

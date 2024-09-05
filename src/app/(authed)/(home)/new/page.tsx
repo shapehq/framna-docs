@@ -1,56 +1,40 @@
-import Link from "next/link"
+import { Box, Typography } from "@mui/material"
+import NewProjectSteps from "@/features/new-project/view/NewProjectSteps"
 import { env, splitOwnerAndRepository } from "@/common"
+import MessageLinkFooter from "@/common/ui/MessageLinkFooter"
+
+const HELP_URL = env.get("NEXT_PUBLIC_SHAPE_DOCS_HELP_URL")
 
 const Page = () => {
   const repositoryNameSuffix = env.getOrThrow("REPOSITORY_NAME_SUFFIX")
   const templateName = env.get("NEW_PROJECT_TEMPLATE_REPOSITORY")
-  const projectName = "Nordisk Film"
-  const suffixedRepositoryName = makeFullRepositoryName({
-    name: projectName,
-    suffix: repositoryNameSuffix
-  })
-  const newGitHubRepositoryLink = makeNewGitHubRepositoryLink({
-    templateName,
-    repositoryName: suffixedRepositoryName,
-    description: `Contains OpenAPI specifications for ${projectName}`
-  })
+  const ownerRepository = templateName ? splitOwnerAndRepository(templateName)?.owner : undefined
   return (
-    <Link href={newGitHubRepositoryLink}>
-      {newGitHubRepositoryLink}
-    </Link>
+    <Box
+      display="flex"
+      alignItems="center"
+      justifyContent="center"
+      flexDirection="column"
+      height={1}
+      width={1}
+      gap={6}
+    >
+      <Typography variant="h4">
+        Add a new project
+      </Typography>
+      <NewProjectSteps 
+        repositoryNameSuffix={repositoryNameSuffix}
+        templateName={templateName}
+        ownerRepository={ownerRepository}
+      />
+      {HELP_URL && 
+        <MessageLinkFooter
+          url={HELP_URL}
+          content="Need help? Explore our wiki for more info."
+        />
+      }
+    </Box>
   )
 }
 
 export default Page
-
-function makeFullRepositoryName({ name, suffix }: { name: string, suffix: string }) {
-  const safeRepositoryName = name
-    .trim()
-    .toLowerCase()
-    .replace(/[^a-z0-9-]+/g, "")
-    .replace(/\s+/g, "-")
-  return `${safeRepositoryName}${suffix}`
-}
-
-function makeNewGitHubRepositoryLink({
-  templateName,
-  repositoryName,
-  description
-}: {
-  templateName?: string,
-  repositoryName: string,
-  description: string
-}) {
-  let url = `https://github.com/new`
-    + `?name=${encodeURIComponent(repositoryName)}`
-    + `&description=${encodeURIComponent(description)}`
-    + `&visibility=private`
-  if (templateName) {
-    const templateRepository = splitOwnerAndRepository(templateName)
-    if (templateRepository) {
-      url += `&template_owner=${encodeURIComponent(templateRepository.owner)}`
-      url += `&template_name=${encodeURIComponent(templateRepository.repository)}`
-    }
-  }
-  return url
-}
