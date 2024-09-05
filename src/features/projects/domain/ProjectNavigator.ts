@@ -1,4 +1,3 @@
-import * as NProgress from "nprogress"
 import Project from "./Project"
 
 interface IPathnameReader {
@@ -34,7 +33,6 @@ export default class ProjectNavigator {
     const candidateSpecification = newVersion.specifications.find(e => {
       return e.name == preferredSpecificationName
     })
-    NProgress.start()
     if (candidateSpecification) {
       this.router.push(`/${project.owner}/${project.name}/${newVersion.id}/${candidateSpecification.id}`)
     } else {
@@ -49,7 +47,6 @@ export default class ProjectNavigator {
     versionId: string,
     specificationId: string
   ) {
-    NProgress.start()
     this.router.push(`/${projectOwner}/${projectName}/${versionId}/${specificationId}`)
   }
   
