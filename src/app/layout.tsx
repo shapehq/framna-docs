@@ -19,8 +19,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en">
       <ThemeRegistry options={{ key: "mui" }}>
         <body>
-          <CssBaseline/>
-            <NextTopLoader color="#000" height={1} showSpinner={false} speed={600} zIndex={1600} />
+            <CssBaseline/>
+            <NextTopLoader color="#000" height={1} showSpinner={false} speed={600} zIndex={10000} />
             {children}
         </body>
       </ThemeRegistry>

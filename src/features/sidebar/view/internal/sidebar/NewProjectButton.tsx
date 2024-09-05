@@ -4,6 +4,7 @@ import { useRouter, usePathname } from "next/navigation"
 import { Stack, List } from "@mui/material"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faPlus } from "@fortawesome/free-solid-svg-icons"
+import * as NProgress from "nprogress"
 import { Template as ProjectListItemTemplate } from "./projects/ProjectListItem"
 import { Squircle as ProjectAvatarSquircle } from "./projects/ProjectAvatar"
 import useCloseSidebarOnSelection from "@/features/sidebar/data/useCloseSidebarOnSelection"
@@ -30,6 +31,7 @@ const NewProjectButton = () => {
         }
         onSelect={() => {
           closeSidebarIfNeeded()
+          NProgress.start()
           router.push("/new")
         }}
       />

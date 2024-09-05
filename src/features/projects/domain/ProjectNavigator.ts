@@ -1,5 +1,5 @@
-import Project from "./Project"
 import * as NProgress from "nprogress"
+import Project from "./Project"
 
 interface IPathnameReader {
   readonly pathname: string
