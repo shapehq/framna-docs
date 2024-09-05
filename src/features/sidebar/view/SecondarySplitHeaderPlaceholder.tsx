@@ -1,8 +1,6 @@
 import { Box, Stack, Divider, Skeleton, Typography } from "@mui/material";
 import React from "react";
 
-export const HEIGHT_HEADER = 80;
-
 const SecondaryHeaderPlaceholder = () => {
   const skeletonCount = 4;
 
@@ -16,7 +14,7 @@ const SecondaryHeaderPlaceholder = () => {
           paddingLeft: { xs: 4, md: 2 },
           maxWidth: "1460px",
           margin: "auto",
-          height: HEIGHT_HEADER,
+          height: 60,
         }}
       >
         <Box
