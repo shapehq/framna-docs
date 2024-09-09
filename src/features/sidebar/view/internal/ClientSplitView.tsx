@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useContext } from "react"
-import { Stack } from "@mui/material"
+import { Stack, useMediaQuery, useTheme } from "@mui/material"
 import { isMac, useKeyboardShortcut, SidebarTogglableContext } from "@/common"
 import { useSidebarOpen } from "../../data"
 import PrimaryContainer from "./primary/Container"
@@ -16,6 +16,10 @@ const ClientSplitView = ({
 }) => {
   const [isSidebarOpen, setSidebarOpen] = useSidebarOpen()
   const isSidebarTogglable = useContext(SidebarTogglableContext)
+  const theme = useTheme()
+  // Determine if the screen size is small or larger
+  const isSM = useMediaQuery(theme.breakpoints.up("sm"))
+
   useEffect(() => {
     if (!isSidebarTogglable && !isSidebarOpen) {
       setSidebarOpen(true)
@@ -31,6 +35,7 @@ const ClientSplitView = ({
     }
   }, [isSidebarTogglable, setSidebarOpen])
   const sidebarWidth = 320
+
   return (
     <Stack direction="row" spacing={0} sx={{ width: "100%", height: "100%" }}>
       <PrimaryContainer
@@ -40,7 +45,7 @@ const ClientSplitView = ({
       >
         {sidebar}
       </PrimaryContainer>
-      <SecondaryContainer sidebarWidth={sidebarWidth} offsetContent={isSidebarOpen}>
+      <SecondaryContainer isSM={isSM} sidebarWidth={sidebarWidth} offsetContent={isSidebarOpen}>
         {children}
       </SecondaryContainer>
     </Stack>
