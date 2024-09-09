@@ -29,7 +29,7 @@ body:
     id: expected-behavior
     attributes:
       label: What is the expected behavior?
-      description: Please describe the behavior you expect of Shape Docs.
-      placeholder: I expect that Shape Docs would...
+      description: Please describe the behavior you expect of Framna Docs.
+      placeholder: I expect that Framna Docs would...
     validations:
       required: true
