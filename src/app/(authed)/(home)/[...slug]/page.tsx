@@ -12,17 +12,17 @@ export default function Page() {
   useEffect(() => {
     navigateToSelectionIfNeeded()
   }, [project, version, specification, navigateToSelectionIfNeeded])
-  // Update the window title to match selected project.
-  const siteName = process.env.NEXT_PUBLIC_FRAMNA_DOCS_TITLE || ""
   useEffect(() => {
+    if (!project) {
+      return
+    }
     updateWindowTitle({
       storage: document,
-      defaultTitle: siteName,
       project,
       version,
       specification
     })
-  }, [siteName, project, version, specification])
+  }, [project, version, specification])
   return (
     <>
       {project && version && specification &&

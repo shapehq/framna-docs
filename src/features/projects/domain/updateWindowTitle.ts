@@ -4,24 +4,18 @@ import OpenApiSpecification from "./OpenApiSpecification"
 
 export default function updateWindowTitle({
   storage,
-  defaultTitle,
   project,
   version,
   specification,
 }: {
   storage: { title: string },
-  defaultTitle: string,
-  project?: Project,
+  project: Project,
   version?: Version,
   specification?: OpenApiSpecification
 }) {
-  if (!project || !version || !specification) {
-    storage.title = defaultTitle
-    return
-  }
-  if (!isSpecificationNameGeneric(specification.name)) {
+  if (version && specification && !isSpecificationNameGeneric(specification.name)) {
     storage.title = `${project.displayName} / ${version.name} / ${specification.name}`
-  } else if (!version.isDefault) {
+  } else if (version && !version.isDefault) {
     storage.title = `${project.displayName} / ${version.name}`
   } else {
     storage.title = project.displayName
