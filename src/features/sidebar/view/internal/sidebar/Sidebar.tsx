@@ -7,7 +7,15 @@ import UserButton from "./user/UserButton"
 import SettingsList from "./settings/SettingsList"
 import NewProjectButton from "./NewProjectButton"
 
-const Sidebar = ({ children }: { children?: React.ReactNode }) => {
+const Sidebar = ({
+  siteName,
+  helpURL,
+  children
+}: {
+  siteName?: string
+  helpURL?: string
+  children?: React.ReactNode
+}) => {
   const [isScrolledToTop, setScrolledToTop] = useState(true)
   const [isScrolledToBottom, setScrolledToBottom] = useState(true)
   const scrollableAreaRef = useRef<HTMLDivElement | null>(null)
@@ -32,7 +40,7 @@ const Sidebar = ({ children }: { children?: React.ReactNode }) => {
   }, [])
   return (
     <>
-      <Header />
+      <Header siteName={siteName} />
       <Box sx={{
         position: "relative",
         overflow: "hidden",
@@ -77,7 +85,7 @@ const Sidebar = ({ children }: { children?: React.ReactNode }) => {
         />
       </Box>
       <UserButton>
-        <SettingsList />
+        <SettingsList helpURL={helpURL} />
       </UserButton>
     </>
   )

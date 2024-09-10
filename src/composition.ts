@@ -170,7 +170,7 @@ export const projectDataSource = new CachingProjectDataSource({
         }),
         graphQlClient: userGitHubClient,
         repositoryNameSuffix: env.getOrThrow("REPOSITORY_NAME_SUFFIX"),
-        projectConfigurationFilename: env.getOrThrow("SHAPE_DOCS_PROJECT_CONFIGURATION_FILENAME")
+        projectConfigurationFilename: env.getOrThrow("FRAMNA_DOCS_PROJECT_CONFIGURATION_FILENAME")
       })
     }),
     repositoryNameSuffix: env.getOrThrow("REPOSITORY_NAME_SUFFIX")
@@ -194,10 +194,10 @@ export const gitHubHookHandler = new GitHubHookHandler({
     }),
     eventHandler: new PostCommentPullRequestEventHandler({
       pullRequestCommenter: new PullRequestCommenter({
-        siteName: env.getOrThrow("NEXT_PUBLIC_SHAPE_DOCS_TITLE"),
-        domain: env.getOrThrow("SHAPE_DOCS_BASE_URL"),
+        siteName: env.getOrThrow("FRAMNA_DOCS_TITLE"),
+        domain: env.getOrThrow("FRAMNA_DOCS_BASE_URL"),
         repositoryNameSuffix: env.getOrThrow("REPOSITORY_NAME_SUFFIX"),
-        projectConfigurationFilename: env.getOrThrow("SHAPE_DOCS_PROJECT_CONFIGURATION_FILENAME"),
+        projectConfigurationFilename: env.getOrThrow("FRAMNA_DOCS_PROJECT_CONFIGURATION_FILENAME"),
         gitHubAppId: env.getOrThrow("GITHUB_APP_ID"),
         gitHubClient: gitHubClient
       })

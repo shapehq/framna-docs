@@ -7,8 +7,8 @@ import { faGithub } from "@fortawesome/free-brands-svg-icons"
 import SignInTexts from "@/features/auth/view/SignInTexts"
 import MessageLinkFooter from "@/common/ui/MessageLinkFooter"
 
-const SITE_NAME = env.getOrThrow("NEXT_PUBLIC_SHAPE_DOCS_TITLE")
-const HELP_URL = env.get("NEXT_PUBLIC_SHAPE_DOCS_HELP_URL")
+const SITE_NAME = env.getOrThrow("FRAMNA_DOCS_TITLE")
+const HELP_URL = env.get("FRAMNA_DOCS_HELP_URL")
  
 export default async function SignInPage() {
   return (
