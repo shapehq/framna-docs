@@ -5,8 +5,7 @@ import { Box, Button, Typography } from "@mui/material"
 import { useRouter } from "next/navigation"
 import { useCloseSidebarOnSelection } from "@/features/sidebar/data"
 
-const Header = () => {
-  const siteName = process.env.NEXT_PUBLIC_FRAMNA_DOCS_TITLE
+const Header = ({ siteName }: { siteName?: string }) => {
   const router = useRouter()
   const { closeSidebarIfNeeded } = useCloseSidebarOnSelection()
   return (
