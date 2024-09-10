@@ -9,8 +9,11 @@ import MessageLinkFooter from "@/common/ui/MessageLinkFooter"
 
 const SITE_NAME = env.getOrThrow("FRAMNA_DOCS_TITLE")
 const HELP_URL = env.get("FRAMNA_DOCS_HELP_URL")
+
+// Force page to be rendered dynamically to ensure we read the correct values for the environment variables.
+export const dynamic = "force-dynamic"
  
-export default async function SignInPage() {
+export default async function Page() {
   return (
     <Box display="flex" height="100vh">
       <InfoColumn/>
