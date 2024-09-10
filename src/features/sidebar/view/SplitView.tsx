@@ -4,8 +4,8 @@ import BaseSidebar from "./internal/sidebar/Sidebar"
 import ProjectList from "./internal/sidebar/projects/ProjectList"
 import { env } from "@/common"
 
-const SITE_NAME = env.getOrThrow("NEXT_PUBLIC_FRAMNA_DOCS_TITLE")
-const HELP_URL = env.get("NEXT_PUBLIC_FRAMNA_DOCS_HELP_URL")
+const SITE_NAME = env.getOrThrow("FRAMNA_DOCS_TITLE")
+const HELP_URL = env.get("FRAMNA_DOCS_HELP_URL")
 
 const SplitView = ({ children }: { children?: React.ReactNode }) => {
   return (

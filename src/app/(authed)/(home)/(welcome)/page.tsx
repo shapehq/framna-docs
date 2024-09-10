@@ -2,7 +2,7 @@ import { Box, Typography } from "@mui/material"
 import { grey } from "@mui/material/colors"
 import { env } from "@/common"
 
-const SITE_NAME = env.getOrThrow("NEXT_PUBLIC_FRAMNA_DOCS_TITLE")
+const SITE_NAME = env.getOrThrow("FRAMNA_DOCS_TITLE")
 
 const Page = () => {
   return (

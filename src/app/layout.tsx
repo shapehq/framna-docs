@@ -9,8 +9,8 @@ import { env } from "@/common"
 fontAwesomeConfig.autoAddCss = false
 
 export const metadata: Metadata = {
-  title: env.getOrThrow("NEXT_PUBLIC_FRAMNA_DOCS_TITLE"),
-  description: env.getOrThrow("NEXT_PUBLIC_FRAMNA_DOCS_DESCRIPTION")
+  title: env.getOrThrow("FRAMNA_DOCS_TITLE"),
+  description: env.getOrThrow("FRAMNA_DOCS_DESCRIPTION")
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
