@@ -9,9 +9,11 @@ import NewProjectButton from "./NewProjectButton"
 
 const Sidebar = ({
   siteName,
+  helpURL,
   children
 }: {
   siteName?: string
+  helpURL?: string
   children?: React.ReactNode
 }) => {
   const [isScrolledToTop, setScrolledToTop] = useState(true)
@@ -83,7 +85,7 @@ const Sidebar = ({
         />
       </Box>
       <UserButton>
-        <SettingsList />
+        <SettingsList helpURL={helpURL} />
       </UserButton>
     </>
   )

@@ -31,8 +31,7 @@ const SettingsItem = ({ onClick, icon, children }: {
   )
 }
 
-const SettingsList = () => {
-  const helpURL = process.env.NEXT_PUBLIC_FRAMNA_DOCS_HELP_URL
+const SettingsList = ({ helpURL }: { helpURL?: string }) => {
   return (
     <List sx={{
       padding: 1,

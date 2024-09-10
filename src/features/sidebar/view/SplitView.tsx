@@ -5,6 +5,7 @@ import ProjectList from "./internal/sidebar/projects/ProjectList"
 import { env } from "@/common"
 
 const SITE_NAME = env.getOrThrow("NEXT_PUBLIC_FRAMNA_DOCS_TITLE")
+const HELP_URL = env.get("NEXT_PUBLIC_FRAMNA_DOCS_HELP_URL")
 
 const SplitView = ({ children }: { children?: React.ReactNode }) => {
   return (
@@ -18,8 +19,8 @@ export default SplitView
 
 const Sidebar = () => {
   return (
-    // The site name is passed as a property to ensure the environment variable is read server-side.
-    <BaseSidebar siteName={SITE_NAME}>
+    // The site name and help URL are passed as a properties to ensure the environment variables are read server-side.
+    <BaseSidebar siteName={SITE_NAME} helpURL={HELP_URL}>
       <ProjectList projectDataSource={projectDataSource} />
     </BaseSidebar>
   )
