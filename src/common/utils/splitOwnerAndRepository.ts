@@ -1,5 +1,5 @@
 // Split full repository names into owner and repository.
-// shapehq/foo becomes { owner: "shapehq", "repository": "foo" }
+// acme/foo becomes { owner: "acme", "repository": "foo" }
 const splitOwnerAndRepository = (str: string) => {
   const index = str.indexOf("/")
   if (index === -1) {

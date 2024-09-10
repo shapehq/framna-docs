@@ -3,7 +3,7 @@ import NewProjectSteps from "@/features/new-project/view/NewProjectSteps"
 import { env, splitOwnerAndRepository } from "@/common"
 import MessageLinkFooter from "@/common/ui/MessageLinkFooter"
 
-const HELP_URL = env.get("NEXT_PUBLIC_SHAPE_DOCS_HELP_URL")
+const HELP_URL = env.get("NEXT_PUBLIC_FRAMNA_DOCS_HELP_URL")
 
 const Page = () => {
   const repositoryNameSuffix = env.getOrThrow("REPOSITORY_NAME_SUFFIX")

@@ -13,7 +13,7 @@ export default function Page() {
     navigateToSelectionIfNeeded()
   }, [project, version, specification, navigateToSelectionIfNeeded])
   // Update the window title to match selected project.
-  const siteName = process.env.NEXT_PUBLIC_SHAPE_DOCS_TITLE || ""
+  const siteName = process.env.NEXT_PUBLIC_FRAMNA_DOCS_TITLE || ""
   useEffect(() => {
     updateWindowTitle({
       storage: document,
