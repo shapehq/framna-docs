@@ -14,7 +14,7 @@ const SecondaryHeaderPlaceholder = () => {
           paddingLeft: { xs: 4, md: 2 },
           maxWidth: "1460px",
           margin: "auto",
-          height: 60,
+          height: 64,
         }}
       >
         <Box
@@ -22,24 +22,25 @@ const SecondaryHeaderPlaceholder = () => {
             display: "flex",
             flexGrow: 1,
             justifyContent: "end",
-            paddingRight: "30px",
           }}
         >
-          <Stack direction="row" alignItems="center" gap={2}>
+          <Stack direction="row" alignItems="center" gap={1}>
             {Array.from({ length: skeletonCount }, (_, index) => (
               <React.Fragment key={index}>
-                <Skeleton variant="rounded" width={70} height={30} />
+                <Skeleton variant="rounded" width={70} height={28} />
                 {index < skeletonCount - 1 && (
-                  <Typography variant="h6" sx={{ marginRight: 1 }}>
+                  <Typography variant="h6">
                     /
                   </Typography>
                 )}
               </React.Fragment>
             ))}
+            <Divider orientation="vertical" flexItem sx={{ height: "38px", marginLeft: 1, marginRight: "6px" }} />
+            <Skeleton variant="rounded" width={20} height={24} />
           </Stack>
         </Box>
       </Box>
-      <Divider />
+      <Divider orientation="vertical" flexItem sx={{ marginLeft: 1, marginRight: 1 }} />
     </Box>
   );
 };
