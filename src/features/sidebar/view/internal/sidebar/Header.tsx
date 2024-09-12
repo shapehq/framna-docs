@@ -3,6 +3,7 @@
 import Image from "next/image"
 import { Box, Button, Typography } from "@mui/material"
 import { useRouter } from "next/navigation"
+import * as NProgress from "nprogress"
 import { useCloseSidebarOnSelection } from "@/features/sidebar/data"
 
 const Header = ({ siteName }: { siteName?: string }) => {
@@ -29,6 +30,7 @@ const Header = ({ siteName }: { siteName?: string }) => {
         }}
         onClick={() => {
           closeSidebarIfNeeded()
+          NProgress.start()
           router.push("/")
         }}
       >

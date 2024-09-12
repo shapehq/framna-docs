@@ -1,5 +1,6 @@
 "use client"
 
+import NProgress from "nprogress"
 import { useRouter, usePathname } from "next/navigation"
 import { useContext } from "react"
 import { ProjectsContext } from "@/common"
@@ -29,6 +30,7 @@ export default function useProjectSelection() {
     selectProject: (project: Project) => {
       const version = project.versions[0]
       const specification = version.specifications[0]
+      NProgress.start()
       projectNavigator.navigate(
         project.owner,
         project.name,
@@ -37,6 +39,7 @@ export default function useProjectSelection() {
       )
     },
     selectVersion: (versionId: string) => {
+      NProgress.start()
       projectNavigator.navigateToVersion(
         selection.project!,
         versionId,
@@ -44,6 +47,7 @@ export default function useProjectSelection() {
       )
     },
     selectSpecification: (specificationId: string) => {
+      NProgress.start()
       projectNavigator.navigate(
         selection.project!.owner,
         selection.project!.name,

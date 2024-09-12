@@ -63,22 +63,22 @@ Clone the repository and consult the articles on [running Framna Docs locally](h
 git clone git@github.com:shapehq/framna-docs.git
 ```
 
-## 🔀 Git Workflow
+### 🔀 Git Workflow
 
-Two long-lived branches exist
+Two following long-lived branches exist:
 
-* **main** (stable/release - deploy to a **production** environment)
-* **develop** (integration - deploy to a **staging** environment)
+* **main**: Stable/release branch meant for deployment to the production environment.
+* **develop**: Branch meant for deployment to a staging environment.
 
 **Do's 👍**
 
-1. Features are branched off from `develop` and merged back in using a PR when ready. Rebase or merge `develop` in to keep the feature branch up to date. Squash merge the feature branch into `develop`.
-2. `develop` is merged into `main` whenever a new release is made. Only regular merge commits are allowed in this case. You do not need to "bring develop up to date" with `main` before merging.
-3. A hotfix is applied by branching out from `main`. The hotfix branch _must_ be merged into both `main` and `develop`.
+- Features are branched off from `develop` and merged back in using a PR when ready. Rebase or merge `develop` in to keep the feature branch up to date. Squash merge the feature branch into `develop`.
+- `develop` is merged into `main` whenever a new release is made. Only regular merge commits are allowed in this case. You do not need to bring develop up to date with `main` before merging.
+- A hotfix is applied by branching out from `main`. The hotfix branch _must_ be merged into both `main` and `develop`.
 
 **Don'ts 🙅‍♂️**
 
-1. Never squash merge `develop` into `main` ☠️
+- Never squash merge `develop` into `main`.
 
 ## ❤️ The Product of a Shape Weekend
 
