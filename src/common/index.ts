@@ -1,4 +1,4 @@
-export * from "./contexts"
+export * from "./context/ProjectsContext"
 export * from "./db"
 export * from "./errors"
 export * from "./github"

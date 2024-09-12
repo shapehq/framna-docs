@@ -17,7 +17,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en">
       <ThemeRegistry options={{ key: "mui" }}>
-        <body style={{ overflow: "hidden" }}>
+        <body>
           <CssBaseline/>
           {children}
         </body>

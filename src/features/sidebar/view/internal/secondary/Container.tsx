@@ -1,30 +1,26 @@
 import { SxProps } from "@mui/system"
-import { Stack } from "@mui/material"
+import { Box, Stack } from "@mui/material"
 import { styled } from "@mui/material/styles"
+import CustomTopLoader from "@/common/ui/CustomTopLoader"
 
 const SecondaryContainer = ({
   sidebarWidth,
   offsetContent,
-  children
+  children,
+  isSM,
 }: {
   sidebarWidth: number
   offsetContent: boolean
-  children?: React.ReactNode
+  children?: React.ReactNode,
+  isSM: boolean,
 }) => {
   const sx = { overflow: "hidden" }
   return (
     <>
       <_SecondaryContainer
-        sidebarWidth={0}
-        isSidebarOpen={false}
-        sx={{ ...sx, display: { xs: "flex", sm: "none" } }}
-      >
-        {children}
-      </_SecondaryContainer>
-      <_SecondaryContainer
-        sidebarWidth={sidebarWidth}
-        isSidebarOpen={offsetContent}
-        sx={{ ...sx, display: { xs: "none", sm: "flex" } }}
+        sidebarWidth={isSM ? sidebarWidth : 0}
+        isSidebarOpen={isSM ? offsetContent:  false}
+        sx={{ ...sx }}
       >
         {children}
       </_SecondaryContainer>
@@ -74,8 +70,35 @@ const _SecondaryContainer = ({
       sidebarWidth={sidebarWidth}
       isSidebarOpen={isSidebarOpen}
       sx={{ ...sx, width: "100%", overflowY: "auto" }}
+      
     >
-      {children}
+      <RaisedMainContent>
+        {children}
+      </RaisedMainContent>
     </WrapperStack>
+  )
+}
+
+const RaisedMainContent = ({ children }: { children?: React.ReactNode }) => {
+  return (
+    <main style={{ flexGrow: "1" }}>
+      <Box sx={{
+        height: "100%",
+        paddingTop: { xs: 0, sm: 2 },
+        marginLeft: { xs: 0, sm: 2 },
+        marginRight: { xs: 0, sm: 2 }
+      }}>
+        <Box id="border-content" sx={{
+          height: "100%",
+          background: "white",
+          boxShadow: { xs: 0, sm: "0 4px 8px rgba(0, 0, 0, 0.08)" },
+          borderTopLeftRadius: { xs: 0, sm: "18px" },
+          borderTopRightRadius: { xs: 0, sm: "18px" }
+        }}>
+          <CustomTopLoader parentSelector="#border-content" color="#e0e0e0" />
+          {children}
+        </Box>
+      </Box>
+    </main>
   )
 }
