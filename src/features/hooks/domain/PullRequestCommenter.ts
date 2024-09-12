@@ -2,7 +2,6 @@ import { IGitHubClient, PullRequestFile } from "@/common"
 import { getBaseFilename } from "@/common/utils"
 
 export default class PullRequestCommenter {
-  private readonly domain: string
   private readonly siteName: string
   private readonly repositoryNameSuffix: string
   private readonly projectConfigurationFilename: string
@@ -10,14 +9,12 @@ export default class PullRequestCommenter {
   private readonly gitHubClient: IGitHubClient
   
   constructor(config: {
-    domain: string
     siteName: string
     repositoryNameSuffix: string
     projectConfigurationFilename: string
     gitHubAppId: string
     gitHubClient: IGitHubClient
   }) {
-    this.domain = config.domain
     this.siteName = config.siteName
     this.repositoryNameSuffix = config.repositoryNameSuffix
     this.projectConfigurationFilename = config.projectConfigurationFilename
@@ -26,6 +23,7 @@ export default class PullRequestCommenter {
   }
   
   async commentPullRequest(request: {
+    hostURL: string
     appInstallationId: number
     repositoryOwner: string
     repositoryName: string
@@ -35,6 +33,7 @@ export default class PullRequestCommenter {
     const files = this.getChangedFiles(await this.getYamlFiles(request))
     const commentBody = this.makeCommentBody({
       files,
+      hostURL: request.hostURL,
       owner: request.repositoryOwner,
       repositoryName: request.repositoryName,
       ref: request.ref
@@ -73,7 +72,7 @@ export default class PullRequestCommenter {
   }
   
   private async getYamlFiles(request: {
-    appInstallationId: number,
+    appInstallationId: number
     repositoryOwner: string
     repositoryName: string
     pullRequestNumber: number
@@ -88,7 +87,7 @@ export default class PullRequestCommenter {
   }
   
   private async getExistingComment(request: {
-    appInstallationId: number,
+    appInstallationId: number
     repositoryOwner: string
     repositoryName: string
     pullRequestNumber: number
@@ -105,17 +104,18 @@ export default class PullRequestCommenter {
   }
   
   private makeCommentBody(params: {
+    hostURL: string
     files: PullRequestFile[]
     owner: string
     repositoryName: string
     ref: string
   }): string {
-    const { owner, repositoryName, ref } = params
+    const { hostURL, owner, repositoryName, ref } = params
     const projectId = this.getProjectId({ repositoryName })
     const tableHTML = this.makeFileTableHTML(params)
     let result = "### 📖 Documentation Preview"
     result += "\n\n"
-    result += `The changes are now ready to previewed on <a href="${this.domain}/${owner}/${projectId}/${ref}">${this.siteName}</a> 🚀`
+    result += `The changes are now ready to previewed on <a href="${hostURL}/${owner}/${projectId}/${ref}">${this.siteName}</a> 🚀`
     if (tableHTML) {
       result += "\n\n" + tableHTML
    }
@@ -123,12 +123,13 @@ export default class PullRequestCommenter {
   }
   
   private makeFileTableHTML(params: {
+    hostURL: string
     files: PullRequestFile[]
     owner: string
     repositoryName: string
     ref: string
   }) {
-    const { files, owner, repositoryName, ref } = params
+    const { hostURL, files, owner, repositoryName, ref } = params
     const rows: { filename: string, status: string, button: string }[] = []
     const projectId = this.getProjectId({ repositoryName })
     // Create rows for each file
@@ -136,7 +137,7 @@ export default class PullRequestCommenter {
       const status = this.getStatusText(file)
       let button = ""
       if (file.status != "removed") {
-        let link = `${this.domain}/${owner}/${projectId}/${ref}`
+        let link = `${hostURL}/${owner}/${projectId}/${ref}`
         if (!this.isProjectConfigurationFile(file.filename)) {
           link += `/${file.filename}`
         }
