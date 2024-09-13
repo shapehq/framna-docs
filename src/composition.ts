@@ -105,6 +105,12 @@ export const { signIn, auth, handlers: authHandlers } = NextAuth({
     strategy: "database"
   },
   callbacks: {
+    async redirect({ url, baseUrl }) {
+      console.log("REDIRECT")
+      console.log(`url = ${url}`)
+      console.log(`baseUrl = ${baseUrl}`)
+      return baseUrl
+    },
     async signIn({ user, account }) {
       return await logInHandler.handleLogIn({ user, account })
     },
