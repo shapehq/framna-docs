@@ -23,7 +23,7 @@
     "@fortawesome/free-regular-svg-icons": "^6.6.0",
     "@fortawesome/free-solid-svg-icons": "^6.6.0",
     "@fortawesome/react-fontawesome": "^0.2.2",
-    "@mui/icons-material": "^6.0.2",
+    "@mui/icons-material": "^6.1.0",
     "@mui/material": "^6.0.1",
     "@octokit/auth-app": "^7.1.1",
     "@octokit/core": "^6.1.2",
@@ -36,7 +36,7 @@
     "ioredis": "^5.4.1",
     "mobx": "^6.13.1",
     "next": "^14.2.5",
-    "next-auth": "^5.0.0-beta.20",
+    "next-auth": "^5.0.0-beta.21",
     "nodemailer": "^6.9.14",
     "npm": "^10.8.3",
     "nprogress": "^0.2.0",
@@ -54,7 +54,7 @@
     "zod": "^3.23.8"
   },
   "devDependencies": {
-    "@auth/pg-adapter": "^1.4.2",
+    "@auth/pg-adapter": "^1.5.0",
     "@types/jest": "^29.5.12",
     "@types/node": "^22.5.4",
     "@types/nodemailer": "^6.4.15",
@@ -63,8 +63,8 @@
     "@types/react": "^18.3.5",
     "@types/react-dom": "^18.3.0",
     "@types/swagger-ui-react": "^4.18.3",
-    "@typescript-eslint/eslint-plugin": "^8.4.0",
-    "@typescript-eslint/parser": "^8.4.0",
+    "@typescript-eslint/eslint-plugin": "^8.5.0",
+    "@typescript-eslint/parser": "^8.5.0",
     "autoprefixer": "^10.4.20",
     "eslint": "^8.57.0",
     "eslint-config-next": "^14.2.8",
@@ -72,6 +72,6 @@
     "postcss": "^8.4.41",
     "tailwindcss": "^3.4.10",
     "ts-jest": "^29.2.5",
-    "typescript": "^5.5.4"
+    "typescript": "^5.6.2"
   }
 }

@@ -4,7 +4,7 @@
 
 <div align="center">
 <h3>👋 Welcome to Framna Docs</h3>
-<h4>Self-hosted web portal that collects OpenAPI documentation and facilitates spec-driven development, built with GitHub-based authorization.</h4>
+<h4>Self-hosted web portal that centralizes OpenAPI documentation and facilitates spec-driven development, built with GitHub-based authorization.</h4>
 </div>
 
 <div align="center">

@@ -1,4 +1,5 @@
 export interface IPullRequestOpenedEvent {
+  readonly hostURL: string
   readonly appInstallationId: number
   readonly repositoryOwner: string
   readonly repositoryName: string
@@ -7,6 +8,7 @@ export interface IPullRequestOpenedEvent {
 }
 
 export interface IPullRequestReopenedEvent {
+  readonly hostURL: string
   readonly appInstallationId: number
   readonly repositoryOwner: string
   readonly repositoryName: string
@@ -15,6 +17,7 @@ export interface IPullRequestReopenedEvent {
 }
 
 export interface IPullRequestSynchronizedEvent {
+  readonly hostURL: string
   readonly appInstallationId: number
   readonly repositoryOwner: string
   readonly repositoryName: string

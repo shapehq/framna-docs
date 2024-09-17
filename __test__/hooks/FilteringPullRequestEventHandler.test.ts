@@ -17,6 +17,7 @@ test("It calls pullRequestOpened(_:) when event is included", async () => {
     }
   })
   await sut.pullRequestOpened({
+    hostURL: "https://localhost:3000",
     appInstallationId: 1234,
     pullRequestNumber: 42,
     repositoryName: "demo-openapi",
@@ -43,6 +44,7 @@ test("It calls pullRequestReopened(_:) when event is included", async () => {
     }
   })
   await sut.pullRequestReopened({
+    hostURL: "https://localhost:3000",
     appInstallationId: 1234,
     pullRequestNumber: 42,
     repositoryName: "demo-openapi",
@@ -69,6 +71,7 @@ test("It calls pullRequestSynchronized(_:) when event is included", async () => 
     }
   })
   await sut.pullRequestSynchronized({
+    hostURL: "https://localhost:3000",
     appInstallationId: 1234,
     pullRequestNumber: 42,
     repositoryName: "demo-openapi",
@@ -95,6 +98,7 @@ test("It skips calling pullRequestOpened(_:) when event is not included", async 
     }
   })
   await sut.pullRequestOpened({
+    hostURL: "https://localhost:3000",
     appInstallationId: 1234,
     pullRequestNumber: 42,
     repositoryName: "demo-openapi",
@@ -121,6 +125,7 @@ test("It skips calling pullRequestReopened(_:) when event is not included", asyn
     }
   })
   await sut.pullRequestReopened({
+    hostURL: "https://localhost:3000",
     appInstallationId: 1234,
     pullRequestNumber: 42,
     repositoryName: "demo-openapi",
@@ -147,6 +152,7 @@ test("It skips calling pullRequestSynchronized(_:) when event is not included", 
     }
   })
   await sut.pullRequestSynchronized({
+    hostURL: "https://localhost:3000",
     appInstallationId: 1234,
     pullRequestNumber: 42,
     repositoryName: "demo-openapi",
