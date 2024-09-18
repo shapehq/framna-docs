@@ -3,6 +3,7 @@ import { PullRequestCommenter } from "@/features/hooks/domain"
 test("It adds comment when none exist", async () => {
   let didAddComment = false
   const sut = new PullRequestCommenter({
+    domain: "https://example.com",
     siteName: "Demo Docs",
     repositoryNameSuffix: "-openapi",
     projectConfigurationFilename: ".demo-docs.yml",
@@ -30,7 +31,6 @@ test("It adds comment when none exist", async () => {
     }
   })
   await sut.commentPullRequest({
-    hostURL: "https://localhost:3000",
     appInstallationId: 1234,
     pullRequestNumber: 42,
     repositoryOwner: "acme",
@@ -44,6 +44,7 @@ test("It adds comment containing list of changed files", async () => {
   let didAddComment = false
   let commentBody: string | undefined
   const sut = new PullRequestCommenter({
+    domain: "https://example.com",
     siteName: "Demo Docs",
     repositoryNameSuffix: "-openapi",
     projectConfigurationFilename: ".demo-docs.yml",
@@ -75,7 +76,6 @@ test("It adds comment containing list of changed files", async () => {
     }
   })
   await sut.commentPullRequest({
-    hostURL: "https://localhost:3000",
     appInstallationId: 1234,
     pullRequestNumber: 42,
     repositoryOwner: "acme",
@@ -91,6 +91,7 @@ test("It adds comment containing list of changed files", async () => {
 test("It skips adding comment when no YAML files were found in the PR", async () => {
   let didAddComment = false
   const sut = new PullRequestCommenter({
+    domain: "https://example.com",
     siteName: "Demo Docs",
     repositoryNameSuffix: "-openapi",
     projectConfigurationFilename: ".demo-docs.yml",
@@ -118,7 +119,6 @@ test("It skips adding comment when no YAML files were found in the PR", async ()
     }
   })
   await sut.commentPullRequest({
-    hostURL: "https://localhost:3000",
     appInstallationId: 1234,
     pullRequestNumber: 42,
     repositoryOwner: "acme",
@@ -131,6 +131,7 @@ test("It skips adding comment when no YAML files were found in the PR", async ()
 test("It updates comment when one already exists", async () => {
   let didUpdateComment = false
   const sut = new PullRequestCommenter({
+    domain: "https://example.com",
     siteName: "Demo Docs",
     repositoryNameSuffix: "-openapi",
     projectConfigurationFilename: ".demo-docs.yml",
@@ -165,7 +166,6 @@ test("It updates comment when one already exists", async () => {
     }
   })
   await sut.commentPullRequest({
-    hostURL: "https://localhost:3000",
     appInstallationId: 1234,
     pullRequestNumber: 42,
     repositoryOwner: "acme",
@@ -179,6 +179,7 @@ test("It skips updating comment when the body has not changed", async () => {
   let addedCommentBody: string | undefined
   let didUpdateComment = false
   const sut = new PullRequestCommenter({
+    domain: "https://example.com",
     siteName: "Demo Docs",
     repositoryNameSuffix: "-openapi",
     projectConfigurationFilename: ".demo-docs.yml",
@@ -219,7 +220,6 @@ test("It skips updating comment when the body has not changed", async () => {
   })
   // Add a comment.
   await sut.commentPullRequest({
-    hostURL: "https://localhost:3000",
     appInstallationId: 1234,
     pullRequestNumber: 42,
     repositoryOwner: "acme",
@@ -228,7 +228,6 @@ test("It skips updating comment when the body has not changed", async () => {
   })
   // Attempt to update a comment. This is skipped because the body has not changed.
   await sut.commentPullRequest({
-    hostURL: "https://localhost:3000",
     appInstallationId: 1234,
     pullRequestNumber: 42,
     repositoryOwner: "acme",
@@ -245,6 +244,7 @@ test("It updates comment to remove file list when all relevant file changes were
   let addedCommentBody: string | undefined
   let updatedCommentBody: string | undefined
   const sut = new PullRequestCommenter({
+    domain: "https://example.com",
     siteName: "Demo Docs",
     repositoryNameSuffix: "-openapi",
     projectConfigurationFilename: ".demo-docs.yml",
@@ -292,7 +292,6 @@ test("It updates comment to remove file list when all relevant file changes were
   })
   // Add a comment.
   await sut.commentPullRequest({
-    hostURL: "https://localhost:3000",
     appInstallationId: 1234,
     pullRequestNumber: 42,
     repositoryOwner: "acme",
@@ -301,7 +300,6 @@ test("It updates comment to remove file list when all relevant file changes were
   })
   // Attempt to update a comment. This is skipped because the body has not changed.
   await sut.commentPullRequest({
-    hostURL: "https://localhost:3000",
     appInstallationId: 1234,
     pullRequestNumber: 42,
     repositoryOwner: "acme",
@@ -320,6 +318,7 @@ test("It adds comment if only project configuration was edited", async () => {
   let didAddComment = false
   let commentBody: string | undefined
   const sut = new PullRequestCommenter({
+    domain: "https://example.com",
     siteName: "Demo Docs",
     repositoryNameSuffix: "-openapi",
     projectConfigurationFilename: ".demo-docs.yml",
@@ -358,7 +357,6 @@ test("It adds comment if only project configuration was edited", async () => {
     }
   })
   await sut.commentPullRequest({
-    hostURL: "https://localhost:3000",
     appInstallationId: 1234,
     pullRequestNumber: 42,
     repositoryOwner: "acme",
@@ -374,6 +372,7 @@ test("It ignores files starting with a dot", async () => {
   let didAddComment = false
   let commentBody: string | undefined
   const sut = new PullRequestCommenter({
+    domain: "https://example.com",
     siteName: "Demo Docs",
     repositoryNameSuffix: "-openapi",
     projectConfigurationFilename: ".demo-docs.yml",
@@ -405,7 +404,6 @@ test("It ignores files starting with a dot", async () => {
     }
   })
   await sut.commentPullRequest({
-    hostURL: "https://localhost:3000",
     appInstallationId: 1234,
     pullRequestNumber: 42,
     repositoryOwner: "acme",
@@ -422,6 +420,7 @@ test("It ignores files in directories", async () => {
   let didAddComment = false
   let commentBody: string | undefined
   const sut = new PullRequestCommenter({
+    domain: "https://example.com",
     siteName: "Demo Docs",
     repositoryNameSuffix: "-openapi",
     projectConfigurationFilename: ".demo-docs.yml",
@@ -453,7 +452,6 @@ test("It ignores files in directories", async () => {
     }
   })
   await sut.commentPullRequest({
-    hostURL: "https://localhost:3000",
     appInstallationId: 1234,
     pullRequestNumber: 42,
     repositoryOwner: "acme",
@@ -469,6 +467,7 @@ test("It ignores files in directories", async () => {
 test("It does not post comment if changes only include ignored filenames", async () => {
   let didAddComment = false
   const sut = new PullRequestCommenter({
+    domain: "https://example.com",
     siteName: "Demo Docs",
     repositoryNameSuffix: "-openapi",
     projectConfigurationFilename: ".demo-docs.yml",
@@ -499,7 +498,6 @@ test("It does not post comment if changes only include ignored filenames", async
     }
   })
   await sut.commentPullRequest({
-    hostURL: "https://localhost:3000",
     appInstallationId: 1234,
     pullRequestNumber: 42,
     repositoryOwner: "acme",
