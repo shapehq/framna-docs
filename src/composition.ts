@@ -195,6 +195,7 @@ export const gitHubHookHandler = new GitHubHookHandler({
     eventHandler: new PostCommentPullRequestEventHandler({
       pullRequestCommenter: new PullRequestCommenter({
         siteName: env.getOrThrow("FRAMNA_DOCS_TITLE"),
+        domain: env.getOrThrow("FRAMNA_DOCS_BASE_URL"),
         repositoryNameSuffix: env.getOrThrow("REPOSITORY_NAME_SUFFIX"),
         projectConfigurationFilename: env.getOrThrow("FRAMNA_DOCS_PROJECT_CONFIGURATION_FILENAME"),
         gitHubAppId: env.getOrThrow("GITHUB_APP_ID"),
