@@ -11,9 +11,18 @@ const ProjectsContextProvider = ({
   initialProjects?: Project[],
   children?: React.ReactNode
 }) => {
+  const [cached, setCached] = useState<boolean>(true)
   const [projects, setProjects] = useState<Project[]>(initialProjects || [])
+  const setProjectsAndCached = (projects: Project[]) => {
+    setProjects(projects)
+    setCached(false)
+  }
   return (
-    <ProjectsContext.Provider value={{ projects, setProjects }}>
+    <ProjectsContext.Provider value={{
+      cached,
+      projects,
+      setProjects: setProjectsAndCached
+    }}>
       {children}
     </ProjectsContext.Provider>
   )
