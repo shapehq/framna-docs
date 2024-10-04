@@ -11,17 +11,19 @@ const ProjectsContextProvider = ({
   initialProjects?: Project[],
   children?: React.ReactNode
 }) => {
-  const [cached, setCached] = useState<boolean>(true)
+  const [refreshed, setRefreshed] = useState<boolean>(false)
   const [projects, setProjects] = useState<Project[]>(initialProjects || [])
-  const setProjectsAndCached = (projects: Project[]) => {
-    setProjects(projects)
-    setCached(false)
+
+  const setProjectsAndRefreshed = (value: Project[]) => {
+    setProjects(value)
+    // Only set refreshed to true after projects are updated
+    if (JSON.stringify(projects) !== JSON.stringify(value)) setRefreshed(true)
   }
   return (
     <ProjectsContext.Provider value={{
-      cached,
+      refreshed,
       projects,
-      setProjects: setProjectsAndCached
+      setProjects: setProjectsAndRefreshed
     }}>
       {children}
     </ProjectsContext.Provider>
