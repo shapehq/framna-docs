@@ -14,10 +14,16 @@ const ProjectsContextProvider = ({
   const [refreshed, setRefreshed] = useState<boolean>(false)
   const [projects, setProjects] = useState<Project[]>(initialProjects || [])
 
+  const hasProjectChanged = (value: Project[]) => value.some((project, index) => {
+    // Compare by project id and version (or any other key fields)
+    return project.id !== projects[index]?.id || project.versions !== projects[index]?.versions
+  })
+
   const setProjectsAndRefreshed = (value: Project[]) => {
     setProjects(value)
-    // Only set refreshed to true after projects are updated
-    if (JSON.stringify(projects) !== JSON.stringify(value)) setRefreshed(true)
+    // If any project has changed, update the state and mark as refreshed
+    if (hasProjectChanged(value)) setRefreshed(true)
+
   }
   return (
     <ProjectsContext.Provider value={{
