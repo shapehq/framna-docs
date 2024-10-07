@@ -30,11 +30,8 @@ export default function Page() {
       {project && version && specification &&
         <Documentation url={specification.url} />
       }
-      {project && !version &&
-        <ErrorMessage text="The selected branch or tag was not found."/>
-      }
-      {project && !specification &&
-        <ErrorMessage text="The selected specification was not found."/>
+      {project && (!version || !specification) &&
+        <ErrorMessage text={`The selected ${!version ? "branch or tag" : "specification"} was not found.`}/>
       }
       {!project && <NotFound/>}
     </>
