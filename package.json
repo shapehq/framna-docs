@@ -31,7 +31,7 @@
     "@stoplight/elements": "^8.4.5",
     "core-js": "^3.38.1",
     "encoding": "^0.1.13",
-    "figma-squircle": "^0.3.1",
+    "figma-squircle": "^1.1.0",
     "install": "^0.13.0",
     "ioredis": "^5.4.1",
     "mobx": "^6.13.3",
