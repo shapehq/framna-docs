@@ -5,6 +5,7 @@ import ErrorMessage from "@/common/ui/ErrorMessage"
 import { updateWindowTitle } from "@/features/projects/domain"
 import { useProjectSelection } from "@/features/projects/data"
 import Documentation from "@/features/projects/view/Documentation"
+import NotFound from "@/features/projects/view/NotFound"
 
 export default function Page() {
   const { project, version, specification, navigateToSelectionIfNeeded } = useProjectSelection()
@@ -23,17 +24,16 @@ export default function Page() {
       specification
     })
   }, [project, version, specification])
+
   return (
     <>
       {project && version && specification &&
         <Documentation url={specification.url} />
       }
-      {project && !version &&
-        <ErrorMessage text="The selected branch or tag was not found."/>
+      {project && (!version || !specification) &&
+        <ErrorMessage text={`The selected ${!version ? "branch or tag" : "specification"} was not found.`}/>
       }
-      {project && !specification &&
-        <ErrorMessage text="The selected specification was not found."/>
-      }
+      {!project && <NotFound/>}
     </>
   )
 }
