@@ -16,6 +16,7 @@ export default function getProjectSelectionFromPath({
   if (path.startsWith("/")) {
     path = path.substring(1)
   }
+  path = decodeURIComponent(path)
   const { owner: _owner, projectName: _projectName, versionId, specificationId } = guessSelection(path)
   // If no project is selected and the user only has a single project then we select that.
   let owner = _owner
