@@ -288,3 +288,69 @@ test("It moves specification ID to version ID if needed", () => {
   expect(sut.version!.id).toEqual("bar/baz")
   expect(sut.specification!.id).toEqual("hello")
 })
+
+test("It supports specifications with spaces in their names", () => {
+  const sut = getProjectSelectionFromPath({
+    path: "/acme/foo/main/openapi with spaces.yml",
+    projects: [
+      {
+        id: 'acme-foo',
+        name: 'foo',
+        displayName: "Ulrik's Playground",
+        versions: [{
+          id: 'main',
+          name: 'main',
+          specifications: [{
+            id: "openapi with spaces.yml", 
+            name: "openapi with spaces.yml", 
+            url: "/api/blob/acme/foo-openapi/openapi with spaces.yml?ref=3dbafacbe57ac931ee750fc973bad3c81c9765bb", 
+            editURL: "https://github.com/acme/foo-openapi/edit/main/openapi with spaces.yml"
+          }],
+          url: 'https://github.com/acme/foo-openapi/tree/main',
+          isDefault: true
+        }],
+        imageURL: '/api/blob/acme/foo-openapi/icon.png?ref=3dbafacbe57ac931ee750fc973bad3c81c9765bb',
+        url: 'https://github.com/acme/foo-openapi',
+        owner: 'acme',
+        ownerUrl: 'https://github.com/acme'
+      }
+    ]
+  })
+  expect(sut.project!.owner).toEqual("acme")
+  expect(sut.project!.name).toEqual("foo")
+  expect(sut.version!.id).toEqual("main")
+  expect(sut.specification!.id).toEqual("openapi with spaces.yml")
+})
+
+test("It supports specifications with URL-encoded spaces in their names", () => {
+  const sut = getProjectSelectionFromPath({
+    path: "/acme/foo/main/openapi%20with%20spaces.yml",
+    projects: [
+      {
+        id: 'acme-foo',
+        name: 'foo',
+        displayName: "Ulrik's Playground",
+        versions: [{
+          id: 'main',
+          name: 'main',
+          specifications: [{
+            id: "openapi with spaces.yml", 
+            name: "openapi with spaces.yml", 
+            url: "/api/blob/acme/foo-openapi/openapi with spaces.yml?ref=3dbafacbe57ac931ee750fc973bad3c81c9765bb", 
+            editURL: "https://github.com/acme/foo-openapi/edit/main/openapi with spaces.yml"
+          }],
+          url: 'https://github.com/acme/foo-openapi/tree/main',
+          isDefault: true
+        }],
+        imageURL: '/api/blob/acme/foo-openapi/icon.png?ref=3dbafacbe57ac931ee750fc973bad3c81c9765bb',
+        url: 'https://github.com/acme/foo-openapi',
+        owner: 'acme',
+        ownerUrl: 'https://github.com/acme'
+      }
+    ]
+  })
+  expect(sut.project!.owner).toEqual("acme")
+  expect(sut.project!.name).toEqual("foo")
+  expect(sut.version!.id).toEqual("main")
+  expect(sut.specification!.id).toEqual("openapi with spaces.yml")
+})
