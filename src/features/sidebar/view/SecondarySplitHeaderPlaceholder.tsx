@@ -12,7 +12,6 @@ const SecondaryHeaderPlaceholder = () => {
           alignItems: "center",
           padding: 2,
           paddingLeft: { xs: 4, md: 2 },
-          maxWidth: "1460px",
           margin: "auto",
           height: 64,
         }}
