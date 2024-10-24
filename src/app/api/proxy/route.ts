@@ -30,7 +30,6 @@ export async function GET(req: NextRequest) {
     const file = await downloadFile({ url, maxBytes, timeoutInSeconds })
     return new NextResponse(file, { status: 200 })
   } catch (error) {
-    console.log(error)
     if (error instanceof Error == false) {
       return makeAPIErrorResponse(500, "An unknown error occurred.")
     }
