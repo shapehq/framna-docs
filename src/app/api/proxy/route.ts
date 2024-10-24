@@ -20,7 +20,6 @@ export async function GET(req: NextRequest) {
   try {
     const maxBytes = 10 * 1024 * 1024 // 10 MB
     const file = await downloadFile({ url, maxBytes })
-    console.log("Downloaded")
     return new NextResponse(file, { status: 200 })
   } catch (error) {
     if (error instanceof Error == false) {
