@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from "next/server"
-import { makeAPIErrorResponse, makeUnauthenticatedAPIErrorResponse } from "@/common"
+import { env, makeAPIErrorResponse, makeUnauthenticatedAPIErrorResponse } from "@/common"
 import { session } from "@/composition"
-import { env } from "@/common"
 
 const ErrorName = {
   MAX_FILE_SIZE_EXCEEDED: "MaxFileSizeExceededError",
@@ -60,7 +59,7 @@ async function downloadFile(params: {
   let totalBytes = 0
   let didExceedMaxBytes = false
   const reader = response.body.getReader()
-  let chunks: Uint8Array[] = []
+  const chunks: Uint8Array[] = []
   // eslint-disable-next-line no-constant-condition
   while (true) {
     // eslint-disable-next-line no-await-in-loop
