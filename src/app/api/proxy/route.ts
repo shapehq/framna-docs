@@ -3,6 +3,11 @@ import { makeAPIErrorResponse, makeUnauthenticatedAPIErrorResponse } from "@/com
 import { session } from "@/composition"
 import { env } from "@/common"
 
+const ErrorName = {
+  MAX_FILE_SIZE_EXCEEDED: "MaxFileSizeExceededError",
+  TIMEOUT: "TimeoutError"
+}
+
 export async function GET(req: NextRequest) {
   const isAuthenticated = await session.getIsAuthenticated()
   if (!isAuthenticated) {
@@ -25,12 +30,13 @@ export async function GET(req: NextRequest) {
     const file = await downloadFile({ url, maxBytes, timeoutInSeconds })
     return new NextResponse(file, { status: 200 })
   } catch (error) {
+    console.log(error)
     if (error instanceof Error == false) {
       return makeAPIErrorResponse(500, "An unknown error occurred.")
     }
-    if (error.name === "AbortError") {
+    if (error.name === ErrorName.MAX_FILE_SIZE_EXCEEDED) {
       return makeAPIErrorResponse(413, "The operation was aborted.")
-    } else if (error.name === "TimeoutError") {
+    } else if (error.name === ErrorName.TIMEOUT) {
       return makeAPIErrorResponse(408, "The operation timed out.")
     } else {
       return makeAPIErrorResponse(500, error.message)
@@ -53,7 +59,9 @@ async function downloadFile(params: {
     throw new Error("Response body unavailable")
   }
   let totalBytes = 0
+  let didExceedMaxBytes = false
   const reader = response.body.getReader()
+  let chunks: Uint8Array[] = []
   // eslint-disable-next-line no-constant-condition
   while (true) {
     // eslint-disable-next-line no-await-in-loop
@@ -62,10 +70,17 @@ async function downloadFile(params: {
       break
     }
     totalBytes += value.length
+    chunks.push(value)
     if (totalBytes >= maxBytes) {
+      didExceedMaxBytes = true
       abortController.abort()
       break
     }
   }
-  return await response.blob()
+  if (didExceedMaxBytes) {
+    const error = new Error("Maximum file size exceeded")
+    error.name = ErrorName.MAX_FILE_SIZE_EXCEEDED
+    throw error
+  }
+  return new Blob(chunks)
 }
