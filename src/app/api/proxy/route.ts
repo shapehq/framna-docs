@@ -39,8 +39,9 @@ export async function GET(req: NextRequest) {
 async function downloadFile(params: { url: URL, maxBytes: number }): Promise<Blob> {
   const { url, maxBytes } = params
   const abortController = new AbortController()
+  const timeoutSignal = AbortSignal.timeout(30 * 1000)
   const response = await fetch(url, {
-    signal: AbortSignal.any([abortController.signal])
+    signal: AbortSignal.any([abortController.signal, timeoutSignal])
   })
   if (!response.body) {
     throw new Error("Response body unavailable")
