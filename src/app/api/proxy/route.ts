@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server"
 import { makeAPIErrorResponse, makeUnauthenticatedAPIErrorResponse } from "@/common"
 import { session } from "@/composition"
+import { env } from "@/common"
 
 export async function GET(req: NextRequest) {
   const isAuthenticated = await session.getIsAuthenticated()
@@ -18,8 +19,10 @@ export async function GET(req: NextRequest) {
     return makeAPIErrorResponse(400, "Invalid \"url\" query parameter.")
   }
   try {
-    const maxBytes = 10 * 1024 * 1024 // 10 MB
-    const file = await downloadFile({ url, maxBytes })
+    const maxMegabytes = Number(env.getOrThrow("PROXY_API_MAXIMUM_FILE_SIZE_IN_MEGABYTES"))
+    const timeoutInSeconds = Number(env.getOrThrow("PROXY_API_TIMEOUT_IN_SECONDS"))
+    const maxBytes = maxMegabytes * 1024 * 1024
+    const file = await downloadFile({ url, maxBytes, timeoutInSeconds })
     return new NextResponse(file, { status: 200 })
   } catch (error) {
     if (error instanceof Error == false) {
@@ -35,10 +38,14 @@ export async function GET(req: NextRequest) {
   }
 }
 
-async function downloadFile(params: { url: URL, maxBytes: number }): Promise<Blob> {
-  const { url, maxBytes } = params
+async function downloadFile(params: {
+  url: URL,
+  maxBytes: number,
+  timeoutInSeconds: number
+}): Promise<Blob> {
+  const { url, maxBytes, timeoutInSeconds } = params
   const abortController = new AbortController()
-  const timeoutSignal = AbortSignal.timeout(30 * 1000)
+  const timeoutSignal = AbortSignal.timeout(timeoutInSeconds * 1000)
   const response = await fetch(url, {
     signal: AbortSignal.any([abortController.signal, timeoutSignal])
   })
