@@ -17,6 +17,48 @@ export async function GET(req: NextRequest) {
   } catch {
     return makeAPIErrorResponse(400, "Invalid \"url\" query parameter.")
   }
-  const file = await fetch(url).then(r => r.blob())
-  return new NextResponse(file, { status: 200 })
+  try {
+    const maxBytes = 10 * 1024 * 1024 // 10 MB
+    const file = await downloadFile({ url, maxBytes })
+    console.log("Downloaded")
+    return new NextResponse(file, { status: 200 })
+  } catch (error) {
+    if (error instanceof Error == false) {
+      return makeAPIErrorResponse(500, "An unknown error occurred.")
+    }
+    if (error.name === "AbortError") {
+      return makeAPIErrorResponse(413, "The operation was aborted.")
+    } else if (error.name === "TimeoutError") {
+      return makeAPIErrorResponse(408, "The operation timed out.")
+    } else {
+      return makeAPIErrorResponse(500, error.message)
+    }
+  }
+}
+
+async function downloadFile(params: { url: URL, maxBytes: number }): Promise<Blob> {
+  const { url, maxBytes } = params
+  const abortController = new AbortController()
+  const response = await fetch(url, {
+    signal: AbortSignal.any([abortController.signal])
+  })
+  if (!response.body) {
+    throw new Error("Response body unavailable")
+  }
+  let totalBytes = 0
+  const reader = response.body.getReader()
+  // eslint-disable-next-line no-constant-condition
+  while (true) {
+    // eslint-disable-next-line no-await-in-loop
+    const { done, value } = await reader.read()
+    if (done) {
+      break
+    }
+    totalBytes += value.length
+    if (totalBytes >= maxBytes) {
+      abortController.abort()
+      break
+    }
+  }
+  return await response.blob()
 }
