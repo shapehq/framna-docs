@@ -1,10 +1,12 @@
 import { NextRequest, NextResponse } from "next/server"
 import { env, makeAPIErrorResponse, makeUnauthenticatedAPIErrorResponse } from "@/common"
 import { session } from "@/composition"
+import { parse as parseYaml } from "yaml"
 
 const ErrorName = {
   MAX_FILE_SIZE_EXCEEDED: "MaxFileSizeExceededError",
-  TIMEOUT: "TimeoutError"
+  TIMEOUT: "TimeoutError",
+  NOT_JSON_OR_YAML: "NotJsonOrYamlError",
 }
 
 export async function GET(req: NextRequest) {
@@ -26,8 +28,9 @@ export async function GET(req: NextRequest) {
     const maxMegabytes = Number(env.getOrThrow("PROXY_API_MAXIMUM_FILE_SIZE_IN_MEGABYTES"))
     const timeoutInSeconds = Number(env.getOrThrow("PROXY_API_TIMEOUT_IN_SECONDS"))
     const maxBytes = maxMegabytes * 1024 * 1024
-    const file = await downloadFile({ url, maxBytes, timeoutInSeconds })
-    return new NextResponse(file, { status: 200 })
+    const fileText = await downloadFile({ url, maxBytes, timeoutInSeconds })
+    checkIfJsonOrYaml(fileText)
+    return new NextResponse(fileText, { status: 200 })
   } catch (error) {
     if (error instanceof Error == false) {
       return makeAPIErrorResponse(500, "An unknown error occurred.")
@@ -36,6 +39,8 @@ export async function GET(req: NextRequest) {
       return makeAPIErrorResponse(413, "The operation was aborted.")
     } else if (error.name === ErrorName.TIMEOUT) {
       return makeAPIErrorResponse(408, "The operation timed out.")
+    } else if (error.name === ErrorName.NOT_JSON_OR_YAML) {
+      return makeAPIErrorResponse(400, "Url does not point to a JSON or YAML file.")
     } else {
       return makeAPIErrorResponse(500, error.message)
     }
@@ -46,7 +51,7 @@ async function downloadFile(params: {
   url: URL,
   maxBytes: number,
   timeoutInSeconds: number
-}): Promise<Blob> {
+}): Promise<string> {
   const { url, maxBytes, timeoutInSeconds } = params
   const abortController = new AbortController()
   const timeoutSignal = AbortSignal.timeout(timeoutInSeconds * 1000)
@@ -80,5 +85,18 @@ async function downloadFile(params: {
     error.name = ErrorName.MAX_FILE_SIZE_EXCEEDED
     throw error
   }
-  return new Blob(chunks)
+  const blob = new Blob(chunks)
+  const arrayBuffer = await blob.arrayBuffer()
+  const decoder = new TextDecoder()
+  return decoder.decode(arrayBuffer)
+}
+
+function checkIfJsonOrYaml(fileText: string) {
+  try {
+    parseYaml(fileText) // will also parse JSON as it is a subset of YAML
+  } catch {
+    const error = new Error("File is not JSON or YAML")
+    error.name = ErrorName.NOT_JSON_OR_YAML
+    throw error
+  }
 }
