@@ -50,6 +50,7 @@ import {
   RepositoryNameEventFilter,
   PullRequestCommenter
 } from "@/features/hooks/domain"
+import { RepoRestrictedGitHubClient } from "./common/github/RepoRestrictedGitHubClient"
 
 const gitHubAppCredentials = {
   appId: env.getOrThrow("GITHUB_APP_ID"),
@@ -135,13 +136,18 @@ const oauthTokenRefresher = new LockingOAuthTokenRefresher({
   })
 })
 
-export const gitHubClient = new GitHubClient({
+const gitHubClient = new GitHubClient({
   ...gitHubAppCredentials,
   oauthTokenDataSource
 })
 
+const repoRestrictedGitHubClient = new RepoRestrictedGitHubClient({
+  repositoryNameSuffix: env.getOrThrow("REPOSITORY_NAME_SUFFIX"),
+  gitHubClient
+})
+
 export const userGitHubClient = new OAuthTokenRefreshingGitHubClient({
-  gitHubClient,
+  gitHubClient: repoRestrictedGitHubClient,
   oauthTokenDataSource,
   oauthTokenRefresher
 })
