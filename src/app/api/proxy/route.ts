@@ -30,7 +30,7 @@ export async function GET(req: NextRequest) {
     const maxBytes = maxMegabytes * 1024 * 1024
     const fileText = await downloadFile({ url, maxBytes, timeoutInSeconds })
     checkIfJsonOrYaml(fileText)
-    return new NextResponse(fileText, { status: 200 })
+    return new NextResponse(fileText, { status: 200, headers: { "Content-Type": "text/plain" } })
   } catch (error) {
     if (error instanceof Error == false) {
       return makeAPIErrorResponse(500, "An unknown error occurred.")

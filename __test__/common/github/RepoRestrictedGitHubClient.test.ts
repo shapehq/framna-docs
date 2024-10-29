@@ -7,7 +7,6 @@ import {
     GetRepositoryContentRequest,
     GraphQLQueryRequest,
     UpdatePullRequestCommentRequest,
-    GitHubClient
 } from "@/common";
 import { jest } from '@jest/globals';
 
@@ -37,7 +36,7 @@ describe('RepoRestrictedGitHubClient', () => {
         expect(gitHubClient.graphql).toHaveBeenCalledWith(request);
     });
 
-    it('should check suffix for getRepositoryContent', async () => {
+    it('should delegate getRepositoryContent to the underlying client', async () => {
         const request: GetRepositoryContentRequest = {
             repositoryName: 'repo-suffix', path: '',
             repositoryOwner: '',
@@ -56,7 +55,7 @@ describe('RepoRestrictedGitHubClient', () => {
         await expect(client.getRepositoryContent(request)).rejects.toThrow("Invalid repository name");
     });
 
-    it('should check suffix for getPullRequestFiles', async () => {
+    it('should delegate getPullRequestFiles to the underlying client', async () => {
         const request: GetPullRequestFilesRequest = {
             repositoryName: 'repo-suffix', pullRequestNumber: 1,
             appInstallationId: 0,
@@ -75,7 +74,7 @@ describe('RepoRestrictedGitHubClient', () => {
         await expect(client.getPullRequestFiles(request)).rejects.toThrow("Invalid repository name");
     });
 
-    it('should check suffix for getPullRequestComments', async () => {
+    it('should delegate getPullRequestComments to the underlying client', async () => {
         const request: GetPullRequestCommentsRequest = {
             repositoryName: 'repo-suffix', pullRequestNumber: 1,
             appInstallationId: 0,
@@ -94,7 +93,7 @@ describe('RepoRestrictedGitHubClient', () => {
         await expect(client.getPullRequestComments(request)).rejects.toThrow("Invalid repository name");
     });
 
-    it('should check suffix for addCommentToPullRequest', async () => {
+    it('should delegate addCommentToPullRequest to the underlying client', async () => {
         const request: AddCommentToPullRequestRequest = {
             repositoryName: 'repo-suffix', pullRequestNumber: 1, body: '',
             appInstallationId: 0,
@@ -113,7 +112,7 @@ describe('RepoRestrictedGitHubClient', () => {
         await expect(client.addCommentToPullRequest(request)).rejects.toThrow("Invalid repository name");
     });
 
-    it('should check suffix for updatePullRequestComment', async () => {
+    it('should delegate updatePullRequestComment to the underlying client', async () => {
         const request: UpdatePullRequestCommentRequest = {
             repositoryName: 'repo-suffix', commentId: 1, body: '',
             appInstallationId: 0,
