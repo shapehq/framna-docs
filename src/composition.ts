@@ -110,8 +110,18 @@ export const { signIn, auth, handlers: authHandlers } = NextAuth({
       return await logInHandler.handleLogIn({ user, account })
     },
     async session({ session, user }) {
-      session.user.id = user.id
-      return session
+      // Construct a new session object conforming to DefaultSession
+      // If "session" is returned it will include everything from AdapterSession,
+      // which is critical as this contains the sessionToken
+      return {
+        user: {
+          id: user.id,
+          email: user.email,
+          name: user.name,
+          image: user.image
+        },
+        expires: session.expires,
+      }
     }
   }
 })
