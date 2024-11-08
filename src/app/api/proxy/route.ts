@@ -55,7 +55,20 @@ async function downloadFile(params: {
   const { url, maxBytes, timeoutInSeconds } = params
   const abortController = new AbortController()
   const timeoutSignal = AbortSignal.timeout(timeoutInSeconds * 1000)
-  const response = await fetch(url, {
+  let headers: {[key: string]: string} = {}
+  // Extract basic auth from URL and construct an Authorization header instead.
+  if ((url.username && url.username.length > 0) || (url.password && url.password.length > 0)) {
+    const username = decodeURIComponent(url.username)
+    const password = decodeURIComponent(url.password)
+    headers["Authorization"] = "Basic " + btoa(`${username}:${password}`)
+  }
+  // Make sure basic auth is removed from URL.
+  const urlWithoutAuth = url
+  urlWithoutAuth.username = ""
+  urlWithoutAuth.password = ""
+  const response = await fetch(urlWithoutAuth, {
+    method: "GET",
+    headers,
     signal: AbortSignal.any([abortController.signal, timeoutSignal])
   })
   if (!response.body) {
