@@ -55,7 +55,7 @@ async function downloadFile(params: {
   const { url, maxBytes, timeoutInSeconds } = params
   const abortController = new AbortController()
   const timeoutSignal = AbortSignal.timeout(timeoutInSeconds * 1000)
-  let headers: {[key: string]: string} = {}
+  const headers: {[key: string]: string} = {}
   // Extract basic auth from URL and construct an Authorization header instead.
   if ((url.username && url.username.length > 0) || (url.password && url.password.length > 0)) {
     const username = decodeURIComponent(url.username)

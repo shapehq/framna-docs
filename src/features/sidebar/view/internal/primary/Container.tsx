@@ -17,7 +17,7 @@ const PrimaryContainer = ({
 }) => {
   return (
     <>
-      <_PrimaryContainer 
+      <InnerPrimaryContainer 
         variant="temporary"
         width={width}
         isOpen={isOpen}
@@ -26,8 +26,8 @@ const PrimaryContainer = ({
         sx={{ display: { xs: "block", sm: "none" } }}
       >
         {children}
-      </_PrimaryContainer>
-      <_PrimaryContainer 
+      </InnerPrimaryContainer>
+      <InnerPrimaryContainer 
         variant="persistent"
         width={width}
         isOpen={isOpen}
@@ -35,14 +35,14 @@ const PrimaryContainer = ({
         sx={{ display: { xs: "none", sm: "block" } }}
         >
           {children}
-        </_PrimaryContainer>
+        </InnerPrimaryContainer>
     </>
   )
 }
 
 export default PrimaryContainer
 
-const _PrimaryContainer = ({
+const InnerPrimaryContainer = ({
   variant,
   width,
   isOpen,
