@@ -17,13 +17,15 @@ const SecondaryContainer = ({
   const sx = { overflow: "hidden" }
   return (
     <>
-      <_SecondaryContainer
+      <InnerSecondaryContainer
+    
         sidebarWidth={isSM ? sidebarWidth : 0}
         isSidebarOpen={isSM ? offsetContent:  false}
         sx={{ ...sx }}
       >
         {children}
-      </_SecondaryContainer>
+      </InnerSecondaryContainer
+    >
     </>
   )
 }
@@ -52,7 +54,7 @@ const WrapperStack = styled(Stack, {
   })
 }))
 
-const _SecondaryContainer = ({
+const InnerSecondaryContainer = ({
   sidebarWidth,
   isSidebarOpen,
   children,
