@@ -24,7 +24,7 @@ export default class GitHubProjectDataSource implements IProjectDataSource {
   }) {
     this.repositoryDataSource = config.repositoryDataSource
     this.repositoryNameSuffix = config.repositoryNameSuffix
-    this.encryptionService = new RsaEncryptionService({
+    this.encryptionService = new RsaEncryptionService({ // TODO: Would be better to load from composition root, but causes errors
       publicKey: Buffer.from(env.getOrThrow("ENCRYPTION_PUBLIC_KEY_BASE_64"), "base64").toString("utf-8"),
       privateKey: Buffer.from(env.getOrThrow("ENCRYPTION_PRIVATE_KEY_BASE_64"), "base64").toString("utf-8")
     })
@@ -175,34 +175,23 @@ export default class GitHubProjectDataSource implements IProjectDataSource {
       const existingVersionIdCount = versionIds.filter(e => e == baseVersionId).length
       const versionId = baseVersionId + (existingVersionIdCount > 0 ? existingVersionIdCount : "")
       const specifications = remoteVersion.specifications.map(e => {
-        if (e.auth) {
-          // decrypt username and password
-          const username = this.encryptionService.decrypt(e.auth.encryptedUsername)
-          const password = this.encryptionService.decrypt(e.auth.encryptedPassword)
-          // construct remote config
-          const remoteConfig: RemoteConfig = {
-            url: e.url,
-            auth: {
-              type: e.auth.type,
-              username,
-              password
-            }
-          }
-          // encrypt and encode remote config
-          const encryptedRemoteConfig = encodeURIComponent(this.encryptionService.encrypt(JSON.stringify(remoteConfig)))
-          
-          return {
-            id: this.makeURLSafeID((e.id || e.name).toLowerCase()),
-            name: e.name,
-            url: `/api/remotes/${encryptedRemoteConfig}`
-          }
-        } else {
-          return {
-            id: this.makeURLSafeID((e.id || e.name).toLowerCase()),
-            name: e.name,
-            url: `/api/proxy?url=${encodeURIComponent(e.url)}`
-          }
-      }
+        const remoteConfig: RemoteConfig = {
+          url: e.url,
+          auth: e.auth ? {
+            type: e.auth.type,
+            username: this.encryptionService.decrypt(e.auth.encryptedUsername),
+            password: this.encryptionService.decrypt(e.auth.encryptedPassword)
+          } : undefined
+        };
+
+        // Encrypt and encode remote config
+        const encryptedRemoteConfig = Buffer.from(this.encryptionService.encrypt(JSON.stringify(remoteConfig))).toString('base64');
+
+        return {
+          id: this.makeURLSafeID((e.id || e.name).toLowerCase()),
+          name: e.name,
+          url: `/api/remotes/${encryptedRemoteConfig}`
+        };
       })
       versions.push({
         id: versionId,

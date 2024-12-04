@@ -27,7 +27,7 @@ export async function GET(req: NextRequest, { params }: { params: RemoteSpecific
     return makeUnauthenticatedAPIErrorResponse()
   }
 
-  const decodedEncryptedRemoteConfig = decodeURIComponent(params.encryptedRemoteConfig)
+  const decodedEncryptedRemoteConfig = Buffer.from(params.encryptedRemoteConfig, 'base64').toString('utf-8');
 
   const decryptedRemoteConfig = encryptionService.decrypt(decodedEncryptedRemoteConfig)
 
