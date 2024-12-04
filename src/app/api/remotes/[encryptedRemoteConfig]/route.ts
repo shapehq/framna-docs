@@ -53,8 +53,16 @@ export async function GET(req: NextRequest, { params }: { params: RemoteSpecific
     })
     
     checkIfJsonOrYaml(fileText)
+
+    const fileName = url.pathname.split('/').pop()
     
-    return new NextResponse(fileText, { status: 200, headers: { "Content-Type": "text/plain" } })
+    return new NextResponse(fileText, { 
+      status: 200, 
+      headers: { 
+        "Content-Type": "text/plain",
+        "Content-Disposition": `attachment; filename="${fileName}"` // used for when downloading the file
+      }
+    })
   } catch (error) {
     if (error instanceof Error == false) {
       return makeAPIErrorResponse(500, "An unknown error occurred.")
