@@ -9,8 +9,8 @@ import {
   GitHubRepository,
   GitHubRepositoryRef
 } from "../domain"
-import { RemoteConfig } from "@/app/api/remotes/[encryptedRemoteConfig]/route"
 import { IEncryptionService } from "@/common/encryption/EncryptionService"
+import RemoteConfig from "../domain/RemoteConfig"
 
 export default class GitHubProjectDataSource implements IProjectDataSource {
   private readonly repositoryDataSource: IGitHubRepositoryDataSource
