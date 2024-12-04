@@ -51,6 +51,7 @@ import {
   PullRequestCommenter
 } from "@/features/hooks/domain"
 import { RepoRestrictedGitHubClient } from "./common/github/RepoRestrictedGitHubClient"
+import RsaEncryptionService from "./common/encryption/EncryptionService"
 
 const gitHubAppCredentials = {
   appId: env.getOrThrow("GITHUB_APP_ID"),
@@ -219,4 +220,9 @@ export const gitHubHookHandler = new GitHubHookHandler({
       })
     })
   })
+})
+
+export const encryptionService = new RsaEncryptionService({
+  publicKey: Buffer.from(env.getOrThrow("ENCRYPTION_PUBLIC_KEY_BASE_64"), "base64").toString("utf-8"),
+  privateKey: Buffer.from(env.getOrThrow("ENCRYPTION_PRIVATE_KEY_BASE_64"), "base64").toString("utf-8")
 })
