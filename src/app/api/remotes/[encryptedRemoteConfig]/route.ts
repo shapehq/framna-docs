@@ -13,13 +13,13 @@ const RemoteSpecAuthSchema = z.object({
   username: z.string(),
   password: z.string(),
 });
-type RemoteSpecAuth = z.infer<typeof RemoteSpecAuthSchema>;
+export type RemoteSpecAuth = z.infer<typeof RemoteSpecAuthSchema>;
 
 const RemoteConfigSchema = z.object({
   url: z.string().url(),
   auth: RemoteSpecAuthSchema.optional(),
 });
-type RemoteConfig = z.infer<typeof RemoteConfigSchema>;
+export type RemoteConfig = z.infer<typeof RemoteConfigSchema>;
 
 export async function GET(req: NextRequest, { params }: { params: RemoteSpecificationParams }) {
   const isAuthenticated = await session.getIsAuthenticated()

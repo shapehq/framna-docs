@@ -9,10 +9,14 @@ import {
   GitHubRepository,
   GitHubRepositoryRef
 } from "../domain"
+import { RemoteConfig } from "@/app/api/remotes/[encryptedRemoteConfig]/route"
+import RsaEncryptionService from "@/common/encryption/EncryptionService"
+import { env } from "@/common"
 
 export default class GitHubProjectDataSource implements IProjectDataSource {
   private readonly repositoryDataSource: IGitHubRepositoryDataSource
   private readonly repositoryNameSuffix: string
+  private readonly encryptionService: RsaEncryptionService
   
   constructor(config: {
     repositoryDataSource: IGitHubRepositoryDataSource
@@ -20,6 +24,10 @@ export default class GitHubProjectDataSource implements IProjectDataSource {
   }) {
     this.repositoryDataSource = config.repositoryDataSource
     this.repositoryNameSuffix = config.repositoryNameSuffix
+    this.encryptionService = new RsaEncryptionService({
+      publicKey: Buffer.from(env.getOrThrow("ENCRYPTION_PUBLIC_KEY_BASE_64"), "base64").toString("utf-8"),
+      privateKey: Buffer.from(env.getOrThrow("ENCRYPTION_PRIVATE_KEY_BASE_64"), "base64").toString("utf-8")
+    })
   }
   
   async getProjects(): Promise<Project[]> {
@@ -167,11 +175,34 @@ export default class GitHubProjectDataSource implements IProjectDataSource {
       const existingVersionIdCount = versionIds.filter(e => e == baseVersionId).length
       const versionId = baseVersionId + (existingVersionIdCount > 0 ? existingVersionIdCount : "")
       const specifications = remoteVersion.specifications.map(e => {
-        return {
-          id: this.makeURLSafeID((e.id || e.name).toLowerCase()),
-          name: e.name,
-          url: "/api/remotes/EKNYViMOSUnJggD4c4UwEoOGkGKZIPjWtijfeoYqgrkRP%2FIwXa770oxwRsVTdVFzmbjWuartdrUhUjkq7EyT4m3NBQOph0UaRTQhFgxm4Q5v2KJ%2BkhJ6TTKwiEgEdS%2BdOvTzAzXtk80T4amaNdeET9JVGJo0y8G47qtUIZCWmyzxamTnOJYOhkj4NcH9XlyafghwUV%2FO%2FAShlzwscFPy%2BlDFuhl8jmYV4fvClI2%2F4iFyew%2Bg5LGvNXPTS8wEZcz9GBKrcgSE6ScK3oeAGesKPyYblkKiU7dAxi%2FlRs9jiKQId%2BEFLWFcDgNw8aLDyZjKMT2u4gF9dfLx4iRQhaJ7KQ%3D%3D"
-        }
+        if (e.auth) {
+          // decrypt username and password
+          const username = this.encryptionService.decrypt(e.auth.encryptedUsername)
+          const password = this.encryptionService.decrypt(e.auth.encryptedPassword)
+          // construct remote config
+          const remoteConfig: RemoteConfig = {
+            url: e.url,
+            auth: {
+              type: e.auth.type,
+              username,
+              password
+            }
+          }
+          // encrypt and encode remote config
+          const encryptedRemoteConfig = encodeURIComponent(this.encryptionService.encrypt(JSON.stringify(remoteConfig)))
+          
+          return {
+            id: this.makeURLSafeID((e.id || e.name).toLowerCase()),
+            name: e.name,
+            url: `/api/remotes/${encryptedRemoteConfig}`
+          }
+        } else {
+          return {
+            id: this.makeURLSafeID((e.id || e.name).toLowerCase()),
+            name: e.name,
+            url: `/api/proxy?url=${encodeURIComponent(e.url)}`
+          }
+      }
       })
       versions.push({
         id: versionId,
