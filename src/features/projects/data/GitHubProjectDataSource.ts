@@ -1,3 +1,4 @@
+import { IEncryptionService } from "@/common/encryption/EncryptionService"
 import {
   Project,
   Version,
@@ -9,22 +10,25 @@ import {
   GitHubRepository,
   GitHubRepositoryRef
 } from "../domain"
-import { IEncryptionService } from "@/common/encryption/EncryptionService"
 import RemoteConfig from "../domain/RemoteConfig"
+import RemoteConfigEncoder from "../domain/RemoteConfigEncoder"
 
 export default class GitHubProjectDataSource implements IProjectDataSource {
   private readonly repositoryDataSource: IGitHubRepositoryDataSource
   private readonly repositoryNameSuffix: string
   private readonly encryptionService: IEncryptionService
+  private readonly remoteConfigEncoder: RemoteConfigEncoder
   
   constructor(config: {
     repositoryDataSource: IGitHubRepositoryDataSource
     repositoryNameSuffix: string
     encryptionService: IEncryptionService
+    remoteConfigEncoder: RemoteConfigEncoder
   }) {
     this.repositoryDataSource = config.repositoryDataSource
     this.repositoryNameSuffix = config.repositoryNameSuffix
     this.encryptionService = config.encryptionService
+    this.remoteConfigEncoder = config.remoteConfigEncoder
   }
   
   async getProjects(): Promise<Project[]> {
@@ -181,13 +185,12 @@ export default class GitHubProjectDataSource implements IProjectDataSource {
           } : undefined
         };
 
-        // Encrypt and encode remote config
-        const encryptedRemoteConfig = Buffer.from(this.encryptionService.encrypt(JSON.stringify(remoteConfig))).toString('base64');
+        const encodedRemoteConfig = this.remoteConfigEncoder.encode(remoteConfig);
 
         return {
           id: this.makeURLSafeID((e.id || e.name).toLowerCase()),
           name: e.name,
-          url: `/api/remotes/${encryptedRemoteConfig}`
+          url: `/api/remotes/${encodedRemoteConfig}`
         };
       })
       versions.push({

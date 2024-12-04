@@ -1,11 +1,10 @@
 import { NextRequest, NextResponse } from "next/server"
-import { encryptionService, session } from "@/composition"
+import { remoteConfigEncoder, session } from "@/composition"
 import { env, makeAPIErrorResponse, makeUnauthenticatedAPIErrorResponse } from "@/common"
 import { downloadFile, checkIfJsonOrYaml, ErrorName } from "@/common/utils/fileUtils";
-import { RemoteConfigSchema } from "@/features/projects/domain/RemoteConfig";
 
 interface RemoteSpecificationParams {
-  encryptedRemoteConfig: string // encrypted and URL encoded JSON string
+  encodedRemoteConfig: string
 }
 
 export async function GET(req: NextRequest, { params }: { params: RemoteSpecificationParams }) {
@@ -14,11 +13,7 @@ export async function GET(req: NextRequest, { params }: { params: RemoteSpecific
     return makeUnauthenticatedAPIErrorResponse()
   }
 
-  const decodedEncryptedRemoteConfig = Buffer.from(params.encryptedRemoteConfig, 'base64').toString('utf-8');
-
-  const decryptedRemoteConfig = encryptionService.decrypt(decodedEncryptedRemoteConfig)
-
-  const remoteConfig = RemoteConfigSchema.parse(JSON.parse(decryptedRemoteConfig))
+  const remoteConfig = remoteConfigEncoder.decode(params.encodedRemoteConfig)
 
   let url: URL
   try {
