@@ -1,6 +1,6 @@
 import { publicEncrypt, privateDecrypt, constants } from 'crypto';
 
-interface IEncryptionService {
+export interface IEncryptionService {
     encrypt(data: string): string;
     decrypt(encryptedDataBase64: string): string;
 }
