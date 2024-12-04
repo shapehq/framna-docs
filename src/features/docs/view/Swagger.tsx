@@ -3,6 +3,7 @@ import SwaggerUI from "swagger-ui-react"
 import "swagger-ui-react/swagger-ui.css"
 import { Box } from "@mui/material"
 import LoadingWrapper from "./LoadingWrapper"
+import "./swagger.css"
 
 const Swagger = ({ url }: { url: string }) => {
   const [isLoading, setLoading] = useState(true)
