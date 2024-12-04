@@ -17,7 +17,6 @@ export async function downloadFile(params: {
     const abortController = new AbortController();
     const timeoutSignal = AbortSignal.timeout(timeoutInSeconds * 1000);
     const headers: { [key: string]: string; } = {};
-    // Extract basic auth from URL and construct an Authorization header instead.
     if (basicAuthUsername && basicAuthPassword) {
         headers["Authorization"] = "Basic " + btoa(`${basicAuthUsername}:${basicAuthPassword}`);
     }
