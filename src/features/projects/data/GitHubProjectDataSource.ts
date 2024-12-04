@@ -10,24 +10,21 @@ import {
   GitHubRepositoryRef
 } from "../domain"
 import { RemoteConfig } from "@/app/api/remotes/[encryptedRemoteConfig]/route"
-import RsaEncryptionService from "@/common/encryption/EncryptionService"
-import { env } from "@/common"
+import { IEncryptionService } from "@/common/encryption/EncryptionService"
 
 export default class GitHubProjectDataSource implements IProjectDataSource {
   private readonly repositoryDataSource: IGitHubRepositoryDataSource
   private readonly repositoryNameSuffix: string
-  private readonly encryptionService: RsaEncryptionService
+  private readonly encryptionService: IEncryptionService
   
   constructor(config: {
     repositoryDataSource: IGitHubRepositoryDataSource
     repositoryNameSuffix: string
+    encryptionService: IEncryptionService
   }) {
     this.repositoryDataSource = config.repositoryDataSource
     this.repositoryNameSuffix = config.repositoryNameSuffix
-    this.encryptionService = new RsaEncryptionService({ // TODO: Would be better to load from composition root, but causes errors
-      publicKey: Buffer.from(env.getOrThrow("ENCRYPTION_PUBLIC_KEY_BASE_64"), "base64").toString("utf-8"),
-      privateKey: Buffer.from(env.getOrThrow("ENCRYPTION_PRIVATE_KEY_BASE_64"), "base64").toString("utf-8")
-    })
+    this.encryptionService = config.encryptionService
   }
   
   async getProjects(): Promise<Project[]> {

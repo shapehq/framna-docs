@@ -177,6 +177,11 @@ export const projectRepository = new ProjectRepository({
   repository: projectUserDataRepository
 })
 
+export const encryptionService = new RsaEncryptionService({
+  publicKey: Buffer.from(env.getOrThrow("ENCRYPTION_PUBLIC_KEY_BASE_64"), "base64").toString("utf-8"),
+  privateKey: Buffer.from(env.getOrThrow("ENCRYPTION_PRIVATE_KEY_BASE_64"), "base64").toString("utf-8")
+})
+
 export const projectDataSource = new CachingProjectDataSource({
   dataSource: new GitHubProjectDataSource({
     repositoryDataSource: new FilteringGitHubRepositoryDataSource({
@@ -190,7 +195,8 @@ export const projectDataSource = new CachingProjectDataSource({
         projectConfigurationFilename: env.getOrThrow("FRAMNA_DOCS_PROJECT_CONFIGURATION_FILENAME")
       })
     }),
-    repositoryNameSuffix: env.getOrThrow("REPOSITORY_NAME_SUFFIX")
+    repositoryNameSuffix: env.getOrThrow("REPOSITORY_NAME_SUFFIX"),
+    encryptionService: encryptionService
   }),
   repository: projectRepository
 })
@@ -220,9 +226,4 @@ export const gitHubHookHandler = new GitHubHookHandler({
       })
     })
   })
-})
-
-export const encryptionService = new RsaEncryptionService({
-  publicKey: Buffer.from(env.getOrThrow("ENCRYPTION_PUBLIC_KEY_BASE_64"), "base64").toString("utf-8"),
-  privateKey: Buffer.from(env.getOrThrow("ENCRYPTION_PRIVATE_KEY_BASE_64"), "base64").toString("utf-8")
 })
