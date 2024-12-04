@@ -170,7 +170,7 @@ export default class GitHubProjectDataSource implements IProjectDataSource {
         return {
           id: this.makeURLSafeID((e.id || e.name).toLowerCase()),
           name: e.name,
-          url: `/api/proxy?url=${encodeURIComponent(e.url)}`
+          url: "/api/remotes/EKNYViMOSUnJggD4c4UwEoOGkGKZIPjWtijfeoYqgrkRP%2FIwXa770oxwRsVTdVFzmbjWuartdrUhUjkq7EyT4m3NBQOph0UaRTQhFgxm4Q5v2KJ%2BkhJ6TTKwiEgEdS%2BdOvTzAzXtk80T4amaNdeET9JVGJo0y8G47qtUIZCWmyzxamTnOJYOhkj4NcH9XlyafghwUV%2FO%2FAShlzwscFPy%2BlDFuhl8jmYV4fvClI2%2F4iFyew%2Bg5LGvNXPTS8wEZcz9GBKrcgSE6ScK3oeAGesKPyYblkKiU7dAxi%2FlRs9jiKQId%2BEFLWFcDgNw8aLDyZjKMT2u4gF9dfLx4iRQhaJ7KQ%3D%3D"
         }
       })
       versions.push({
