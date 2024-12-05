@@ -51,6 +51,8 @@ import {
   PullRequestCommenter
 } from "@/features/hooks/domain"
 import { RepoRestrictedGitHubClient } from "./common/github/RepoRestrictedGitHubClient"
+import RsaEncryptionService from "./features/encrypt/EncryptionService"
+import RemoteConfigEncoder from "./features/projects/domain/RemoteConfigEncoder"
 
 const gitHubAppCredentials = {
   appId: env.getOrThrow("GITHUB_APP_ID"),
@@ -176,6 +178,13 @@ export const projectRepository = new ProjectRepository({
   repository: projectUserDataRepository
 })
 
+export const encryptionService = new RsaEncryptionService({
+  publicKey: Buffer.from(env.getOrThrow("ENCRYPTION_PUBLIC_KEY_BASE_64"), "base64").toString("utf-8"),
+  privateKey: Buffer.from(env.getOrThrow("ENCRYPTION_PRIVATE_KEY_BASE_64"), "base64").toString("utf-8")
+})
+
+export const remoteConfigEncoder = new RemoteConfigEncoder(encryptionService)
+
 export const projectDataSource = new CachingProjectDataSource({
   dataSource: new GitHubProjectDataSource({
     repositoryDataSource: new FilteringGitHubRepositoryDataSource({
@@ -189,7 +198,9 @@ export const projectDataSource = new CachingProjectDataSource({
         projectConfigurationFilename: env.getOrThrow("FRAMNA_DOCS_PROJECT_CONFIGURATION_FILENAME")
       })
     }),
-    repositoryNameSuffix: env.getOrThrow("REPOSITORY_NAME_SUFFIX")
+    repositoryNameSuffix: env.getOrThrow("REPOSITORY_NAME_SUFFIX"),
+    encryptionService: encryptionService,
+    remoteConfigEncoder: remoteConfigEncoder
   }),
   repository: projectRepository
 })

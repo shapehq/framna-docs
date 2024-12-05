@@ -1,3 +1,4 @@
+import { IEncryptionService } from "@/features/encrypt/EncryptionService"
 import {
   Project,
   Version,
@@ -7,19 +8,28 @@ import {
   ProjectConfigRemoteVersion,
   IGitHubRepositoryDataSource,
   GitHubRepository,
-  GitHubRepositoryRef
+  GitHubRepositoryRef,
+  ProjectConfigRemoteSpecification
 } from "../domain"
+import RemoteConfig from "../domain/RemoteConfig"
+import { IRemoteConfigEncoder } from "../domain/RemoteConfigEncoder"
 
 export default class GitHubProjectDataSource implements IProjectDataSource {
   private readonly repositoryDataSource: IGitHubRepositoryDataSource
   private readonly repositoryNameSuffix: string
+  private readonly encryptionService: IEncryptionService
+  private readonly remoteConfigEncoder: IRemoteConfigEncoder
   
   constructor(config: {
     repositoryDataSource: IGitHubRepositoryDataSource
     repositoryNameSuffix: string
+    encryptionService: IEncryptionService
+    remoteConfigEncoder: IRemoteConfigEncoder
   }) {
     this.repositoryDataSource = config.repositoryDataSource
     this.repositoryNameSuffix = config.repositoryNameSuffix
+    this.encryptionService = config.encryptionService
+    this.remoteConfigEncoder = config.remoteConfigEncoder
   }
   
   async getProjects(): Promise<Project[]> {
@@ -167,11 +177,18 @@ export default class GitHubProjectDataSource implements IProjectDataSource {
       const existingVersionIdCount = versionIds.filter(e => e == baseVersionId).length
       const versionId = baseVersionId + (existingVersionIdCount > 0 ? existingVersionIdCount : "")
       const specifications = remoteVersion.specifications.map(e => {
+        const remoteConfig: RemoteConfig = {
+          url: e.url,
+          auth: this.tryDecryptAuth(e)
+        };
+
+        const encodedRemoteConfig = this.remoteConfigEncoder.encode(remoteConfig);
+
         return {
           id: this.makeURLSafeID((e.id || e.name).toLowerCase()),
           name: e.name,
-          url: `/api/proxy?url=${encodeURIComponent(e.url)}`
-        }
+          url: `/api/remotes/${encodedRemoteConfig}`
+        };
       })
       versions.push({
         id: versionId,
@@ -211,5 +228,22 @@ export default class GitHubProjectDataSource implements IProjectDataSource {
     return str
       .replace(/ /g, "-")
       .replace(/[^A-Za-z0-9-]/g, "")
+  }
+
+  private tryDecryptAuth(projectConfigRemoteSpec: ProjectConfigRemoteSpecification): { type: string, username: string, password: string } | undefined {
+    if (!projectConfigRemoteSpec.auth) {
+      return undefined
+    }
+
+    try {
+      return {
+        type: projectConfigRemoteSpec.auth.type,
+        username: this.encryptionService.decrypt(projectConfigRemoteSpec.auth.encryptedUsername),
+        password: this.encryptionService.decrypt(projectConfigRemoteSpec.auth.encryptedPassword)
+      }
+    } catch (error) {
+      console.error(`Failed to decrypt remote specification auth for ${projectConfigRemoteSpec.url}. Perhaps a different public key was used?:`, error);
+      return undefined
+    }
   }
 }

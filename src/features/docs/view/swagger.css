@@ -1,0 +1,6 @@
+.swagger-ui .info span.url {
+  display: block;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  max-width: 80%;
+}
