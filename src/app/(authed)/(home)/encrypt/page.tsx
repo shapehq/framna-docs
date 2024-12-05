@@ -22,7 +22,7 @@ export default async function EncryptPage() {
                 sx={{ width: '80%', maxWidth: '600px' }}
             >
                 <Typography variant="h4">
-                    Encrypt secrets for remote config
+                    Encrypt secrets
                 </Typography>
                 <Typography sx={{ textAlign: "center" }}>
                     When adding authentication information to remote specifications it 
