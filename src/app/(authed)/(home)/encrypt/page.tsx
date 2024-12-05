@@ -7,6 +7,7 @@ const HELP_URL = env.getOrThrow("FRAMNA_DOCS_HELP_URL")
 const SITE_NAME = env.getOrThrow("FRAMNA_DOCS_TITLE")
 
 export default async function EncryptPage() {
+    const possessiveName = SITE_NAME + (SITE_NAME.endsWith('s') ? "'" : "'s")
     return (
         <Box
             display="flex"
@@ -25,12 +26,10 @@ export default async function EncryptPage() {
                     Encrypt secrets
                 </Typography>
                 <Typography sx={{ textAlign: "center" }}>
-                    When adding authentication information to remote specifications it 
-                    is required to encrypt the authentication information with our public 
-                    key before storing it in the repository.<br />
-                    <br />
-                    This page allows you to encrypt the secret using {SITE_NAME}{SITE_NAME.endsWith('s') ? "'" : "'s"} 
-                    public key, which means only {SITE_NAME} can decrypt it.
+                    Use the form below to encrypt a secret using {possessiveName} public key.
+                    <br/><br />
+                    Authentication in remote specifications must be encrypted using {possessiveName} public key
+                    before it is stored in a repository on GitHub.
                 </Typography>
                 <EncryptionForm />
                 {HELP_URL &&
