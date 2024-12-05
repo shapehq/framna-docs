@@ -1,53 +1,45 @@
-'use client'
+import { Box, Typography } from '@mui/material'
+import MessageLinkFooter from "@/common/ui/MessageLinkFooter"
+import { EncryptionForm } from "@/features/encrypt/view/EncryptionForm"
+import { env } from '@/common'
 
-import { useState } from 'react'
-import { encrypt } from './action'
-import { Box, Button, TextareaAutosize, Typography } from '@mui/material'
+const HELP_URL = env.getOrThrow("FRAMNA_DOCS_HELP_URL")
+const SITE_NAME = env.getOrThrow("FRAMNA_DOCS_TITLE")
 
-export default function EncryptPage() {
-    const [inputText, setInputText] = useState('')
-    const [encryptedText, setEncryptedText] = useState('')
-
-    const handleSubmit = async (event: React.FormEvent) => {
-        event.preventDefault()
-        const encrypted = await encrypt(inputText)
-        setEncryptedText(encrypted)
-    }
-
+export default async function EncryptPage() {
     return (
         <Box
             display="flex"
-            alignItems="center"
             justifyContent="center"
-            flexDirection="column"
-            height={1}
+            alignItems="center"
             width={1}
-            gap={6}
         >
-            <Typography variant="h4">
-                Encrypt text for remote config
-            </Typography>
-            <Typography variant="body1">
-                Use this to encrypt values to be used in the configuration file.<br />
-                The input text is encrypted using the public key of the server.
-            </Typography>
-            <form onSubmit={handleSubmit}>
-                <TextareaAutosize
-                    value={inputText}
-                    onChange={(e) => setInputText(e.target.value)}
-                    cols={50}
-                    minRows={10}
-                />
-                <br />
-                <Button type="submit" variant="outlined"
-                    color="primary"
-                    size="large"
-                    sx={{ height: 56, width: 1 }}
-                >Encrypt</Button>
-            </form>
-            {encryptedText && (
-                <textarea readOnly value={encryptedText} rows={10} cols={50} />
-            )}
+            <Box
+                display="flex"
+                alignItems="center"
+                flexDirection="column"
+                gap={6}
+                sx={{ width: '80%', maxWidth: '600px' }}
+            >
+                <Typography variant="h4">
+                    Encrypt secrets for remote config
+                </Typography>
+                <Typography sx={{ textAlign: "center" }}>
+                    When adding authentication information to remote specifications it 
+                    is required to encrypt the authentication information with our public 
+                    key before storing it in the repository.<br />
+                    <br />
+                    This page allows you to encrypt the secret using {SITE_NAME}{SITE_NAME.endsWith('s') ? "'" : "'s"} 
+                    public key, which means only {SITE_NAME} can decrypt it.
+                </Typography>
+                <EncryptionForm />
+                {HELP_URL &&
+                    <MessageLinkFooter
+                        url={HELP_URL}
+                        content="Need help? Explore our wiki for more info."
+                    />
+                }
+            </Box>
         </Box>
     )
 }
