@@ -1,3 +1,4 @@
+import { IEncryptionService } from "@/features/encrypt/EncryptionService"
 import {
   Project,
   Version,
@@ -9,17 +10,25 @@ import {
   GitHubRepository,
   GitHubRepositoryRef
 } from "../domain"
+import RemoteConfig from "../domain/RemoteConfig"
+import { IRemoteConfigEncoder } from "../domain/RemoteConfigEncoder"
 
 export default class GitHubProjectDataSource implements IProjectDataSource {
   private readonly repositoryDataSource: IGitHubRepositoryDataSource
   private readonly repositoryNameSuffix: string
+  private readonly encryptionService: IEncryptionService
+  private readonly remoteConfigEncoder: IRemoteConfigEncoder
   
   constructor(config: {
     repositoryDataSource: IGitHubRepositoryDataSource
     repositoryNameSuffix: string
+    encryptionService: IEncryptionService
+    remoteConfigEncoder: IRemoteConfigEncoder
   }) {
     this.repositoryDataSource = config.repositoryDataSource
     this.repositoryNameSuffix = config.repositoryNameSuffix
+    this.encryptionService = config.encryptionService
+    this.remoteConfigEncoder = config.remoteConfigEncoder
   }
   
   async getProjects(): Promise<Project[]> {
@@ -167,11 +176,22 @@ export default class GitHubProjectDataSource implements IProjectDataSource {
       const existingVersionIdCount = versionIds.filter(e => e == baseVersionId).length
       const versionId = baseVersionId + (existingVersionIdCount > 0 ? existingVersionIdCount : "")
       const specifications = remoteVersion.specifications.map(e => {
+        const remoteConfig: RemoteConfig = {
+          url: e.url,
+          auth: e.auth ? {
+            type: e.auth.type,
+            username: this.encryptionService.decrypt(e.auth.encryptedUsername),
+            password: this.encryptionService.decrypt(e.auth.encryptedPassword)
+          } : undefined
+        };
+
+        const encodedRemoteConfig = this.remoteConfigEncoder.encode(remoteConfig);
+
         return {
           id: this.makeURLSafeID((e.id || e.name).toLowerCase()),
           name: e.name,
-          url: `/api/proxy?url=${encodeURIComponent(e.url)}`
-        }
+          url: `/api/remotes/${encodedRemoteConfig}`
+        };
       })
       versions.push({
         id: versionId,

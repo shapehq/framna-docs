@@ -1,4 +1,29 @@
 import { GitHubProjectDataSource } from "@/features/projects/data"
+import RemoteConfig from "@/features/projects/domain/RemoteConfig"
+
+/**
+ * Simple encryption service for testing. Does nothing.
+ */
+const noopEncryptionService = {
+  encrypt: function (data: string): string {
+    return data
+  },
+  decrypt: function (encryptedDataBase64: string): string {
+    return encryptedDataBase64
+  }
+}
+
+/**
+ * Simple encoder for testing
+ */
+const base64RemoteConfigEncoder = {
+  encode: function (remoteConfig: RemoteConfig): string {
+    return Buffer.from(JSON.stringify(remoteConfig)).toString("base64")
+  },
+  decode: function (encodedString: string): RemoteConfig {
+    return JSON.parse(Buffer.from(encodedString, "base64").toString())
+  }
+}
 
 test("It loads repositories from data source", async () => {
   let didLoadRepositories = false
@@ -9,7 +34,9 @@ test("It loads repositories from data source", async () => {
         didLoadRepositories = true
         return []
       }
-    }
+    },
+    encryptionService: noopEncryptionService,
+    remoteConfigEncoder: base64RemoteConfigEncoder
   })
   await sut.getProjects()
   expect(didLoadRepositories).toBeTruthy()
@@ -43,7 +70,9 @@ test("It maps projects including branches and tags", async () => {
           }]
         }]
       }
-    }
+    },
+    encryptionService: noopEncryptionService,
+    remoteConfigEncoder: base64RemoteConfigEncoder
   })
   const projects = await sut.getProjects()
   expect(projects).toEqual([{
@@ -107,7 +136,9 @@ test("It removes suffix from project name", async () => {
           }]
         }]
       }
-    }
+    },
+    encryptionService: noopEncryptionService,
+    remoteConfigEncoder: base64RemoteConfigEncoder
   })
   const projects = await sut.getProjects()
   expect(projects[0].id).toEqual("acme-foo")
@@ -147,7 +178,9 @@ test("It supports multiple OpenAPI specifications on a branch", async () => {
           }]
         }]
       }
-    }
+    },
+    encryptionService: noopEncryptionService,
+    remoteConfigEncoder: base64RemoteConfigEncoder
   })
   const projects = await sut.getProjects()
   expect(projects).toEqual([{
@@ -209,7 +242,9 @@ test("It filters away projects with no versions", async () => {
           tags: []
         }]
       }
-    }
+    },
+    encryptionService: noopEncryptionService,
+    remoteConfigEncoder: base64RemoteConfigEncoder
   })
   const projects = await sut.getProjects()
   expect(projects.length).toEqual(0)
@@ -243,7 +278,9 @@ test("It filters away branches with no specifications", async () => {
           tags: []
         }]
       }
-    }
+    },
+    encryptionService: noopEncryptionService,
+    remoteConfigEncoder: base64RemoteConfigEncoder
   })
   const projects = await sut.getProjects()
   expect(projects[0].versions.length).toEqual(1)
@@ -283,7 +320,9 @@ test("It filters away tags with no specifications", async () => {
           }]
         }]
       }
-    }
+    },
+    encryptionService: noopEncryptionService,
+    remoteConfigEncoder: base64RemoteConfigEncoder
   })
   const projects = await sut.getProjects()
   expect(projects[0].versions.length).toEqual(2)
@@ -314,7 +353,9 @@ test("It reads image from configuration file with .yml extension", async () => {
           tags: []
         }]
       }
-    }
+    },
+    encryptionService: noopEncryptionService,
+    remoteConfigEncoder: base64RemoteConfigEncoder
   })
   const projects = await sut.getProjects()
   expect(projects[0].imageURL).toEqual("/api/blob/acme/foo-openapi/icon.png?ref=12345678")
@@ -345,7 +386,9 @@ test("It reads display name from configuration file with .yml extension", async 
           tags: []
         }]
       }
-    }
+    },
+    encryptionService: noopEncryptionService,
+    remoteConfigEncoder: base64RemoteConfigEncoder
   })
   const projects = await sut.getProjects()
   expect(projects[0].id).toEqual("acme-foo")
@@ -378,7 +421,9 @@ test("It reads image from configuration file with .yaml extension", async () => 
           tags: []
         }]
       }
-    }
+    },
+    encryptionService: noopEncryptionService,
+    remoteConfigEncoder: base64RemoteConfigEncoder
   })
   const projects = await sut.getProjects()
   expect(projects[0].imageURL).toEqual("/api/blob/acme/foo-openapi/icon.png?ref=12345678")
@@ -409,7 +454,9 @@ test("It reads display name from configuration file with .yaml extension", async
           tags: []
         }]
       }
-    }
+    },
+    encryptionService: noopEncryptionService,
+    remoteConfigEncoder: base64RemoteConfigEncoder
   })
   const projects = await sut.getProjects()
   expect(projects[0].id).toEqual("acme-foo")
@@ -478,7 +525,9 @@ test("It sorts projects alphabetically", async () => {
           tags: []
         }]
       }
-    }
+    },
+    encryptionService: noopEncryptionService,
+    remoteConfigEncoder: base64RemoteConfigEncoder
   })
   const projects = await sut.getProjects()
   expect(projects[0].name).toEqual("anne")
@@ -529,7 +578,9 @@ test("It sorts versions alphabetically", async () => {
           }]
         }]
       }
-    }
+    },
+    encryptionService: noopEncryptionService,
+    remoteConfigEncoder: base64RemoteConfigEncoder
   })
   const projects = await sut.getProjects()
   expect(projects[0].versions[0].name).toEqual("1.0")
@@ -593,7 +644,9 @@ test("It prioritizes main, master, develop, and development branch names when so
           }]
         }]
       }
-    }
+    },
+    encryptionService: noopEncryptionService,
+    remoteConfigEncoder: base64RemoteConfigEncoder
   })
   const projects = await sut.getProjects()
   expect(projects[0].versions[0].name).toEqual("main")
@@ -641,7 +694,9 @@ test("It identifies the default branch in returned versions", async () => {
           tags: []
         }]
       }
-    }
+    },
+    encryptionService: noopEncryptionService,
+    remoteConfigEncoder: base64RemoteConfigEncoder
   })
   const projects = await sut.getProjects()
   const defaultVersionNames = projects[0]
@@ -682,7 +737,9 @@ test("It adds remote versions from the project configuration", async () => {
           tags: []
         }]
       }
-    }
+    },
+    encryptionService: noopEncryptionService,
+    remoteConfigEncoder: base64RemoteConfigEncoder
   })
   const projects = await sut.getProjects()
   expect(projects[0].versions).toEqual([{
@@ -692,11 +749,11 @@ test("It adds remote versions from the project configuration", async () => {
     specifications: [{
       id: "huey",
       name: "Huey",
-      url: `/api/proxy?url=${encodeURIComponent("https://example.com/huey.yml")}`
+      url: `/api/remotes/${base64RemoteConfigEncoder.encode({ url: "https://example.com/huey.yml" })}`
     }, {
       id: "dewey",
       name: "Dewey",
-      url: `/api/proxy?url=${encodeURIComponent("https://example.com/dewey.yml")}`
+      url: `/api/remotes/${base64RemoteConfigEncoder.encode({ url: "https://example.com/dewey.yml" })}`
     }]
   }, {
     id: "bobby",
@@ -705,7 +762,7 @@ test("It adds remote versions from the project configuration", async () => {
     specifications: [{
       id: "louie",
       name: "Louie",
-      url: `/api/proxy?url=${encodeURIComponent("https://example.com/louie.yml")}`
+      url: `/api/remotes/${base64RemoteConfigEncoder.encode({ url: "https://example.com/louie.yml" })}`
     }]
   }])
 })
@@ -745,7 +802,9 @@ test("It modifies ID of remote version if the ID already exists", async () => {
           tags: []
         }]
       }
-    }
+    },
+    encryptionService: noopEncryptionService,
+    remoteConfigEncoder: base64RemoteConfigEncoder
   })
   const projects = await sut.getProjects()
   expect(projects[0].versions).toEqual([{
@@ -766,7 +825,7 @@ test("It modifies ID of remote version if the ID already exists", async () => {
     specifications: [{
       id: "baz",
       name: "Baz",
-      url: `/api/proxy?url=${encodeURIComponent("https://example.com/baz.yml")}`
+      url: `/api/remotes/${base64RemoteConfigEncoder.encode({ url: "https://example.com/baz.yml" })}`
     }]
   }, {
     id: "bar2",
@@ -775,7 +834,7 @@ test("It modifies ID of remote version if the ID already exists", async () => {
     specifications: [{
       id: "hello",
       name: "Hello",
-      url: `/api/proxy?url=${encodeURIComponent("https://example.com/hello.yml")}`
+      url: `/api/remotes/${base64RemoteConfigEncoder.encode({ url: "https://example.com/hello.yml" })}`
     }]
   }])
 })
@@ -806,7 +865,9 @@ test("It lets users specify the ID of a remote version", async () => {
           tags: []
         }]
       }
-    }
+    },
+    encryptionService: noopEncryptionService,
+    remoteConfigEncoder: base64RemoteConfigEncoder
   })
   const projects = await sut.getProjects()
   expect(projects[0].versions).toEqual([{
@@ -816,7 +877,7 @@ test("It lets users specify the ID of a remote version", async () => {
     specifications: [{
       id: "baz",
       name: "Baz",
-      url: `/api/proxy?url=${encodeURIComponent("https://example.com/baz.yml")}`
+      url: `/api/remotes/${base64RemoteConfigEncoder.encode({ url: "https://example.com/baz.yml" })}`
     }]
   }])
 })
@@ -847,7 +908,9 @@ test("It lets users specify the ID of a remote specification", async () => {
           tags: []
         }]
       }
-    }
+    },
+    encryptionService: noopEncryptionService,
+    remoteConfigEncoder: base64RemoteConfigEncoder
   })
   const projects = await sut.getProjects()
   expect(projects[0].versions).toEqual([{
@@ -857,7 +920,7 @@ test("It lets users specify the ID of a remote specification", async () => {
     specifications: [{
       id: "some-spec",
       name: "Baz",
-      url: `/api/proxy?url=${encodeURIComponent("https://example.com/baz.yml")}`
+      url: `/api/remotes/${base64RemoteConfigEncoder.encode({ url: "https://example.com/baz.yml" })}`
     }]
   }])
 })
