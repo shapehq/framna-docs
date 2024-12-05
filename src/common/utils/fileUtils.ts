@@ -4,6 +4,7 @@ export const ErrorName = {
     MAX_FILE_SIZE_EXCEEDED: "MaxFileSizeExceededError",
     TIMEOUT: "TimeoutError",
     NOT_JSON_OR_YAML: "NotJsonOrYamlError",
+    URL_MAY_NOT_INCLUDE_BASIC_AITH: "UrlMayNotIncludeBasicAuth"
 }
 
 export async function downloadFile(params: {
@@ -21,14 +22,13 @@ export async function downloadFile(params: {
         headers["Authorization"] = "Basic " + btoa(`${basicAuthUsername}:${basicAuthPassword}`);
     }
     // Make sure basic auth is removed from URL.
-    const urlWithoutAuth = url;
-    urlWithoutAuth.username = "";
-    urlWithoutAuth.password = "";
-    const response = await fetch(urlWithoutAuth, {
-        method: "GET",
-        headers,
-        signal: AbortSignal.any([abortController.signal, timeoutSignal])
-    });
+    if ((url.username && url.username.length > 0) || (url.password && url.password.length > 0)) {
+        const error = new Error("URL may not include basic auth");
+        error.name = ErrorName.URL_MAY_NOT_INCLUDE_BASIC_AITH;
+        throw error;
+    }
+    let fetchSignal = AbortSignal.any([abortController.signal, timeoutSignal])
+    const response = await fetch(url, { method: "GET", headers, signal: fetchSignal })
     if (!response.body) {
         throw new Error("Response body unavailable");
     }
