@@ -27,7 +27,7 @@ describe('RemoteConfigEncoder', () => {
 
     it('should throw an error if the decrypted string is not valid JSON', () => {
         const invalidJson = Buffer.from('encrypted-invalid-json').toString('base64')
-        expect(() => encoder.decode(invalidJson)).toThrow("Unexpected token i in JSON at position 0")
+        expect(() => encoder.decode(invalidJson)).toThrow(/Unexpected token/)
     })
 
     it('should throw an error if the remote config is not valid', () => {
