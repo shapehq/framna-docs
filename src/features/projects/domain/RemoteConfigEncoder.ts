@@ -1,6 +1,11 @@
 import { IEncryptionService } from "@/features/encrypt/EncryptionService";
 import RemoteConfig, { RemoteConfigSchema } from "./RemoteConfig";
 
+export interface IRemoteConfigEncoder {
+    encode(remoteConfig: RemoteConfig): string;
+    decode(encodedString: string): RemoteConfig;
+}
+
 /**
  * Encodes and decodes remote configs.
  * 
@@ -8,7 +13,7 @@ import RemoteConfig, { RemoteConfigSchema } from "./RemoteConfig";
  * 
  * At the receiving end, the encoded string is first decoded from base64, then decrypted, and finally parsed as JSON.
  */
-export default class RemoteConfigEncoder {
+export default class RemoteConfigEncoder implements IRemoteConfigEncoder {
     private readonly encryptionService: IEncryptionService;
 
     constructor(encryptionService: IEncryptionService) {

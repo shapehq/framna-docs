@@ -11,19 +11,19 @@ import {
   GitHubRepositoryRef
 } from "../domain"
 import RemoteConfig from "../domain/RemoteConfig"
-import RemoteConfigEncoder from "../domain/RemoteConfigEncoder"
+import { IRemoteConfigEncoder } from "../domain/RemoteConfigEncoder"
 
 export default class GitHubProjectDataSource implements IProjectDataSource {
   private readonly repositoryDataSource: IGitHubRepositoryDataSource
   private readonly repositoryNameSuffix: string
   private readonly encryptionService: IEncryptionService
-  private readonly remoteConfigEncoder: RemoteConfigEncoder
+  private readonly remoteConfigEncoder: IRemoteConfigEncoder
   
   constructor(config: {
     repositoryDataSource: IGitHubRepositoryDataSource
     repositoryNameSuffix: string
     encryptionService: IEncryptionService
-    remoteConfigEncoder: RemoteConfigEncoder
+    remoteConfigEncoder: IRemoteConfigEncoder
   }) {
     this.repositoryDataSource = config.repositoryDataSource
     this.repositoryNameSuffix = config.repositoryNameSuffix
