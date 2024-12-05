@@ -1,8 +1,12 @@
 'use client'
 
 import { useState } from 'react'
-import { Box, Button, Snackbar, TextField, Tooltip } from '@mui/material'
+import { Box, Button, Snackbar, TextField, Tooltip, InputAdornment } from '@mui/material'
+import { styled } from '@mui/material/styles'
+import AccountCircle from '@mui/icons-material/AccountCircle';
 import { encrypt } from "./encryptAction"
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
+import { faClipboard } from "@fortawesome/free-regular-svg-icons"
 
 export const EncryptionForm = () => {
     const [inputText, setInputText] = useState('')
@@ -11,18 +15,30 @@ export const EncryptionForm = () => {
 
     const handleSubmit = async (event: React.FormEvent) => {
         event.preventDefault()
-        const encrypted = await encrypt(inputText)
-        setEncryptedText(encrypted)
+        if (inputText.length > 0) {
+            const encrypted = await encrypt(inputText)
+            setEncryptedText(encrypted)
+        } else {
+            setEncryptedText("")
+        }
     }
 
     const handleCopy = () => {
-        navigator.clipboard.writeText(encryptedText)
-        setOpenSnackbar(true)
+        if (encryptedText.length > 0) {
+            navigator.clipboard.writeText(encryptedText)
+            setOpenSnackbar(true)
+        }
     }
 
     const handleCloseSnackbar = () => {
         setOpenSnackbar(false)
     }
+    
+    const EncryptedValueTextField = styled(TextField)({
+        '& .MuiInputBase-root': {
+            backgroundColor: '#F8F8F8'
+        }
+    })
 
     return <Box
         component="form"
@@ -51,13 +67,28 @@ export const EncryptionForm = () => {
         >Encrypt</Button>
 
         <Tooltip title="Click to copy to clipboard">
-            <TextField
+            <EncryptedValueTextField
                 value={encryptedText}
                 onClick={handleCopy}
-                sx={{ input: { cursor: 'pointer' }, width: "300px" }}
-                slotProps={{ input: { readOnly: true } }}
-                placeholder="Encrypted text will appear here"
-            />
+                sx={{
+                    width: "300px",
+                    input: {
+                        cursor: "pointer",
+                        color: "#727272"
+                    }
+                }}
+                slotProps={{
+                  input: {
+                      readOnly: true,
+                      startAdornment: (
+                        <InputAdornment position="start">
+                            <FontAwesomeIcon icon={faClipboard} size="lg" />
+                        </InputAdornment>
+                    )
+                  }
+                }}
+                placeholder="Encrypted text appears here"
+              />
         </Tooltip>
         
         <Snackbar
