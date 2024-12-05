@@ -1,4 +1,4 @@
-import { IEncryptionService } from "@/common/encryption/EncryptionService"
+import { IEncryptionService } from "@/features/encrypt/EncryptionService"
 import {
   Project,
   Version,

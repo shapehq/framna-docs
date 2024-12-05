@@ -51,7 +51,7 @@ import {
   PullRequestCommenter
 } from "@/features/hooks/domain"
 import { RepoRestrictedGitHubClient } from "./common/github/RepoRestrictedGitHubClient"
-import RsaEncryptionService from "./common/encryption/EncryptionService"
+import RsaEncryptionService from "./features/encrypt/EncryptionService"
 import RemoteConfigEncoder from "./features/projects/domain/RemoteConfigEncoder"
 
 const gitHubAppCredentials = {
