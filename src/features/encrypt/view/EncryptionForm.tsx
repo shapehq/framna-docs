@@ -78,14 +78,14 @@ export const EncryptionForm = () => {
                     }
                 }}
                 slotProps={{
-                  input: {
-                      readOnly: true,
-                      startAdornment: (
-                        <InputAdornment position="start">
-                            <FontAwesomeIcon icon={faClipboard} size="lg" />
-                        </InputAdornment>
-                    )
-                  }
+                    input: {
+                        readOnly: true,
+                        startAdornment: (
+                            <InputAdornment position="start">
+                                <FontAwesomeIcon icon={faClipboard} size="lg" />
+                            </InputAdornment>
+                        )
+                    }
                 }}
                 placeholder="Encrypted text appears here"
               />
