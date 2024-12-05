@@ -178,7 +178,7 @@ export const projectRepository = new ProjectRepository({
   repository: projectUserDataRepository
 })
 
-const encryptionService = new RsaEncryptionService({
+export const encryptionService = new RsaEncryptionService({
   publicKey: Buffer.from(env.getOrThrow("ENCRYPTION_PUBLIC_KEY_BASE_64"), "base64").toString("utf-8"),
   privateKey: Buffer.from(env.getOrThrow("ENCRYPTION_PRIVATE_KEY_BASE_64"), "base64").toString("utf-8")
 })
