@@ -7,7 +7,7 @@ interface RemoteSpecificationParams {
   encodedRemoteConfig: string
 }
 
-export async function GET(req: NextRequest, { params }: { params: RemoteSpecificationParams }) {
+export async function GET(_req: NextRequest, { params }: { params: RemoteSpecificationParams }) {
   const isAuthenticated = await session.getIsAuthenticated()
   if (!isAuthenticated) {
     return makeUnauthenticatedAPIErrorResponse()
