@@ -3,7 +3,6 @@
 import { useState } from 'react'
 import { Box, Button, Snackbar, TextField, Tooltip, InputAdornment } from '@mui/material'
 import { styled } from '@mui/material/styles'
-import AccountCircle from '@mui/icons-material/AccountCircle';
 import { encrypt } from "./encryptAction"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faClipboard } from "@fortawesome/free-regular-svg-icons"
