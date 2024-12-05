@@ -25,12 +25,9 @@ export default async function EncryptPage() {
                     Encrypt secrets
                 </Typography>
                 <Typography sx={{ textAlign: "center" }}>
-                    When adding authentication information to remote specifications it 
-                    is required to encrypt the authentication information with our public 
-                    key before storing it in the repository.<br />
+                    When adding authentication information to remote specifications it is required to encrypt the authentication information with {SITE_NAME}{SITE_NAME.endsWith('s') ? "'" : "'s"} public key before storing it in the repository.<br />
                     <br />
-                    This page allows you to encrypt the secret using {SITE_NAME}{SITE_NAME.endsWith('s') ? "'" : "'s"} 
-                    public key, which means only {SITE_NAME} can decrypt it.
+                    Use the form to encrypt the secret using {SITE_NAME}{SITE_NAME.endsWith('s') ? "'" : "'s"} public key, which means only {SITE_NAME} can decrypt it.
                 </Typography>
                 <EncryptionForm />
                 {HELP_URL &&
