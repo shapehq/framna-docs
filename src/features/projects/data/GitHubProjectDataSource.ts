@@ -8,7 +8,8 @@ import {
   ProjectConfigRemoteVersion,
   IGitHubRepositoryDataSource,
   GitHubRepository,
-  GitHubRepositoryRef
+  GitHubRepositoryRef,
+  ProjectConfigRemoteSpecification
 } from "../domain"
 import RemoteConfig from "../domain/RemoteConfig"
 import { IRemoteConfigEncoder } from "../domain/RemoteConfigEncoder"
@@ -178,11 +179,7 @@ export default class GitHubProjectDataSource implements IProjectDataSource {
       const specifications = remoteVersion.specifications.map(e => {
         const remoteConfig: RemoteConfig = {
           url: e.url,
-          auth: e.auth ? {
-            type: e.auth.type,
-            username: this.encryptionService.decrypt(e.auth.encryptedUsername),
-            password: this.encryptionService.decrypt(e.auth.encryptedPassword)
-          } : undefined
+          auth: this.tryDecryptAuth(e)
         };
 
         const encodedRemoteConfig = this.remoteConfigEncoder.encode(remoteConfig);
@@ -231,5 +228,22 @@ export default class GitHubProjectDataSource implements IProjectDataSource {
     return str
       .replace(/ /g, "-")
       .replace(/[^A-Za-z0-9-]/g, "")
+  }
+
+  private tryDecryptAuth(projectConfigRemoteSpec: ProjectConfigRemoteSpecification): { type: string, username: string, password: string } | undefined {
+    if (!projectConfigRemoteSpec.auth) {
+      return undefined
+    }
+
+    try {
+      return {
+        type: projectConfigRemoteSpec.auth.type,
+        username: this.encryptionService.decrypt(projectConfigRemoteSpec.auth.encryptedUsername),
+        password: this.encryptionService.decrypt(projectConfigRemoteSpec.auth.encryptedPassword)
+      }
+    } catch (error) {
+      console.error(`Failed to decrypt remote specification auth for ${projectConfigRemoteSpec.url}. Perhaps a different public key was used?:`, error);
+      return undefined
+    }
   }
 }
