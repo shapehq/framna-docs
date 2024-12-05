@@ -27,7 +27,7 @@ export async function downloadFile(params: {
         error.name = ErrorName.URL_MAY_NOT_INCLUDE_BASIC_AITH;
         throw error;
     }
-    let fetchSignal = AbortSignal.any([abortController.signal, timeoutSignal])
+    const fetchSignal = AbortSignal.any([abortController.signal, timeoutSignal])
     const response = await fetch(url, { method: "GET", headers, signal: fetchSignal })
     if (!response.body) {
         throw new Error("Response body unavailable");
