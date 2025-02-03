@@ -28,12 +28,12 @@ const Stoplight = ({ url }: { url: string }) => {
 const ResponsiveStoplight = ({ document: apiDescriptionDocument }: { document: string }) => {
   useEffect(() => {
     const script = document.createElement("script")
-    script.src = "https://unpkg.com/@stoplight/elements/web-components.min.js"
+    script.src = "https://unpkg.com/@stoplight/elements@9.0.0/web-components.min.js"
     script.async = true
     document.body.appendChild(script)
     const link = document.createElement("link")
     link.rel = "stylesheet"
-    link.href = "https://unpkg.com/@stoplight/elements/styles.min.css"
+    link.href = "https://unpkg.com/@stoplight/elements@9.0.0/styles.min.css"
     document.head.appendChild(link)
     return () => {
       document.body.removeChild(script)
