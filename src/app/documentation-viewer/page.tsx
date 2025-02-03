@@ -5,12 +5,13 @@ type SearchParams = { visualizer: string, url: string }
 export default async function Page({
   searchParams
 }: {
-  searchParams: SearchParams
+  searchParams: Promise<SearchParams>
 }) {
+  const { visualizer, url } = await searchParams
   return (
     <DocumentationViewer
-      visualizer={parseInt(searchParams.visualizer)}
-      url={searchParams.url}
+      visualizer={parseInt(visualizer)}
+      url={url}
     />
   )
 }
