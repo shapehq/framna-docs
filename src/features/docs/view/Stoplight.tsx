@@ -1,7 +1,5 @@
-import { useEffect, useState } from "react"
+import { useEffect, useState, createElement } from "react"
 import { Box } from "@mui/material"
-import { API } from "@stoplight/elements"
-import "@stoplight/elements/styles.min.css"
 import LoadingWrapper from "./LoadingWrapper"
 
 const Stoplight = ({ url }: { url: string }) => {
@@ -27,7 +25,21 @@ const Stoplight = ({ url }: { url: string }) => {
   )
 }
 
-const ResponsiveStoplight = ({ document }: { document: string }) => {
+const ResponsiveStoplight = ({ document: apiDescriptionDocument }: { document: string }) => {
+  useEffect(() => {
+    const script = document.createElement("script")
+    script.src = "https://unpkg.com/@stoplight/elements@9.0.0/web-components.min.js"
+    script.async = true
+    document.body.appendChild(script)
+    const link = document.createElement("link")
+    link.rel = "stylesheet"
+    link.href = "https://unpkg.com/@stoplight/elements@9.0.0/styles.min.css"
+    document.head.appendChild(link)
+    return () => {
+      document.body.removeChild(script)
+      document.head.removeChild(link)
+    }
+  }, [])
   return (
     <>
       <Box sx={{
@@ -36,25 +48,31 @@ const ResponsiveStoplight = ({ document }: { document: string }) => {
         height: "100%",
         padding: 2 
       }}>
-        <API
-          apiDescriptionDocument={document}
-          router="hash"
-          layout="stacked"
-        />
+        <ElementsAPI document={apiDescriptionDocument} layout="stacked" />
       </Box>
       <Box sx={{
         display: { xs: "none", sm: "block" },
         width: "100%",
         height: "100%",
       }}>
-        <API
-          apiDescriptionDocument={document}
-          router="hash"
-          layout="sidebar"
-        />
+        <ElementsAPI document={apiDescriptionDocument} layout="sidebar" />
       </Box>
     </>
   )
-} 
+}
+
+const ElementsAPI = ({
+  document: apiDescriptionDocument,
+  layout
+}: {
+  document: string,
+  layout: "sidebar" | "stacked"
+}) => {
+  return createElement("elements-api", {
+      apiDescriptionDocument,
+      router: "hash",
+      layout: layout
+    })
+}
 
 export default Stoplight
