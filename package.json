@@ -23,7 +23,7 @@
     "@fortawesome/free-regular-svg-icons": "^6.7.2",
     "@fortawesome/free-solid-svg-icons": "^6.7.2",
     "@fortawesome/react-fontawesome": "^0.2.2",
-    "@mui/icons-material": "^6.4.1",
+    "@mui/icons-material": "^6.4.2",
     "@mui/material": "^6.0.1",
     "@octokit/auth-app": "^7.1.4",
     "@octokit/core": "^6.1.3",
