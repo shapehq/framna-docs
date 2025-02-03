@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { useEffect, useState, createElement } from "react"
 import { Box } from "@mui/material"
 import LoadingWrapper from "./LoadingWrapper"
 
@@ -48,27 +48,31 @@ const ResponsiveStoplight = ({ document: apiDescriptionDocument }: { document: s
         height: "100%",
         padding: 2 
       }}>
-        <Box
-          component="elements-api"
-          apiDescriptionDocument={apiDescriptionDocument}
-          router="hash"
-          layout="stacked"
-        />
+        <ElementsAPI document={apiDescriptionDocument} layout="stacked" />
       </Box>
       <Box sx={{
         display: { xs: "none", sm: "block" },
         width: "100%",
         height: "100%",
       }}>
-        <Box
-          component="elements-api"
-          apiDescriptionDocument={apiDescriptionDocument}
-          router="hash"
-          layout="sidebar"
-        />
+        <ElementsAPI document={apiDescriptionDocument} layout="sidebar" />
       </Box>
     </>
   )
-} 
+}
+
+const ElementsAPI = ({
+  document: apiDescriptionDocument,
+  layout
+}: {
+  document: string,
+  layout: "sidebar" | "stacked"
+}) => {
+  return createElement("elements-api", {
+      apiDescriptionDocument,
+      router: "hash",
+      layout: layout
+    })
+}
 
 export default Stoplight
