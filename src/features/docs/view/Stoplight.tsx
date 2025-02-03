@@ -1,7 +1,5 @@
 import { useEffect, useState } from "react"
 import { Box } from "@mui/material"
-import { API } from "@stoplight/elements"
-import "@stoplight/elements/styles.min.css"
 import LoadingWrapper from "./LoadingWrapper"
 
 const Stoplight = ({ url }: { url: string }) => {
@@ -27,7 +25,21 @@ const Stoplight = ({ url }: { url: string }) => {
   )
 }
 
-const ResponsiveStoplight = ({ document }: { document: string }) => {
+const ResponsiveStoplight = ({ document: apiDescriptionDocument }: { document: string }) => {
+  useEffect(() => {
+    const script = document.createElement("script")
+    script.src = "https://unpkg.com/@stoplight/elements/web-components.min.js"
+    script.async = true
+    document.body.appendChild(script)
+    const link = document.createElement("link")
+    link.rel = "stylesheet"
+    link.href = "https://unpkg.com/@stoplight/elements/styles.min.css"
+    document.head.appendChild(link)
+    return () => {
+      document.body.removeChild(script)
+      document.head.removeChild(link)
+    }
+  }, [])
   return (
     <>
       <Box sx={{
@@ -36,8 +48,9 @@ const ResponsiveStoplight = ({ document }: { document: string }) => {
         height: "100%",
         padding: 2 
       }}>
-        <API
-          apiDescriptionDocument={document}
+        <Box
+          component="elements-api"
+          apiDescriptionDocument={apiDescriptionDocument}
           router="hash"
           layout="stacked"
         />
@@ -47,8 +60,9 @@ const ResponsiveStoplight = ({ document }: { document: string }) => {
         width: "100%",
         height: "100%",
       }}>
-        <API
-          apiDescriptionDocument={document}
+        <Box
+          component="elements-api"
+          apiDescriptionDocument={apiDescriptionDocument}
           router="hash"
           layout="sidebar"
         />
