@@ -8,15 +8,16 @@ interface GetBlobParams {
   path: [string]
 }
 
-export async function GET(req: NextRequest, { params }: { params: GetBlobParams }) {
+export async function GET(req: NextRequest, { params }: { params: Promise<GetBlobParams> }) {
   const isAuthenticated = await session.getIsAuthenticated()
   if (!isAuthenticated) {
     return makeUnauthenticatedAPIErrorResponse()
   }
-  const path = params.path.join("/")
+  const { path: paramsPath, owner, repository } = await params
+  const path = paramsPath.join("/")
   const item = await userGitHubClient.getRepositoryContent({
-    repositoryOwner: params.owner,
-    repositoryName: params.repository,
+    repositoryOwner: owner,
+    repositoryName: repository,
     path: path,
     ref: req.nextUrl.searchParams.get("ref") ?? undefined
   })
