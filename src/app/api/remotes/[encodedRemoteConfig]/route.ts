@@ -55,7 +55,7 @@ export async function GET(_req: NextRequest, { params }: { params: Promise<Remot
     } else if (error.name === ErrorName.TIMEOUT) {
       return makeAPIErrorResponse(408, "The operation timed out.")
     } else if (error.name === ErrorName.NOT_JSON_OR_YAML) {
-      return makeAPIErrorResponse(400, "Url does not point to a JSON or YAML file.")
+      return makeAPIErrorResponse(400, error.message)
     } else if (error.name === ErrorName.URL_MAY_NOT_INCLUDE_BASIC_AITH) {
       return makeAPIErrorResponse(400, "Url may not include basic auth.")
     } else {
