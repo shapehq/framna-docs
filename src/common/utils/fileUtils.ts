@@ -66,7 +66,7 @@ export function checkIfJsonOrYaml(fileText: string) {
     try {
         parseYaml(fileText) // will also parse JSON as it is a subset of YAML
     } catch {
-        const error = new Error("File is not JSON or YAML")
+        const error = new Error("File is not JSON or YAML. Content: " + fileText.slice(0, 1000));
         error.name = ErrorName.NOT_JSON_OR_YAML
         throw error
     }
