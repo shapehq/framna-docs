@@ -32,7 +32,7 @@
     "encoding": "^0.1.13",
     "figma-squircle": "^1.1.0",
     "install": "^0.13.0",
-    "ioredis": "^5.4.1",
+    "ioredis": "^5.5.0",
     "mobx": "^6.13.5",
     "next": "^15.1.6",
     "next-auth": "^5.0.0-beta.25",
