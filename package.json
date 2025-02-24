@@ -54,7 +54,7 @@
   "devDependencies": {
     "@auth/pg-adapter": "^1.7.2",
     "@types/jest": "^29.5.12",
-    "@types/node": "^22.9.0",
+    "@types/node": "^22.13.5",
     "@types/nprogress": "^0.2.3",
     "@types/pg": "^8.11.10",
     "@types/react": "^18.3.12",
