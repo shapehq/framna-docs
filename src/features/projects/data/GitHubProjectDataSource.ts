@@ -242,7 +242,7 @@ export default class GitHubProjectDataSource implements IProjectDataSource {
         password: this.encryptionService.decrypt(projectConfigRemoteSpec.auth.encryptedPassword)
       }
     } catch (error) {
-      console.error(`Failed to decrypt remote specification auth for ${projectConfigRemoteSpec.url}. Perhaps a different public key was used?:`, error);
+      console.info(`Failed to decrypt remote specification auth for ${projectConfigRemoteSpec.name} (${projectConfigRemoteSpec.url}). Perhaps a different public key was used?:`, error);
       return undefined
     }
   }
