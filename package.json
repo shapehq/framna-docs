@@ -17,7 +17,7 @@
   "dependencies": {
     "@emotion/react": "^11.13.3",
     "@emotion/styled": "^11.13.0",
-    "@fontsource/poppins": "^5.1.0",
+    "@fontsource/poppins": "^5.2.5",
     "@fortawesome/fontawesome-svg-core": "^6.7.2",
     "@fortawesome/free-brands-svg-icons": "^6.7.2",
     "@fortawesome/free-regular-svg-icons": "^6.7.2",
@@ -34,7 +34,7 @@
     "install": "^0.13.0",
     "ioredis": "^5.5.0",
     "mobx": "^6.13.5",
-    "next": "^15.1.6",
+    "next": "^15.2.0",
     "next-auth": "^5.0.0-beta.25",
     "npm": "^11.1.0",
     "nprogress": "^0.2.0",
@@ -68,7 +68,7 @@
     "pg": "^8.13.1",
     "postcss": "^8.4.41",
     "tailwindcss": "^4.0.8",
-    "ts-jest": "^29.2.5",
+    "ts-jest": "^29.2.6",
     "typescript": "^5.6.3"
   }
 }
