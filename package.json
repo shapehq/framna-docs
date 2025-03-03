@@ -47,7 +47,7 @@
     "styled-components": "^6.1.13",
     "swagger-ui-react": "^5.17.14",
     "swr": "^2.2.5",
-    "usehooks-ts": "^3.1.0",
+    "usehooks-ts": "^3.1.1",
     "yaml": "^2.7.0",
     "zod": "^3.23.8"
   },
