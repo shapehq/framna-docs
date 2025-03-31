@@ -27,7 +27,7 @@
     "@mui/material": "^6.0.1",
     "@octokit/auth-app": "^7.1.5",
     "@octokit/core": "^6.1.4",
-    "@octokit/webhooks": "~13.7.5",
+    "@octokit/webhooks": "~13.8.0",
     "core-js": "^3.39.0",
     "encoding": "^0.1.13",
     "figma-squircle": "^1.1.0",
