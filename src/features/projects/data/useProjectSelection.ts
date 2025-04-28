@@ -4,7 +4,13 @@ import NProgress from "nprogress"
 import { useRouter, usePathname } from "next/navigation"
 import { useContext } from "react"
 import { ProjectsContext } from "@/common"
-import { Project, ProjectNavigator, getProjectSelectionFromPath } from "../domain"
+import {
+  Project,
+  ProjectNavigator,
+  getProjectSelectionFromPath,
+  getDefaultSpecification
+  
+} from "../domain"
 
 export default function useProjectSelection() {
   const router = useRouter()
@@ -29,7 +35,7 @@ export default function useProjectSelection() {
     },
     selectProject: (project: Project) => {
       const version = project.versions[0]
-      const specification = version.specifications[0]
+      const specification = getDefaultSpecification(version)
       NProgress.start()
       projectNavigator.navigate(
         project.owner,
