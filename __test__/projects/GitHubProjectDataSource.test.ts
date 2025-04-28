@@ -194,12 +194,6 @@ test("It supports multiple OpenAPI specifications on a branch", async () => {
       id: "main",
       name: "main",
       specifications: [{
-        id: "foo-service.yml",
-        name: "foo-service.yml",
-        url: "/api/blob/acme/foo-openapi/foo-service.yml?ref=12345678",
-        editURL: "https://github.com/acme/foo-openapi/edit/main/foo-service.yml",
-        isDefault: false
-      }, {
         id: "bar-service.yml",
         name: "bar-service.yml",
         url: "/api/blob/acme/foo-openapi/bar-service.yml?ref=12345678",
@@ -210,6 +204,13 @@ test("It supports multiple OpenAPI specifications on a branch", async () => {
         name: "baz-service.yml",
         url: "/api/blob/acme/foo-openapi/baz-service.yml?ref=12345678",
         editURL: "https://github.com/acme/foo-openapi/edit/main/baz-service.yml",
+        isDefault: false
+      },
+      {
+        id: "foo-service.yml",
+        name: "foo-service.yml",
+        url: "/api/blob/acme/foo-openapi/foo-service.yml?ref=12345678",
+        editURL: "https://github.com/acme/foo-openapi/edit/main/foo-service.yml",
         isDefault: false
       }],
       url: "https://github.com/acme/foo-openapi/tree/main",
@@ -663,6 +664,55 @@ test("It prioritizes main, master, develop, and development branch names when so
   expect(projects[0].versions[5].name).toEqual("anne")
 })
 
+test("It sorts specifications alphabetically", async () => {
+  const sut = new GitHubProjectDataSource({
+    repositoryNameSuffix: "-openapi",
+    repositoryDataSource: {
+      async getRepositories() {
+        return [{
+          owner: "acme",
+          name: "foo-openapi",
+          defaultBranchRef: {
+            id: "12345678",
+            name: "main"
+          },
+          configYaml: {
+            text: "name: Hello World"
+          },
+          branches: [{
+            id: "12345678",
+            name: "anne",
+            files: [{
+              name: "z-openapi.yml",
+            }, {
+              name: "a-openapi.yml",
+            }, {
+              name: "1-openapi.yml",
+            }]
+          }],
+          tags: [{
+            id: "12345678",
+            name: "cathrine",
+            files: [{
+              name: "o-openapi.yml",
+            }, {
+              name: "2-openapi.yml",
+            }]
+          }]
+        }]
+      }
+    },
+    encryptionService: noopEncryptionService,
+    remoteConfigEncoder: base64RemoteConfigEncoder
+  })
+  const projects = await sut.getProjects()
+  expect(projects[0].versions[0].specifications[0].name).toEqual("1-openapi.yml")
+  expect(projects[0].versions[0].specifications[1].name).toEqual("a-openapi.yml")
+  expect(projects[0].versions[0].specifications[2].name).toEqual("z-openapi.yml")
+  expect(projects[0].versions[1].specifications[0].name).toEqual("2-openapi.yml")
+  expect(projects[0].versions[1].specifications[1].name).toEqual("o-openapi.yml")
+})
+
 test("It identifies the default branch in returned versions", async () => {
   const sut = new GitHubProjectDataSource({
     repositoryNameSuffix: "-openapi",
@@ -753,14 +803,14 @@ test("It adds remote versions from the project configuration", async () => {
     name: "Anne",
     isDefault: false,
     specifications: [{
-      id: "huey",
-      name: "Huey",
-      url: `/api/remotes/${base64RemoteConfigEncoder.encode({ url: "https://example.com/huey.yml" })}`,
-      isDefault: false
-    }, {
       id: "dewey",
       name: "Dewey",
       url: `/api/remotes/${base64RemoteConfigEncoder.encode({ url: "https://example.com/dewey.yml" })}`,
+      isDefault: false
+    }, {
+      id: "huey",
+      name: "Huey",
+      url: `/api/remotes/${base64RemoteConfigEncoder.encode({ url: "https://example.com/huey.yml" })}`,
       isDefault: false
     }]
   }, {
