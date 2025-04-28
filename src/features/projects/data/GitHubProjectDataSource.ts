@@ -65,6 +65,7 @@ export default class GitHubProjectDataSource implements IProjectDataSource {
     ).filter(version => {
       return version.specifications.length > 0
     })
+    .map(version => this.setDefaultSpecification(version, config?.defaultSpecificationName));
     const defaultName = repository.name.replace(new RegExp(this.repositoryNameSuffix + "$"), "")
     return {
       id: `${repository.owner}-${defaultName}`,
@@ -130,7 +131,8 @@ export default class GitHubProjectDataSource implements IProjectDataSource {
           path: file.name,
           ref: ref.id
         }),
-        editURL: `https://github.com/${ownerName}/${repositoryName}/edit/${ref.name}/${file.name}`
+        editURL: `https://github.com/${ownerName}/${repositoryName}/edit/${ref.name}/${file.name}`,
+        isDefault: false // initial value
       }
     })
     return {
@@ -187,7 +189,8 @@ export default class GitHubProjectDataSource implements IProjectDataSource {
         return {
           id: this.makeURLSafeID((e.id || e.name).toLowerCase()),
           name: e.name,
-          url: `/api/remotes/${encodedRemoteConfig}`
+          url: `/api/remotes/${encodedRemoteConfig}`,
+          isDefault: false // initial value
         };
       })
       versions.push({
@@ -244,6 +247,16 @@ export default class GitHubProjectDataSource implements IProjectDataSource {
     } catch (error) {
       console.info(`Failed to decrypt remote specification auth for ${projectConfigRemoteSpec.name} (${projectConfigRemoteSpec.url}). Perhaps a different public key was used?:`, error);
       return undefined
+    }
+  }
+
+  private setDefaultSpecification(version: Version, defaultSpecificationName?: string): Version {
+    return {
+      ...version,
+      specifications: version.specifications.map(spec => ({
+        ...spec,
+        isDefault: spec.name == defaultSpecificationName
+      }))
     }
   }
 }
