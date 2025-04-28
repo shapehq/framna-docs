@@ -255,7 +255,7 @@ export default class GitHubProjectDataSource implements IProjectDataSource {
       ...version,
       specifications: version.specifications.map(spec => ({
         ...spec,
-        isDefault: spec.name == defaultSpecificationName
+        isDefault: spec.name === defaultSpecificationName
       }))
     }
   }
