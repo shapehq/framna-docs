@@ -52,7 +52,7 @@
     "zod": "^3.23.8"
   },
   "devDependencies": {
-    "@auth/pg-adapter": "^1.7.2",
+    "@auth/pg-adapter": "^1.9.0",
     "@tailwindcss/postcss": "^4.0.8",
     "@types/jest": "^29.5.12",
     "@types/node": "^22.13.8",
