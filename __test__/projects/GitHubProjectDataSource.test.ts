@@ -664,7 +664,7 @@ test("It prioritizes main, master, develop, and development branch names when so
   expect(projects[0].versions[5].name).toEqual("anne")
 })
 
-test("It sorts specifications alphabetically", async () => {
+test("It sorts file specifications alphabetically", async () => {
   const sut = new GitHubProjectDataSource({
     repositoryNameSuffix: "-openapi",
     repositoryDataSource: {
@@ -711,6 +711,45 @@ test("It sorts specifications alphabetically", async () => {
   expect(projects[0].versions[0].specifications[2].name).toEqual("z-openapi.yml")
   expect(projects[0].versions[1].specifications[0].name).toEqual("2-openapi.yml")
   expect(projects[0].versions[1].specifications[1].name).toEqual("o-openapi.yml")
+})
+
+test("It maintains remote version specification ordering from config", async () => {
+  const sut = new GitHubProjectDataSource({
+    repositoryNameSuffix: "-openapi",
+    repositoryDataSource: {
+      async getRepositories() {
+        return [{
+          owner: "acme",
+          name: "foo-openapi",
+          defaultBranchRef: {
+            id: "12345678",
+            name: "main"
+          },
+          configYaml: {
+            text: `
+              name: Hello World
+              remoteVersions:
+              - name: Bar
+                specifications:
+                - id: some-spec
+                  name: Zac
+                  url: https://example.com/zac.yml
+                - id: another-spec
+                  name: Bob
+                  url: https://example.com/bob.yml
+            `
+          },
+          branches: [],
+          tags: []
+        }]
+      }
+    },
+    encryptionService: noopEncryptionService,
+    remoteConfigEncoder: base64RemoteConfigEncoder
+  })
+  const projects = await sut.getProjects()
+  expect(projects[0].versions[0].specifications[0].name).toEqual("Zac")
+  expect(projects[0].versions[0].specifications[1].name).toEqual("Bob")
 })
 
 test("It identifies the default branch in returned versions", async () => {
@@ -803,14 +842,14 @@ test("It adds remote versions from the project configuration", async () => {
     name: "Anne",
     isDefault: false,
     specifications: [{
-      id: "dewey",
-      name: "Dewey",
-      url: `/api/remotes/${base64RemoteConfigEncoder.encode({ url: "https://example.com/dewey.yml" })}`,
-      isDefault: false
-    }, {
       id: "huey",
       name: "Huey",
       url: `/api/remotes/${base64RemoteConfigEncoder.encode({ url: "https://example.com/huey.yml" })}`,
+      isDefault: false
+    }, {
+      id: "dewey",
+      name: "Dewey",
+      url: `/api/remotes/${base64RemoteConfigEncoder.encode({ url: "https://example.com/dewey.yml" })}`,
       isDefault: false
     }]
   }, {
