@@ -68,7 +68,7 @@
     "pg": "^8.13.1",
     "postcss": "^8.4.41",
     "tailwindcss": "^4.1.4",
-    "ts-jest": "^29.3.0",
+    "ts-jest": "^29.3.2",
     "typescript": "^5.8.2"
   }
 }
