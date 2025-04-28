@@ -1,5 +1,5 @@
 import Project from "./Project"
-import Version from "./Version"
+import Version, { getDefaultSpecification } from "./Version"
 import OpenApiSpecification from "./OpenApiSpecification"
 
 export default function getProjectSelectionFromPath({
@@ -61,7 +61,7 @@ export default function getProjectSelectionFromPath({
   if (specificationId && !didMoveSpecificationIdToVersionId) {
     specification = version.specifications.find(e => e.id == specificationId)
   } else if (version.specifications.length > 0) {
-    specification = version.specifications.find(spec => spec.isDefault) || version.specifications[0]
+    specification = getDefaultSpecification(version)
   }
   return { project, version, specification }
 }

@@ -12,3 +12,7 @@ export const VersionSchema = z.object({
 type Version = z.infer<typeof VersionSchema>
 
 export default Version
+
+export function getDefaultSpecification(version: Version) {
+  return version.specifications.find((spec) => spec.isDefault) || version.specifications[0]
+}
