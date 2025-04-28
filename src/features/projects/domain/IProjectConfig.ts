@@ -20,6 +20,7 @@ export const ProjectConfigRemoteVersionSchema = z.object({
 export const IProjectConfigSchema = z.object({
   name: z.coerce.string().optional(),
   image: z.string().optional(),
+  defaultSpecificationName: z.string().optional(),
   remoteVersions: ProjectConfigRemoteVersionSchema.array().optional()
 })
 

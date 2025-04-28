@@ -87,7 +87,8 @@ test("It maps projects including branches and tags", async () => {
         id: "openapi.yml",
         name: "openapi.yml",
         url: "/api/blob/acme/foo-openapi/openapi.yml?ref=12345678",
-        editURL: "https://github.com/acme/foo-openapi/edit/main/openapi.yml"
+        editURL: "https://github.com/acme/foo-openapi/edit/main/openapi.yml",
+        isDefault: false
       }],
       url: "https://github.com/acme/foo-openapi/tree/main",
       isDefault: true
@@ -98,7 +99,8 @@ test("It maps projects including branches and tags", async () => {
         id: "openapi.yml",
         name: "openapi.yml",
         url: "/api/blob/acme/foo-openapi/openapi.yml?ref=12345678",
-        editURL: "https://github.com/acme/foo-openapi/edit/1.0/openapi.yml"
+        editURL: "https://github.com/acme/foo-openapi/edit/1.0/openapi.yml",
+        isDefault: false
       }],
       url: "https://github.com/acme/foo-openapi/tree/1.0",
       isDefault: false
@@ -195,17 +197,20 @@ test("It supports multiple OpenAPI specifications on a branch", async () => {
         id: "foo-service.yml",
         name: "foo-service.yml",
         url: "/api/blob/acme/foo-openapi/foo-service.yml?ref=12345678",
-        editURL: "https://github.com/acme/foo-openapi/edit/main/foo-service.yml"
+        editURL: "https://github.com/acme/foo-openapi/edit/main/foo-service.yml",
+        isDefault: false
       }, {
         id: "bar-service.yml",
         name: "bar-service.yml",
         url: "/api/blob/acme/foo-openapi/bar-service.yml?ref=12345678",
-        editURL: "https://github.com/acme/foo-openapi/edit/main/bar-service.yml"
+        editURL: "https://github.com/acme/foo-openapi/edit/main/bar-service.yml",
+        isDefault: false
       }, {
         id: "baz-service.yml",
         name: "baz-service.yml",
         url: "/api/blob/acme/foo-openapi/baz-service.yml?ref=12345678",
-        editURL: "https://github.com/acme/foo-openapi/edit/main/baz-service.yml"
+        editURL: "https://github.com/acme/foo-openapi/edit/main/baz-service.yml",
+        isDefault: false
       }],
       url: "https://github.com/acme/foo-openapi/tree/main",
       isDefault: true
@@ -216,7 +221,8 @@ test("It supports multiple OpenAPI specifications on a branch", async () => {
         id: "openapi.yml",
         name: "openapi.yml",
         url: "/api/blob/acme/foo-openapi/openapi.yml?ref=12345678",
-        editURL: "https://github.com/acme/foo-openapi/edit/1.0/openapi.yml"
+        editURL: "https://github.com/acme/foo-openapi/edit/1.0/openapi.yml",
+        isDefault: false
       }],
       url: "https://github.com/acme/foo-openapi/tree/1.0",
       isDefault: false
@@ -749,11 +755,13 @@ test("It adds remote versions from the project configuration", async () => {
     specifications: [{
       id: "huey",
       name: "Huey",
-      url: `/api/remotes/${base64RemoteConfigEncoder.encode({ url: "https://example.com/huey.yml" })}`
+      url: `/api/remotes/${base64RemoteConfigEncoder.encode({ url: "https://example.com/huey.yml" })}`,
+      isDefault: false
     }, {
       id: "dewey",
       name: "Dewey",
-      url: `/api/remotes/${base64RemoteConfigEncoder.encode({ url: "https://example.com/dewey.yml" })}`
+      url: `/api/remotes/${base64RemoteConfigEncoder.encode({ url: "https://example.com/dewey.yml" })}`,
+      isDefault: false
     }]
   }, {
     id: "bobby",
@@ -762,7 +770,8 @@ test("It adds remote versions from the project configuration", async () => {
     specifications: [{
       id: "louie",
       name: "Louie",
-      url: `/api/remotes/${base64RemoteConfigEncoder.encode({ url: "https://example.com/louie.yml" })}`
+      url: `/api/remotes/${base64RemoteConfigEncoder.encode({ url: "https://example.com/louie.yml" })}`,
+      isDefault: false
     }]
   }])
 })
@@ -816,7 +825,8 @@ test("It modifies ID of remote version if the ID already exists", async () => {
       id: "openapi.yml",
       name: "openapi.yml",
       url: "/api/blob/acme/foo-openapi/openapi.yml?ref=12345678",
-      editURL: "https://github.com/acme/foo-openapi/edit/bar/openapi.yml"
+      editURL: "https://github.com/acme/foo-openapi/edit/bar/openapi.yml",
+      isDefault: false
     }]
   }, {
     id: "bar1",
@@ -825,7 +835,8 @@ test("It modifies ID of remote version if the ID already exists", async () => {
     specifications: [{
       id: "baz",
       name: "Baz",
-      url: `/api/remotes/${base64RemoteConfigEncoder.encode({ url: "https://example.com/baz.yml" })}`
+      url: `/api/remotes/${base64RemoteConfigEncoder.encode({ url: "https://example.com/baz.yml" })}`,
+      isDefault: false
     }]
   }, {
     id: "bar2",
@@ -834,7 +845,8 @@ test("It modifies ID of remote version if the ID already exists", async () => {
     specifications: [{
       id: "hello",
       name: "Hello",
-      url: `/api/remotes/${base64RemoteConfigEncoder.encode({ url: "https://example.com/hello.yml" })}`
+      url: `/api/remotes/${base64RemoteConfigEncoder.encode({ url: "https://example.com/hello.yml" })}`,
+      isDefault: false
     }]
   }])
 })
@@ -877,7 +889,8 @@ test("It lets users specify the ID of a remote version", async () => {
     specifications: [{
       id: "baz",
       name: "Baz",
-      url: `/api/remotes/${base64RemoteConfigEncoder.encode({ url: "https://example.com/baz.yml" })}`
+      url: `/api/remotes/${base64RemoteConfigEncoder.encode({ url: "https://example.com/baz.yml" })}`,
+      isDefault: false
     }]
   }])
 })
@@ -920,7 +933,168 @@ test("It lets users specify the ID of a remote specification", async () => {
     specifications: [{
       id: "some-spec",
       name: "Baz",
-      url: `/api/remotes/${base64RemoteConfigEncoder.encode({ url: "https://example.com/baz.yml" })}`
+      url: `/api/remotes/${base64RemoteConfigEncoder.encode({ url: "https://example.com/baz.yml" })}`,
+      isDefault: false
     }]
   }])
+})
+
+test("It sets isDefault on the correct specification based on defaultSpecificationName in config", async () => {
+  const sut = new GitHubProjectDataSource({
+    repositoryNameSuffix: "-openapi",
+    repositoryDataSource: {
+      async getRepositories() {
+        return [{
+          owner: "acme",
+          name: "foo-openapi",
+          defaultBranchRef: {
+            id: "12345678",
+            name: "main"
+          },
+          configYml: {
+            text: `
+            defaultSpecificationName: bar-service.yml
+            remoteVersions:
+              - name: Bar
+                specifications:
+                - id: some-spec
+                  name: Baz
+                  url: https://example.com/baz.yml
+            `
+          },
+          branches: [{
+            id: "12345678",
+            name: "main",
+            files: [
+              { name: "foo-service.yml" },
+              { name: "bar-service.yml" },
+              { name: "baz-service.yml" }
+            ]
+          }],
+          tags: []
+        }]
+      }
+    },
+    encryptionService: noopEncryptionService,
+    remoteConfigEncoder: base64RemoteConfigEncoder
+  })
+  const projects = await sut.getProjects()
+  const specs = projects[0].versions[0].specifications
+  expect(specs.find(s => s.name === "bar-service.yml")!.isDefault).toBe(true)
+  expect(specs.find(s => s.name === "foo-service.yml")!.isDefault).toBe(false)
+  expect(specs.find(s => s.name === "baz-service.yml")!.isDefault).toBe(false)
+  expect(projects[0].versions[1].specifications.find(s => s.name === "Baz")!.isDefault).toBe(false)
+})
+
+test("It sets a remote specification as the default if specified", async () => {
+  const sut = new GitHubProjectDataSource({
+    repositoryNameSuffix: "-openapi",
+    repositoryDataSource: {
+      async getRepositories() {
+        return [{
+          owner: "acme",
+          name: "foo-openapi",
+          defaultBranchRef: {
+            id: "12345678",
+            name: "main"
+          },
+          configYaml: {
+            text: `
+            defaultSpecificationName: Baz
+            remoteVersions:
+              - name: Bar
+                specifications:
+                - id: some-spec
+                  name: Baz
+                  url: https://example.com/baz.yml
+                - id: another-spec
+                  name: Qux
+                  url: https://example.com/qux.yml
+            `
+          },
+          branches: [],
+          tags: []
+        }]
+      }
+    },
+    encryptionService: noopEncryptionService,
+    remoteConfigEncoder: base64RemoteConfigEncoder
+  })
+  const projects = await sut.getProjects()
+  const remoteSpecs = projects[0].versions[0].specifications
+  expect(remoteSpecs.find(s => s.id === "some-spec")!.isDefault).toBe(true)
+  expect(remoteSpecs.find(s => s.id === "another-spec")!.isDefault).toBe(false)
+})
+
+
+test("It sets isDefault to false for all specifications if defaultSpecificationName is not set", async () => {
+  const sut = new GitHubProjectDataSource({
+    repositoryNameSuffix: "-openapi",
+    repositoryDataSource: {
+      async getRepositories() {
+        return [{
+          owner: "acme",
+          name: "foo-openapi",
+          defaultBranchRef: {
+            id: "12345678",
+            name: "main"
+          },
+          configYml: {
+            text: ``
+          },
+          branches: [{
+            id: "12345678",
+            name: "main",
+            files: [
+              { name: "foo-service.yml" },
+              { name: "bar-service.yml" },
+              { name: "baz-service.yml" }
+            ]
+          }],
+          tags: []
+        }]
+      }
+    },
+    encryptionService: noopEncryptionService,
+    remoteConfigEncoder: base64RemoteConfigEncoder
+  })
+  const projects = await sut.getProjects()
+  const specs = projects[0].versions[0].specifications
+  expect(specs.every(s => s.isDefault === false)).toBe(true)
+})
+
+test("It silently ignores defaultSpecificationName if no matching spec is found", async () => {
+  const sut = new GitHubProjectDataSource({
+    repositoryNameSuffix: "-openapi",
+    repositoryDataSource: {
+      async getRepositories() {
+        return [{
+          owner: "acme",
+          name: "foo-openapi",
+          defaultBranchRef: {
+            id: "12345678",
+            name: "main"
+          },
+          configYml: {
+            text: `defaultSpecificationName: non-existent.yml`
+          },
+          branches: [{
+            id: "12345678",
+            name: "main",
+            files: [
+              { name: "foo-service.yml" },
+              { name: "bar-service.yml" },
+              { name: "baz-service.yml" }
+            ]
+          }],
+          tags: []
+        }]
+      }
+    },
+    encryptionService: noopEncryptionService,
+    remoteConfigEncoder: base64RemoteConfigEncoder
+  })
+  const projects = await sut.getProjects()
+  const specs = projects[0].versions[0].specifications
+  expect(specs.every(s => s.isDefault === false)).toBe(true)
 })

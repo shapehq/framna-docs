@@ -1,4 +1,5 @@
 import Project from "./Project"
+import { getDefaultSpecification } from "./Version"
 
 interface IPathnameReader {
   readonly pathname: string
@@ -36,8 +37,8 @@ export default class ProjectNavigator {
     if (candidateSpecification) {
       this.router.push(`/${project.owner}/${project.name}/${newVersion.id}/${candidateSpecification.id}`)
     } else {
-      const firstSpecification = newVersion.specifications[0]
-      this.router.push(`/${project.owner}/${project.name}/${newVersion.id}/${firstSpecification.id}`)
+      const defaultOrFirstSpecification = getDefaultSpecification(newVersion)
+      this.router.push(`/${project.owner}/${project.name}/${newVersion.id}/${defaultOrFirstSpecification.id}`)
     }
   }
   
