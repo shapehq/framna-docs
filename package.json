@@ -53,7 +53,7 @@
   },
   "devDependencies": {
     "@auth/pg-adapter": "^1.7.2",
-    "@tailwindcss/postcss": "^4.0.8",
+    "@tailwindcss/postcss": "^4.1.4",
     "@types/jest": "^29.5.12",
     "@types/node": "^22.13.8",
     "@types/nprogress": "^0.2.3",
