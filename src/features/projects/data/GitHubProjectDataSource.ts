@@ -259,11 +259,4 @@ export default class GitHubProjectDataSource implements IProjectDataSource {
       }))
     }
   }
-
-  private sortSpecificationsByName(version: Version): Version {
-    return {
-      ...version,
-      specifications: version.specifications.sort((a, b) => a.name.localeCompare(b.name))
-    }
-  }
 }
