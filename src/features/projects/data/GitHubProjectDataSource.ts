@@ -65,7 +65,8 @@ export default class GitHubProjectDataSource implements IProjectDataSource {
     ).filter(version => {
       return version.specifications.length > 0
     })
-    .map(version => this.setDefaultSpecification(version, config?.defaultSpecificationName));
+    .map(version => this.setDefaultSpecification(version, config?.defaultSpecificationName))
+    .map(version => this.sortSpecificationsByName(version));
     const defaultName = repository.name.replace(new RegExp(this.repositoryNameSuffix + "$"), "")
     return {
       id: `${repository.owner}-${defaultName}`,
@@ -257,6 +258,13 @@ export default class GitHubProjectDataSource implements IProjectDataSource {
         ...spec,
         isDefault: spec.name === defaultSpecificationName
       }))
+    }
+  }
+
+  private sortSpecificationsByName(version: Version): Version {
+    return {
+      ...version,
+      specifications: version.specifications.sort((a, b) => a.name.localeCompare(b.name))
     }
   }
 }
