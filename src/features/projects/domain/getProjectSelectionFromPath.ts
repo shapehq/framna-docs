@@ -61,7 +61,7 @@ export default function getProjectSelectionFromPath({
   if (specificationId && !didMoveSpecificationIdToVersionId) {
     specification = version.specifications.find(e => e.id == specificationId)
   } else if (version.specifications.length > 0) {
-    specification = version.specifications[0]
+    specification = version.specifications.find(spec => spec.isDefault) || version.specifications[0]
   }
   return { project, version, specification }
 }

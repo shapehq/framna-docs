@@ -36,8 +36,8 @@ export default class ProjectNavigator {
     if (candidateSpecification) {
       this.router.push(`/${project.owner}/${project.name}/${newVersion.id}/${candidateSpecification.id}`)
     } else {
-      const firstSpecification = newVersion.specifications[0]
-      this.router.push(`/${project.owner}/${project.name}/${newVersion.id}/${firstSpecification.id}`)
+      const defaultOrFirstSpecification = newVersion.specifications.find(spec => spec.isDefault) || newVersion.specifications[0]
+      this.router.push(`/${project.owner}/${project.name}/${newVersion.id}/${defaultOrFirstSpecification.id}`)
     }
   }
   

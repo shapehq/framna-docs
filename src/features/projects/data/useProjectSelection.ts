@@ -29,7 +29,7 @@ export default function useProjectSelection() {
     },
     selectProject: (project: Project) => {
       const version = project.versions[0]
-      const specification = version.specifications[0]
+      const specification = version.specifications.find(spec => spec.isDefault) || version.specifications[0]
       NProgress.start()
       projectNavigator.navigate(
         project.owner,
