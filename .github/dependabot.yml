@@ -5,15 +5,6 @@ updates:
     schedule:
       interval: "monthly"
     groups:
-      fontawesome:
+      all:
         patterns:
-          - "@fortawesome/*"
-      octokit:
-        patterns:
-          - "@octokit/*"
-      mui:
-        patterns:
-          - "@mui/*"
-      typescript-eslint:
-        patterns:
-          - "@typescript-eslint/*"
+          - "*"
