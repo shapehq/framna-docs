@@ -194,12 +194,6 @@ test("It supports multiple OpenAPI specifications on a branch", async () => {
       id: "main",
       name: "main",
       specifications: [{
-        id: "foo-service.yml",
-        name: "foo-service.yml",
-        url: "/api/blob/acme/foo-openapi/foo-service.yml?ref=12345678",
-        editURL: "https://github.com/acme/foo-openapi/edit/main/foo-service.yml",
-        isDefault: false
-      }, {
         id: "bar-service.yml",
         name: "bar-service.yml",
         url: "/api/blob/acme/foo-openapi/bar-service.yml?ref=12345678",
@@ -210,6 +204,13 @@ test("It supports multiple OpenAPI specifications on a branch", async () => {
         name: "baz-service.yml",
         url: "/api/blob/acme/foo-openapi/baz-service.yml?ref=12345678",
         editURL: "https://github.com/acme/foo-openapi/edit/main/baz-service.yml",
+        isDefault: false
+      },
+      {
+        id: "foo-service.yml",
+        name: "foo-service.yml",
+        url: "/api/blob/acme/foo-openapi/foo-service.yml?ref=12345678",
+        editURL: "https://github.com/acme/foo-openapi/edit/main/foo-service.yml",
         isDefault: false
       }],
       url: "https://github.com/acme/foo-openapi/tree/main",
@@ -661,6 +662,94 @@ test("It prioritizes main, master, develop, and development branch names when so
   expect(projects[0].versions[3].name).toEqual("development")
   expect(projects[0].versions[4].name).toEqual("1.0")
   expect(projects[0].versions[5].name).toEqual("anne")
+})
+
+test("It sorts file specifications alphabetically", async () => {
+  const sut = new GitHubProjectDataSource({
+    repositoryNameSuffix: "-openapi",
+    repositoryDataSource: {
+      async getRepositories() {
+        return [{
+          owner: "acme",
+          name: "foo-openapi",
+          defaultBranchRef: {
+            id: "12345678",
+            name: "main"
+          },
+          configYaml: {
+            text: "name: Hello World"
+          },
+          branches: [{
+            id: "12345678",
+            name: "anne",
+            files: [{
+              name: "z-openapi.yml",
+            }, {
+              name: "a-openapi.yml",
+            }, {
+              name: "1-openapi.yml",
+            }]
+          }],
+          tags: [{
+            id: "12345678",
+            name: "cathrine",
+            files: [{
+              name: "o-openapi.yml",
+            }, {
+              name: "2-openapi.yml",
+            }]
+          }]
+        }]
+      }
+    },
+    encryptionService: noopEncryptionService,
+    remoteConfigEncoder: base64RemoteConfigEncoder
+  })
+  const projects = await sut.getProjects()
+  expect(projects[0].versions[0].specifications[0].name).toEqual("1-openapi.yml")
+  expect(projects[0].versions[0].specifications[1].name).toEqual("a-openapi.yml")
+  expect(projects[0].versions[0].specifications[2].name).toEqual("z-openapi.yml")
+  expect(projects[0].versions[1].specifications[0].name).toEqual("2-openapi.yml")
+  expect(projects[0].versions[1].specifications[1].name).toEqual("o-openapi.yml")
+})
+
+test("It maintains remote version specification ordering from config", async () => {
+  const sut = new GitHubProjectDataSource({
+    repositoryNameSuffix: "-openapi",
+    repositoryDataSource: {
+      async getRepositories() {
+        return [{
+          owner: "acme",
+          name: "foo-openapi",
+          defaultBranchRef: {
+            id: "12345678",
+            name: "main"
+          },
+          configYaml: {
+            text: `
+              name: Hello World
+              remoteVersions:
+              - name: Bar
+                specifications:
+                - id: some-spec
+                  name: Zac
+                  url: https://example.com/zac.yml
+                - id: another-spec
+                  name: Bob
+                  url: https://example.com/bob.yml
+            `
+          },
+          branches: [],
+          tags: []
+        }]
+      }
+    },
+    encryptionService: noopEncryptionService,
+    remoteConfigEncoder: base64RemoteConfigEncoder
+  })
+  const projects = await sut.getProjects()
+  expect(projects[0].versions[0].specifications[0].name).toEqual("Zac")
+  expect(projects[0].versions[0].specifications[1].name).toEqual("Bob")
 })
 
 test("It identifies the default branch in returned versions", async () => {
