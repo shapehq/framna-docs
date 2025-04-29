@@ -8,7 +8,7 @@ const Swagger = ({ url }: { url: string }) => {
   const [isLoading, setLoading] = useState(true)
   const [spec, setSpec] = useState<string | undefined>(undefined)
     
-  const unkpgUrl = "https://unpkg.com/swagger-ui-dist@5.11.0"
+  const unpkgUrl = "https://unpkg.com/swagger-ui-dist@5.11.0"
 
   useEffect(() => {
     fetch(url)
@@ -26,7 +26,7 @@ const Swagger = ({ url }: { url: string }) => {
     }
 
     const script = document.createElement("script")
-    script.src = `${unkpgUrl}/swagger-ui-bundle.js`
+    script.src = `${unpkgUrl}/swagger-ui-bundle.js`
     script.async = true
     script.onload = () => {
       const SwaggerUI = window.SwaggerUIBundle
@@ -44,7 +44,7 @@ const Swagger = ({ url }: { url: string }) => {
 
     const link = document.createElement("link")
     link.rel = "stylesheet"
-    link.href = `${unkpgUrl}/swagger-ui.css`
+    link.href = `${unpkgUrl}/swagger-ui.css`
     document.head.appendChild(link)
 
     return () => {
