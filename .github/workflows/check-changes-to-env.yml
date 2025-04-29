@@ -1,4 +1,8 @@
 name: Check Changes to Env
+permissions:
+  contents: read
+  pull-requests: read
+  issues: write
 on:
   pull_request:
     types: [opened, synchronize]
