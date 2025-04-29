@@ -5,6 +5,13 @@ updates:
     schedule:
       interval: "monthly"
     groups:
-      all:
+      react:
+        patterns:
+          - "react"
+          - "react-*"
+      everything-else:
         patterns:
           - "*"
+        exclude-patterns:
+          - "react"
+          - "react-*"
