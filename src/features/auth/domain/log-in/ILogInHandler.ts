@@ -10,6 +10,11 @@ export interface IAccount {
   readonly refresh_token?: string
 }
 
+export type HandleLoginParams = {
+  readonly user: IUser
+  readonly account: IAccount | null | undefined 
+}
+
 export default interface ILogInHandler {
-  handleLogIn(params: { user: IUser, account: IAccount | null }): Promise<boolean | string>
+  handleLogIn(params: HandleLoginParams): Promise<boolean | string>
 }
