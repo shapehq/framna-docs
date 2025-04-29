@@ -1,4 +1,4 @@
-import { ILogInHandler, IUser, IAccount } from "."
+import { ILogInHandler, IUser, IAccount, HandleLoginParams } from "."
 import { IOAuthTokenRepository } from "../oauth-token"
 import saneParseInt from "@/common/utils/saneParseInt"
 
@@ -9,7 +9,7 @@ export default class LogInHandler implements ILogInHandler {
     this.oauthTokenRepository = config.oauthTokenRepository
   }
   
-  async handleLogIn({ user, account }: { user: IUser, account: IAccount | null }) {
+  async handleLogIn({ user, account }: HandleLoginParams) {
     if (!account) {
       return false
     }
