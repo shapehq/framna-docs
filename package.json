@@ -28,7 +28,7 @@
     "@octokit/auth-app": "^7.2.1",
     "@octokit/core": "^6.1.5",
     "@octokit/webhooks": "~13.8.2",
-    "core-js": "^3.41.0",
+    "core-js": "^3.42.0",
     "encoding": "^0.1.13",
     "figma-squircle": "^1.1.0",
     "install": "^0.13.0",
@@ -53,7 +53,7 @@
   },
   "devDependencies": {
     "@auth/pg-adapter": "^1.9.0",
-    "@tailwindcss/postcss": "^4.1.4",
+    "@tailwindcss/postcss": "^4.1.5",
     "@types/jest": "^29.5.12",
     "@types/node": "^22.15.3",
     "@types/nprogress": "^0.2.3",
