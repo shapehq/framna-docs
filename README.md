@@ -86,4 +86,4 @@ Every year we go on Shape Weekend, three days where all employees in Shape get t
 
 ---
 
-Framna Docs is built with ❤️ by [Shape](https://shape.dk) in Denmark. Oh, and [we are hiring](https://careers.shape.dk) 🤗
+Framna Docs is built with ❤️ by [Framna](https://framna.com/) in Denmark. Oh, and [we are hiring](https://framna.com/careers) 🤗
