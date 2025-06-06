@@ -16,16 +16,19 @@ jobs:
     - name: Get PR Number
       id: get-pr-number
       run: |
-        PR_NUMBER=$(echo "${{ github.ref }}" | awk 'BEGIN { FS = "/" } ; { print $3 }')
-        echo "pr-number=${PR_NUMBER}" >> $GITHUB_OUTPUT
+        PR_NUMBER=$(echo "${GITHUB_REF}" | awk 'BEGIN { FS = "/" } ; { print $3 }')
+        echo "pr-number=${PR_NUMBER}" >> "$GITHUB_OUTPUT"
     - name: Comment when dummy.txt changes
       uses: actions/github-script@v7
+      env:
+        PR_NUMBER: ${{ steps.get-pr-number.outputs.pr-number }}
+        REPO: ${{ github.repository }}
       with:
         script: |
           const filename = ".env.example"
           const filenameSha256 = await sha256(filename)
-          const diffURL = "https://github.com/${{ github.repository }}/pull/${{ steps.get-pr-number.outputs.pr-number }}/files#diff-" + filenameSha256
-          const docsURL = "https://github.com/${{ github.repository }}/wiki/Setting-Environment-Variables"
+          const diffURL = `https://github.com/${process.env.REPO}/pull/${process.env.PR_NUMBER}/files#diff-${filenameSha256}`
+          const docsURL = `https://github.com/${process.env.REPO}/wiki/Setting-Environment-Variables`
           const commentBody = `⚠️ It looks like [${filename}](${diffURL}) has changed. Remember to update the [Setting Environment Variables](${docsURL}) article accordingly.`
           const listComments = await github.rest.issues.listComments({
             ...context.repo,

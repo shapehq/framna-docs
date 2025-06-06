@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     services:
       postgres:
-        image: postgres:latest
+        image: postgres:17.5
         ports:
           - 5432:5432
         options: >-
@@ -28,6 +28,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          persist-credentials: false
       - name: Wait for PostgreSQL to be ready
         run: |
           until pg_isready -h localhost -p 5432; do
