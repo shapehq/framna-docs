@@ -1,4 +1,6 @@
 name: Run Unit Tests
+permissions:
+  contents: read
 on:
   workflow_dispatch:
   pull_request:
