@@ -82,7 +82,7 @@ Two following long-lived branches exist:
 
 ## ❤️ The Product of a Shape Weekend
 
-Every year we go on Shape Weekend, three days where all employees in Shape get together for a hackathon to build amazing products. In 2023, a team of Shape developers with a passion for documentation and spec-driven development built Framna Docs and we've used it daily ever since!
+Before we became Framna, our company was known as Shape. Every year, we held "Shape Weekend", a three-day hackathon where all employees came together to build exciting new products. In 2023, one of those teams, passionate about documentation and spec-driven development, built Framna Docs. We have used it daily ever since.
 
 ---
 
