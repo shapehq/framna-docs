@@ -16,7 +16,7 @@ jobs:
     - name: Get PR Number
       id: get-pr-number
       run: |
-        PR_NUMBER=$(echo "${{ github.ref }}" | awk 'BEGIN { FS = "/" } ; { print $3 }')
+        PR_NUMBER=$(echo "${GITHUB_REF}" | awk 'BEGIN { FS = "/" } ; { print $3 }')
         echo "pr-number=${PR_NUMBER}" >> $GITHUB_OUTPUT
     - name: Comment when dummy.txt changes
       uses: actions/github-script@v7
