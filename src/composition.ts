@@ -173,7 +173,7 @@ const projectUserDataRepository = new KeyValueUserDataRepository({
   baseKey: "projects"
 })
 
-export const projectRepository = new ProjectRepository({
+const projectRepository = new ProjectRepository({
   userIDReader: session,
   repository: projectUserDataRepository
 })

@@ -12,6 +12,11 @@ export default class CachingProjectDataSource implements IProjectDataSource {
   }
   
   async getProjects(): Promise<Project[]> {
+    const cachedProjects = await this.repository.get()
+    console.log("Cached projects:", cachedProjects)  
+    if (cachedProjects) {
+      return cachedProjects
+    }
     const projects = await this.dataSource.getProjects()
     await this.repository.set(projects)
     return projects

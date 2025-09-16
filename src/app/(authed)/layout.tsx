@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation"
 import { SessionProvider } from "next-auth/react"
-import { session, projectRepository } from "@/composition"
+import { session, projectDataSource } from "@/composition"
 import ErrorHandler from "@/common/ui/ErrorHandler"
 import SessionBarrier from "@/features/auth/view/SessionBarrier"
 import ProjectsContextProvider from "@/features/projects/view/ProjectsContextProvider"
@@ -11,7 +11,8 @@ export default async function Layout({ children }: { children: React.ReactNode }
   if (!isAuthenticated) {
     return redirect("/api/auth/signin")
   }
-  const projects = await projectRepository.get()
+  const projects = await projectDataSource.getProjects()
+  console.log("Loaded projects:", projects)
   return (
     <ErrorHandler>
       <SessionProvider>
