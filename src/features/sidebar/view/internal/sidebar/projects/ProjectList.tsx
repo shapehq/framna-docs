@@ -1,24 +1,25 @@
-import { Suspense } from "react"
+'use client'  
+
+import { Suspense, useContext } from "react"
 import { Typography } from "@mui/material"
 import ProjectListFallback from "./ProjectListFallback"
 import PopulatedProjectList from "./PopulatedProjectList"
-import { IProjectDataSource } from "@/features/projects/domain"
+import { ProjectsContext } from "@/common"
 
-const ProjectList = ({
-  projectDataSource
-}: {
-  projectDataSource: IProjectDataSource
-}) => {
+const ProjectList = () => {
+
+  const { projects } = useContext(ProjectsContext)
+
   return (
     <Suspense fallback={<ProjectListFallback/>}>
-      <DataFetchingProjectList projectDataSource={projectDataSource}/>
+     {projects.length > 0 ? <PopulatedProjectList projects={projects} /> : <EmptyProjectList/>}
     </Suspense>
   )
 }
 
 export default ProjectList
 
-const DataFetchingProjectList = async ({
+/* const DataFetchingProjectList = async ({
   projectDataSource
 }: {
   projectDataSource: IProjectDataSource
@@ -29,7 +30,7 @@ const DataFetchingProjectList = async ({
   } else {
     return <EmptyProjectList/>
   }
-}
+} */
 
 const EmptyProjectList = () => {
   return (

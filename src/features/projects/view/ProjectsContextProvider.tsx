@@ -1,39 +1,72 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { ProjectsContext } from "@/common"
-import { Project } from "@/features/projects/domain"
+import { useState, useEffect } from "react";
+import { ProjectsContext } from "@/common";
+import { Project } from "@/features/projects/domain";
 
 const ProjectsContextProvider = ({
   initialProjects,
-  children
+  children,
 }: {
-  initialProjects?: Project[],
-  children?: React.ReactNode
+  initialProjects?: Project[];
+  children?: React.ReactNode;
 }) => {
-  const [refreshed, setRefreshed] = useState<boolean>(false)
-  const [projects, setProjects] = useState<Project[]>(initialProjects || [])
+  const [refreshed, setRefreshed] = useState<boolean>(true);
+  const [projects, setProjects] = useState<Project[]>(initialProjects || []);
 
-  const hasProjectChanged = (value: Project[]) => value.some((project, index) => {
-    // Compare by project id and version (or any other key fields)
-    return project.id !== projects[index]?.id || project.versions !== projects[index]?.versions
-  })
+  const hasProjectChanged = (value: Project[]) =>
+    value.some((project, index) => {
+      // Compare by project id and version (or any other key fields)
+      return (
+        project.id !== projects[index]?.id ||
+        project.versions !== projects[index]?.versions
+      );
+    });
 
   const setProjectsAndRefreshed = (value: Project[]) => {
-    setProjects(value)
+    setProjects(value);
     // If any project has changed, update the state and mark as refreshed
-    if (hasProjectChanged(value)) setRefreshed(true)
+    if (hasProjectChanged(value)) setRefreshed(true);
+  };
 
-  }
+  // Trigger background refresh after initial mount
+  useEffect(() => {
+    const refreshProjects = () => {
+      fetch("/api/projects")
+        .then((res) => res.json())
+        .then(
+          ({ projects }) =>
+            projects &&
+            hasProjectChanged(projects) &&
+            setProjectsAndRefreshed(projects)
+        )
+        .catch(() => {});
+    };
+
+    // Initial refresh
+    refreshProjects();
+
+    // Refresh when tab becomes active
+    const handleVisibilityChange = () => {
+      if (!document.hidden) refreshProjects();
+    };
+
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+    return () =>
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+  }, []);
+
   return (
-    <ProjectsContext.Provider value={{
-      refreshed,
-      projects,
-      setProjects: setProjectsAndRefreshed
-    }}>
+    <ProjectsContext.Provider
+      value={{
+        refreshed,
+        projects,
+        setProjects: setProjectsAndRefreshed,
+      }}
+    >
       {children}
     </ProjectsContext.Provider>
-  )
-}
+  );
+};
 
-export default ProjectsContextProvider
+export default ProjectsContextProvider;

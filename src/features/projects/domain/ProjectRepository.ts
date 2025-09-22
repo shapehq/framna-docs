@@ -15,9 +15,11 @@ export default class ProjectRepository implements IProjectRepository {
     this.repository = config.repository
   }
   
-  async get(): Promise<Project[] | undefined> {
+    async get(): Promise<Project[] | undefined> {
     const userId = await this.userIDReader.getUserId()
+    console.log("Fetching projects for user ID:", userId)
     const string = await this.repository.get(userId)
+    console.log("Fetched projects string:", string)
     if (!string) {
       return undefined
     }
