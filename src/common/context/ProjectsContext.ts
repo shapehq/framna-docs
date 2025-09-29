@@ -6,13 +6,13 @@ import { Project } from "@/features/projects/domain"
 export const SidebarTogglableContext = createContext<boolean>(true)
 
 type ProjectsContextValue = {
-  refreshed: boolean,
+  refreshing: boolean,
   projects: Project[],
   setProjects: (projects: Project[]) => void
 }
 
 export const ProjectsContext = createContext<ProjectsContextValue>({
-  refreshed: false,
+  refreshing: false,
   projects: [],
   setProjects: () => {}
 })
