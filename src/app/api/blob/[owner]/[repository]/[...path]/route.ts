@@ -29,7 +29,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<GetBlo
   const file = await res.blob()
   revalidatePath('/(authed)/projects')
   const headers = new Headers()
-  if (res.status !== 200    ) {
+  if (res.status !== 200) {
     headers.set("Content-Type", "text/plain");
     headers.set("Cache-Control", `max-age=3000`)
   }
