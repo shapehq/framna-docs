@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { ProjectsContext } from "@/common";
 import { Project } from "@/features/projects/domain";
 
@@ -11,8 +11,9 @@ const ProjectsContextProvider = ({
   initialProjects?: Project[];
   children?: React.ReactNode;
 }) => {
-  const [refreshed, setRefreshed] = useState<boolean>(false);
+  const [refreshed, setRefreshed] = useState<boolean>(true);
   const [projects, setProjects] = useState<Project[]>(initialProjects || []);
+  const isLoadingRef = useRef(false);
 
   const hasProjectChanged = (value: Project[]) =>
     value.some((project, index) => {
@@ -32,6 +33,9 @@ const ProjectsContextProvider = ({
   // Trigger background refresh after initial mount
   useEffect(() => {
     const refreshProjects = () => {
+      if (isLoadingRef.current) return;
+      isLoadingRef.current = true;
+      
       fetch("/api/projects")
         .then((res) => res.json())
         .then(
@@ -40,9 +44,11 @@ const ProjectsContextProvider = ({
             hasProjectChanged(projects) &&
             setProjectsAndRefreshed(projects)
         )
-        .catch((error) => console.log("Failed to refresh projects", error));
+        .catch((error) => console.error("Failed to refresh projects", error))
+        .finally(() => {
+          isLoadingRef.current = false;
+        });
     };
-
     // Initial refresh
     refreshProjects();
 
