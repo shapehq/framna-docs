@@ -40,7 +40,7 @@ const ProjectsContextProvider = ({
             hasProjectChanged(projects) &&
             setProjectsAndRefreshed(projects)
         )
-        .catch(() => {});
+        .catch((error) => console.log("Failed to refresh projects", error));
     };
 
     // Initial refresh

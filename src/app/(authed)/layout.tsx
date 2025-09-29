@@ -21,7 +21,7 @@ export default async function Layout({
   }
 
   const projects = await projectDataSource.getProjects();
-  console.log("Loaded projects:", projects);
+ 
 
   return (
     <ErrorHandler>
