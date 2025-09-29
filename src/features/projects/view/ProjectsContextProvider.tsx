@@ -11,7 +11,7 @@ const ProjectsContextProvider = ({
   initialProjects?: Project[];
   children?: React.ReactNode;
 }) => {
-  const [refreshed, setRefreshed] = useState<boolean>(true);
+  const [refreshed, setRefreshed] = useState<boolean>(false);
   const [projects, setProjects] = useState<Project[]>(initialProjects || []);
 
   const hasProjectChanged = (value: Project[]) =>
