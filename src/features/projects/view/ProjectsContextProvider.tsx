@@ -36,7 +36,7 @@ const ProjectsContextProvider = ({
       if (isLoadingRef.current) return;
       isLoadingRef.current = true;
       
-      fetch("/api/projects")
+      fetch("/api/projects", { method: "POST" })
         .then((res) => res.json())
         .then(
           ({ projects }) =>
