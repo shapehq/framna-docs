@@ -54,7 +54,6 @@ const ProjectsContextProvider = ({
       value={{
         projects,
         refreshing,
-        setProjects: setProjectsAndRefreshed,
       }}
     >
       {children}

@@ -25,6 +25,7 @@ export default class ProjectRepository implements IProjectRepository {
     try {
       return ZodJSONCoder.decode(ProjectSchema.array(), string)
     } catch { // swallow decode errors and treat as missing cache
+      console.warn("[ProjectRepository] Failed to decode cached projects – treating as cache miss")
       return undefined
     }
   }
