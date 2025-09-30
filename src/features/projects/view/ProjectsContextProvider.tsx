@@ -12,17 +12,7 @@ const ProjectsContextProvider = ({
   children?: React.ReactNode;
 }) => {
   const [projects, setProjects] = useState<Project[]>(initialProjects || []);
-  const isLoadingRef = useRef(false);
   const [refreshing, setRefreshing] = useState(false);
-
-  const hasProjectChanged = (value: Project[]) =>
-    value.some((project, index) => {
-      // Compare by project id and version (or any other key fields)
-      return (
-        project.id !== projects[index]?.id ||
-        project.versions !== projects[index]?.versions
-      );
-    });
 
   const setProjectsAndRefreshed = (value: Project[]) => {
     setProjects(value);
@@ -31,21 +21,17 @@ const ProjectsContextProvider = ({
   // Trigger background refresh after initial mount
   useEffect(() => {
     const refreshProjects = () => {
-      if (isLoadingRef.current) return;
-      isLoadingRef.current = true;
       setRefreshing(true);
 
       fetch("/api/projects", { method: "POST" })
         .then((res) => res.json())
         .then(
-          ({ projects }) =>
-            projects &&
-            hasProjectChanged(projects) &&
-            setProjectsAndRefreshed(projects)
+             ({ projects }) => {
+            if (projects) setProjectsAndRefreshed(projects);
+          }
         )
         .catch((error) => console.error("Failed to refresh projects", error))
         .finally(() => {
-          isLoadingRef.current = false;
           setRefreshing(false);
         });
     };
