@@ -15,16 +15,17 @@ export default class ProjectRepository implements IProjectRepository {
     this.repository = config.repository
   }
   
-  async get(): Promise<Project[] | undefined> {
+    async get(): Promise<Project[] | undefined> {
     const userId = await this.userIDReader.getUserId()
     const string = await this.repository.get(userId)
+   
     if (!string) {
       return undefined
     }
     try {
       return ZodJSONCoder.decode(ProjectSchema.array(), string)
-    } catch (err) {
-      console.error(err)
+    } catch { // swallow decode errors and treat as missing cache
+      console.warn("[ProjectRepository] Failed to decode cached projects – treating as cache miss")
       return undefined
     }
   }
