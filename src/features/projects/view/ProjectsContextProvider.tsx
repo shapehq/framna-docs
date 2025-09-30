@@ -27,7 +27,7 @@ const ProjectsContextProvider = ({
       }
       isLoadingRef.current = true;
       setRefreshing(true);
-      fetch("/api/refreshedProjects", { method: "POST" })
+      fetch("/api/refresh-projects", { method: "POST" })
         .then((res) => res.json())
         .then(({ projects }) => {
           if (projects) setProjectsAndRefreshed(projects);
@@ -40,7 +40,6 @@ const ProjectsContextProvider = ({
     };
     // Initial refresh
     refreshProjects();
-
     const handleVisibilityChange = () => {
       if (!document.hidden) refreshProjects();
     };

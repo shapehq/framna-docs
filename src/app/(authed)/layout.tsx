@@ -1,10 +1,9 @@
 import { redirect } from "next/navigation";
 import { SessionProvider } from "next-auth/react";
-import { session } from "@/composition";
+import { session, projectDataSource } from "@/composition";
 import ErrorHandler from "@/common/ui/ErrorHandler";
 import SessionBarrier from "@/features/auth/view/SessionBarrier";
 import ProjectsContextProvider from "@/features/projects/view/ProjectsContextProvider";
-import { projectDataSource } from "@/composition";
 import {
   SidebarTogglableContextProvider,
   SplitView,

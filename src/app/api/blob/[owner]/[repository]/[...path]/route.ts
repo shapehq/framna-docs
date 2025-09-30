@@ -1,8 +1,6 @@
 import { NextRequest, NextResponse } from "next/server"
 import { session, userGitHubClient } from "@/composition"
 import { makeUnauthenticatedAPIErrorResponse } from "@/common"
-import { revalidatePath } from "next/cache"
-
 
 interface GetBlobParams {
   owner: string
@@ -10,7 +8,7 @@ interface GetBlobParams {
   path: [string]
 }
 
-export async function GET(req: NextRequest, { params }: { params: Promise<GetBlobParams> } ) {
+export async function GET(req: NextRequest, { params }: { params: Promise<GetBlobParams> }) {
   const isAuthenticated = await session.getIsAuthenticated()
   if (!isAuthenticated) {
     return makeUnauthenticatedAPIErrorResponse()
@@ -25,18 +23,14 @@ export async function GET(req: NextRequest, { params }: { params: Promise<GetBlo
   })
   const url = new URL(item.downloadURL)
   const imageRegex = /\.(jpg|jpeg|png|webp|avif|gif)$/;
-  const res = await fetch(url, { next: { revalidate: 6000 } })
-  const file = await res.blob()
-  revalidatePath('/(authed)/projects')
+  const file = await fetch(url).then(r => r.blob())
   const headers = new Headers()
-  if (res.status !== 200) {
-    headers.set("Content-Type", "text/plain");
-    headers.set("Cache-Control", `max-age=3000`)
-  }
   if (new RegExp(imageRegex).exec(path)) {
     const cacheExpirationInSeconds = 60 * 60 * 24 * 30 // 30 days
     headers.set("Content-Type", "image/*");
     headers.set("Cache-Control", `max-age=${cacheExpirationInSeconds}`)
-  } 
+  } else {
+    headers.set("Content-Type", "text/plain");
+  }
   return new NextResponse(file, { status: 200, headers })
 }

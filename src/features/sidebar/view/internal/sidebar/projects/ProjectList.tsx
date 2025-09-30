@@ -19,19 +19,6 @@ const ProjectList = () => {
 
 export default ProjectList
 
-/* const DataFetchingProjectList = async ({
-  projectDataSource
-}: {
-  projectDataSource: IProjectDataSource
-}) => {
-  const projects = await projectDataSource.getProjects()
-  if (projects.length > 0) {
-    return <PopulatedProjectList projects={projects} />
-  } else {
-    return <EmptyProjectList/>
-  }
-} */
-
 const EmptyProjectList = () => {
   return (
     <Typography
