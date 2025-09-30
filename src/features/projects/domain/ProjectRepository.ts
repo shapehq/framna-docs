@@ -24,7 +24,7 @@ export default class ProjectRepository implements IProjectRepository {
     }
     try {
       return ZodJSONCoder.decode(ProjectSchema.array(), string)
-    } catch (err) {
+    } catch (_err) { // swallow decode errors and treat as missing cache
       return undefined
     }
   }
