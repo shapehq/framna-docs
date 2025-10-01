@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import {
   Box,
@@ -7,26 +7,33 @@ import {
   ListItemButton,
   Skeleton as MuiSkeleton,
   Stack,
-  Typography
-} from "@mui/material"
-import MenuItemHover from "@/common/ui/MenuItemHover"
-import { Project } from "@/features/projects/domain"
-import { useProjectSelection } from "@/features/projects/data"
-import ProjectAvatar, { Squircle as ProjectAvatarSquircle } from "./ProjectAvatar"
-import { useCloseSidebarOnSelection } from "@/features/sidebar/data"
+  Typography,
+} from "@mui/material";
+import MenuItemHover from "@/common/ui/MenuItemHover";
+import { Project } from "@/features/projects/domain";
+import { useProjectSelection } from "@/features/projects/data";
+import { useContext } from "react";
+import { ProjectsContext } from "@/common";
+import ProjectAvatar, {
+  Squircle as ProjectAvatarSquircle,
+} from "./ProjectAvatar";
+import { useCloseSidebarOnSelection } from "@/features/sidebar/data";
 
-const AVATAR_SIZE = { width: 40, height: 40 }
+const AVATAR_SIZE = { width: 40, height: 40 };
 
 const ProjectListItem = ({ project }: { project: Project }) => {
-  const { project: selectedProject, selectProject } = useProjectSelection()
-  const selected = project.id === selectedProject?.id
-  const { closeSidebarIfNeeded } = useCloseSidebarOnSelection()
+  const { project: selectedProject, selectProject } = useProjectSelection();
+  const { refreshProjects } = useContext(ProjectsContext);
+  const selected = project.id === selectedProject?.id;
+  const { closeSidebarIfNeeded } = useCloseSidebarOnSelection();
+
   return (
     <Template
       selected={selected}
       onSelect={() => {
-        closeSidebarIfNeeded()
-        selectProject(project)
+        closeSidebarIfNeeded();
+        selectProject(project);
+        refreshProjects();
       }}
       avatar={
         <ProjectAvatar
@@ -37,26 +44,32 @@ const ProjectListItem = ({ project }: { project: Project }) => {
       }
       title={project.displayName}
     />
-  )
-}
+  );
+};
 
-export default ProjectListItem
+export default ProjectListItem;
 
 export const Skeleton = () => {
   return (
-    <Template disabled avatar={
-      <ProjectAvatarSquircle width={AVATAR_SIZE.width} height={AVATAR_SIZE.height}>
-        <MuiSkeleton
-          variant="rectangular"
-          animation="wave"
-          sx={{ width: "100%", height: "100%" }}
-        />
-      </ProjectAvatarSquircle>
-    }>
+    <Template
+      disabled
+      avatar={
+        <ProjectAvatarSquircle
+          width={AVATAR_SIZE.width}
+          height={AVATAR_SIZE.height}
+        >
+          <MuiSkeleton
+            variant="rectangular"
+            animation="wave"
+            sx={{ width: "100%", height: "100%" }}
+          />
+        </ProjectAvatarSquircle>
+      }
+    >
       <MuiSkeleton variant="text" animation="wave" width={100} />
     </Template>
-  )
-}
+  );
+};
 
 export const Template = ({
   disabled,
@@ -64,28 +77,22 @@ export const Template = ({
   onSelect,
   avatar,
   title,
-  children
+  children,
 }: {
-  disabled?: boolean
-  selected?: boolean
-  onSelect?: () => void
-  avatar: React.ReactNode
-  title?: string
-  children?: React.ReactNode
+  disabled?: boolean;
+  selected?: boolean;
+  onSelect?: () => void;
+  avatar: React.ReactNode;
+  title?: string;
+  children?: React.ReactNode;
 }) => {
   return (
     <ListItem disablePadding>
-      <Button
-        disabled={disabled}
-        selected={selected}
-        onSelect={onSelect}
-      >
+      <Button disabled={disabled} selected={selected} onSelect={onSelect}>
         <MenuItemHover disabled={disabled}>
           <Stack direction="row" alignItems="center" spacing={1.5}>
-            <Box sx={{ width: 40, height: 40 }}>
-              {avatar}
-            </Box>
-            {title &&
+            <Box sx={{ width: 40, height: 40 }}>{avatar}</Box>
+            {title && (
               <ListItemText
                 primary={
                   <Typography
@@ -95,37 +102,37 @@ export const Template = ({
                       letterSpacing: 0.1,
                       whiteSpace: "nowrap",
                       overflow: "hidden",
-                      textOverflow: "ellipsis"
+                      textOverflow: "ellipsis",
                     }}
                   >
                     {title}
                   </Typography>
                 }
               />
-            }
+            )}
             {children}
           </Stack>
         </MenuItemHover>
       </Button>
     </ListItem>
-  )
-}
+  );
+};
 
 const Button = ({
   disabled,
   selected,
   onSelect,
-  children
+  children,
 }: {
-  disabled?: boolean
-  selected?: boolean
-  onSelect?: () => void
-  children?: React.ReactNode
+  disabled?: boolean;
+  selected?: boolean;
+  onSelect?: () => void;
+  children?: React.ReactNode;
 }) => {
   return (
     <>
       {disabled && children}
-      {!disabled &&
+      {!disabled && (
         <ListItemButton
           disabled={disabled}
           onClick={onSelect}
@@ -135,7 +142,7 @@ const Button = ({
         >
           {children}
         </ListItemButton>
-      }
+      )}
     </>
-  )
-}
+  );
+};
