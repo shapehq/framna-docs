@@ -37,7 +37,6 @@ const refreshProjects = useCallback(() => {
 }, []); 
 
   // Trigger background refresh after initial mount
-
 useEffect(() => {
   // Initial refresh
   refreshProjects();
@@ -48,7 +47,7 @@ useEffect(() => {
   return () => {
     document.removeEventListener("visibilitychange", handleVisibilityChange);
   };
-}, [refreshProjects]); 
+}, []); 
 
   return (
     <ProjectsContext.Provider value={{ projects, refreshing, refreshProjects }}>
