@@ -1,4 +1,4 @@
- export class FetcherError extends Error {
+export class FetcherError extends Error {
    readonly status: number
    
    constructor(status: number, message: string) {
@@ -12,7 +12,7 @@
   input: RequestInfo,
   init?: RequestInit
 ): Promise<JSON> {
-  const res = await fetch(input, init)
+ const res = await fetch(input, init)
   if (!res.ok) {
     throw new FetcherError(res.status, "An error occurred while fetching the data.")
   }

@@ -1,4 +1,6 @@
 name: Build Docker Image
+permissions:
+  contents: read
 on:
   workflow_dispatch:
   pull_request:
@@ -14,5 +16,7 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
+        with:
+          persist-credentials: false
       - name: Build Docker Image
         run: docker build .

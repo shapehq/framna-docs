@@ -1,39 +1,60 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { ProjectsContext } from "@/common"
-import { Project } from "@/features/projects/domain"
+import { useState, useEffect, useRef, useCallback } from "react";
+import { ProjectsContext } from "@/common";
+import { Project } from "@/features/projects/domain";
 
 const ProjectsContextProvider = ({
   initialProjects,
-  children
+  children,
 }: {
-  initialProjects?: Project[],
-  children?: React.ReactNode
+  initialProjects?: Project[];
+  children?: React.ReactNode;
 }) => {
-  const [refreshed, setRefreshed] = useState<boolean>(false)
-  const [projects, setProjects] = useState<Project[]>(initialProjects || [])
+  const [projects, setProjects] = useState<Project[]>(initialProjects || []);
+  const [refreshing, setRefreshing] = useState(false);
+  const isLoadingRef = useRef(false);
 
-  const hasProjectChanged = (value: Project[]) => value.some((project, index) => {
-    // Compare by project id and version (or any other key fields)
-    return project.id !== projects[index]?.id || project.versions !== projects[index]?.versions
-  })
 
   const setProjectsAndRefreshed = (value: Project[]) => {
-    setProjects(value)
-    // If any project has changed, update the state and mark as refreshed
-    if (hasProjectChanged(value)) setRefreshed(true)
+    setProjects(value);
+  };
 
-  }
+const refreshProjects = useCallback(() => {
+  if (isLoadingRef.current) return;
+  isLoadingRef.current = true;
+  setRefreshing(true);
+  fetch("/api/refresh-projects", { method: "POST" })
+    .then((res) => res.json())
+    .then(({ projects }) => {
+      if (projects) setProjectsAndRefreshed(projects);
+    })
+    .catch((error) => console.error("Failed to refresh projects", error))
+    .finally(() => {
+      isLoadingRef.current = false;
+      setRefreshing(false);
+    });
+}, []); 
+
+  // Trigger background refresh after initial mount
+
+useEffect(() => {
+  // Initial refresh
+  refreshProjects();
+  const handleVisibilityChange = () => {
+    if (!document.hidden) refreshProjects();
+  };
+  document.addEventListener("visibilitychange", handleVisibilityChange);
+  return () => {
+    document.removeEventListener("visibilitychange", handleVisibilityChange);
+  };
+}, [refreshProjects]); 
+
   return (
-    <ProjectsContext.Provider value={{
-      refreshed,
-      projects,
-      setProjects: setProjectsAndRefreshed
-    }}>
+    <ProjectsContext.Provider value={{ projects, refreshing, refreshProjects }}>
       {children}
     </ProjectsContext.Provider>
-  )
-}
+  );
+};
 
-export default ProjectsContextProvider
+export default ProjectsContextProvider;

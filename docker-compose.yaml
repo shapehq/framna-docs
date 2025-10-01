@@ -1,4 +1,3 @@
-version: '3.8'
 services:
   cache:
     image: redis:6.2-alpine
@@ -8,6 +7,26 @@ services:
     command: redis-server --save 20 1 --loglevel warning
     volumes: 
       - cache:/data
+
+  postgres:
+    image: postgres:16.8
+    restart: always
+    ports:
+    - '5432:5432'
+    environment:
+      - POSTGRES_USER=oscar
+      - POSTGRES_PASSWORD=passw0rd
+      - POSTGRES_DB=shape-docs
+
+  app:
+    build: .
+    ports:
+      - '3000:3000'
+    env_file:
+      - .env
+    depends_on:
+      - cache
+
 volumes:
   cache:
     driver: local

@@ -1,5 +1,4 @@
 import ClientSplitView from "./internal/ClientSplitView"
-import { projectDataSource } from "@/composition"
 import BaseSidebar from "./internal/sidebar/Sidebar"
 import ProjectList from "./internal/sidebar/projects/ProjectList"
 import { env } from "@/common"
@@ -21,7 +20,7 @@ const Sidebar = () => {
   return (
     // The site name and help URL are passed as a properties to ensure the environment variables are read server-side.
     <BaseSidebar siteName={SITE_NAME} helpURL={HELP_URL}>
-      <ProjectList projectDataSource={projectDataSource} />
+         <ProjectList />
     </BaseSidebar>
   )
 }
