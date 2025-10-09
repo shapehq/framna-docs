@@ -44,6 +44,11 @@ type GraphQLGitHubRepositoryRef = {
       }[]
     }
   }
+  readonly associatedPullRequests?: {
+    readonly nodes: {
+      readonly baseRefName: string
+    }[]
+  }
 }
 
 export default class GitHubProjectDataSource implements IGitHubRepositoryDataSource {
@@ -112,9 +117,11 @@ export default class GitHubProjectDataSource implements IGitHubRepositoryDataSou
           configYml: repository.configYml,
           configYaml: repository.configYaml,
           branches: repository.branches.edges.map(branch => {
+            const baseRef = branch.node.associatedPullRequests?.nodes[0]?.baseRefName
             return {
               id: branch.node.target.oid,
               name: branch.node.name,
+              baseRef: baseRef || undefined,
               files: branch.node.target.tree.entries
             }
           }),
@@ -189,6 +196,11 @@ export default class GitHubProjectDataSource implements IGitHubRepositoryDataSou
                       name
                     }
                   }
+                }
+              }
+              associatedPullRequests(first: 1, states: [OPEN, MERGED]) {
+                nodes {
+                  baseRefName
                 }
               }
             }

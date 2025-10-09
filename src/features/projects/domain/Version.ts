@@ -6,7 +6,8 @@ export const VersionSchema = z.object({
   name: z.string(),
   specifications: OpenApiSpecificationSchema.array(),
   url: z.string().optional(),
-  isDefault: z.boolean().default(false)
+  isDefault: z.boolean().default(false),
+  baseRef: z.string().optional()
 })
 
 type Version = z.infer<typeof VersionSchema>
