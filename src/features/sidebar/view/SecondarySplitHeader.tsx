@@ -4,9 +4,10 @@ import { useState, useEffect, useContext } from "react"
 import { useSessionStorage } from "usehooks-ts"
 import { Box, IconButton, Stack, Tooltip, Collapse } from "@mui/material"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
-import { faBars, faChevronLeft } from "@fortawesome/free-solid-svg-icons"
+import { faBars, faChevronLeft, faChevronRight, faCodeCompare } from "@fortawesome/free-solid-svg-icons"
 import { isMac as checkIsMac, SidebarTogglableContext } from "@/common"
 import { useSidebarOpen } from "@/features/sidebar/data"
+import useDiffbarOpen from "@/features/sidebar/data/useDiffbarOpen"
 import ToggleMobileToolbarButton from "./internal/secondary/ToggleMobileToolbarButton"
 
 const SecondarySplitHeader = ({
@@ -17,6 +18,7 @@ const SecondarySplitHeader = ({
   children?: React.ReactNode
 }) => {
   const [isSidebarOpen, setSidebarOpen] = useSidebarOpen()
+  const [isDiffbarOpen, setDiffbarOpen] = useDiffbarOpen()
   const [isMobileToolbarVisible, setMobileToolbarVisible] = useSessionStorage("isMobileToolbarVisible", true)
   return (
     <Box>
@@ -35,6 +37,10 @@ const SecondarySplitHeader = ({
         <Box sx={{ display: "flex", flexGrow: 1, justifyContent: "end" }}> 
           <Stack direction="row" alignItems="center">
             {children}
+            <ToggleDiffButton
+              isDiffbarOpen={isDiffbarOpen}
+              onClick={setDiffbarOpen}
+            />
             {mobileToolbar &&
               <ToggleMobileToolbarButton
                 direction={isMobileToolbarVisible ? "up" : "down"}
@@ -87,6 +93,41 @@ const ToggleSidebarButton = ({
       >
         <FontAwesomeIcon
           icon={isSidebarOpen ? faChevronLeft : faBars}
+          size="sm"
+          style={{ aspectRatio: 1, padding: 2 }}
+        />
+      </IconButton>
+    </Tooltip>
+    </Box>
+  )
+}
+
+const ToggleDiffButton = ({
+  isDiffbarOpen,
+  onClick
+}: {
+  isDiffbarOpen: boolean,
+  onClick: (isDiffbarOpen: boolean) => void
+}) => {
+  const [isMac, setIsMac] = useState(false)
+  useEffect(() => {
+    // checkIsMac uses window so we delay the check.
+    setIsMac(checkIsMac())
+  }, [isMac, setIsMac])
+  const isSidebarTogglable = useContext(SidebarTogglableContext)
+  const openCloseKeyboardShortcut = `(${isMac ? "⌘" : "^"} + K)`
+  const tooltip = isDiffbarOpen ? "Hide Diff" : "Show Diff" 
+  return (
+    <Box sx={{ display: isSidebarTogglable ? "block" : "none" }}>
+    <Tooltip title={`${tooltip} ${openCloseKeyboardShortcut}`}>
+      <IconButton
+        size="medium"
+        color="primary"
+        onClick={() => onClick(!isDiffbarOpen)}
+        edge="end"
+      >
+        <FontAwesomeIcon
+          icon={isDiffbarOpen ? faChevronRight : faCodeCompare}
           size="sm"
           style={{ aspectRatio: 1, padding: 2 }}
         />

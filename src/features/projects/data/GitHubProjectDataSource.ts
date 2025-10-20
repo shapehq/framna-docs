@@ -140,7 +140,8 @@ export default class GitHubProjectDataSource implements IProjectDataSource {
       name: ref.name,
       specifications: specifications,
       url: `https://github.com/${ownerName}/${repositoryName}/tree/${ref.name}`,
-      isDefault: isDefaultRef || false
+      isDefault: isDefaultRef || false,
+      baseRef: ref.baseRef,
     }
   }
 

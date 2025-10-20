@@ -1,40 +1,61 @@
-"use client"
+"use client";
 
-import { useEffect, useContext } from "react"
-import { Stack, useMediaQuery, useTheme } from "@mui/material"
-import { isMac, useKeyboardShortcut, SidebarTogglableContext } from "@/common"
-import { useSidebarOpen } from "../../data"
-import PrimaryContainer from "./primary/Container"
-import SecondaryContainer from "./secondary/Container"
+import { useEffect, useContext, useState } from "react";
+import { Stack, useMediaQuery, useTheme } from "@mui/material";
+import { isMac, useKeyboardShortcut, SidebarTogglableContext } from "@/common";
+import { useSidebarOpen } from "../../data";
+import useDiffbarOpen from "../../data/useDiffbarOpen";
+import PrimaryContainer from "./primary/Container";
+import SecondaryContainer from "./secondary/Container";
+import DiffContainer from "./tertiary/Container";
 
 const ClientSplitView = ({
   sidebar,
-  children
+  children,
+  diffContent,
 }: {
-  sidebar: React.ReactNode
-  children?: React.ReactNode
+  sidebar: React.ReactNode;
+  children?: React.ReactNode;
+  diffContent?: React.ReactNode;
 }) => {
-  const [isSidebarOpen, setSidebarOpen] = useSidebarOpen()
-  const isSidebarTogglable = useContext(SidebarTogglableContext)
-  const theme = useTheme()
+  const [isSidebarOpen, setSidebarOpen] = useSidebarOpen();
+  const [isDiffbarOpen, setDiffbarOpen] = useDiffbarOpen();
+  const isSidebarTogglable = useContext(SidebarTogglableContext);
+  const theme = useTheme();
   // Determine if the screen size is small or larger
-  const isSM = useMediaQuery(theme.breakpoints.up("sm"))
+  const isSM = useMediaQuery(theme.breakpoints.up("sm"));
 
   useEffect(() => {
     if (!isSidebarTogglable && !isSidebarOpen) {
-      setSidebarOpen(true)
+      setSidebarOpen(true);
     }
-  }, [isSidebarOpen, isSidebarTogglable, setSidebarOpen])
-  useKeyboardShortcut(event => {
-    const isActionKey = isMac() ? event.metaKey : event.ctrlKey
-    if (isActionKey && event.key === ".") {
-      event.preventDefault()
-      if (isSidebarTogglable) {
-        setSidebarOpen(!isSidebarOpen)
+  }, [isSidebarOpen, isSidebarTogglable, setSidebarOpen]);
+  useKeyboardShortcut(
+    (event) => {
+      const isActionKey = isMac() ? event.metaKey : event.ctrlKey;
+      if (isActionKey && event.key === ".") {
+        event.preventDefault();
+        if (isSidebarTogglable) {
+          setSidebarOpen(!isSidebarOpen);
+        }
       }
-    }
-  }, [isSidebarTogglable, setSidebarOpen])
-  const sidebarWidth = 320
+    },
+    [isSidebarTogglable, setSidebarOpen]
+  );
+  
+  useKeyboardShortcut(
+    (event) => {
+      const isActionKey = isMac() ? event.metaKey : event.ctrlKey;
+      if (isActionKey && event.key === "k") {
+        event.preventDefault();
+        setDiffbarOpen(!isDiffbarOpen);
+      }
+    },
+    [isDiffbarOpen ,setDiffbarOpen]
+  );
+  
+  const sidebarWidth = 320;
+  const diffWidth = 320;
 
   return (
     <Stack direction="row" spacing={0} sx={{ width: "100%", height: "100%" }}>
@@ -45,11 +66,24 @@ const ClientSplitView = ({
       >
         {sidebar}
       </PrimaryContainer>
-      <SecondaryContainer isSM={isSM} sidebarWidth={sidebarWidth} offsetContent={isSidebarOpen}>
+      <SecondaryContainer
+        isSM={isSM}
+        sidebarWidth={sidebarWidth}
+        offsetContent={isSidebarOpen}
+        diffWidth={diffWidth}
+        offsetDiffContent={isDiffbarOpen}
+      >
         {children}
       </SecondaryContainer>
+      <DiffContainer
+        width={diffWidth}
+        isOpen={isDiffbarOpen}
+        onClose={() => setDiffbarOpen(false)}
+      >
+        {diffContent}
+      </DiffContainer>
     </Stack>
-  )
-}
+  );
+};
 
-export default ClientSplitView
+export default ClientSplitView;
