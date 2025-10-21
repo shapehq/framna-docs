@@ -3,12 +3,18 @@
 import React from "react";
 import { Box, Typography, FormControl, Select, MenuItem } from "@mui/material";
 
+interface Version {  
+  id: string;  
+  name: string;  
+}  
+
+
 const DiffHeader = ({
   versions,
   fromBranch,
   onChange,
 }: {
-  versions: any[];
+  versions: Version[];
   fromBranch: string;
   onChange: (ref: string) => void;
 }) => {

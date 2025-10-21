@@ -4,12 +4,17 @@ import React from "react";
 import SpacedList from "@/common/ui/SpacedList";
 import DiffListItem from "./DiffListItem";
 
+interface Change {  
+  path?: string;  
+  text?: string;  
+}  
+
 const PopulatedDiffList = ({
   changes,
   selectedChange,
   onClick,
 }: {
-  changes: any[];
+  changes: Change[];
   selectedChange: number | null;
   onClick: (i: number) => void;
 }) => {

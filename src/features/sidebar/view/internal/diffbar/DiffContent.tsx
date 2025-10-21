@@ -7,11 +7,22 @@ import DiffHeader from "./components/DiffHeader";
 import DiffList from "./components/DiffList";
 import DiffDialog from "./components/DiffDialog";
 
+interface DiffChange {
+  path?: string;
+  text?: string;
+}
+
+interface DiffData {
+  from: string;
+  to: string;
+  changes: DiffChange[];
+}
+
 const DiffContent = () => {
   const { project, specification, version } = useProjectSelection();
   const [fromBranch, setFromBranch] = useState("");
   const [toBranch, setToBranch] = useState("");
-  const [data, setData] = useState<any>(null);
+  const [data, setData] = useState<DiffData | null>(null);
   const [selectedChange, setSelectedChange] = useState<number | null>(null);
   const [loading, setLoading] = useState(false);
 
@@ -61,7 +72,7 @@ const DiffContent = () => {
         <DiffList
           changes={data ? changes : []}
           loading={loading}
-          data={data}
+          data={!!data}
           selectedChange={selectedChange}
           onClick={(i) => setSelectedChange(i)}
         />

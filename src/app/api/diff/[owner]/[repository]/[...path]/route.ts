@@ -42,8 +42,6 @@ export async function GET(req: NextRequest, { params }: { params: Promise<GetDif
   })
 
   const result = execSync(`oasdiff changelog --format json "${spec1.downloadURL}" "${spec2.downloadURL}"`, { encoding: 'utf8' })
-  
-  console.log(result)
 
   
   const diffData = JSON.parse(result)

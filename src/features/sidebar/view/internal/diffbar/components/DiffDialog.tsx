@@ -13,13 +13,18 @@ import {
 import { softPaperSx } from "@/common/theme/theme";
 import MonoQuotedText from "./MonoQuotedText";
 
+interface ChangeDetails {
+  path?: string;
+  text?: string | React.ReactNode;
+}
+
 const DiffDialog = ({
   open,
   change,
   onClose,
 }: {
   open: boolean;
-  change: any | null;
+  change: ChangeDetails | null;
   onClose: () => void;
 }) => {
   return (
@@ -57,7 +62,9 @@ const DiffDialog = ({
         )}
         {change?.text && (
           <Box>
-            <Typography sx={{ mb: 1, fontWeight: 600 }}>Description:</Typography>
+            <Typography sx={{ mb: 1, fontWeight: 600 }}>
+              Description:
+            </Typography>
             <Typography variant="body0" sx={{ wordBreak: "break-word" }}>
               {typeof change.text === "string" ? (
                 <MonoQuotedText text={change.text} />

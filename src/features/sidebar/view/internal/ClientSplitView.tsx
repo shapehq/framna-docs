@@ -51,7 +51,7 @@ const ClientSplitView = ({
         setDiffbarOpen(!isDiffbarOpen);
       }
     },
-    [isDiffbarOpen ,setDiffbarOpen]
+    [isDiffbarOpen, setDiffbarOpen]
   );
   
   const sidebarWidth = 320;

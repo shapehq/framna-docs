@@ -4,6 +4,11 @@ import React from "react";
 import { Box, Typography } from "@mui/material";
 import PopulatedDiffList from "./PopulatedDiffList";
 
+interface Change {  
+  path?: string;  
+  text?: string;  
+}
+
 const DiffList = ({
   changes,
   loading,
@@ -11,7 +16,7 @@ const DiffList = ({
   selectedChange,
   onClick,
 }: {
-  changes: any[];
+  changes: Change[];
   loading: boolean;
   data: boolean;
   selectedChange: number | null;
