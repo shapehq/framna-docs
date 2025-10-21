@@ -26,21 +26,24 @@ const DiffContent = () => {
   const [selectedChange, setSelectedChange] = useState<number | null>(null);
   const [loading, setLoading] = useState(false);
 
-
   useEffect(() => {
-    setData(null);
-    if (version !== undefined) {
-      setFromBranch(version.baseRef || "");
-      setToBranch(version.id);
-    }
-  }, [project, specification, version]);
+      setData(null);
 
-  useEffect(() => {
+      let currentFromBranch = fromBranch;
+      let currentToBranch = toBranch;
+
+      if (version !== undefined) {
+        currentFromBranch = version.baseRef || "";
+        currentToBranch = version.id;
+        setFromBranch(version.baseRef || "");
+        setToBranch(version.id);
+      }
+
     const compare = async () => {
-      if (project && specification && fromBranch && toBranch) {
+      if (project && specification && currentFromBranch && currentToBranch) {
         setLoading(true);
         const res = await fetch(
-          `/api/diff/${project.owner}/${project.name}/${specification.id}?from=${fromBranch}&to=${toBranch}`
+          `/api/diff/${project.owner}/${project.name}/${specification.id}?from=${currentFromBranch}&to=${currentToBranch}`
         );
         setLoading(false);
         const result = await res.json();
@@ -48,7 +51,7 @@ const DiffContent = () => {
       }
     };
     compare();
-  }, [toBranch, fromBranch]);
+  }, [toBranch, fromBranch, project, specification, version]);
 
   const changes = data?.changes || [];
   const versions = project?.versions || [];

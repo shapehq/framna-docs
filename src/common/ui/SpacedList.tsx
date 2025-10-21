@@ -13,7 +13,7 @@ const SpacedList = ({
   return (
     <List disablePadding sx={{ ...sx }}>
       {React.Children.map(children, (child, idx) => {
-        const baseKey = (child as any)?.key ?? "idx";
+        const baseKey = (child as React.ReactElement)?.key ?? "idx";
         const key = `${String(baseKey)}-${idx}`;
         return (
           <Box

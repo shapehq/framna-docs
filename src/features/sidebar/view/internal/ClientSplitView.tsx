@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useContext, useState } from "react";
+import { useEffect, useContext } from "react";
 import { Stack, useMediaQuery, useTheme } from "@mui/material";
 import { isMac, useKeyboardShortcut, SidebarTogglableContext } from "@/common";
 import { useSidebarOpen } from "../../data";

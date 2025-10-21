@@ -25,7 +25,7 @@ const DiffHeader = ({
           Added changes from main:
         </Typography>
         <Select value={fromBranch} onChange={(e) => onChange(e.target.value)}>
-          {versions.map((v: any) => (
+          {versions.map((v: Version) => (
             <MenuItem key={v.id} value={v.id}>
               {v.name}
             </MenuItem>

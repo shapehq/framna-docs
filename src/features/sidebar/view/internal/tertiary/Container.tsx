@@ -1,13 +1,13 @@
 'use client'
 
-import { SxProps } from "@mui/system"
+
 import { Box } from "@mui/material"
 import { useTheme } from "@mui/material/styles" 
 
 const DiffContainer = ({
   width,
   isOpen,
-  onClose,
+  onClose: _onClose,
   children
 }: {
   width: number
