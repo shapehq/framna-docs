@@ -47,7 +47,7 @@ interface WrapperStackProps {
 
 const WrapperStack = styled(Stack, {
   shouldForwardProp: (prop) => prop !== "isSidebarOpen" && prop !== "sidebarWidth" && prop !== "diffWidth" && prop !== "isDiffOpen"
-})<WrapperStackProps>(({ theme, sidebarWidth, isSidebarOpen, diffWidth, isDiffOpen }) => {
+})<WrapperStackProps>(({ theme, sidebarWidth, isSidebarOpen, diffWidth: _diffWidth, isDiffOpen }) => {
  
   
   return {
