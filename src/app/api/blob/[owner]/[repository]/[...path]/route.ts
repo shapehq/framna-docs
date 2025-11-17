@@ -2,13 +2,7 @@ import { NextRequest, NextResponse } from "next/server"
 import { session, userGitHubClient } from "@/composition"
 import { makeUnauthenticatedAPIErrorResponse } from "@/common"
 
-interface GetBlobParams {
-  owner: string
-  repository: string
-  path: [string]
-}
-
-export async function GET(req: NextRequest, { params }: { params: Promise<GetBlobParams> }) {
+export async function GET(req: NextRequest, { params }: { params: Promise<{ owner: string; repository: string; path: string[] }> }) {
   const isAuthenticated = await session.getIsAuthenticated()
   if (!isAuthenticated) {
     return makeUnauthenticatedAPIErrorResponse()
