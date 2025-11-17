@@ -56,10 +56,14 @@ export async function downloadFile(params: {
         error.name = ErrorName.MAX_FILE_SIZE_EXCEEDED;
         throw error;
     }
-    const blob = new Blob(chunks);
-    const arrayBuffer = await blob.arrayBuffer();
+    const allBytes = new Uint8Array(totalBytes);
+    let offset = 0;
+    for (const chunk of chunks) {
+        allBytes.set(chunk, offset);
+        offset += chunk.length;
+    }
     const decoder = new TextDecoder();
-    return decoder.decode(arrayBuffer);
+    return decoder.decode(allBytes);
 }
 
 export function checkIfJsonOrYaml(fileText: string) {
