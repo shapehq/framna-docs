@@ -1,38 +1,13 @@
-import { defineConfig } from "eslint/config"
-import typescriptEslint from "@typescript-eslint/eslint-plugin"
-import tsParser from "@typescript-eslint/parser"
-import path from "node:path"
-import { fileURLToPath } from "node:url"
 import js from "@eslint/js"
-import { FlatCompat } from "@eslint/eslintrc"
+import nextCoreWebVitals from "eslint-config-next/core-web-vitals"
+import tseslint from "typescript-eslint"
 
-const __filename = fileURLToPath(import.meta.url)
-const __dirname = path.dirname(__filename)
-const compat = new FlatCompat({
-  baseDirectory: __dirname,
-  recommendedConfig: js.configs.recommended,
-  allConfig: js.configs.all
-})
-
-export default defineConfig([
+const config = [
+  ...nextCoreWebVitals,
+  js.configs.recommended,
+  ...tseslint.configs.recommended,
   {
     ignores: ["next-env.d.ts", ".next"],
-  },
-  {
-    extends: [
-      ...compat.extends("next/core-web-vitals"),
-      ...compat.extends("eslint:recommended"),
-      ...compat.extends("plugin:@typescript-eslint/recommended")
-    ],
-  
-    plugins: {
-      "@typescript-eslint": typescriptEslint,
-    },
-  
-    languageOptions: {
-      parser: tsParser,
-    },
-  
     rules: {
       "array-callback-return": ["error"],
       "no-await-in-loop": ["error"],
@@ -46,10 +21,11 @@ export default defineConfig([
       "no-unreachable-loop": ["error"],
       "no-unused-private-class-members": ["error"],
       "require-atomic-updates": ["error"],
-  
       "@typescript-eslint/no-unused-vars": ["error", {
         argsIgnorePattern: "^_",
       }],
     },
   }
-])
+]
+
+export default config

@@ -10,13 +10,11 @@ const getRandomTextColor = ({ excluding }: { excluding?: string } = {}) => {
   return colors[Math.floor(Math.random() * colors.length)]
 }
 
-const INITIAL_TEXT_COLOR = getRandomTextColor()
-
 const SignInTexts = ({ prefix }: { prefix: string }) => {
   const [characterIndex, setCharacterIndex] = useState(0)
   const [textIndex, setTextIndex] = useState(0)
   const [displayedText, setDisplayedText] = useState("")
-  const [textColor, setTextColor] = useState(INITIAL_TEXT_COLOR)
+  const [textColor, setTextColor] = useState(BASE_COLORS[0])
   const texts = useMemo(() => [
     "is a great OpenAPI viewer",
     "facilitates spec-driven development",

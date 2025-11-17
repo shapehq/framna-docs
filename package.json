@@ -3,8 +3,8 @@
   "version": "1.0.0",
   "private": true,
   "engines": {
-    "node": "22.13.1",
-    "npm": "11.1.0"
+    "node": ">=24.0.0 <25.0.0",
+    "npm": ">=11.1.0 <12.0.0"
   },
   "scripts": {
     "dev": "next dev",
@@ -34,7 +34,7 @@
     "install": "^0.13.0",
     "ioredis": "^5.8.2",
     "mobx": "^6.15.0",
-    "next": "^15.5.6",
+    "next": "16.0.3",
     "next-auth": "^5.0.0-beta.30",
     "npm": "^11.6.2",
     "nprogress": "^0.2.0",
@@ -61,8 +61,9 @@
     "@types/react": "^19.2.5",
     "@types/react-dom": "^19.2.3",
     "@typescript-eslint/parser": "^8.31.1",
+    "typescript-eslint": "^8.46.0",
     "eslint": "^9.39.1",
-    "eslint-config-next": "^15.3.4",
+    "eslint-config-next": "^16.0.3",
     "pg": "^8.16.3",
     "postcss": "^8.5.6",
     "tailwindcss": "^4.1.4",
