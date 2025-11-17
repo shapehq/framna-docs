@@ -14,7 +14,7 @@ test("It gets token for user ID and provider", async () => {
           async disconnect() {},
         }
       },
-      async query(_query, values: any[] = []) {
+      async query(_query, values: readonly unknown[] = []) {
         queryProvider = values[0]
         queryUserId = values[1]
         return {
@@ -44,7 +44,7 @@ test("It does not set token", async () => {
           async disconnect() {},
         }
       },
-      async query(_query, _values: any[] = []) {
+      async query(_query, _values: readonly unknown[] = []) {
         didSetToken = true
         return { rows: [] }
       }
@@ -67,7 +67,7 @@ test("It does not delete token", async () => {
           async disconnect() {},
         }
       },
-      async query(_query, _values: any[] = []) {
+      async query(_query, _values: readonly unknown[] = []) {
         didDeleteToken = true
         return { rows: [] }
       }
