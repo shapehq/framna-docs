@@ -10,7 +10,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint --max-warnings=0",
+    "lint": "eslint --max-warnings=0 .",
     "test": "node --experimental-vm-modules ./node_modules/.bin/jest",
     "testwatch": "node --experimental-vm-modules ./node_modules/.bin/jest --watch"
   },

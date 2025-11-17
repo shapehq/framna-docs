@@ -7,6 +7,12 @@ import { encrypt } from "./encryptAction"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faClipboard } from "@fortawesome/free-regular-svg-icons"
 
+const EncryptedValueTextField = styled(TextField)({
+    '& .MuiInputBase-root': {
+        backgroundColor: '#F8F8F8'
+    }
+})
+
 export const EncryptionForm = () => {
     const [inputText, setInputText] = useState('')
     const [encryptedText, setEncryptedText] = useState('')
@@ -32,12 +38,6 @@ export const EncryptionForm = () => {
     const handleCloseSnackbar = () => {
         setOpenSnackbar(false)
     }
-    
-    const EncryptedValueTextField = styled(TextField)({
-        '& .MuiInputBase-root': {
-            backgroundColor: '#F8F8F8'
-        }
-    })
 
     return <Box
         component="form"

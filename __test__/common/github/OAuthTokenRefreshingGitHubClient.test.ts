@@ -285,6 +285,7 @@ test("It does not refresh an OAuth token when the initial request was successful
     },
     oauthTokenRefresher: {
       async refreshOAuthToken(_refreshToken) {
+        didRefreshOAuthToken = true
         return {
           accessToken: "newAccessToken",
           refreshToken: "newRefreshToken"
