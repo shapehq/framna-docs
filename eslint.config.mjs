@@ -1,5 +1,4 @@
 import { defineConfig } from "eslint/config";
-import nextCoreWebVitals from "eslint-config-next/core-web-vitals";
 import typescriptEslint from "@typescript-eslint/eslint-plugin";
 import tsParser from "@typescript-eslint/parser";
 import path from "node:path";
@@ -15,37 +14,42 @@ const compat = new FlatCompat({
     allConfig: js.configs.all
 });
 
-export default defineConfig([{
-    extends: [
-        ...nextCoreWebVitals,
-        ...compat.extends("eslint:recommended"),
-        ...compat.extends("plugin:@typescript-eslint/recommended")
-    ],
-
-    plugins: {
-        "@typescript-eslint": typescriptEslint,
+export default defineConfig([
+    {
+        ignores: ["next-env.d.ts"],
     },
+    {
+        extends: [
+            ...compat.extends("next/core-web-vitals"),
+            ...compat.extends("eslint:recommended"),
+            ...compat.extends("plugin:@typescript-eslint/recommended")
+        ],
 
-    languageOptions: {
-        parser: tsParser,
-    },
+        plugins: {
+            "@typescript-eslint": typescriptEslint,
+        },
 
-    rules: {
-        "array-callback-return": ["error"],
-        "no-await-in-loop": ["error"],
-        "no-constant-binary-expression": ["error"],
-        "no-constructor-return": ["error"],
-        "no-duplicate-imports": ["error"],
-        "no-new-native-nonconstructor": ["error"],
-        "no-self-compare": ["error"],
-        "no-template-curly-in-string": ["error"],
-        "no-unmodified-loop-condition": ["error"],
-        "no-unreachable-loop": ["error"],
-        "no-unused-private-class-members": ["error"],
-        "require-atomic-updates": ["error"],
+        languageOptions: {
+            parser: tsParser,
+        },
 
-        "@typescript-eslint/no-unused-vars": ["error", {
-            argsIgnorePattern: "^_",
-        }],
-    },
-}]);
+        rules: {
+            "array-callback-return": ["error"],
+            "no-await-in-loop": ["error"],
+            "no-constant-binary-expression": ["error"],
+            "no-constructor-return": ["error"],
+            "no-duplicate-imports": ["error"],
+            "no-new-native-nonconstructor": ["error"],
+            "no-self-compare": ["error"],
+            "no-template-curly-in-string": ["error"],
+            "no-unmodified-loop-condition": ["error"],
+            "no-unreachable-loop": ["error"],
+            "no-unused-private-class-members": ["error"],
+            "require-atomic-updates": ["error"],
+
+            "@typescript-eslint/no-unused-vars": ["error", {
+                argsIgnorePattern: "^_",
+            }],
+        },
+    }
+]);
