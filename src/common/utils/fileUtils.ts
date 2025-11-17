@@ -54,7 +54,7 @@ export async function downloadFile(params: {
         const error = new Error("Maximum file size exceeded");
         error.name = ErrorName.MAX_FILE_SIZE_EXCEEDED;
         throw error;
-    }    
+    }
     const allBytes = new Uint8Array(totalBytes);
     let offset = 0;
     for (const chunk of chunks) {
