@@ -276,7 +276,7 @@ test("It only retries a request once when receiving HTTP 401", async () => {
 })
 
 test("It does not refresh an OAuth token when the initial request was successful", async () => {
-  let didRefreshOAuthToken = false
+  const didRefreshOAuthToken = false
   const sut = new OAuthTokenRefreshingGitHubClient({
     oauthTokenDataSource: {
       async getOAuthToken() {

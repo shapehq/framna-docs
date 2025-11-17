@@ -21,6 +21,12 @@ const SignInTexts = ({ prefix }: { prefix: string }) => {
     "adds documentation previews to pull requests"
   ], [])
   useEffect(() => {
+    const timeout = window.setTimeout(() => {
+      setTextColor(getRandomTextColor({}))
+    }, 0)
+    return () => window.clearTimeout(timeout)
+  }, [])
+  useEffect(() => {
     const interval = setInterval(() => {
       setDisplayedText("")
       setCharacterIndex(0)

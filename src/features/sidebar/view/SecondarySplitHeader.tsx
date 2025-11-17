@@ -71,8 +71,11 @@ const ToggleSidebarButton = ({
   const [isMac, setIsMac] = useState(false)
   useEffect(() => {
     // checkIsMac uses window so we delay the check.
-    setIsMac(checkIsMac())
-  }, [isMac, setIsMac])
+    const timeout = window.setTimeout(() => {
+      setIsMac(checkIsMac())
+    }, 0)
+    return () => window.clearTimeout(timeout)
+  }, [setIsMac])
   const isSidebarTogglable = useContext(SidebarTogglableContext)
   const openCloseKeyboardShortcut = `(${isMac ? "⌘" : "^"} + .)`
   const tooltip = isSidebarOpen ? "Show Projects" : "Hide Projects" 

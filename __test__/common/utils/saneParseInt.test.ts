@@ -1,7 +1,7 @@
 import { saneParseInt } from "@/common"
 
 test("It parses an integer", async () => {
-  // @ts-ignore
+  // @ts-expect-error - verifying that non-string input is rejected
   const val = saneParseInt(42 as string)
   expect(val).toBe(42)
 })

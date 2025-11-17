@@ -189,7 +189,7 @@ test("It queries for both .yml and .yaml file extension with no extension", asyn
 })
 
 test("It loads repositories for all logins", async () => {
-  let searchQueries: string[] = []
+  const searchQueries: string[] = []
   const sut = new GitHubRepositoryDataSource({
     repositoryNameSuffix: "-openapi",
     projectConfigurationFilename: ".demo-docs",

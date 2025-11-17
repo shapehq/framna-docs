@@ -8,13 +8,13 @@ test("It reads the auth token for the specified user", async () => {
     db: {
       async connect() {
         return {
-          async query(_query: string, _values: any[] = []) {
+          async query(_query: string, _values: readonly unknown[] = []) {
             return { rows: [] }
           },
           async disconnect() {},
         }
       },
-      async query(_query: string, values: any[] = []) {
+      async query(_query: string, values: [string, string]) {
         readProvider = values[0]
         readUserId = values[1]
         return {
@@ -36,20 +36,20 @@ test("It reads the auth token for the specified user", async () => {
 test("It stores the auth token for the specified user", async () => {
   let storedProvider: string | undefined
   let storedUserId: string | undefined
-  let storedAccessToken: any | undefined
-  let storedRefreshToken: any | undefined
+  let storedAccessToken: string | undefined
+  let storedRefreshToken: string | undefined
   const sut = new OAuthTokenRepository({
     provider: "github",
     db: {
       async connect() {
         return {
-          async query(_query: string, _values: any[] = []) {
+          async query(_query: string, _values: readonly unknown[] = []) {
             return { rows: [] }
           },
           async disconnect() {},
         }
       },
-      async query(_query: string, values: any[] = []) {
+      async query(_query: string, values: [string, string, string, string]) {
         storedProvider = values[0]
         storedUserId = values[1]
         storedAccessToken = values[2]
@@ -76,13 +76,13 @@ test("It deletes the auth token for the specified user", async () => {
     db: {
       async connect() {
         return {
-          async query(_query: string, _values: any[] = []) {
+          async query(_query: string, _values: readonly unknown[] = []) {
             return { rows: [] }
           },
           async disconnect() {},
         }
       },
-      async query(_query: string, values: any[] = []) {
+      async query(_query: string, values: [string, string]) {
         deletedUserId = values[1]
         return { rows: [] }
       }
