@@ -61,6 +61,7 @@
     "@types/react": "^19.2.5",
     "@types/react-dom": "^19.2.3",
     "@typescript-eslint/parser": "^8.31.1",
+    "typescript-eslint": "^8.46.0",
     "eslint": "^9.39.1",
     "eslint-config-next": "^16.0.3",
     "pg": "^8.16.3",
