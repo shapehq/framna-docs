@@ -40,13 +40,16 @@ const refreshProjects = useCallback(() => {
 
 useEffect(() => {
   // Initial refresh
-  refreshProjects();
+  const timeout = window.setTimeout(() => {
+    refreshProjects();
+  }, 0);
   const handleVisibilityChange = () => {
     if (!document.hidden) refreshProjects();
   };
   document.addEventListener("visibilitychange", handleVisibilityChange);
   return () => {
     document.removeEventListener("visibilitychange", handleVisibilityChange);
+    window.clearTimeout(timeout);
   };
 }, [refreshProjects]); 
 

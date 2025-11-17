@@ -4,16 +4,17 @@ import { BASE_COLORS } from "@/common/theme/theme"
 import { Box, Typography, SxProps } from "@mui/material"
 import { useEffect, useState, useMemo } from "react"
 
+const getRandomTextColor = ({ excluding }: { excluding?: string } = {}) => {
+  const colors = BASE_COLORS
+    .filter(e => e !== excluding)
+  return colors[Math.floor(Math.random() * colors.length)]
+}
+
 const SignInTexts = ({ prefix }: { prefix: string }) => {
-  const getRandomTextColor = ({ excluding }: { excluding?: string }) => {
-    const colors = BASE_COLORS
-      .filter(e => e !== excluding)
-    return colors[Math.floor(Math.random() * colors.length)]
-  }
   const [characterIndex, setCharacterIndex] = useState(0)
   const [textIndex, setTextIndex] = useState(0)
   const [displayedText, setDisplayedText] = useState("")
-  const [textColor, setTextColor] = useState(getRandomTextColor({}))
+  const [textColor, setTextColor] = useState(BASE_COLORS[0])
   const texts = useMemo(() => [
     "is a great OpenAPI viewer",
     "facilitates spec-driven development",

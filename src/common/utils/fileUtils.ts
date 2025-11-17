@@ -36,7 +36,6 @@ export async function downloadFile(params: {
     let didExceedMaxBytes = false;
     const reader = response.body.getReader();
     const chunks: Uint8Array[] = [];
-    // eslint-disable-next-line no-constant-condition
     while (true) {
         // eslint-disable-next-line no-await-in-loop
         const { done, value } = await reader.read();
@@ -56,10 +55,14 @@ export async function downloadFile(params: {
         error.name = ErrorName.MAX_FILE_SIZE_EXCEEDED;
         throw error;
     }
-    const blob = new Blob(chunks);
-    const arrayBuffer = await blob.arrayBuffer();
+    const allBytes = new Uint8Array(totalBytes);
+    let offset = 0;
+    for (const chunk of chunks) {
+        allBytes.set(chunk, offset);
+        offset += chunk.length;
+    }
     const decoder = new TextDecoder();
-    return decoder.decode(arrayBuffer);
+    return decoder.decode(allBytes);
 }
 
 export function checkIfJsonOrYaml(fileText: string) {

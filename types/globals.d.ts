@@ -2,6 +2,6 @@ export {}
 
 declare global {
   interface Window {
-    SwaggerUIBundle: any
+    SwaggerUIBundle: (options: unknown) => unknown
   }
 }

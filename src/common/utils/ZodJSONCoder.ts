@@ -1,12 +1,12 @@
-import { ZodType } from "zod"
+import { ZodType, z } from "zod"
 
 export default class ZodJSONCoder {
-  static encode<Schema extends ZodType, T>(schema: Schema, value: T): string {
+  static encode<Schema extends ZodType>(schema: Schema, value: z.input<Schema>): string {
     const validatedValue = schema.parse(value)
     return JSON.stringify(validatedValue)
   }
   
-  static decode<Schema extends ZodType, T>(schema: Schema, string: string): T {
+  static decode<Schema extends ZodType>(schema: Schema, string: string): z.output<Schema> {
     /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
     let obj: any | undefined
     try {
