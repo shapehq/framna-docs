@@ -16,7 +16,7 @@ const compat = new FlatCompat({
 
 export default defineConfig([
     {
-        ignores: ["next-env.d.ts"],
+        ignores: ["next-env.d.ts", ".next"],
     },
     {
         extends: [
