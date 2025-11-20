@@ -1,10 +1,29 @@
 import { execFileSync } from "child_process"
 import { DiffChange } from "@/features/diff/domain/DiffChange"
-import { GitHubClient } from "@/common"
+import type { IGitHubClient } from "@/common"
 import { DiffResult, IOasDiffCalculator } from "./IOasDiffCalculator"
 
+/**
+ * Validates that a URL originates from a trusted GitHub domain.
+ * @param url - The URL to validate
+ * @returns true if the URL is from a trusted GitHub domain, false otherwise
+ */
+function isValidGitHubUrl(url: string): boolean {
+    try {
+        const parsedUrl = new URL(url)
+        const trustedDomains = [
+            "raw.githubusercontent.com",
+            "github.com",
+            "api.github.com"
+        ]
+        return trustedDomains.includes(parsedUrl.hostname)
+    } catch {
+        return false
+    }
+}
+
 export class OasDiffCalculator implements IOasDiffCalculator {
-    constructor(private readonly githubClient: GitHubClient) {}
+    constructor(private readonly githubClient: IGitHubClient) {}
 
     async calculateDiff(
         owner: string,
@@ -45,6 +64,18 @@ export class OasDiffCalculator implements IOasDiffCalculator {
             path: path,
             ref: toRef
         })
+
+        // Validate URLs originate from GitHub
+        if (!isValidGitHubUrl(spec1.downloadURL)) {
+            throw new Error(
+                `Invalid URL for base spec: ${spec1.downloadURL}. URL must originate from a trusted GitHub domain.`
+            )
+        }
+        if (!isValidGitHubUrl(spec2.downloadURL)) {
+            throw new Error(
+                `Invalid URL for head spec: ${spec2.downloadURL}. URL must originate from a trusted GitHub domain.`
+            )
+        }
 
         // Execute oasdiff
         const diffData = (() => {
