@@ -1,16 +1,16 @@
-"use client";
+"use client"
 
-import { Alert, Box, Typography } from "@mui/material";
-import { useState } from "react";
-import useDiff from "@/features/sidebar/data/useDiff";
-import DiffList, { DiffListStatus } from "./components/DiffList";
-import DiffDialog from "./components/DiffDialog";
+import { Alert, Box, Typography } from "@mui/material"
+import { useState } from "react"
+import useDiff from "@/features/sidebar/data/useDiff"
+import DiffList, { DiffListStatus } from "./components/DiffList"
+import DiffDialog from "./components/DiffDialog"
 
 const DiffContent = () => {
-  const { data, loading, changes, error } = useDiff();
-  const [selectedChange, setSelectedChange] = useState<number | null>(null);
+  const { data, loading, changes, error } = useDiff()
+  const [selectedChange, setSelectedChange] = useState<number | null>(null)
 
-  const closeModal = () => setSelectedChange(null);
+  const closeModal = () => setSelectedChange(null)
 
   const hasData = Boolean(data)
   const hasChanges = changes.length > 0
@@ -79,7 +79,7 @@ const DiffContent = () => {
         onClose={closeModal}
       />
     </Box>
-  );
-};
+  )
+}
 
-export default DiffContent;
+export default DiffContent

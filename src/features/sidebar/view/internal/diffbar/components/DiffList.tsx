@@ -1,11 +1,11 @@
-"use client";
+"use client"
 
-import { Box, Typography } from "@mui/material";
-import PopulatedDiffList from "./PopulatedDiffList";
+import { Box, Typography } from "@mui/material"
+import PopulatedDiffList from "./PopulatedDiffList"
 
 interface Change {
-  path?: string;
-  text?: string;
+  path?: string
+  text?: string
 }
 
 export type DiffListStatus = "idle" | "loading" | "empty" | "ready" | "error"
@@ -28,7 +28,7 @@ const DiffList = ({
           Loading changes...
         </Typography>
       </Box>
-    );
+    )
   } else if (status === "empty") {
     return (
       <Box sx={{ textAlign: "left", py: 1, px: 1 }}>
@@ -36,7 +36,7 @@ const DiffList = ({
           No changes
         </Typography>
       </Box>
-    );
+    )
   } else if (status === "ready") {
     return (
       <PopulatedDiffList
@@ -44,10 +44,10 @@ const DiffList = ({
         selectedChange={selectedChange}
         onClick={onClick}
       />
-    );
+    )
   }
 
   return null
 }
 
-export default DiffList;
+export default DiffList

@@ -1,6 +1,6 @@
-"use client";
+"use client"
 
-import { Box } from "@mui/material";
+import { Box } from "@mui/material"
 
 const MonoQuotedText = ({ text }: { text: string }) => {
   return (
@@ -23,7 +23,7 @@ const MonoQuotedText = ({ text }: { text: string }) => {
         )
       )}
     </>
-  );
-};
+  )
+}
 
-export default MonoQuotedText;
+export default MonoQuotedText

@@ -1,4 +1,4 @@
-import { DiffChange } from "../domain/DiffChange";
+import { DiffChange } from "../domain/DiffChange"
 
 export interface DiffResult {
     from: string
@@ -14,5 +14,5 @@ export interface IOasDiffCalculator {
         path: string,
         baseRefOid: string,
         toRef: string
-    ): Promise<DiffResult>;
+    ): Promise<DiffResult>
 }

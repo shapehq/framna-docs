@@ -1,7 +1,7 @@
-"use client";
+"use client"
 
-import SpacedList from "@/common/ui/SpacedList";
-import DiffListItem from "./DiffListItem";
+import SpacedList from "@/common/ui/SpacedList"
+import DiffListItem from "./DiffListItem"
 
 interface Change {  
   path?: string;  
@@ -13,9 +13,9 @@ const PopulatedDiffList = ({
   selectedChange,
   onClick,
 }: {
-  changes: Change[];
-  selectedChange: number | null;
-  onClick: (i: number) => void;
+  changes: Change[]
+  selectedChange: number | null
+  onClick: (i: number) => void
 }) => {
   return (
     <SpacedList
@@ -35,7 +35,7 @@ const PopulatedDiffList = ({
         />
       ))}
     </SpacedList>
-  );
-};
+  )
+}
 
-export default PopulatedDiffList;
+export default PopulatedDiffList

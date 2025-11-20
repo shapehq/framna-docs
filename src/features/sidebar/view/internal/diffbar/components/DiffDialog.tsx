@@ -1,6 +1,6 @@
-"use client";
+"use client"
 
-import React from "react";
+import React from "react"
 import {
   Dialog,
   DialogTitle,
@@ -9,13 +9,13 @@ import {
   Button,
   Box,
   Typography,
-} from "@mui/material";
-import { softPaperSx } from "@/common/theme/theme";
-import MonoQuotedText from "./MonoQuotedText";
+} from "@mui/material"
+import { softPaperSx } from "@/common/theme/theme"
+import MonoQuotedText from "./MonoQuotedText"
 
 interface ChangeDetails {
-  path?: string;
-  text?: string | React.ReactNode;
+  path?: string
+  text?: string | React.ReactNode
 }
 
 const DiffDialog = ({
@@ -23,9 +23,9 @@ const DiffDialog = ({
   change,
   onClose,
 }: {
-  open: boolean;
-  change: ChangeDetails | null;
-  onClose: () => void;
+  open: boolean
+  change: ChangeDetails | null
+  onClose: () => void
 }) => {
   return (
     <Dialog
@@ -79,7 +79,7 @@ const DiffDialog = ({
         <Button onClick={onClose}>Close</Button>
       </DialogActions>
     </Dialog>
-  );
-};
+  )
+}
 
-export default DiffDialog;
+export default DiffDialog

@@ -1,8 +1,8 @@
-"use client";
+"use client"
 
-import { Box, Typography, ListItem, ListItemButton, Stack } from "@mui/material";
-import MenuItemHover from "@/common/ui/MenuItemHover";
-import MonoQuotedText from "./MonoQuotedText";
+import { Box, Typography, ListItem, ListItemButton, Stack } from "@mui/material"
+import MenuItemHover from "@/common/ui/MenuItemHover"
+import MonoQuotedText from "./MonoQuotedText"
 
 const DiffListItem = ({
   path,
@@ -10,10 +10,10 @@ const DiffListItem = ({
   selected,
   onClick,
 }: {
-  path?: string;
-  text?: string;
-  selected: boolean;
-  onClick: () => void;
+  path?: string
+  text?: string
+  selected: boolean
+  onClick: () => void
 }) => {
   return (
     <ListItem disableGutters disablePadding>
@@ -60,7 +60,7 @@ const DiffListItem = ({
         </MenuItemHover>
       </ListItemButton>
     </ListItem>
-  );
-};
+  )
+}
 
-export default DiffListItem;
+export default DiffListItem
