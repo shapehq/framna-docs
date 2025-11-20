@@ -141,8 +141,11 @@ const ToggleDiffButton = ({
   const [isMac, setIsMac] = useState(false);
   useEffect(() => {
     // checkIsMac uses window so we delay the check.
-    setIsMac(checkIsMac());
-  }, [isMac, setIsMac]);
+    const timeout = window.setTimeout(() => {
+      setIsMac(checkIsMac());
+    }, 0);
+    return () => window.clearTimeout(timeout);
+  }, []);
   const isSidebarTogglable = useContext(SidebarTogglableContext);
   const openCloseKeyboardShortcut = `(${isMac ? "⌘" : "^"} + K)`;
   const tooltip = isDiffbarOpen ? "Hide changes" : "Show changes";

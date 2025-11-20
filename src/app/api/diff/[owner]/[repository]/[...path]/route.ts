@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from "next/server"
-import { session } from "@/composition"
+import { session, diffCalculator } from "@/composition"
 import { makeUnauthenticatedAPIErrorResponse } from "@/common"
-import { diffCalculator } from "@/composition"
 
 interface GetDiffParams {
   owner: string

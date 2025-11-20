@@ -197,7 +197,10 @@ export default class GitHubProjectDataSource
     }
 
     // Map PRs by their head branch name for quick lookup
-    response.repository.pullRequests.edges.forEach((edge: any) => {
+    const pullRequestEdges =
+      response.repository.pullRequests.edges as Edge<GraphQLPullRequest>[];
+
+    pullRequestEdges.forEach((edge) => {
       const pr = edge.node;
       pullRequests.set(pr.headRefName, {
         headRefName: pr.headRefName,

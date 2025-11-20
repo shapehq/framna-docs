@@ -16,18 +16,28 @@ export default function useDiff() {
 
   useEffect(() => {
     if (!diffUrl) {
-      setData({ changes: [] })
-      setLoading(false)
-      setError(null)
       return
     }
 
-    setLoading(true)
-    setError(null)
+    let isCancelled = false
+
+    Promise.resolve().then(() => {
+      if (isCancelled) {
+        return
+      }
+
+      setLoading(true)
+      setError(null)
+      setData(null)
+    })
 
     fetch(diffUrl)
       .then(res => res.json())
       .then(result => {
+        if (isCancelled) {
+          return
+        }
+
         if (result.error) {
           setData(null)
           setError(result.error)
@@ -38,12 +48,26 @@ export default function useDiff() {
         setLoading(false)
       })
       .catch(err => {
+        if (isCancelled) {
+          return
+        }
+
         console.error("Failed to fetch diff:", err)
         setData(null)
         setError("We couldn't load the diff right now. Please try again later.")
         setLoading(false)
       })
+
+    return () => {
+      isCancelled = true
+    }
   }, [diffUrl])
 
-  return { data, loading, changes: data?.changes || [], error }
+  const hasDiffUrl = Boolean(diffUrl)
+  const resolvedData = hasDiffUrl ? data : { changes: [] }
+  const resolvedChanges = resolvedData?.changes ?? []
+  const resolvedLoading = hasDiffUrl ? loading : false
+  const resolvedError = hasDiffUrl ? error : null
+
+  return { data: resolvedData, loading: resolvedLoading, changes: resolvedChanges, error: resolvedError }
 }
