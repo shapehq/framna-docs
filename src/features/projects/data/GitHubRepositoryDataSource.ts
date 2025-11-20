@@ -44,11 +44,12 @@ type GraphQLGitHubRepositoryRef = {
       }[];
     };
   };
-  readonly associatedPullRequests?: {
-    readonly nodes: {
-      readonly baseRefName: string;
-    }[];
-  };
+};
+
+type GraphQLPullRequest = {
+  readonly headRefName: string;
+  readonly baseRefName: string;
+  readonly baseRefOid: string;
 };
 
 export default class GitHubProjectDataSource
@@ -115,38 +116,97 @@ export default class GitHubProjectDataSource
           return !alreadyAdded;
         });
       })
-      .then((repositories) => {
+      .then(async (repositories) => {
         // Map from the internal model to the public model.
-        return repositories.map((repository) => {
-          return {
-            name: repository.name,
-            owner: repository.owner.login,
-            defaultBranchRef: {
-              id: repository.defaultBranchRef.target.oid,
-              name: repository.defaultBranchRef.name,
-            },
-            configYml: repository.configYml,
-            configYaml: repository.configYaml,
-            branches: repository.branches.edges.map((branch) => {
-              const baseRef =
-                branch.node.associatedPullRequests?.nodes[0]?.baseRefName;
+        return await Promise.all(
+          repositories.map(async (repository) => {
+            // Fetch PRs for this repository in a separate query
+            const pullRequests = await this.getOpenPullRequestsForRepository({
+              owner: repository.owner.login,
+              name: repository.name,
+            });
+
+            const branches = repository.branches.edges.map((branch) => {
+              const pr = pullRequests.get(branch.node.name);
+
               return {
                 id: branch.node.target.oid,
                 name: branch.node.name,
-                baseRef: baseRef || undefined,
+                baseRef: pr?.baseRefName,
+                baseRefOid: pr?.baseRefOid,
                 files: branch.node.target.tree.entries,
               };
-            }),
-            tags: repository.tags.edges.map((branch) => {
-              return {
-                id: branch.node.target.oid,
-                name: branch.node.name,
-                files: branch.node.target.tree.entries,
-              };
-            }),
-          };
-        });
+            });
+
+            return {
+              name: repository.name,
+              owner: repository.owner.login,
+              defaultBranchRef: {
+                id: repository.defaultBranchRef.target.oid,
+                name: repository.defaultBranchRef.name,
+              },
+              configYml: repository.configYml,
+              configYaml: repository.configYaml,
+              branches: branches,
+              tags: repository.tags.edges.map((branch) => {
+                return {
+                  id: branch.node.target.oid,
+                  name: branch.node.name,
+                  files: branch.node.target.tree.entries,
+                };
+              }),
+            };
+          })
+        );
       });
+  }
+
+  private async getOpenPullRequestsForRepository(params: {
+    owner: string;
+    name: string;
+  }): Promise<Map<string, GraphQLPullRequest>> {
+    const { owner, name } = params;
+    const request = {
+      query: `
+      query PullRequests($owner: String!, $name: String!, $cursor: String) {
+        repository(owner: $owner, name: $name) {
+          pullRequests(first: 100, states: [OPEN, MERGED], after: $cursor) {
+            edges {
+              node {
+                headRefName
+                baseRefName
+                baseRefOid
+              }
+            }
+            pageInfo {
+              hasNextPage
+              endCursor
+            }
+          }
+        }
+      }
+      `,
+      variables: { owner, name, cursor: undefined },
+    };
+
+    const response = await this.graphQlClient.graphql(request);
+    const pullRequests = new Map<string, GraphQLPullRequest>();
+
+    if (!response.repository?.pullRequests?.edges) {
+      return pullRequests;
+    }
+
+    // Map PRs by their head branch name for quick lookup
+    response.repository.pullRequests.edges.forEach((edge: any) => {
+      const pr = edge.node;
+      pullRequests.set(pr.headRefName, {
+        headRefName: pr.headRefName,
+        baseRefName: pr.baseRefName,
+        baseRefOid: pr.baseRefOid,
+      });
+    });
+
+    return pullRequests;
   }
 
   private async getRepositoriesForSearchQuery(params: {
@@ -208,11 +268,6 @@ export default class GitHubProjectDataSource
                       name
                     }
                   }
-                }
-              }
-              associatedPullRequests(first: 1, states: [OPEN, MERGED]) {
-              nodes {
-                baseRefName
                 }
               }
             }

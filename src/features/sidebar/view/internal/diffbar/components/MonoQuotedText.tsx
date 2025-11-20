@@ -20,7 +20,7 @@ const MonoQuotedText = ({ text }: { text: string }) => {
           >
             {part}
           </Box>
-        ) : (
+        ) : i % 3 === 1 ? null : (
           part
         )
       )}

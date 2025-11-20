@@ -18,7 +18,12 @@ const DiffListItem = ({
 }) => {
   return (
     <ListItem disableGutters disablePadding>
-      <ListItemButton selected={selected} onClick={onClick} disableGutters>
+      <ListItemButton
+        selected={selected}
+        onClick={onClick}
+        disableGutters
+        sx={{ width: "100%", px: 0, alignItems: "flex-start" }}
+      >
         <MenuItemHover>
           <Stack direction="row" alignItems="center" sx={{ width: "100%" }}>
             <Box

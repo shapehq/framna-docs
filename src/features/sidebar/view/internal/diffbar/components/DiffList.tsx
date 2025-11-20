@@ -4,49 +4,51 @@ import React from "react";
 import { Box, Typography } from "@mui/material";
 import PopulatedDiffList from "./PopulatedDiffList";
 
-interface Change {  
-  path?: string;  
-  text?: string;  
+interface Change {
+  path?: string;
+  text?: string;
 }
+
+export type DiffListStatus = "idle" | "loading" | "empty" | "ready" | "error"
 
 const DiffList = ({
   changes,
-  loading,
-  data,
+  status,
   selectedChange,
   onClick,
 }: {
-  changes: Change[];
-  loading: boolean;
-  data: boolean;
-  selectedChange: number | null;
-  onClick: (i: number) => void;
+  changes: Change[]
+  status: DiffListStatus
+  selectedChange: number | null
+  onClick: (i: number) => void
 }) => {
-  if (loading) {
+  if (status === "loading") {
     return (
-      <Box sx={{ textAlign: "center", py: 4 }}>
+      <Box sx={{ textAlign: "left", py: 1, px: 1 }}>
         <Typography variant="body0" color="text.secondary">
           Loading changes...
         </Typography>
       </Box>
     );
-  } else if (!loading && data && changes.length === 0) {
+  } else if (status === "empty") {
     return (
-      <Box sx={{ textAlign: "center", py: 4 }}>
+      <Box sx={{ textAlign: "left", py: 1, px: 1 }}>
         <Typography variant="body0" color="text.secondary">
-          Non comparable
+          No changes
         </Typography>
       </Box>
     );
+  } else if (status === "ready") {
+    return (
+      <PopulatedDiffList
+        changes={changes}
+        selectedChange={selectedChange}
+        onClick={onClick}
+      />
+    );
   }
 
-  return (
-    <PopulatedDiffList
-      changes={changes}
-      selectedChange={selectedChange}
-      onClick={onClick}
-    />
-  );
-};
+  return null
+}
 
 export default DiffList;

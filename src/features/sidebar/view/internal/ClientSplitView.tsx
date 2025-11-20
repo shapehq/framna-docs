@@ -7,19 +7,19 @@ import { useSidebarOpen } from "../../data";
 import useDiffbarOpen from "../../data/useDiffbarOpen";
 import PrimaryContainer from "./primary/Container";
 import SecondaryContainer from "./secondary/Container";
-import DiffContainer from "./tertiary/Container";
+import RightContainer from "./tertiary/RightContainer";
 
 const ClientSplitView = ({
   sidebar,
   children,
-  diffContent,
+  sidebarRight,
 }: {
   sidebar: React.ReactNode;
   children?: React.ReactNode;
-  diffContent?: React.ReactNode;
+  sidebarRight?: React.ReactNode;
 }) => {
   const [isSidebarOpen, setSidebarOpen] = useSidebarOpen();
-  const [isDiffbarOpen, setDiffbarOpen] = useDiffbarOpen();
+  const [isRightSidebarOpen, setRightSidebarOpen] = useDiffbarOpen();
   const isSidebarTogglable = useContext(SidebarTogglableContext);
   const theme = useTheme();
   // Determine if the screen size is small or larger
@@ -48,10 +48,10 @@ const ClientSplitView = ({
       const isActionKey = isMac() ? event.metaKey : event.ctrlKey;
       if (isActionKey && event.key === "k") {
         event.preventDefault();
-        setDiffbarOpen(!isDiffbarOpen);
+        setRightSidebarOpen(!isRightSidebarOpen);
       }
     },
-    [isDiffbarOpen, setDiffbarOpen]
+    [isRightSidebarOpen, setRightSidebarOpen]
   );
   
   const sidebarWidth = 320;
@@ -71,17 +71,17 @@ const ClientSplitView = ({
         sidebarWidth={sidebarWidth}
         offsetContent={isSidebarOpen}
         diffWidth={diffWidth}
-        offsetDiffContent={isDiffbarOpen}
+        offsetDiffContent={isRightSidebarOpen}
       >
         {children}
       </SecondaryContainer>
-      <DiffContainer
+      <RightContainer
         width={diffWidth}
-        isOpen={isDiffbarOpen}
-        onClose={() => setDiffbarOpen(false)}
+        isOpen={isRightSidebarOpen}
+        onClose={() => setRightSidebarOpen(false)}
       >
-        {diffContent}
-      </DiffContainer>
+        {sidebarRight}
+      </RightContainer>
     </Stack>
   );
 };

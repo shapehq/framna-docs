@@ -132,6 +132,13 @@ export default class GitHubProjectDataSource implements IProjectDataSource {
           ref: ref.id
         }),
         editURL: `https://github.com/${ownerName}/${repositoryName}/edit/${ref.name}/${file.name}`,
+        diffURL: this.getGitHubDiffURL({
+          ownerName,
+          repositoryName,
+          path: file.name,
+          baseRefOid: ref.baseRefOid,
+          headRefOid: ref.id
+        }),
         isDefault: false // initial value
       }
     }).sort((a, b) => a.name.localeCompare(b.name))
@@ -141,7 +148,6 @@ export default class GitHubProjectDataSource implements IProjectDataSource {
       specifications: specifications,
       url: `https://github.com/${ownerName}/${repositoryName}/tree/${ref.name}`,
       isDefault: isDefaultRef || false,
-      baseRef: ref.baseRef,
     }
   }
 
@@ -163,6 +169,26 @@ export default class GitHubProjectDataSource implements IProjectDataSource {
     ref: string
   }): string {
     return `/api/blob/${ownerName}/${repositoryName}/${path}?ref=${ref}`
+  }
+
+  private getGitHubDiffURL({
+    ownerName,
+    repositoryName,
+    path,
+    baseRefOid,
+    headRefOid
+  }: { 
+    ownerName: string; 
+    repositoryName: string; 
+    path: string; 
+    baseRefOid: string | undefined; 
+    headRefOid: string }
+  ): string | undefined {
+    if (!baseRefOid) {
+      return undefined
+    } else {
+      return `/api/diff/${ownerName}/${repositoryName}/${path}?baseRefOid=${baseRefOid}&to=${headRefOid}`
+    }
   }
   
   private addRemoteVersions(

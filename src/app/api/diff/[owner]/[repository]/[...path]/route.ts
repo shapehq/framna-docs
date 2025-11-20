@@ -1,7 +1,7 @@
-  import { NextRequest, NextResponse } from "next/server"
-import { session, userGitHubClient } from "@/composition"
+import { NextRequest, NextResponse } from "next/server"
+import { session } from "@/composition"
 import { makeUnauthenticatedAPIErrorResponse } from "@/common"
-import { execSync } from "child_process"
+import { diffCalculator } from "@/composition"
 
 interface GetDiffParams {
   owner: string
@@ -17,38 +17,30 @@ export async function GET(req: NextRequest, { params }: { params: Promise<GetDif
 
   const { path: paramsPath, owner, repository } = await params
   const path = paramsPath.join("/")
-  
-  const fromRef = req.nextUrl.searchParams.get("from")
+
   const toRef = req.nextUrl.searchParams.get("to")
-  
-  if (!fromRef || !toRef) {
-    return NextResponse.json({ error: "Missing from/to parameters" }, { status: 400 })
+  const baseRefOid = req.nextUrl.searchParams.get("baseRefOid")
+
+  if (!toRef) {
+    return NextResponse.json({ error: "Missing 'to' parameter" }, { status: 400 })
   }
 
-  const fullRepositoryName = repository + "-openapi"
+  if (!baseRefOid) {
+    return NextResponse.json({ error: "Missing 'baseRefOid' parameter" }, { status: 400 })
+  }
 
-  const spec1 = await userGitHubClient.getRepositoryContent({
-    repositoryOwner: owner,
-    repositoryName: fullRepositoryName,
-    path: path,
-    ref: fromRef
-  })
+  try {
+    const diff = await diffCalculator.calculateDiff(
+      owner,
+      repository,
+      path,
+      baseRefOid,
+      toRef
+    )
 
-  const spec2 = await userGitHubClient.getRepositoryContent({
-    repositoryOwner: owner,
-    repositoryName: fullRepositoryName,
-    path: path, 
-    ref: toRef
-  })
-
-  const result = execSync(`oasdiff changelog --format json "${spec1.downloadURL}" "${spec2.downloadURL}"`, { encoding: 'utf8' })
-
-  
-  const diffData = JSON.parse(result)
- 
-  return NextResponse.json({
-    from: fromRef,
-    to: toRef,
-    changes: diffData 
-  })
+    return NextResponse.json(diff)
+  } catch (error) {
+    const message = error instanceof Error ? error.message : "Unknown error while calculating diff"
+    return NextResponse.json({ error: message }, { status: 500 })
+  }
 }

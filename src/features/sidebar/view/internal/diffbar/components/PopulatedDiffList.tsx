@@ -19,7 +19,13 @@ const PopulatedDiffList = ({
   onClick: (i: number) => void;
 }) => {
   return (
-    <SpacedList itemSpacing={1}>
+    <SpacedList
+      itemSpacing={0.5}
+      sx={{
+        "& .MuiListItem-root": { pl: 0, pr: 0 },
+        "& .menu-item-highlight": { px: 1, py: 1.25 },
+      }}
+    >
       {changes.map((change, i) => (
         <DiffListItem
           key={i}

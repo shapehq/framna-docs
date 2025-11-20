@@ -5,6 +5,7 @@ export const OpenApiSpecificationSchema = z.object({
   name: z.string(),
   url: z.string(),
   editURL: z.string().optional(),
+  diffURL: z.string().optional(),
   isDefault: z.boolean()
 })
 

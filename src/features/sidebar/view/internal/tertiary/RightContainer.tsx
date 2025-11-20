@@ -1,10 +1,9 @@
 'use client'
 
-
 import { Box } from "@mui/material"
 import { useTheme } from "@mui/material/styles" 
 
-const DiffContainer = ({
+const RightContainer = ({
   width,
   isOpen,
   onClose: _onClose,
@@ -36,4 +35,4 @@ const DiffContainer = ({
   )
 }
 
-export default DiffContainer
+export default RightContainer

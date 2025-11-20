@@ -1,81 +1,71 @@
 "use client";
 
-import { Box } from "@mui/material";
-import { useState, useEffect } from "react";
-import { useProjectSelection } from "@/features/projects/data";
-import DiffHeader from "./components/DiffHeader";
-import DiffList from "./components/DiffList";
+import { Alert, Box, Typography } from "@mui/material";
+import { useState } from "react";
+import useDiff from "@/features/sidebar/data/useDiff";
+import DiffList, { DiffListStatus } from "./components/DiffList";
 import DiffDialog from "./components/DiffDialog";
 
-interface DiffChange {
-  path?: string;
-  text?: string;
-}
-
-interface DiffData {
-  from: string;
-  to: string;
-  changes: DiffChange[];
-}
-
 const DiffContent = () => {
-  const { project, specification, version } = useProjectSelection();
-  const [fromBranch, setFromBranch] = useState("");
-  const [toBranch, setToBranch] = useState("");
-  const [data, setData] = useState<DiffData | null>(null);
+  const { data, loading, changes, error } = useDiff();
   const [selectedChange, setSelectedChange] = useState<number | null>(null);
-  const [loading, setLoading] = useState(false);
-
-  useEffect(() => {
-      setData(null);
-
-      let currentFromBranch = fromBranch;
-      let currentToBranch = toBranch;
-
-      if (version !== undefined) {
-        currentFromBranch = version.baseRef || "";
-        currentToBranch = version.id;
-        setFromBranch(version.baseRef || "");
-        setToBranch(version.id);
-      }
-
-    const compare = async () => {
-      if (project && specification && currentFromBranch && currentToBranch) {
-        setLoading(true);
-        const res = await fetch(
-          `/api/diff/${project.owner}/${project.name}/${specification.id}?from=${currentFromBranch}&to=${currentToBranch}`
-        );
-        setLoading(false);
-        const result = await res.json();
-        setData(result);
-      }
-    };
-    compare();
-  }, [toBranch, fromBranch, project, specification, version]);
-
-  const changes = data?.changes || [];
-  const versions = project?.versions || [];
 
   const closeModal = () => setSelectedChange(null);
 
+  const hasData = Boolean(data)
+  const hasChanges = changes.length > 0
+  const diffStatus: DiffListStatus = loading
+    ? "loading"
+    : error
+      ? "error"
+      : hasData && hasChanges
+        ? "ready"
+        : hasData
+          ? "empty"
+          : "idle"
+
   return (
-    <Box sx={{ height: "100%", display: "flex", flexDirection: "column" }}>
-      <DiffHeader
-        versions={versions}
-        fromBranch={fromBranch}
-        onChange={(ref) => setFromBranch(ref)}
-      />
+    <Box
+      sx={{
+        height: "100%",
+        display: "flex",
+        flexDirection: "column",
+        px: 1,
+        py: 4,
+        gap: 1,
+      }}
+    >
+      <Typography variant="body2" sx={{ fontWeight: 600, px: 1 }}>
+        What has changed?
+      </Typography>
+
+      {error ? (
+        <Alert
+          severity="error"
+          variant="outlined"
+          sx={{
+            mx: 1,
+            py: 1,
+            "& .MuiAlert-message": {
+              fontSize: "0.85rem",
+              lineHeight: 1.4,
+            },
+          }}
+        >
+          {error}
+        </Alert>
+      ) : null}
 
       <Box
         sx={{
+          flex: 1,
           overflowY: "auto",
           overflowX: "hidden",
         }}
       >
         <DiffList
-          changes={data ? changes : []}
-          loading={loading}
-          data={!!data}
+          changes={changes}
+          status={diffStatus}
           selectedChange={selectedChange}
           onClick={(i) => setSelectedChange(i)}
         />

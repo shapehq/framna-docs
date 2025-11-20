@@ -9,7 +9,7 @@ const HELP_URL = env.get("FRAMNA_DOCS_HELP_URL")
 
 const SplitView = ({ children }: { children?: React.ReactNode }) => {
   return (
-    <ClientSplitView sidebar={<Sidebar/>} diffContent={<DiffContent/>}>
+    <ClientSplitView sidebar={<Sidebar/>} sidebarRight={<DiffContent/>}>
       {children}
     </ClientSplitView>
   )

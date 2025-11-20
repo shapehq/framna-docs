@@ -11,7 +11,6 @@ import MenuItemHover from "@/common/ui/MenuItemHover"
 interface SelectorItem {
   readonly id: string
   readonly name: string
-  readonly baseRef?: string
 }
 
 const Selector = ({
