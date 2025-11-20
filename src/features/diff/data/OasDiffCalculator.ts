@@ -1,6 +1,6 @@
 import { execFileSync } from "child_process"
 import { DiffChange } from "@/features/diff/domain/DiffChange"
-import { GitHubClient } from "@/common"
+import type { IGitHubClient } from "@/common"
 import { DiffResult, IOasDiffCalculator } from "./IOasDiffCalculator"
 
 /**
@@ -23,7 +23,7 @@ function isValidGitHubUrl(url: string): boolean {
 }
 
 export class OasDiffCalculator implements IOasDiffCalculator {
-    constructor(private readonly githubClient: GitHubClient) {}
+    constructor(private readonly githubClient: IGitHubClient) {}
 
     async calculateDiff(
         owner: string,
