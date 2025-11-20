@@ -21,6 +21,7 @@ import { isMac as checkIsMac, SidebarTogglableContext } from "@/common";
 import { useSidebarOpen } from "@/features/sidebar/data";
 import useDiffbarOpen from "@/features/sidebar/data/useDiffbarOpen";
 import ToggleMobileToolbarButton from "./internal/secondary/ToggleMobileToolbarButton";
+import { useProjectSelection } from "@/features/projects/data";
 
 const SecondarySplitHeader = ({
   mobileToolbar,
@@ -35,6 +36,7 @@ const SecondarySplitHeader = ({
     "isMobileToolbarVisible",
     true
   );
+  const { specification } = useProjectSelection();
   return (
     <Box>
       <Box
@@ -72,6 +74,7 @@ const SecondarySplitHeader = ({
         <ToggleDiffButton
           isDiffbarOpen={isDiffbarOpen}
           onClick={setDiffbarOpen}
+          isDiffAvailable={!!specification?.diffURL}
         />
       </Box>
       {mobileToolbar && (
@@ -134,9 +137,11 @@ const ToggleSidebarButton = ({
 const ToggleDiffButton = ({
   isDiffbarOpen,
   onClick,
+  isDiffAvailable,
 }: {
   isDiffbarOpen: boolean;
   onClick: (isDiffbarOpen: boolean) => void;
+  isDiffAvailable: boolean;
 }) => {
   const [isMac, setIsMac] = useState(false);
   useEffect(() => {
@@ -148,23 +153,31 @@ const ToggleDiffButton = ({
   }, []);
   const isSidebarTogglable = useContext(SidebarTogglableContext);
   const openCloseKeyboardShortcut = `(${isMac ? "⌘" : "^"} + K)`;
-  const tooltip = isDiffbarOpen ? "Hide changes" : "Show changes";
+  const isDisabled = !isDiffAvailable && !isDiffbarOpen;
+  const tooltip = isDisabled
+    ? "Changes cannot be displayed"
+    : isDiffbarOpen
+    ? "Hide changes"
+    : "Show changes";
   return (
     <Box sx={{ display: isSidebarTogglable ? "block" : "none" }}>
-    
-      <Tooltip title={`${tooltip} ${openCloseKeyboardShortcut}`}>
-        <IconButton
-          size="medium"
-          color="primary"
-          onClick={() => onClick(!isDiffbarOpen)}
-          edge="end"
-        >
-          <FontAwesomeIcon
-            icon={isDiffbarOpen ? faChevronRight : faArrowRightArrowLeft}
-            size="xs"
-            style={{ aspectRatio: 1, padding: 2 }}
-          />
-        </IconButton>
+
+      <Tooltip title={isDisabled ? tooltip : `${tooltip} ${openCloseKeyboardShortcut}`}>
+        <span>
+          <IconButton
+            size="medium"
+            color="primary"
+            onClick={() => onClick(!isDiffbarOpen)}
+            edge="end"
+            disabled={isDisabled}
+          >
+            <FontAwesomeIcon
+              icon={isDiffbarOpen ? faChevronRight : faArrowRightArrowLeft}
+              size="xs"
+              style={{ aspectRatio: 1, padding: 2 }}
+            />
+          </IconButton>
+        </span>
       </Tooltip>
     </Box>
   );
