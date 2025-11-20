@@ -1,6 +1,5 @@
 "use client";
 
-import React from "react";
 import { Box, Typography, ListItem, ListItemButton, Stack } from "@mui/material";
 import MenuItemHover from "@/common/ui/MenuItemHover";
 import MonoQuotedText from "./MonoQuotedText";
@@ -51,7 +50,6 @@ const DiffListItem = ({
               {text && (
                 <Typography
                   variant="body0"
-               
                   sx={{ wordBreak: "break-word" }}
                 >
                   <MonoQuotedText text={text} />

@@ -1,6 +1,5 @@
 "use client";
 
-import React from "react";
 import SpacedList from "@/common/ui/SpacedList";
 import DiffListItem from "./DiffListItem";
 

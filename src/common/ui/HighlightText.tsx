@@ -1,5 +1,5 @@
 "use client"
-import React from "react"
+
 import { SxProps, Typography, TypographyVariant } from "@mui/material"
 import styled from "@emotion/styled"
 
