@@ -21,15 +21,13 @@ export default function useDiff() {
 
     let isCancelled = false
 
-    Promise.resolve().then(() => {
-      if (isCancelled) {
-        return
-      }
+    if (isCancelled) {
+      return
+    }
 
-      setLoading(true)
-      setError(null)
-      setData(null)
-    })
+    setLoading(true)
+    setError(null)
+    setData(null)
 
     fetch(diffUrl)
       .then(res => res.json())
