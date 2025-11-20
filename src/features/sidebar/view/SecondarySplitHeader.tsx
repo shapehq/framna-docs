@@ -1,72 +1,49 @@
-"use client";
+"use client"
 
-import { useState, useEffect, useContext } from "react";
-import { useSessionStorage } from "usehooks-ts";
-import {
-  Box,
-  IconButton,
-  Stack,
-  Tooltip,
-  Collapse,
-  Divider,
-} from "@mui/material";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faArrowRightArrowLeft,
-  faBars,
-  faChevronLeft,
-  faChevronRight,
-} from "@fortawesome/free-solid-svg-icons";
-import { isMac as checkIsMac, SidebarTogglableContext } from "@/common";
-import { useSidebarOpen } from "@/features/sidebar/data";
-import useDiffbarOpen from "@/features/sidebar/data/useDiffbarOpen";
-import ToggleMobileToolbarButton from "./internal/secondary/ToggleMobileToolbarButton";
-import { useProjectSelection } from "@/features/projects/data";
+import { useState, useEffect, useContext } from "react"
+import { useSessionStorage } from "usehooks-ts"
+import { Box, IconButton, Stack, Tooltip, Collapse, Divider } from "@mui/material"
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
+import { faBars, faChevronLeft, faChevronRight, faArrowRightArrowLeft } from "@fortawesome/free-solid-svg-icons"
+import { isMac as checkIsMac, SidebarTogglableContext } from "@/common"
+import { useSidebarOpen } from "@/features/sidebar/data"
+import useDiffbarOpen from "@/features/sidebar/data/useDiffbarOpen"
+import ToggleMobileToolbarButton from "./internal/secondary/ToggleMobileToolbarButton"
+import { useProjectSelection } from "@/features/projects/data"
 
 const SecondarySplitHeader = ({
   mobileToolbar,
-  children,
+  children
 }: {
-  mobileToolbar?: React.ReactNode;
-  children?: React.ReactNode;
+  mobileToolbar?: React.ReactNode
+  children?: React.ReactNode
 }) => {
-  const [isSidebarOpen, setSidebarOpen] = useSidebarOpen();
-  const [isDiffbarOpen, setDiffbarOpen] = useDiffbarOpen();
-  const [isMobileToolbarVisible, setMobileToolbarVisible] = useSessionStorage(
-    "isMobileToolbarVisible",
-    true
-  );
-  const { specification } = useProjectSelection();
+  const [isSidebarOpen, setSidebarOpen] = useSidebarOpen()
+  const [isDiffbarOpen, setDiffbarOpen] = useDiffbarOpen()
+  const [isMobileToolbarVisible, setMobileToolbarVisible] = useSessionStorage("isMobileToolbarVisible", true)
+  const { specification } = useProjectSelection()
   return (
     <Box>
-      <Box
-        sx={{
-          display: "flex",
-          alignItems: "center",
-          paddingLeft: 2,
-          paddingRight: 2,
-          height: 64,
-          margin: "auto",
-        }}
-      >
+      <Box sx={{ 
+        display: "flex",
+        alignItems: "center",
+        paddingLeft: 2,
+        paddingRight: 2,
+        height: 64,
+        margin: "auto"
+      }}>
         <ToggleSidebarButton
           isSidebarOpen={isSidebarOpen}
           onClick={setSidebarOpen}
         />
-        <Box sx={{ display: "flex", flexGrow: 1, justifyContent: "end" }}>
+        <Box sx={{ display: "flex", flexGrow: 1, justifyContent: "end" }}> 
           <Stack direction="row" alignItems="center">
             {children}
-            <Divider
-              orientation="vertical"
-              flexItem
-              sx={{ marginLeft: 0.5, marginRight: 0.5 }}
-            />
+            <Divider orientation="vertical" flexItem sx={{ marginLeft: 0.5, marginRight: 0.5 }} />
             {mobileToolbar && (
               <ToggleMobileToolbarButton
                 direction={isMobileToolbarVisible ? "up" : "down"}
-                onToggle={() =>
-                  setMobileToolbarVisible(!isMobileToolbarVisible)
-                }
+                onToggle={() => setMobileToolbarVisible(!isMobileToolbarVisible) }
               />
             )}
           </Stack>
@@ -79,86 +56,84 @@ const SecondarySplitHeader = ({
       </Box>
       {mobileToolbar && (
         <Collapse in={isMobileToolbarVisible}>
-          <Box
-            sx={{
-              padding: 2,
-              paddingTop: 0,
-              display: { sm: "block", md: "none" },
-            }}
-          >
+          <Box sx={{
+            padding: 2,
+            paddingTop: 0,
+            display: { sm: "block", md: "none" }
+          }}>
             {mobileToolbar}
           </Box>
         </Collapse>
       )}
     </Box>
-  );
-};
+  )
+}
 
-export default SecondarySplitHeader;
+export default SecondarySplitHeader
 
 const ToggleSidebarButton = ({
   isSidebarOpen,
-  onClick,
+  onClick
 }: {
-  isSidebarOpen: boolean;
-  onClick: (isSidebarOpen: boolean) => void;
+  isSidebarOpen: boolean,
+  onClick: (isSidebarOpen: boolean) => void
 }) => {
-  const [isMac, setIsMac] = useState(false);
+  const [isMac, setIsMac] = useState(false)
   useEffect(() => {
     // checkIsMac uses window so we delay the check.
     const timeout = window.setTimeout(() => {
-      setIsMac(checkIsMac());
-    }, 0);
-    return () => window.clearTimeout(timeout);
-  }, [setIsMac]);
-  const isSidebarTogglable = useContext(SidebarTogglableContext);
-  const openCloseKeyboardShortcut = `(${isMac ? "⌘" : "^"} + .)`;
-  const tooltip = isSidebarOpen ? "Hide Projects" : "Show Projects";
+      setIsMac(checkIsMac())
+    }, 0)
+    return () => window.clearTimeout(timeout)
+  }, [setIsMac])
+  const isSidebarTogglable = useContext(SidebarTogglableContext)
+  const openCloseKeyboardShortcut = `(${isMac ? "⌘" : "^"} + .)`
+  const tooltip = isSidebarOpen ? "Hide Projects" : "Show Projects" 
   return (
     <Box sx={{ display: isSidebarTogglable ? "block" : "none" }}>
-      <Tooltip title={`${tooltip} ${openCloseKeyboardShortcut}`}>
-        <IconButton
-          size="medium"
-          color="primary"
-          onClick={() => onClick(!isSidebarOpen)}
-          edge="start"
-        >
-          <FontAwesomeIcon
-            icon={isSidebarOpen ? faChevronLeft : faBars}
-            size="sm"
-            style={{ aspectRatio: 1, padding: 2 }}
-          />
-        </IconButton>
-      </Tooltip>
+    <Tooltip title={`${tooltip} ${openCloseKeyboardShortcut}`}>
+      <IconButton
+        size="medium"
+        color="primary"
+        onClick={() => onClick(!isSidebarOpen)}
+        edge="start"
+      >
+        <FontAwesomeIcon
+          icon={isSidebarOpen ? faChevronLeft : faBars}
+          size="sm"
+          style={{ aspectRatio: 1, padding: 2 }}
+        />
+      </IconButton>
+    </Tooltip>
     </Box>
-  );
-};
+  )
+}
 
 const ToggleDiffButton = ({
   isDiffbarOpen,
   onClick,
-  isDiffAvailable,
+  isDiffAvailable
 }: {
-  isDiffbarOpen: boolean;
-  onClick: (isDiffbarOpen: boolean) => void;
-  isDiffAvailable: boolean;
+  isDiffbarOpen: boolean,
+  onClick: (isDiffbarOpen: boolean) => void,
+  isDiffAvailable: boolean
 }) => {
-  const [isMac, setIsMac] = useState(false);
+  const [isMac, setIsMac] = useState(false)
   useEffect(() => {
     // checkIsMac uses window so we delay the check.
     const timeout = window.setTimeout(() => {
-      setIsMac(checkIsMac());
-    }, 0);
-    return () => window.clearTimeout(timeout);
-  }, []);
-  const isSidebarTogglable = useContext(SidebarTogglableContext);
-  const openCloseKeyboardShortcut = `(${isMac ? "⌘" : "^"} + K)`;
-  const isDisabled = !isDiffAvailable && !isDiffbarOpen;
+      setIsMac(checkIsMac())
+    }, 0)
+    return () => window.clearTimeout(timeout)
+  }, [])
+  const isSidebarTogglable = useContext(SidebarTogglableContext)
+  const openCloseKeyboardShortcut = `(${isMac ? "⌘" : "^"} + K)`
+  const isDisabled = !isDiffAvailable && !isDiffbarOpen
   const tooltip = isDisabled
     ? "Changes cannot be displayed"
     : isDiffbarOpen
     ? "Hide changes"
-    : "Show changes";
+    : "Show changes"
   return (
     <Box sx={{ display: isSidebarTogglable ? "block" : "none" }}>
 
@@ -180,5 +155,5 @@ const ToggleDiffButton = ({
         </span>
       </Tooltip>
     </Box>
-  );
-};
+  )
+}
