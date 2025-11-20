@@ -6,7 +6,7 @@ import { diffCalculator } from "@/composition"
 interface GetDiffParams {
   owner: string
   repository: string
-  path: [string]
+  path: string[]
 }
 
 export async function GET(req: NextRequest, { params }: { params: Promise<GetDiffParams> }) {
