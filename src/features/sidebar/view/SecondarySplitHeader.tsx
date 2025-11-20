@@ -113,7 +113,7 @@ const ToggleSidebarButton = ({
   }, [setIsMac]);
   const isSidebarTogglable = useContext(SidebarTogglableContext);
   const openCloseKeyboardShortcut = `(${isMac ? "⌘" : "^"} + .)`;
-  const tooltip = isSidebarOpen ? "Show Projects" : "Hide Projects";
+  const tooltip = isSidebarOpen ? "Hide Projects" : "Show Projects";
   return (
     <Box sx={{ display: isSidebarTogglable ? "block" : "none" }}>
       <Tooltip title={`${tooltip} ${openCloseKeyboardShortcut}`}>
