@@ -25,7 +25,6 @@ const RightContainer = ({
       sx={{
         width: width,
         height: "100%",
-        borderLeft: `1px ${theme.palette.divider}`,
         backgroundColor: theme.palette.background.default,
         flexShrink: 0,
       }}

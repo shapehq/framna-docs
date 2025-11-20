@@ -1,18 +1,17 @@
-"use client";
+"use client"
 
-import React from "react";
-import SpacedList from "@/common/ui/SpacedList";
-import DiffListItem from "./DiffListItem";
-import { DiffChange } from "@/features/diff/domain/DiffChange";  
+import SpacedList from "@/common/ui/SpacedList"
+import DiffListItem from "./DiffListItem"
+import { DiffChange } from "@/features/diff/domain/DiffChange"
 
 const PopulatedDiffList = ({
   changes,
   selectedChange,
   onClick,
 }: {
-  changes: DiffChange[];
-  selectedChange: number | null;
-  onClick: (i: number) => void;
+  changes: DiffChange[]
+  selectedChange: number | null
+  onClick: (i: number) => void
 }) => {
   return (
     <SpacedList
@@ -32,7 +31,7 @@ const PopulatedDiffList = ({
         />
       ))}
     </SpacedList>
-  );
-};
+  )
+}
 
-export default PopulatedDiffList;
+export default PopulatedDiffList

@@ -21,17 +21,19 @@ export default function useDiff() {
 
     let isCancelled = false
 
-    if (isCancelled) {
-      return
-    }
+    const fetchDiff = async () => {
+      if (isCancelled) {
+        return
+      }
 
-    setLoading(true)
-    setError(null)
-    setData(null)
+      setLoading(true)
+      setError(null)
+      setData(null)
 
-    fetch(diffUrl)
-      .then(res => res.json())
-      .then(result => {
+      try {
+        const res = await fetch(diffUrl)
+        const result = await res.json()
+
         if (isCancelled) {
           return
         }
@@ -44,8 +46,7 @@ export default function useDiff() {
           setError(null)
         }
         setLoading(false)
-      })
-      .catch(err => {
+      } catch (err) {
         if (isCancelled) {
           return
         }
@@ -54,7 +55,10 @@ export default function useDiff() {
         setData(null)
         setError("We couldn't load the diff right now. Please try again later.")
         setLoading(false)
-      })
+      }
+    }
+
+    fetchDiff()
 
     return () => {
       isCancelled = true

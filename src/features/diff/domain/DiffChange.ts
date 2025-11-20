@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { z } from "zod"
 
 export const DiffChangeSchema = z.object({
   id: z.string(),
@@ -9,6 +9,6 @@ export const DiffChangeSchema = z.object({
   path: z.string().optional(),
   source: z.string().optional(),
   section: z.string().optional(),
-});
+})
 
-export type DiffChange = z.infer<typeof DiffChangeSchema>;
+export type DiffChange = z.infer<typeof DiffChangeSchema>
