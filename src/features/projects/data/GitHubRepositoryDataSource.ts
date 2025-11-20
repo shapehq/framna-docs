@@ -176,7 +176,7 @@ export default class GitHubProjectDataSource
       .map((repo, index) => {
         return `
         repo${index}: repository(owner: "${repo.owner}", name: "${repo.name}") {
-          pullRequests(first: 100, states: [OPEN, MERGED]) {
+          pullRequests(first: 100, states: [OPEN]) {
             edges {
               node {
                 headRefName
