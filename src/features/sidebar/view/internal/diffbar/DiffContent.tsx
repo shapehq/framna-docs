@@ -35,17 +35,19 @@ const DiffContent = () => {
         gap: 1,
       }}
     >
-      <Typography variant="body2" sx={{ fontWeight: 600, px: 1 }}>
+      <Typography variant="body2" sx={{ px: 1 }}>
         What has changed?
       </Typography>
 
       {error ? (
         <Alert
           severity="error"
+          icon="!"
           variant="outlined"
           sx={{
+            my: 1,
             mx: 1,
-            py: 1,
+            py: 0.5,
             "& .MuiAlert-message": {
               fontSize: "0.85rem",
               lineHeight: 1.4,

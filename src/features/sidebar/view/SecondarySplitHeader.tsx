@@ -12,10 +12,10 @@ import {
 } from "@mui/material";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
+  faArrowRightArrowLeft,
   faBars,
   faChevronLeft,
   faChevronRight,
-  faCodeCompare,
 } from "@fortawesome/free-solid-svg-icons";
 import { isMac as checkIsMac, SidebarTogglableContext } from "@/common";
 import { useSidebarOpen } from "@/features/sidebar/data";
@@ -103,8 +103,11 @@ const ToggleSidebarButton = ({
   const [isMac, setIsMac] = useState(false);
   useEffect(() => {
     // checkIsMac uses window so we delay the check.
-    setIsMac(checkIsMac());
-  }, [isMac, setIsMac]);
+    const timeout = window.setTimeout(() => {
+      setIsMac(checkIsMac());
+    }, 0);
+    return () => window.clearTimeout(timeout);
+  }, [setIsMac]);
   const isSidebarTogglable = useContext(SidebarTogglableContext);
   const openCloseKeyboardShortcut = `(${isMac ? "⌘" : "^"} + .)`;
   const tooltip = isSidebarOpen ? "Show Projects" : "Hide Projects";
@@ -142,7 +145,7 @@ const ToggleDiffButton = ({
   }, [isMac, setIsMac]);
   const isSidebarTogglable = useContext(SidebarTogglableContext);
   const openCloseKeyboardShortcut = `(${isMac ? "⌘" : "^"} + K)`;
-  const tooltip = isDiffbarOpen ? "Hide Diff" : "Show Diff";
+  const tooltip = isDiffbarOpen ? "Hide changes" : "Show changes";
   return (
     <Box sx={{ display: isSidebarTogglable ? "block" : "none" }}>
     
@@ -154,8 +157,8 @@ const ToggleDiffButton = ({
           edge="end"
         >
           <FontAwesomeIcon
-            icon={isDiffbarOpen ? faChevronRight : faCodeCompare}
-            size="sm"
+            icon={isDiffbarOpen ? faChevronRight : faArrowRightArrowLeft}
+            size="xs"
             style={{ aspectRatio: 1, padding: 2 }}
           />
         </IconButton>

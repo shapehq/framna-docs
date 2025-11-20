@@ -24,7 +24,11 @@ const NewProjectButton = () => {
             height={40}
             sx={{ background: "#dfdfdf" }}
           >
-            <Stack sx={{ height: "100%" }} justifyContent="center">
+            <Stack
+              sx={{ height: "100%" }}
+              justifyContent="center"
+              alignItems="center"
+            >
               <FontAwesomeIcon icon={faPlus} size="lg" color="#bababa" />
             </Stack>
           </ProjectAvatarSquircle>

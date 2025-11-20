@@ -3,8 +3,6 @@ import { useProjectSelection } from "@/features/projects/data"
 import { DiffChange } from "../../diff/domain/DiffChange"
 
 interface DiffData {
-  from: string
-  to: string
   changes: DiffChange[]
   error?: string | null
 }
@@ -18,7 +16,7 @@ export default function useDiff() {
 
   useEffect(() => {
     if (!diffUrl) {
-      setData(null)
+      setData({ changes: [] })
       setLoading(false)
       setError(null)
       return

@@ -50,7 +50,7 @@ export class OasDiffCalculator implements IOasDiffCalculator {
         const diffData = (() => {
             try {
                 const result = execFileSync(
-                    "oasdiffz",
+                    "oasdiff",
                     ["changelog", "--format", "json", spec1.downloadURL, spec2.downloadURL],
                     { encoding: "utf8" }
                 )
