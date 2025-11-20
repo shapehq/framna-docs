@@ -2,18 +2,14 @@
 
 import SpacedList from "@/common/ui/SpacedList"
 import DiffListItem from "./DiffListItem"
-
-interface Change {  
-  path?: string;  
-  text?: string;  
-}  
+import { DiffChange } from "@/features/diff/domain/DiffChange"
 
 const PopulatedDiffList = ({
   changes,
   selectedChange,
   onClick,
 }: {
-  changes: Change[]
+  changes: DiffChange[]
   selectedChange: number | null
   onClick: (i: number) => void
 }) => {
@@ -27,7 +23,7 @@ const PopulatedDiffList = ({
     >
       {changes.map((change, i) => (
         <DiffListItem
-          key={i}
+          key={change.id}
           path={change?.path}
           text={change?.text}
           selected={selectedChange === i}

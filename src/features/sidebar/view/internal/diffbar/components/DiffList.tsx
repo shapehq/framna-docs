@@ -2,11 +2,7 @@
 
 import { Box, Typography } from "@mui/material"
 import PopulatedDiffList from "./PopulatedDiffList"
-
-interface Change {
-  path?: string
-  text?: string
-}
+import { DiffChange } from "@/features/diff/domain/DiffChange"
 
 export type DiffListStatus = "idle" | "loading" | "empty" | "ready" | "error"
 
@@ -16,7 +12,7 @@ const DiffList = ({
   selectedChange,
   onClick,
 }: {
-  changes: Change[]
+  changes: DiffChange[]
   status: DiffListStatus
   selectedChange: number | null
   onClick: (i: number) => void
