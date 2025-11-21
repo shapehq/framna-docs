@@ -7,6 +7,8 @@ import IGitHubClient, {
   AddCommentToPullRequestRequest,
   UpdatePullRequestCommentRequest,
   GetPullRequestFilesRequest,
+  CompareCommitsRequest,
+  CompareCommitsResponse,
   RepositoryContent,
   PullRequestComment,
   PullRequestFile
@@ -76,7 +78,13 @@ export default class OAuthTokenRefreshingGitHubClient implements IGitHubClient {
       return await this.gitHubClient.updatePullRequestComment(request)
     })
   }
-  
+
+  async compareCommitsWithBasehead(request: CompareCommitsRequest): Promise<CompareCommitsResponse> {
+    return await this.send(async () => {
+      return await this.gitHubClient.compareCommitsWithBasehead(request)
+    })
+  }
+
   private async send<T>(fn: () => Promise<T>): Promise<T> {
     const oauthToken = await this.oauthTokenDataSource.getOAuthToken()
     try {

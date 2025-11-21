@@ -8,6 +8,8 @@ import IGitHubClient, {
   GetPullRequestFilesRequest,
   AddCommentToPullRequestRequest,
   UpdatePullRequestCommentRequest,
+  CompareCommitsRequest,
+  CompareCommitsResponse,
   RepositoryContent,
   PullRequestComment,
   PullRequestFile
@@ -118,5 +120,16 @@ export default class GitHubClient implements IGitHubClient {
       repo: request.repositoryName,
       body: request.body
     })
+  }
+
+  async compareCommitsWithBasehead(request: CompareCommitsRequest): Promise<CompareCommitsResponse> {
+    const oauthToken = await this.oauthTokenDataSource.getOAuthToken()
+    const octokit = new Octokit({ auth: oauthToken.accessToken })
+    const response = await octokit.rest.repos.compareCommitsWithBasehead({
+      owner: request.repositoryOwner,
+      repo: request.repositoryName,
+      basehead: `${request.baseRefOid}...${request.headRefOid}`
+    })
+    return { mergeBaseSha: response.data.merge_base_commit.sha }
   }
 }

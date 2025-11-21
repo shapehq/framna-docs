@@ -17,7 +17,10 @@ export type GitHubRepository = {
 
 export type GitHubRepositoryRef = {
   readonly id: string
-  readonly name: string  
+  readonly name: string
+  readonly baseRef?: string
+  readonly baseRefOid?: string
+  readonly prNumber?: number
   readonly files: {
     readonly name: string
   }[]

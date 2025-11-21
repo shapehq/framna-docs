@@ -53,6 +53,8 @@ import {
 import { RepoRestrictedGitHubClient } from "./common/github/RepoRestrictedGitHubClient"
 import RsaEncryptionService from "./features/encrypt/EncryptionService"
 import RemoteConfigEncoder from "./features/projects/domain/RemoteConfigEncoder"
+import { OasDiffCalculator } from "./features/diff/data/OasDiffCalculator"
+import { IOasDiffCalculator } from "./features/diff/data/IOasDiffCalculator"
 
 const gitHubAppCredentials = {
   appId: env.getOrThrow("GITHUB_APP_ID"),
@@ -231,3 +233,5 @@ export const gitHubHookHandler = new GitHubHookHandler({
     })
   })
 })
+
+export const diffCalculator: IOasDiffCalculator = new OasDiffCalculator(gitHubClient)

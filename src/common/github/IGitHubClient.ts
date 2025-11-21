@@ -70,6 +70,17 @@ export type UpdatePullRequestCommentRequest = {
   readonly body: string
 }
 
+export type CompareCommitsRequest = {
+  readonly repositoryOwner: string
+  readonly repositoryName: string
+  readonly baseRefOid: string
+  readonly headRefOid: string
+}
+
+export type CompareCommitsResponse = {
+  readonly mergeBaseSha: string
+}
+
 export default interface IGitHubClient {
   graphql(request: GraphQLQueryRequest): Promise<GraphQlQueryResponse>
   getRepositoryContent(request: GetRepositoryContentRequest): Promise<RepositoryContent>
@@ -77,4 +88,5 @@ export default interface IGitHubClient {
   getPullRequestComments(request: GetPullRequestCommentsRequest): Promise<PullRequestComment[]>
   addCommentToPullRequest(request: AddCommentToPullRequestRequest): Promise<void>
   updatePullRequestComment(request: UpdatePullRequestCommentRequest): Promise<void>
+  compareCommitsWithBasehead(request: CompareCommitsRequest): Promise<CompareCommitsResponse>
 }
