@@ -52,7 +52,6 @@ export class OasDiffCalculator implements IOasDiffCalculator {
 
         // Fetch spec content from both refs
         let spec1
-        let isNewFile = false
 
         try {
             spec1 = await this.githubClient.getRepositoryContent({
@@ -61,7 +60,7 @@ export class OasDiffCalculator implements IOasDiffCalculator {
                 path: path,
                 ref: fromRef
             })
-        } catch (error) {
+        } catch {
             // File doesn't exist in base ref - this is a new file
             return {
                 from: fromRef,

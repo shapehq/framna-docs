@@ -66,7 +66,7 @@ const DiffContent = () => {
       {isNewFile && (
         <Box sx={{ textAlign: "left", py: 1, px: 1 }}>
           <Typography variant="body0" color="text.secondary">
-            This is a new file that doesn't exist on the base branch.
+            This is a new file that doesn&apos;t exist on the base branch.
           </Typography>
         </Box>
       )}
