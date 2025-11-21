@@ -5,6 +5,7 @@ import { DiffChange } from "../../diff/domain/DiffChange"
 interface DiffData {
   changes: DiffChange[]
   error?: string | null
+  isNewFile?: boolean
 }
 
 export default function useDiff() {
@@ -70,6 +71,13 @@ export default function useDiff() {
   const resolvedChanges = resolvedData?.changes ?? []
   const resolvedLoading = hasDiffUrl ? loading : false
   const resolvedError = hasDiffUrl ? error : null
+  const isNewFile = resolvedData?.isNewFile ?? false
 
-  return { data: resolvedData, loading: resolvedLoading, changes: resolvedChanges, error: resolvedError }
+  return {
+    data: resolvedData,
+    loading: resolvedLoading,
+    changes: resolvedChanges,
+    error: resolvedError,
+    isNewFile
+  }
 }

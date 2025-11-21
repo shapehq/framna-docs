@@ -51,12 +51,25 @@ export class OasDiffCalculator implements IOasDiffCalculator {
         }
 
         // Fetch spec content from both refs
-        const spec1 = await this.githubClient.getRepositoryContent({
-            repositoryOwner: owner,
-            repositoryName: repository,
-            path: path,
-            ref: fromRef
-        })
+        let spec1
+        let isNewFile = false
+
+        try {
+            spec1 = await this.githubClient.getRepositoryContent({
+                repositoryOwner: owner,
+                repositoryName: repository,
+                path: path,
+                ref: fromRef
+            })
+        } catch (error) {
+            // File doesn't exist in base ref - this is a new file
+            return {
+                from: fromRef,
+                to: toRef,
+                changes: [],
+                isNewFile: true
+            }
+        }
 
         const spec2 = await this.githubClient.getRepositoryContent({
             repositoryOwner: owner,

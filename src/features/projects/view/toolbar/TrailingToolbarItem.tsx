@@ -83,7 +83,7 @@ const TrailingToolbarItem = () => {
             </IconButton>
           </Tooltip>
         }
-        
+
       </Stack>
     </>
   )

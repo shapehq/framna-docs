@@ -5,6 +5,7 @@ export interface DiffResult {
     to: string
     changes: DiffChange[]
     error?: string | null
+    isNewFile?: boolean
 }
 
 export interface IOasDiffCalculator {

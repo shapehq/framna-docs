@@ -1,13 +1,15 @@
 "use client"
 
-import { Alert, Box, Typography } from "@mui/material"
+import { Alert, Box, Typography, Link } from "@mui/material"
 import { useState } from "react"
 import useDiff from "@/features/sidebar/data/useDiff"
+import { useProjectSelection } from "@/features/projects/data"
 import DiffList, { DiffListStatus } from "./components/DiffList"
 import DiffDialog from "./components/DiffDialog"
 
 const DiffContent = () => {
-  const { data, loading, changes, error } = useDiff()
+  const { data, loading, changes, error, isNewFile } = useDiff()
+  const { specification } = useProjectSelection()
   const [selectedChange, setSelectedChange] = useState<number | null>(null)
 
   const closeModal = () => setSelectedChange(null)
@@ -18,11 +20,13 @@ const DiffContent = () => {
     ? "loading"
     : error
       ? "error"
-      : hasData && hasChanges
-        ? "ready"
-        : hasData
-          ? "empty"
-          : "idle"
+      : isNewFile
+        ? "empty"
+        : hasData && hasChanges
+          ? "ready"
+          : hasData
+            ? "empty"
+            : "idle"
 
   return (
     <Box
@@ -38,6 +42,34 @@ const DiffContent = () => {
       <Typography variant="body2" sx={{ px: 1 }}>
         What has changed?
       </Typography>
+
+      {specification?.diffBaseBranch && specification?.diffBaseOid && (
+        <Typography variant="caption" color="text.secondary" sx={{ px: 1, pb: 1 }}>
+          Comparing to:{" "}
+          {specification.diffPrUrl ? (
+            <Link
+              href={specification.diffPrUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              variant="caption"
+              color="text.secondary"
+              underline="hover"
+            >
+              {specification.diffBaseBranch} ({specification.diffBaseOid.substring(0, 7)})
+            </Link>
+          ) : (
+            `${specification.diffBaseBranch} (${specification.diffBaseOid.substring(0, 7)})`
+          )}
+        </Typography>
+      )}
+
+      {isNewFile && (
+        <Box sx={{ textAlign: "left", py: 1, px: 1 }}>
+          <Typography variant="body0" color="text.secondary">
+            This is a new file that doesn't exist on the base branch.
+          </Typography>
+        </Box>
+      )}
 
       {error ? (
         <Alert
@@ -58,20 +90,22 @@ const DiffContent = () => {
         </Alert>
       ) : null}
 
-      <Box
-        sx={{
-          flex: 1,
-          overflowY: "auto",
-          overflowX: "hidden",
-        }}
-      >
-        <DiffList
-          changes={changes}
-          status={diffStatus}
-          selectedChange={selectedChange}
-          onClick={(i) => setSelectedChange(i)}
-        />
-      </Box>
+      {!isNewFile && (
+        <Box
+          sx={{
+            flex: 1,
+            overflowY: "auto",
+            overflowX: "hidden",
+          }}
+        >
+          <DiffList
+            changes={changes}
+            status={diffStatus}
+            selectedChange={selectedChange}
+            onClick={(i) => setSelectedChange(i)}
+          />
+        </Box>
+      )}
 
       <DiffDialog
         open={selectedChange !== null}

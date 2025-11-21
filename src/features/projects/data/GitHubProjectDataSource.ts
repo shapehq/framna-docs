@@ -131,7 +131,7 @@ export default class GitHubProjectDataSource implements IProjectDataSource {
           path: file.name,
           ref: ref.id
         }),
-        editURL: `https://github.com/${ownerName}/${repositoryName}/edit/${ref.name}/${file.name}`,
+        editURL: `https://github.com/${ownerName}/${repositoryName}/edit/${ref.name}/${encodeURIComponent(file.name)}`,
         diffURL: this.getGitHubDiffURL({
           ownerName,
           repositoryName,
@@ -139,6 +139,9 @@ export default class GitHubProjectDataSource implements IProjectDataSource {
           baseRefOid: ref.baseRefOid,
           headRefOid: ref.id
         }),
+        diffBaseBranch: ref.baseRef,
+        diffBaseOid: ref.baseRefOid,
+        diffPrUrl: ref.prNumber ? `https://github.com/${ownerName}/${repositoryName}/pull/${ref.prNumber}` : undefined,
         isDefault: false // initial value
       }
     }).sort((a, b) => a.name.localeCompare(b.name))
@@ -168,7 +171,8 @@ export default class GitHubProjectDataSource implements IProjectDataSource {
     path: string
     ref: string
   }): string {
-    return `/api/blob/${ownerName}/${repositoryName}/${path}?ref=${ref}`
+    const encodedPath = path.split('/').map(segment => encodeURIComponent(segment)).join('/')
+    return `/api/blob/${ownerName}/${repositoryName}/${encodedPath}?ref=${ref}`
   }
 
   private getGitHubDiffURL({
@@ -177,17 +181,18 @@ export default class GitHubProjectDataSource implements IProjectDataSource {
     path,
     baseRefOid,
     headRefOid
-  }: { 
-    ownerName: string; 
-    repositoryName: string; 
-    path: string; 
-    baseRefOid: string | undefined; 
+  }: {
+    ownerName: string;
+    repositoryName: string;
+    path: string;
+    baseRefOid: string | undefined;
     headRefOid: string }
   ): string | undefined {
     if (!baseRefOid) {
       return undefined
     } else {
-      return `/api/diff/${ownerName}/${repositoryName}/${path}?baseRefOid=${baseRefOid}&to=${headRefOid}`
+      const encodedPath = path.split('/').map(segment => encodeURIComponent(segment)).join('/')
+      return `/api/diff/${ownerName}/${repositoryName}/${encodedPath}?baseRefOid=${baseRefOid}&to=${headRefOid}`
     }
   }
   

@@ -47,6 +47,7 @@ type GraphQLGitHubRepositoryRef = {
 }
 
 type GraphQLPullRequest = {
+  readonly number: number
   readonly headRefName: string
   readonly baseRefName: string
   readonly baseRefOid: string
@@ -127,6 +128,7 @@ export default class GitHubProjectDataSource implements IGitHubRepositoryDataSou
             name: branch.node.name,
             baseRef: pr?.baseRefName,
             baseRefOid: pr?.baseRefOid,
+            prNumber: pr?.number,
             files: branch.node.target.tree.entries
           }
         })
@@ -168,6 +170,7 @@ export default class GitHubProjectDataSource implements IGitHubRepositoryDataSou
           pullRequests(first: 100, states: [OPEN]) {
             edges {
               node {
+                number
                 headRefName
                 baseRefName
                 baseRefOid
@@ -201,6 +204,7 @@ export default class GitHubProjectDataSource implements IGitHubRepositoryDataSou
         pullRequestEdges.forEach(edge => {
           const pr = edge.node
           pullRequests.set(pr.headRefName, {
+            number: pr.number,
             headRefName: pr.headRefName,
             baseRefName: pr.baseRefName,
             baseRefOid: pr.baseRefOid

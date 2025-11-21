@@ -35,10 +35,12 @@ export default class ProjectNavigator {
       return e.name == preferredSpecificationName
     })
     if (candidateSpecification) {
-      this.router.push(`/${project.owner}/${project.name}/${newVersion.id}/${candidateSpecification.id}`)
+      const encodedPath = this.encodePath(project.owner, project.name, newVersion.id, candidateSpecification.id)
+      this.router.push(encodedPath)
     } else {
       const defaultOrFirstSpecification = getDefaultSpecification(newVersion)
-      this.router.push(`/${project.owner}/${project.name}/${newVersion.id}/${defaultOrFirstSpecification.id}`)
+      const encodedPath = this.encodePath(project.owner, project.name, newVersion.id, defaultOrFirstSpecification.id)
+      this.router.push(encodedPath)
     }
   }
   
@@ -48,9 +50,10 @@ export default class ProjectNavigator {
     versionId: string,
     specificationId: string
   ) {
-    this.router.push(`/${projectOwner}/${projectName}/${versionId}/${specificationId}`)
+    const encodedPath = this.encodePath(projectOwner, projectName, versionId, specificationId)
+    this.router.push(encodedPath)
   }
-  
+
   navigateIfNeeded(selection: {
     projectOwner?: string
     projectName?: string
@@ -60,9 +63,15 @@ export default class ProjectNavigator {
     if (!selection.projectOwner || !selection.projectName || !selection.versionId || !selection.specificationId) {
       return
     }
-    const path = `/${selection.projectOwner}/${selection.projectName}/${selection.versionId}/${selection.specificationId}`
+    const path = this.encodePath(selection.projectOwner, selection.projectName, selection.versionId, selection.specificationId)
     if (path !== this.pathnameReader.pathname) {
       this.router.replace(path)
     }
+  }
+
+  private encodePath(owner: string, projectName: string, versionId: string, specificationId: string): string {
+    const encodedVersionId = versionId.split('/').map(segment => encodeURIComponent(segment)).join('/')
+    const encodedSpecificationId = encodeURIComponent(specificationId)
+    return `/${owner}/${projectName}/${encodedVersionId}/${encodedSpecificationId}`
   }
 }
