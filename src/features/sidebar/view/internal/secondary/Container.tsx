@@ -47,27 +47,20 @@ interface WrapperStackProps {
 
 const WrapperStack = styled(Stack, {
   shouldForwardProp: (prop) => prop !== "isSidebarOpen" && prop !== "sidebarWidth" && prop !== "diffWidth" && prop !== "isDiffOpen"
-})<WrapperStackProps>(({ theme, sidebarWidth, isSidebarOpen, diffWidth: _diffWidth, isDiffOpen }) => {
- 
-  
+})<WrapperStackProps>(({ theme, sidebarWidth, isSidebarOpen, diffWidth, isDiffOpen }) => {
   return {
     transition: theme.transitions.create(["margin", "width"], {
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.leavingScreen
     }),
     marginLeft: isSidebarOpen ? 0 : `-${sidebarWidth}px`,
-    ...(isSidebarOpen && {
+    marginRight: isDiffOpen ? 0 : `-${diffWidth}px`,
+    ...((isSidebarOpen || isDiffOpen) && {
       transition: theme.transitions.create(["margin", "width"], {
         easing: theme.transitions.easing.easeOut,
         duration: theme.transitions.duration.enteringScreen,
       }),
     }),
-    ...(isDiffOpen && {
-      transition: theme.transitions.create(["margin", "width"], {
-        easing: theme.transitions.easing.easeOut,
-        duration: theme.transitions.duration.enteringScreen,
-      }),
-    })
   };
 })
 
