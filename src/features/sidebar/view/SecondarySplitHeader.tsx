@@ -32,12 +32,14 @@ const SecondarySplitHeader = ({
         height: 64,
         margin: "auto"
       }}>
-        <ToggleSidebarButton
-          isSidebarOpen={isSidebarOpen}
-          onClick={setSidebarOpen}
-        />
-        <Box sx={{ display: "flex", flexGrow: 1, justifyContent: "end" }}> 
-          <Stack direction="row" alignItems="center">
+        <Box sx={{ flexShrink: 0 }}>
+          <ToggleSidebarButton
+            isSidebarOpen={isSidebarOpen}
+            onClick={setSidebarOpen}
+          />
+        </Box>
+        <Box sx={{ position: "relative", flexGrow: 1, overflow: "hidden", minWidth: 0, height: 40 }}>
+          <Stack direction="row" alignItems="center" sx={{ position: "absolute", right: 0, top: "50%", transform: "translateY(-50%)", whiteSpace: "nowrap" }}>
             {children}
             <Divider orientation="vertical" flexItem sx={{ marginLeft: 0.5, marginRight: 0.5 }} />
             {mobileToolbar && (
@@ -48,11 +50,13 @@ const SecondarySplitHeader = ({
             )}
           </Stack>
         </Box>
-        <ToggleDiffButton
-          isDiffbarOpen={isDiffbarOpen}
-          onClick={setDiffbarOpen}
-          isDiffAvailable={!!specification?.diffURL}
-        />
+        <Box sx={{ flexShrink: 0 }}>
+          <ToggleDiffButton
+            isDiffbarOpen={isDiffbarOpen}
+            onClick={setDiffbarOpen}
+            isDiffAvailable={!!specification?.diffURL}
+          />
+        </Box>
       </Box>
       {mobileToolbar && (
         <Collapse in={isMobileToolbarVisible}>
