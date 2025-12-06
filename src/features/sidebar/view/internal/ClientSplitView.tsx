@@ -10,6 +10,8 @@ import PrimaryContainer from "./primary/Container"
 import SecondaryContainer from "./secondary/Container"
 import RightContainer from "./tertiary/RightContainer"
 
+const isDiffFeatureEnabled = process.env.NEXT_PUBLIC_ENABLE_DIFF_SIDEBAR === "true"
+
 const ClientSplitView = ({
   sidebar,
   children,
@@ -51,7 +53,7 @@ const ClientSplitView = ({
   
   useKeyboardShortcut(event => {
     const isActionKey = isMac() ? event.metaKey : event.ctrlKey
-    if (isActionKey && event.key === "k") {
+    if (isDiffFeatureEnabled && isActionKey && event.key === "k") {
       event.preventDefault()
       setRightSidebarOpen(!isRightSidebarOpen)
     }

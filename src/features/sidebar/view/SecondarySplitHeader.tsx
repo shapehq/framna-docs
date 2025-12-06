@@ -11,6 +11,8 @@ import useDiffbarOpen from "@/features/sidebar/data/useDiffbarOpen"
 import ToggleMobileToolbarButton from "./internal/secondary/ToggleMobileToolbarButton"
 import { useProjectSelection } from "@/features/projects/data"
 
+const isDiffFeatureEnabled = process.env.NEXT_PUBLIC_ENABLE_DIFF_SIDEBAR === "true"
+
 const SecondarySplitHeader = ({
   mobileToolbar,
   children
@@ -48,11 +50,13 @@ const SecondarySplitHeader = ({
             )}
           </Stack>
         </Box>
-        <ToggleDiffButton
-          isDiffbarOpen={isDiffbarOpen}
-          onClick={setDiffbarOpen}
-          isDiffAvailable={!!specification?.diffURL}
-        />
+        {isDiffFeatureEnabled && (
+          <ToggleDiffButton
+            isDiffbarOpen={isDiffbarOpen}
+            onClick={setDiffbarOpen}
+            isDiffAvailable={!!specification?.diffURL}
+          />
+        )}
       </Box>
       {mobileToolbar && (
         <Collapse in={isMobileToolbarVisible}>
