@@ -3,12 +3,13 @@ import { Box, Button, Stack, Typography } from "@mui/material"
 import { signIn } from "@/composition"
 import { env } from "@/common"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
-import { faGithub } from "@fortawesome/free-brands-svg-icons"
+import { faGithub, faMicrosoft } from "@fortawesome/free-brands-svg-icons"
 import SignInTexts from "@/features/auth/view/SignInTexts"
 import MessageLinkFooter from "@/common/ui/MessageLinkFooter"
 
 const SITE_NAME = env.getOrThrow("FRAMNA_DOCS_TITLE")
 const HELP_URL = env.get("FRAMNA_DOCS_HELP_URL")
+const PROJECT_SOURCE_PROVIDER = env.get("PROJECT_SOURCE_PROVIDER") || "github"
 
 // Force page to be rendered dynamically to ensure we read the correct values for the environment variables.
 export const dynamic = "force-dynamic"
@@ -74,7 +75,7 @@ const SignInColumn = () => {
           }}>
             {title}
           </Typography>
-          <SignInWithGitHub />
+          <SignInButton />
         </Stack>
       </Box>
       {HELP_URL && (
@@ -89,20 +90,25 @@ const SignInColumn = () => {
   )
 }
 
-const SignInWithGitHub = () => {
+const SignInButton = () => {
+  const isAzureDevOps = PROJECT_SOURCE_PROVIDER === "azure-devops"
+  const providerId = isAzureDevOps ? "microsoft-entra-id" : "github"
+  const providerName = isAzureDevOps ? "Microsoft" : "GitHub"
+  const providerIcon = isAzureDevOps ? faMicrosoft : faGithub
+
   return (
     <form
       action={async () => {
         "use server"
-          await signIn("github", { redirectTo: "/" })
+        await signIn(providerId, { redirectTo: "/" })
       }}
     >
       <Button variant="outlined" type="submit">
         <Stack direction="row" alignItems="center" spacing={1} padding={1}>
-          <FontAwesomeIcon icon={faGithub} size="2xl" />
-            <Typography variant="h6" sx={{ display: "flex" }}>
-              Sign in with GitHub
-            </Typography>
+          <FontAwesomeIcon icon={providerIcon} size="2xl" />
+          <Typography variant="h6" sx={{ display: "flex" }}>
+            Sign in with {providerName}
+          </Typography>
         </Stack>
       </Button>
     </form>
