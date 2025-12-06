@@ -343,7 +343,7 @@ export const gitHubHookHandler = isGitHubProvider && gitHubClient ? new GitHubHo
       })
     })
   })
-) : null
+}) : null
 
 // Diff calculator only available for GitHub provider (requires GitHub-specific APIs)
 export const diffCalculator: IOasDiffCalculator | null = gitHubClient

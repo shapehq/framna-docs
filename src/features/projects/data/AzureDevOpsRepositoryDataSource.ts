@@ -116,7 +116,7 @@ export default class AzureDevOpsRepositoryDataSource implements IAzureDevOpsRepo
     const path = `${this.projectConfigurationFilename}${extension}`
     const content = await this.client.getFileContent(repositoryId, path, branchName)
 
-    if (content) {
+    if (content && typeof content === "string") {
       return { text: content }
     }
     return undefined
