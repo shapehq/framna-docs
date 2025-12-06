@@ -11,6 +11,8 @@ export class AzureDevOpsError extends Error {
     this.name = "AzureDevOpsError"
     this.status = status
     this.isAuthError = isAuthError
+    // Restore prototype chain - required for instanceof to work with Error subclasses in TypeScript
+    Object.setPrototypeOf(this, AzureDevOpsError.prototype)
   }
 }
 
