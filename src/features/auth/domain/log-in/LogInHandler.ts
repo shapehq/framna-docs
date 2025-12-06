@@ -13,15 +13,15 @@ export default class LogInHandler implements ILogInHandler {
     if (!account) {
       return false
     }
-    if (account.provider === "github") {
-      return await this.handleLogInForGitHubUser({ user, account })
+    if (account.provider === "github" || account.provider === "microsoft-entra-id") {
+      return await this.handleLogInForOAuthUser({ user, account })
     } else {
       console.error("Unhandled account provider: " + account.provider)
       return false
     }
   }
   
-  private async handleLogInForGitHubUser({ user, account }: { user: IUser, account: IAccount }) {
+  private async handleLogInForOAuthUser({ user, account }: { user: IUser, account: IAccount }) {
     if (!user.id) {
       return false
     }
