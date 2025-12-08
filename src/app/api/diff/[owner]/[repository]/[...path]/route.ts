@@ -14,6 +14,13 @@ export async function GET(req: NextRequest, { params }: { params: Promise<GetDif
     return makeUnauthenticatedAPIErrorResponse()
   }
 
+  if (!diffCalculator) {
+    return NextResponse.json(
+      { error: "Diff calculation is not available for this provider" },
+      { status: 501 }
+    )
+  }
+
   const { path: paramsPath, owner, repository } = await params
   const path = paramsPath.join("/")
 

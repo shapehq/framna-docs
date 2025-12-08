@@ -4,7 +4,7 @@
 
 <div align="center">
 <h3>👋 Welcome to Framna Docs</h3>
-<h4>Self-hosted web portal that centralizes OpenAPI documentation and facilitates spec-driven development, built with GitHub-based authorization.</h4>
+<h4>Self-hosted web portal that centralizes OpenAPI documentation and facilitates spec-driven development, with support for GitHub and Azure DevOps.</h4>
 </div>
 
 <div align="center">
@@ -54,15 +54,43 @@ brew install oasdiff
 
 ## 👨‍🔧 How does it work?
 
-Framna Docs uses [OpenAPI specifications](https://swagger.io) from GitHub repositories. Users log in with their GitHub account to access documentation for projects they have access to. A repository only needs an OpenAPI spec to be recognized by Framna Docs, but customization is possible with a .framna-docs.yml file. Here's an example:
+Framna Docs uses [OpenAPI specifications](https://swagger.io) from GitHub or Azure DevOps repositories. Users log in with their GitHub or Microsoft Entra ID account (depending on the configured provider) to access documentation for projects they have access to. A repository only needs an OpenAPI spec to be recognized by Framna Docs, but customization is possible with a .framna-docs.yml file. Here's an example:
 
 <img width="650" src="https://github.com/shapehq/framna-docs/raw/main/wiki/example-openapi-repository-with-config.png?raw=true"/>
 
-Framna Docs supports spec-driven development by requiring OpenAPI specs in GitHub repos, ensuring version control and peer review. When a pull request is opened, Framna Docs comments with links to preview the documentation:
+Framna Docs supports spec-driven development by requiring OpenAPI specs in version-controlled repositories, ensuring peer review. When using GitHub, Framna Docs comments on pull requests with links to preview the documentation:
 
 <img width="760" src="https://github.com/shapehq/framna-docs/raw/main/wiki/pr-comment.png?raw=true"/>
 
 Learn more from the [Adding Documentation](https://github.com/shapehq/framna-docs/wiki/Adding-Documentation-to-Framna-Docs), [Browsing Documentation](https://github.com/shapehq/framna-docs/wiki/Browsing-Documentation), and [Updating Documentation](https://github.com/shapehq/framna-docs/wiki/Updating-Documentation) articles in the wiki.
+
+### Provider Configuration
+
+Framna Docs supports two project source providers: **GitHub** (default) and **Azure DevOps**. Set the `PROJECT_SOURCE_PROVIDER` environment variable to choose your provider.
+
+#### GitHub (default)
+
+```bash
+PROJECT_SOURCE_PROVIDER=github
+GITHUB_CLIENT_ID=...
+GITHUB_CLIENT_SECRET=...
+GITHUB_APP_ID=...
+GITHUB_PRIVATE_KEY_BASE_64=...
+```
+
+#### Azure DevOps
+
+Azure DevOps uses Microsoft Entra ID (formerly Azure AD) for authentication:
+
+```bash
+PROJECT_SOURCE_PROVIDER=azure-devops
+AZURE_ENTRA_ID_CLIENT_ID=...
+AZURE_ENTRA_ID_CLIENT_SECRET=...
+AZURE_ENTRA_ID_TENANT_ID=...
+AZURE_DEVOPS_ORGANIZATION=your-organization
+```
+
+See `.env.example` for a full list of configuration options.
 
 ## 👩‍💻 How can I contribute?
 

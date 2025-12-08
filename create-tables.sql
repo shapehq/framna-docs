@@ -41,9 +41,9 @@ CREATE TABLE oauth_tokens
 (
   user_id VARCHAR(255) NOT NULL,
   provider VARCHAR(255) NOT NULL,
-  access_token VARCHAR(255) NOT NULL,
-  refresh_token VARCHAR(255) NOT NULL,
+  access_token TEXT NOT NULL,
+  refresh_token TEXT NOT NULL,
   last_updated_at timestamptz NOT NULL DEFAULT now(),
-  
+
   PRIMARY KEY (user_id, provider)
 );

@@ -1,23 +1,27 @@
 import Image from "next/image"
-import { Box, Button, Stack, Typography } from "@mui/material"
-import { signIn } from "@/composition"
+import { Box, Stack, Typography } from "@mui/material"
 import { env } from "@/common"
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
-import { faGithub } from "@fortawesome/free-brands-svg-icons"
 import SignInTexts from "@/features/auth/view/SignInTexts"
 import MessageLinkFooter from "@/common/ui/MessageLinkFooter"
+import SignInButton from "./SignInButton"
 
 const SITE_NAME = env.getOrThrow("FRAMNA_DOCS_TITLE")
 const HELP_URL = env.get("FRAMNA_DOCS_HELP_URL")
+const PROJECT_SOURCE_PROVIDER = env.get("PROJECT_SOURCE_PROVIDER") || "github"
 
 // Force page to be rendered dynamically to ensure we read the correct values for the environment variables.
 export const dynamic = "force-dynamic"
- 
+
 export default async function Page() {
+  const isAzureDevOps = PROJECT_SOURCE_PROVIDER === "azure-devops"
+  const providerId = isAzureDevOps ? "microsoft-entra-id" : "github"
+
   return (
     <Box display="flex" height="100vh">
-      <InfoColumn/>
-      <SignInColumn/>
+      <InfoColumn />
+      <SignInColumn
+        providerId={providerId}
+      />
     </Box>
   )
 }
@@ -36,7 +40,11 @@ const InfoColumn = () => {
   )
 }
 
-const SignInColumn = () => {
+interface SignInColumnProps {
+  providerId: string
+}
+
+const SignInColumn = ({ providerId }: SignInColumnProps) => {
   const title = `Get started with ${SITE_NAME}`
   return (
     <Box
@@ -74,37 +82,17 @@ const SignInColumn = () => {
           }}>
             {title}
           </Typography>
-          <SignInWithGitHub />
+          <SignInButton providerId={providerId} />
         </Stack>
       </Box>
       {HELP_URL && (
         <Box sx={{ marginBottom: 2 }}>
-          <MessageLinkFooter 
+          <MessageLinkFooter
             url={HELP_URL}
             content={`Learn more about ${SITE_NAME}`}
           />
         </Box>
-      )}  
+      )}
     </Box>
-  )
-}
-
-const SignInWithGitHub = () => {
-  return (
-    <form
-      action={async () => {
-        "use server"
-          await signIn("github", { redirectTo: "/" })
-      }}
-    >
-      <Button variant="outlined" type="submit">
-        <Stack direction="row" alignItems="center" spacing={1} padding={1}>
-          <FontAwesomeIcon icon={faGithub} size="2xl" />
-            <Typography variant="h6" sx={{ display: "flex" }}>
-              Sign in with GitHub
-            </Typography>
-        </Stack>
-      </Button>
-    </form>
   )
 }

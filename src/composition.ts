@@ -1,6 +1,8 @@
 import { Pool } from "pg"
 import NextAuth from "next-auth"
+import type { Provider } from "next-auth/providers"
 import GithubProvider from "next-auth/providers/github"
+import MicrosoftEntraID from "next-auth/providers/microsoft-entra-id"
 import PostgresAdapter from "@auth/pg-adapter"
 import RedisKeyedMutexFactory from "@/common/mutex/RedisKeyedMutexFactory"
 import RedisKeyValueStore from "@/common/key-value-store/RedisKeyValueStore"
@@ -15,18 +17,24 @@ import {
   SessionMutexFactory,
   listFromCommaSeparatedString
 } from "@/common"
+import { AzureDevOpsClient, OAuthTokenRefreshingAzureDevOpsClient } from "@/common/azure-devops"
+import { GitHubBlobProvider, AzureDevOpsBlobProvider, IBlobProvider } from "@/common/blob"
 import {
   GitHubLoginDataSource,
   GitHubProjectDataSource,
-  GitHubRepositoryDataSource
+  GitHubRepositoryDataSource,
+  AzureDevOpsRepositoryDataSource,
+  AzureDevOpsProjectDataSource
 } from "@/features/projects/data"
 import {
   CachingProjectDataSource,
   FilteringGitHubRepositoryDataSource,
-  ProjectRepository
+  ProjectRepository,
+  IProjectDataSource
 } from "@/features/projects/domain"
 import {
-  GitHubOAuthTokenRefresher
+  GitHubOAuthTokenRefresher,
+  AzureDevOpsOAuthTokenRefresher
 } from "@/features/auth/data"
 import {
   AuthjsAccountsOAuthTokenRepository,
@@ -39,7 +47,8 @@ import {
   OAuthTokenRepository,
   OAuthTokenSessionValidator,
   PersistingOAuthTokenRefresher,
-  UserDataCleanUpLogOutHandler
+  UserDataCleanUpLogOutHandler,
+  IOAuthTokenRefresher
 } from "@/features/auth/domain"
 import {
   GitHubHookHandler
@@ -56,14 +65,31 @@ import RemoteConfigEncoder from "./features/projects/domain/RemoteConfigEncoder"
 import { OasDiffCalculator } from "./features/diff/data/OasDiffCalculator"
 import { IOasDiffCalculator } from "./features/diff/data/IOasDiffCalculator"
 
-const gitHubAppCredentials = {
+// Provider configuration
+const projectSourceProvider = env.get("PROJECT_SOURCE_PROVIDER") || "github"
+const isGitHubProvider = projectSourceProvider === "github"
+const isAzureDevOpsProvider = projectSourceProvider === "azure-devops"
+
+// Microsoft's registered Application ID for Azure DevOps
+const AZURE_DEVOPS_RESOURCE_ID = "499b84ac-1321-427f-aa17-267ca6975798"
+
+// GitHub credentials (only loaded if using GitHub provider)
+const gitHubAppCredentials = isGitHubProvider ? {
   appId: env.getOrThrow("GITHUB_APP_ID"),
   clientId: env.getOrThrow("GITHUB_CLIENT_ID"),
   clientSecret: env.getOrThrow("GITHUB_CLIENT_SECRET"),
   privateKey: Buffer
     .from(env.getOrThrow("GITHUB_PRIVATE_KEY_BASE_64"), "base64")
     .toString("utf-8")
-}
+} : null
+
+// Azure DevOps credentials (only loaded if using Azure DevOps provider)
+const azureDevOpsCredentials = isAzureDevOpsProvider ? {
+  clientId: env.getOrThrow("AZURE_ENTRA_ID_CLIENT_ID"),
+  clientSecret: env.getOrThrow("AZURE_ENTRA_ID_CLIENT_SECRET"),
+  tenantId: env.getOrThrow("AZURE_ENTRA_ID_TENANT_ID"),
+  organization: env.getOrThrow("AZURE_DEVOPS_ORGANIZATION")
+} : null
 
 const pool = new Pool({
   host: env.getOrThrow("POSTGRESQL_HOST"),
@@ -77,12 +103,47 @@ const pool = new Pool({
 
 const db = new PostgreSQLDB({ pool })
 
+// The NextAuth provider ID differs from our config value
+const authProviderName = isAzureDevOpsProvider ? "microsoft-entra-id" : "github"
+
 const oauthTokenRepository = new FallbackOAuthTokenRepository({
-  primaryRepository: new OAuthTokenRepository({ db, provider: "github" }),
-  secondaryRepository: new AuthjsAccountsOAuthTokenRepository({ db, provider: "github" })
+  primaryRepository: new OAuthTokenRepository({ db, provider: authProviderName }),
+  secondaryRepository: new AuthjsAccountsOAuthTokenRepository({ db, provider: authProviderName })
 })
 
 const logInHandler = new LogInHandler({ oauthTokenRepository })
+
+// Build auth providers based on configuration
+function getAuthProviders(): Provider[] {
+  if (isGitHubProvider && gitHubAppCredentials) {
+    return [
+      GithubProvider({
+        clientId: gitHubAppCredentials.clientId,
+        clientSecret: gitHubAppCredentials.clientSecret,
+        authorization: {
+          params: {
+            scope: "repo"
+          }
+        }
+      })
+    ]
+  } else if (isAzureDevOpsProvider && azureDevOpsCredentials) {
+    return [
+      MicrosoftEntraID({
+        clientId: azureDevOpsCredentials.clientId,
+        clientSecret: azureDevOpsCredentials.clientSecret,
+        issuer: `https://login.microsoftonline.com/${azureDevOpsCredentials.tenantId}/v2.0`,
+        authorization: {
+          params: {
+            // Request Azure DevOps API access + offline_access for refresh tokens
+            scope: `openid profile email offline_access ${AZURE_DEVOPS_RESOURCE_ID}/.default`
+          }
+        }
+      })
+    ]
+  }
+  throw new Error(`Unsupported PROJECT_SOURCE_PROVIDER: ${projectSourceProvider}`)
+}
 
 export const { signIn, auth, handlers: authHandlers } = NextAuth({
   adapter: PostgresAdapter(pool),
@@ -95,17 +156,7 @@ export const { signIn, auth, handlers: authHandlers } = NextAuth({
   pages: {
     signIn: "/auth/signin"
   },
-  providers: [
-    GithubProvider({
-      clientId: env.getOrThrow("GITHUB_CLIENT_ID"),
-      clientSecret: env.getOrThrow("GITHUB_CLIENT_SECRET"),
-      authorization: {
-        params: {
-          scope: "repo"
-        }
-      }
-    })
-  ],
+  providers: getAuthProviders(),
   session: {
     strategy: "database"
   },
@@ -137,6 +188,20 @@ const oauthTokenDataSource = new OAuthTokenDataSource({
   repository: oauthTokenRepository
 })
 
+// Build OAuth token refresher based on provider
+function getOAuthTokenRefresher(): IOAuthTokenRefresher {
+  if (isGitHubProvider && gitHubAppCredentials) {
+    return new GitHubOAuthTokenRefresher(gitHubAppCredentials)
+  } else if (isAzureDevOpsProvider && azureDevOpsCredentials) {
+    return new AzureDevOpsOAuthTokenRefresher({
+      clientId: azureDevOpsCredentials.clientId,
+      clientSecret: azureDevOpsCredentials.clientSecret,
+      tenantId: azureDevOpsCredentials.tenantId
+    })
+  }
+  throw new Error(`Unsupported PROJECT_SOURCE_PROVIDER: ${projectSourceProvider}`)
+}
+
 const oauthTokenRefresher = new LockingOAuthTokenRefresher({
   mutexFactory: new SessionMutexFactory({
     baseKey: "mutexLockingOAuthTokenRefresher",
@@ -146,25 +211,50 @@ const oauthTokenRefresher = new LockingOAuthTokenRefresher({
   oauthTokenRefresher: new PersistingOAuthTokenRefresher({
     userIdReader: session,
     oauthTokenRepository,
-    oauthTokenRefresher: new GitHubOAuthTokenRefresher(gitHubAppCredentials)
+    oauthTokenRefresher: getOAuthTokenRefresher()
   })
 })
 
-const gitHubClient = new GitHubClient({
+// GitHub-specific clients (only used for GitHub provider)
+const gitHubClient = isGitHubProvider && gitHubAppCredentials ? new GitHubClient({
   ...gitHubAppCredentials,
   oauthTokenDataSource
-})
+}) : null
 
-const repoRestrictedGitHubClient = new RepoRestrictedGitHubClient({
+const repoRestrictedGitHubClient = gitHubClient ? new RepoRestrictedGitHubClient({
   repositoryNameSuffix: env.getOrThrow("REPOSITORY_NAME_SUFFIX"),
   gitHubClient
-})
+}) : null
 
-export const userGitHubClient = new OAuthTokenRefreshingGitHubClient({
+export const userGitHubClient = repoRestrictedGitHubClient ? new OAuthTokenRefreshingGitHubClient({
   gitHubClient: repoRestrictedGitHubClient,
   oauthTokenDataSource,
   oauthTokenRefresher
-})
+}) : null
+
+// Azure DevOps client (only used for Azure DevOps provider)
+const baseAzureDevOpsClient = isAzureDevOpsProvider && azureDevOpsCredentials ? new AzureDevOpsClient({
+  organization: azureDevOpsCredentials.organization,
+  oauthTokenDataSource
+}) : null
+
+export const azureDevOpsClient = baseAzureDevOpsClient ? new OAuthTokenRefreshingAzureDevOpsClient({
+  client: baseAzureDevOpsClient,
+  oauthTokenDataSource,
+  oauthTokenRefresher
+}) : null
+
+// Blob provider for fetching file content
+function getBlobProvider(): IBlobProvider {
+  if (userGitHubClient) {
+    return new GitHubBlobProvider({ gitHubClient: userGitHubClient })
+  } else if (azureDevOpsClient) {
+    return new AzureDevOpsBlobProvider({ client: azureDevOpsClient })
+  }
+  throw new Error(`No blob provider available for PROJECT_SOURCE_PROVIDER: ${projectSourceProvider}`)
+}
+
+export const blobProvider = getBlobProvider()
 
 export const blockingSessionValidator = new OAuthTokenSessionValidator({
   oauthTokenDataSource
@@ -187,23 +277,43 @@ export const encryptionService = new RsaEncryptionService({
 
 export const remoteConfigEncoder = new RemoteConfigEncoder(encryptionService)
 
-export const projectDataSource = new CachingProjectDataSource({
-  dataSource: new GitHubProjectDataSource({
-    repositoryDataSource: new FilteringGitHubRepositoryDataSource({
-      hiddenRepositories: listFromCommaSeparatedString(env.get("HIDDEN_REPOSITORIES")),
-      dataSource: new GitHubRepositoryDataSource({
-        loginsDataSource: new GitHubLoginDataSource({
-          graphQlClient: userGitHubClient
-        }),
-        graphQlClient: userGitHubClient,
+// Build project data source based on provider
+function getProjectDataSource(): IProjectDataSource {
+  if (isGitHubProvider && userGitHubClient) {
+    return new GitHubProjectDataSource({
+      repositoryDataSource: new FilteringGitHubRepositoryDataSource({
+        hiddenRepositories: listFromCommaSeparatedString(env.get("HIDDEN_REPOSITORIES")),
+        dataSource: new GitHubRepositoryDataSource({
+          loginsDataSource: new GitHubLoginDataSource({
+            graphQlClient: userGitHubClient
+          }),
+          graphQlClient: userGitHubClient,
+          repositoryNameSuffix: env.getOrThrow("REPOSITORY_NAME_SUFFIX"),
+          projectConfigurationFilename: env.getOrThrow("FRAMNA_DOCS_PROJECT_CONFIGURATION_FILENAME")
+        })
+      }),
+      repositoryNameSuffix: env.getOrThrow("REPOSITORY_NAME_SUFFIX"),
+      encryptionService: encryptionService,
+      remoteConfigEncoder: remoteConfigEncoder
+    })
+  } else if (isAzureDevOpsProvider && azureDevOpsClient && azureDevOpsCredentials) {
+    return new AzureDevOpsProjectDataSource({
+      repositoryDataSource: new AzureDevOpsRepositoryDataSource({
+        client: azureDevOpsClient,
+        organization: azureDevOpsCredentials.organization,
         repositoryNameSuffix: env.getOrThrow("REPOSITORY_NAME_SUFFIX"),
         projectConfigurationFilename: env.getOrThrow("FRAMNA_DOCS_PROJECT_CONFIGURATION_FILENAME")
-      })
-    }),
-    repositoryNameSuffix: env.getOrThrow("REPOSITORY_NAME_SUFFIX"),
-    encryptionService: encryptionService,
-    remoteConfigEncoder: remoteConfigEncoder
-  }),
+      }),
+      repositoryNameSuffix: env.getOrThrow("REPOSITORY_NAME_SUFFIX"),
+      encryptionService: encryptionService,
+      remoteConfigEncoder: remoteConfigEncoder
+    })
+  }
+  throw new Error(`Unsupported PROJECT_SOURCE_PROVIDER: ${projectSourceProvider}`)
+}
+
+export const projectDataSource = new CachingProjectDataSource({
+  dataSource: getProjectDataSource(),
   repository: projectRepository
 })
 
@@ -213,7 +323,8 @@ export const logOutHandler = new ErrorIgnoringLogOutHandler(
   ])
 )
 
-export const gitHubHookHandler = new GitHubHookHandler({
+// GitHub webhook handler (only available for GitHub provider)
+export const gitHubHookHandler = isGitHubProvider && gitHubClient ? new GitHubHookHandler({
   secret: env.getOrThrow("GITHUB_WEBHOOK_SECRET"),
   pullRequestEventHandler: new FilteringPullRequestEventHandler({
     filter: new RepositoryNameEventFilter({
@@ -232,6 +343,9 @@ export const gitHubHookHandler = new GitHubHookHandler({
       })
     })
   })
-})
+}) : null
 
-export const diffCalculator: IOasDiffCalculator = new OasDiffCalculator(gitHubClient)
+// Diff calculator only available for GitHub provider (requires GitHub-specific APIs)
+export const diffCalculator: IOasDiffCalculator | null = gitHubClient
+  ? new OasDiffCalculator(gitHubClient)
+  : null
