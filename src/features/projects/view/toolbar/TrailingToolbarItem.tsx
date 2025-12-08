@@ -68,7 +68,7 @@ const TrailingToolbarItem = () => {
           <Divider orientation="vertical" flexItem sx={{ marginLeft: 1, marginRight: 1 }} />
         }
         {specification.editURL &&
-          <Tooltip title={`Edit ${specification.name}`}>
+          <Tooltip title={`Edit ${specification.name}`} sx={{ marginLeft: 0.5, marginRight: 0.5 }}>
             <IconButton
               href={specification.editURL}
               target="_blank"
@@ -83,6 +83,7 @@ const TrailingToolbarItem = () => {
             </IconButton>
           </Tooltip>
         }
+
       </Stack>
     </>
   )

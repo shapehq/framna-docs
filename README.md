@@ -41,6 +41,17 @@ Please refer to the following articles in [the wiki](https://github.com/shapehq/
 - [Updating Documentation](https://github.com/shapehq/framna-docs/wiki/Updating-Documentation)
 - [Deploying Framna Docs](https://github.com/shapehq/framna-docs/wiki/Deploying-Framna-Docs)
 
+### Install the OpenAPI diff tool locally
+
+Framna Docs relies on the [`oasdiff`](https://github.com/oasdiff/oasdiff) CLI when comparing specifications.  
+
+On MacOS you can install with homebrew:
+
+```bash
+brew tap oasdiff/homebrew-oasdiff
+brew install oasdiff
+```
+
 ## 👨‍🔧 How does it work?
 
 Framna Docs uses [OpenAPI specifications](https://swagger.io) from GitHub repositories. Users log in with their GitHub account to access documentation for projects they have access to. A repository only needs an OpenAPI spec to be recognized by Framna Docs, but customization is possible with a .framna-docs.yml file. Here's an example:

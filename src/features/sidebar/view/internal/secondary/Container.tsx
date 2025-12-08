@@ -6,11 +6,15 @@ import CustomTopLoader from "@/common/ui/CustomTopLoader"
 const SecondaryContainer = ({
   sidebarWidth,
   offsetContent,
+  diffWidth,
+  offsetDiffContent,
   children,
   isSM,
 }: {
   sidebarWidth: number
   offsetContent: boolean
+  diffWidth?: number
+  offsetDiffContent?: boolean
   children?: React.ReactNode,
   isSM: boolean,
 }) => {
@@ -21,6 +25,8 @@ const SecondaryContainer = ({
     
         sidebarWidth={isSM ? sidebarWidth : 0}
         isSidebarOpen={isSM ? offsetContent:  false}
+        diffWidth={isSM ? (diffWidth || 0) : 0}
+        isDiffOpen={isSM ? (offsetDiffContent || false) : false}
         sx={{ ...sx }}
       >
         {children}
@@ -35,33 +41,41 @@ export default SecondaryContainer
 interface WrapperStackProps {
   readonly sidebarWidth: number
   readonly isSidebarOpen: boolean
+  readonly diffWidth: number
+  readonly isDiffOpen: boolean
 }
 
 const WrapperStack = styled(Stack, {
-  shouldForwardProp: (prop) => prop !== "isSidebarOpen" && prop !== "sidebarWidth"
-})<WrapperStackProps>(({ theme, sidebarWidth, isSidebarOpen }) => ({
-  transition: theme.transitions.create("margin", {
-    easing: theme.transitions.easing.sharp,
-    duration: theme.transitions.duration.leavingScreen
-  }),
-  marginLeft: `-${sidebarWidth}px`,
-  ...(isSidebarOpen && {
-    transition: theme.transitions.create("margin", {
-      easing: theme.transitions.easing.easeOut,
-      duration: theme.transitions.duration.enteringScreen,
+  shouldForwardProp: (prop) => prop !== "isSidebarOpen" && prop !== "sidebarWidth" && prop !== "diffWidth" && prop !== "isDiffOpen"
+})<WrapperStackProps>(({ theme, sidebarWidth, isSidebarOpen, diffWidth, isDiffOpen }) => {
+  return {
+    transition: theme.transitions.create(["margin", "width"], {
+      easing: theme.transitions.easing.sharp,
+      duration: theme.transitions.duration.leavingScreen
     }),
-    marginLeft: 0
-  })
-}))
+    marginLeft: isSidebarOpen ? 0 : `-${sidebarWidth}px`,
+    marginRight: isDiffOpen ? 0 : `-${diffWidth}px`,
+    ...((isSidebarOpen || isDiffOpen) && {
+      transition: theme.transitions.create(["margin", "width"], {
+        easing: theme.transitions.easing.easeOut,
+        duration: theme.transitions.duration.enteringScreen,
+      }),
+    }),
+  };
+})
 
 const InnerSecondaryContainer = ({
   sidebarWidth,
   isSidebarOpen,
+  diffWidth,
+  isDiffOpen,
   children,
   sx
 }: {
   sidebarWidth: number
   isSidebarOpen: boolean
+  diffWidth: number
+  isDiffOpen: boolean
   children: React.ReactNode
   sx?: SxProps
 }) => {
@@ -71,6 +85,8 @@ const InnerSecondaryContainer = ({
       spacing={0}
       sidebarWidth={sidebarWidth}
       isSidebarOpen={isSidebarOpen}
+      diffWidth={diffWidth}
+      isDiffOpen={isDiffOpen}
       sx={{ ...sx, width: "100%", overflowY: "auto" }}
       
     >
