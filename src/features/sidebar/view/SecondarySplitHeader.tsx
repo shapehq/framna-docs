@@ -123,9 +123,12 @@ const ToggleDiffButton = ({
   isDiffAvailable: boolean
 }) => {
   const [isMac, setIsMac] = useState(false)
+  // Prevent flash of button during SSR/hydration. Only render after client mount.
+  const [mounted, setMounted] = useState(false)
   useEffect(() => {
     // checkIsMac uses window so we delay the check.
     const timeout = window.setTimeout(() => {
+      setMounted(true)
       setIsMac(checkIsMac())
     }, 0)
     return () => window.clearTimeout(timeout)
@@ -138,6 +141,7 @@ const ToggleDiffButton = ({
     : isDiffbarOpen
     ? "Hide changes"
     : "Show changes"
+  if (!mounted) return null
   return (
     <Box sx={{ display: isSidebarTogglable ? "block" : "none" }}>
 

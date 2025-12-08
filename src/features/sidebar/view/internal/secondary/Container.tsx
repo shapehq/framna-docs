@@ -1,3 +1,6 @@
+"use client"
+
+import { useState, useEffect } from "react"
 import { SxProps } from "@mui/system"
 import { Box, Stack } from "@mui/material"
 import { styled } from "@mui/material/styles"
@@ -18,15 +21,23 @@ const SecondaryContainer = ({
   children?: React.ReactNode,
   isSM: boolean,
 }) => {
+  // Disable transitions on initial render to prevent layout shift
+  const [enableTransitions, setEnableTransitions] = useState(false)
+  useEffect(() => {
+    // Enable transitions after first paint
+    const rafId = requestAnimationFrame(() => setEnableTransitions(true))
+    return () => cancelAnimationFrame(rafId)
+  }, [])
+
   const sx = { overflow: "hidden" }
   return (
     <>
       <InnerSecondaryContainer
-    
         sidebarWidth={isSM ? sidebarWidth : 0}
         isSidebarOpen={isSM ? offsetContent:  false}
         diffWidth={isSM ? (diffWidth || 0) : 0}
         isDiffOpen={isSM ? (offsetDiffContent || false) : false}
+        enableTransitions={enableTransitions}
         sx={{ ...sx }}
       >
         {children}
@@ -43,19 +54,20 @@ interface WrapperStackProps {
   readonly isSidebarOpen: boolean
   readonly diffWidth: number
   readonly isDiffOpen: boolean
+  readonly enableTransitions: boolean
 }
 
 const WrapperStack = styled(Stack, {
-  shouldForwardProp: (prop) => prop !== "isSidebarOpen" && prop !== "sidebarWidth" && prop !== "diffWidth" && prop !== "isDiffOpen"
-})<WrapperStackProps>(({ theme, sidebarWidth, isSidebarOpen, diffWidth, isDiffOpen }) => {
+  shouldForwardProp: (prop) => prop !== "isSidebarOpen" && prop !== "sidebarWidth" && prop !== "diffWidth" && prop !== "isDiffOpen" && prop !== "enableTransitions"
+})<WrapperStackProps>(({ theme, sidebarWidth, isSidebarOpen, diffWidth, isDiffOpen, enableTransitions }) => {
   return {
-    transition: theme.transitions.create(["margin", "width"], {
+    transition: enableTransitions ? theme.transitions.create(["margin", "width"], {
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.leavingScreen
-    }),
+    }) : "none",
     marginLeft: isSidebarOpen ? 0 : `-${sidebarWidth}px`,
     marginRight: isDiffOpen ? 0 : `-${diffWidth}px`,
-    ...((isSidebarOpen || isDiffOpen) && {
+    ...((isSidebarOpen || isDiffOpen) && enableTransitions && {
       transition: theme.transitions.create(["margin", "width"], {
         easing: theme.transitions.easing.easeOut,
         duration: theme.transitions.duration.enteringScreen,
@@ -69,6 +81,7 @@ const InnerSecondaryContainer = ({
   isSidebarOpen,
   diffWidth,
   isDiffOpen,
+  enableTransitions,
   children,
   sx
 }: {
@@ -76,6 +89,7 @@ const InnerSecondaryContainer = ({
   isSidebarOpen: boolean
   diffWidth: number
   isDiffOpen: boolean
+  enableTransitions: boolean
   children: React.ReactNode
   sx?: SxProps
 }) => {
@@ -87,8 +101,9 @@ const InnerSecondaryContainer = ({
       isSidebarOpen={isSidebarOpen}
       diffWidth={diffWidth}
       isDiffOpen={isDiffOpen}
+      enableTransitions={enableTransitions}
       sx={{ ...sx, width: "100%", overflowY: "auto" }}
-      
+
     >
       <RaisedMainContent>
         {children}

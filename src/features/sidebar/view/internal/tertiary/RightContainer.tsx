@@ -1,5 +1,6 @@
 'use client'
 
+import { useState, useEffect } from "react"
 import { SxProps } from "@mui/system"
 import { Drawer as MuiDrawer } from "@mui/material"
 import { useTheme } from "@mui/material/styles"
@@ -15,6 +16,12 @@ const RightContainer = ({
   onClose?: () => void
   children?: React.ReactNode
 }) => {
+  // Don't render drawer until client-side to prevent flash
+  const [mounted, setMounted] = useState(false)
+  useEffect(() => {
+    requestAnimationFrame(() => setMounted(true))
+  }, [])
+  if (!mounted) return null
   return (
     <>
       <InnerRightContainer
