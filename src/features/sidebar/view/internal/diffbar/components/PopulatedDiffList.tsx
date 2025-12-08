@@ -26,6 +26,8 @@ const PopulatedDiffList = ({
           key={change.id}
           path={change?.path}
           text={change?.text}
+          level={change?.level}
+          operation={change?.operation}
           selected={selectedChange === i}
           onClick={() => onClick(i)}
         />

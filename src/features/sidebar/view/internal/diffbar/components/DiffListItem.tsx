@@ -4,17 +4,37 @@ import { Box, Typography, ListItem, ListItemButton, Stack } from "@mui/material"
 import MenuItemHover from "@/common/ui/MenuItemHover"
 import MonoQuotedText from "./MonoQuotedText"
 
+type Level = 1 | 2 | 3
+
+const getLevelConfig = (level: Level) => {
+  switch (level) {
+    case 3:
+      return { label: "breaking", color: "#e88388" }
+    case 2:
+      return { label: "warn", color: "#dbab79" }
+    case 1:
+    default:
+      return { label: "info", color: "#66c2cd" }
+  }
+}
+
 const DiffListItem = ({
   path,
   text,
+  level,
+  operation,
   selected,
   onClick,
 }: {
   path?: string
   text?: string
+  level?: number
+  operation?: string
   selected: boolean
   onClick: () => void
 }) => {
+  const levelConfig = getLevelConfig((level ?? 1) as Level)
+
   return (
     <ListItem disableGutters disablePadding>
       <ListItemButton
@@ -31,26 +51,61 @@ const DiffListItem = ({
                 flexDirection: "column",
                 minWidth: 0,
                 flex: 1,
-                gap: 1.25,
+                gap: 0.75,
               }}
             >
-              {path && (
+              <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
                 <Typography
-                  variant="body0"
+                  component="span"
                   sx={{
                     fontFamily: "Segoe UI Mono, monospace",
                     fontWeight: 700,
-                    letterSpacing: 0.1,
-                    wordBreak: "break-word",
+                    fontSize: "0.75rem",
+                    color: levelConfig.color,
+                    textTransform: "lowercase",
                   }}
                 >
-                  {path}
+                  {levelConfig.label}
                 </Typography>
-              )}
+                {operation && path && (
+                  <Typography
+                    component="span"
+                    sx={{
+                      fontFamily: "Segoe UI Mono, monospace",
+                      fontSize: "0.8rem",
+                      color: "text.secondary",
+                    }}
+                  >
+                    at{" "}
+                    <Box
+                      component="span"
+                      sx={{ fontWeight: 600, color: "text.primary" }}
+                    >
+                      {operation}
+                    </Box>{" "}
+                    <Box component="span" sx={{ wordBreak: "break-word" }}>
+                      {path}
+                    </Box>
+                  </Typography>
+                )}
+                {!operation && path && (
+                  <Typography
+                    component="span"
+                    sx={{
+                      fontFamily: "Segoe UI Mono, monospace",
+                      fontSize: "0.8rem",
+                      color: "text.secondary",
+                      wordBreak: "break-word",
+                    }}
+                  >
+                    {path}
+                  </Typography>
+                )}
+              </Box>
               {text && (
                 <Typography
                   variant="body0"
-                  sx={{ wordBreak: "break-word" }}
+                  sx={{ wordBreak: "break-word", pl: 0.5 }}
                 >
                   <MonoQuotedText text={text} />
                 </Typography>

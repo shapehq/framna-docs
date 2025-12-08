@@ -13,9 +13,25 @@ import {
 import { softPaperSx } from "@/common/theme/theme"
 import MonoQuotedText from "./MonoQuotedText"
 
+type Level = 1 | 2 | 3
+
+const getLevelConfig = (level: Level) => {
+  switch (level) {
+    case 3:
+      return { label: "breaking", color: "#e88388" }
+    case 2:
+      return { label: "warn", color: "#dbab79" }
+    case 1:
+    default:
+      return { label: "info", color: "#66c2cd" }
+  }
+}
+
 interface ChangeDetails {
   path?: string
   text?: string | React.ReactNode
+  level?: number
+  operation?: string
 }
 
 const DiffDialog = ({
@@ -27,6 +43,8 @@ const DiffDialog = ({
   change: ChangeDetails | null
   onClose: () => void
 }) => {
+  const levelConfig = getLevelConfig((change?.level ?? 1) as Level)
+
   return (
     <Dialog
       open={!!open}
@@ -43,28 +61,58 @@ const DiffDialog = ({
     >
       <DialogTitle>Change Details</DialogTitle>
       <DialogContent>
-        {change?.path && (
-          <Box sx={{ mb: 2 }}>
-            <Typography sx={{ mb: 1, fontWeight: 600 }}>Path:</Typography>
+        <Box sx={{ mb: 2 }}>
+          <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 1 }}>
             <Typography
-              variant="body0"
+              component="span"
               sx={{
-                p: 1,
                 fontFamily: "Segoe UI Mono, monospace",
                 fontWeight: 700,
-                wordBreak: "break-word",
-                overflowWrap: "anywhere",
+                fontSize: "0.85rem",
+                color: levelConfig.color,
+                textTransform: "lowercase",
               }}
             >
-              {change.path}
+              {levelConfig.label}
             </Typography>
+            {change?.operation && change?.path && (
+              <Typography
+                component="span"
+                sx={{
+                  fontFamily: "Segoe UI Mono, monospace",
+                  fontSize: "0.85rem",
+                  color: "text.secondary",
+                }}
+              >
+                at{" "}
+                <Box
+                  component="span"
+                  sx={{ fontWeight: 600, color: "text.primary" }}
+                >
+                  {change.operation}
+                </Box>{" "}
+                <Box component="span" sx={{ wordBreak: "break-word" }}>
+                  {change.path}
+                </Box>
+              </Typography>
+            )}
+            {!change?.operation && change?.path && (
+              <Typography
+                component="span"
+                sx={{
+                  fontFamily: "Segoe UI Mono, monospace",
+                  fontSize: "0.85rem",
+                  color: "text.secondary",
+                  wordBreak: "break-word",
+                }}
+              >
+                {change.path}
+              </Typography>
+            )}
           </Box>
-        )}
+        </Box>
         {change?.text && (
           <Box>
-            <Typography sx={{ mb: 1, fontWeight: 600 }}>
-              Description:
-            </Typography>
             <Typography variant="body0" sx={{ wordBreak: "break-word" }}>
               {typeof change.text === "string" ? (
                 <MonoQuotedText text={change.text} />
