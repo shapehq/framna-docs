@@ -1,25 +1,50 @@
 import { IEncryptionService } from "@/features/encrypt/EncryptionService"
 import {
   Project,
-  Version,
-  IProjectConfig,
   IProjectDataSource,
-  ProjectConfigParser,
-  ProjectConfigRemoteVersion,
-  IGitHubRepositoryDataSource,
-  GitHubRepository,
-  GitHubRepositoryRef,
-  ProjectConfigRemoteSpecification
+  IGitHubRepositoryDataSource
 } from "../domain"
-import RemoteConfig from "../domain/RemoteConfig"
+import ProjectMapper, { type URLBuilders, type RepositoryWithRefs, type RepositoryRef } from "../domain/ProjectMapper"
 import { IRemoteConfigEncoder } from "../domain/RemoteConfigEncoder"
+
+const gitHubURLBuilders: URLBuilders<RepositoryWithRefs> = {
+  getImageRef(repository: RepositoryWithRefs): string {
+    return repository.defaultBranchRef.id!
+  },
+  getBlobRef(ref: RepositoryRef): string {
+    return ref.id!
+  },
+  getOwnerUrl(owner: string): string {
+    return `https://github.com/${owner}`
+  },
+  getProjectUrl(repository: RepositoryWithRefs): string {
+    return `https://github.com/${repository.owner}/${repository.name}`
+  },
+  getVersionUrl(repository: RepositoryWithRefs, ref: RepositoryRef): string {
+    return `https://github.com/${repository.owner}/${repository.name}/tree/${ref.name}`
+  },
+  getSpecEditUrl(repository: RepositoryWithRefs, ref: RepositoryRef, fileName: string): string {
+    return `https://github.com/${repository.owner}/${repository.name}/edit/${ref.name}/${encodeURIComponent(fileName)}`
+  },
+  getDiffUrl(repository: RepositoryWithRefs, ref: RepositoryRef, fileName: string): string | undefined {
+    if (!ref.baseRefOid || !ref.id) {
+      return undefined
+    }
+    const encodedPath = fileName.split('/').map(segment => encodeURIComponent(segment)).join('/')
+    return `/api/diff/${repository.owner}/${repository.name}/${encodedPath}?baseRefOid=${ref.baseRefOid}&to=${ref.id}`
+  },
+  getPrUrl(repository: RepositoryWithRefs, ref: RepositoryRef): string | undefined {
+    if (!ref.prNumber) {
+      return undefined
+    }
+    return `https://github.com/${repository.owner}/${repository.name}/pull/${ref.prNumber}`
+  }
+}
 
 export default class GitHubProjectDataSource implements IProjectDataSource {
   private readonly repositoryDataSource: IGitHubRepositoryDataSource
-  private readonly repositoryNameSuffix: string
-  private readonly encryptionService: IEncryptionService
-  private readonly remoteConfigEncoder: IRemoteConfigEncoder
-  
+  private readonly projectMapper: ProjectMapper<RepositoryWithRefs>
+
   constructor(config: {
     repositoryDataSource: IGitHubRepositoryDataSource
     repositoryNameSuffix: string
@@ -27,268 +52,16 @@ export default class GitHubProjectDataSource implements IProjectDataSource {
     remoteConfigEncoder: IRemoteConfigEncoder
   }) {
     this.repositoryDataSource = config.repositoryDataSource
-    this.repositoryNameSuffix = config.repositoryNameSuffix
-    this.encryptionService = config.encryptionService
-    this.remoteConfigEncoder = config.remoteConfigEncoder
+    this.projectMapper = new ProjectMapper({
+      repositoryNameSuffix: config.repositoryNameSuffix,
+      urlBuilders: gitHubURLBuilders,
+      encryptionService: config.encryptionService,
+      remoteConfigEncoder: config.remoteConfigEncoder
+    })
   }
-  
+
   async getProjects(): Promise<Project[]> {
     const repositories = await this.repositoryDataSource.getRepositories()
-    return repositories.map(repository => {
-      return this.mapProject(repository)
-    })
-    .filter((project: Project) => {
-      return project.versions.length > 0
-    })
-    .sort((a: Project, b: Project) => {
-      return a.name.localeCompare(b.name)
-    })
-  }
-  
-  private mapProject(repository: GitHubRepository): Project {
-    const config = this.getConfig(repository)
-    let imageURL: string | undefined
-    if (config && config.image) {
-      imageURL = this.getGitHubBlobURL({
-        ownerName: repository.owner,
-        repositoryName: repository.name,
-        path: config.image,
-        ref: repository.defaultBranchRef.id
-      })
-    }
-    const versions = this.sortVersions(
-      this.addRemoteVersions(
-        this.getVersions(repository),
-        config?.remoteVersions || []
-      ),
-      repository.defaultBranchRef.name
-    ).filter(version => {
-      return version.specifications.length > 0
-    })
-    .map(version => this.setDefaultSpecification(version, config?.defaultSpecificationName))
-    const defaultName = repository.name.replace(new RegExp(this.repositoryNameSuffix + "$"), "")
-    return {
-      id: `${repository.owner}-${defaultName}`,
-      owner: repository.owner,
-      name: defaultName,
-      displayName: config?.name || defaultName,
-      versions,
-      imageURL: imageURL,
-      ownerUrl: `https://github.com/${repository.owner}`,
-      url: `https://github.com/${repository.owner}/${repository.name}`
-    }
-  }
-  
-  private getConfig(repository: GitHubRepository): IProjectConfig | null {
-    const yml = repository.configYml || repository.configYaml
-    if (!yml || !yml.text || yml.text.length == 0) {
-      return null
-    }
-    const parser = new ProjectConfigParser()
-    return parser.parse(yml.text)
-  }
-  
-  private getVersions(repository: GitHubRepository): Version[] {
-    const branchVersions = repository.branches.map(branch => {
-      const isDefaultRef = branch.name == repository.defaultBranchRef.name
-      return this.mapVersionFromRef({
-        ownerName: repository.owner,
-        repositoryName: repository.name,
-        ref: branch,
-        isDefaultRef
-      })
-    })
-    const tagVersions = repository.tags.map(tag => {
-      return this.mapVersionFromRef({
-        ownerName: repository.owner,
-        repositoryName: repository.name,
-        ref: tag
-      })
-    })
-    return branchVersions.concat(tagVersions)
-  }
-  
-  private mapVersionFromRef({
-    ownerName,
-    repositoryName,
-    ref,
-    isDefaultRef
-  }: {
-    ownerName: string
-    repositoryName: string
-    ref: GitHubRepositoryRef
-    isDefaultRef?: boolean
-  }): Version {
-    const specifications = ref.files.filter(file => {
-      return this.isOpenAPISpecification(file.name)
-    }).map(file => {
-      return {
-        id: file.name,
-        name: file.name,
-        url: this.getGitHubBlobURL({
-          ownerName,
-          repositoryName,
-          path: file.name,
-          ref: ref.id
-        }),
-        editURL: `https://github.com/${ownerName}/${repositoryName}/edit/${ref.name}/${encodeURIComponent(file.name)}`,
-        diffURL: this.getGitHubDiffURL({
-          ownerName,
-          repositoryName,
-          path: file.name,
-          baseRefOid: ref.baseRefOid,
-          headRefOid: ref.id
-        }),
-        diffBaseBranch: ref.baseRef,
-        diffBaseOid: ref.baseRefOid,
-        diffPrUrl: ref.prNumber ? `https://github.com/${ownerName}/${repositoryName}/pull/${ref.prNumber}` : undefined,
-        isDefault: false // initial value
-      }
-    }).sort((a, b) => a.name.localeCompare(b.name))
-    return {
-      id: ref.name,
-      name: ref.name,
-      specifications: specifications,
-      url: `https://github.com/${ownerName}/${repositoryName}/tree/${ref.name}`,
-      isDefault: isDefaultRef || false,
-    }
-  }
-
-  private isOpenAPISpecification(filename: string) {
-    return !filename.startsWith(".") && (
-      filename.endsWith(".yml") || filename.endsWith(".yaml")
-    )
-  }
-  
-  private getGitHubBlobURL({
-    ownerName,
-    repositoryName,
-    path,
-    ref
-  }: {
-    ownerName: string
-    repositoryName: string
-    path: string
-    ref: string
-  }): string {
-    const encodedPath = path.split('/').map(segment => encodeURIComponent(segment)).join('/')
-    return `/api/blob/${ownerName}/${repositoryName}/${encodedPath}?ref=${ref}`
-  }
-
-  private getGitHubDiffURL({
-    ownerName,
-    repositoryName,
-    path,
-    baseRefOid,
-    headRefOid
-  }: {
-    ownerName: string;
-    repositoryName: string;
-    path: string;
-    baseRefOid: string | undefined;
-    headRefOid: string }
-  ): string | undefined {
-    if (!baseRefOid) {
-      return undefined
-    } else {
-      const encodedPath = path.split('/').map(segment => encodeURIComponent(segment)).join('/')
-      return `/api/diff/${ownerName}/${repositoryName}/${encodedPath}?baseRefOid=${baseRefOid}&to=${headRefOid}`
-    }
-  }
-  
-  private addRemoteVersions(
-    existingVersions: Version[],
-    remoteVersions: ProjectConfigRemoteVersion[]
-  ): Version[] {
-    const versions = [...existingVersions]
-    const versionIds = versions.map(e => e.id)
-    for (const remoteVersion of remoteVersions) {
-      const baseVersionId = this.makeURLSafeID(
-        (remoteVersion.id || remoteVersion.name).toLowerCase()
-      )
-      // If the version ID exists then we suffix it with a number to ensure unique versions.
-      // E.g. if "foo" already exists, we make it "foo1".
-      const existingVersionIdCount = versionIds.filter(e => e == baseVersionId).length
-      const versionId = baseVersionId + (existingVersionIdCount > 0 ? existingVersionIdCount : "")
-      const specifications = remoteVersion.specifications.map(e => {
-        const remoteConfig: RemoteConfig = {
-          url: e.url,
-          auth: this.tryDecryptAuth(e)
-        };
-
-        const encodedRemoteConfig = this.remoteConfigEncoder.encode(remoteConfig);
-
-        return {
-          id: this.makeURLSafeID((e.id || e.name).toLowerCase()),
-          name: e.name,
-          url: `/api/remotes/${encodedRemoteConfig}`,
-          isDefault: false // initial value
-        };
-      })
-      versions.push({
-        id: versionId,
-        name: remoteVersion.name,
-        specifications,
-        isDefault: false
-      })
-      versionIds.push(baseVersionId)
-    }
-    return versions
-  }
-  
-  private sortVersions(versions: Version[], defaultBranchName: string): Version[] {
-    const candidateDefaultBranches = [
-      defaultBranchName, "main", "master", "develop", "development", "trunk"
-    ]
-    // Reverse them so the top-priority branches end up at the top of the list.
-    .reverse()
-    const copiedVersions = [...versions].sort((a, b) => {
-      return a.name.localeCompare(b.name)
-    })
-    // Move the top-priority branches to the top of the list.
-    for (const candidateDefaultBranch of candidateDefaultBranches) {
-      const defaultBranchIndex = copiedVersions.findIndex(version => {
-        return version.name === candidateDefaultBranch
-      })
-      if (defaultBranchIndex !== -1) {
-        const branchVersion = copiedVersions[defaultBranchIndex]
-        copiedVersions.splice(defaultBranchIndex, 1)
-        copiedVersions.splice(0, 0, branchVersion)
-      }
-    }
-    return copiedVersions
-  }
-  
-  private makeURLSafeID(str: string): string {
-    return str
-      .replace(/ /g, "-")
-      .replace(/[^A-Za-z0-9-]/g, "")
-  }
-
-  private tryDecryptAuth(projectConfigRemoteSpec: ProjectConfigRemoteSpecification): { type: string, username: string, password: string } | undefined {
-    if (!projectConfigRemoteSpec.auth) {
-      return undefined
-    }
-
-    try {
-      return {
-        type: projectConfigRemoteSpec.auth.type,
-        username: this.encryptionService.decrypt(projectConfigRemoteSpec.auth.encryptedUsername),
-        password: this.encryptionService.decrypt(projectConfigRemoteSpec.auth.encryptedPassword)
-      }
-    } catch (error) {
-      console.info(`Failed to decrypt remote specification auth for ${projectConfigRemoteSpec.name} (${projectConfigRemoteSpec.url}). Perhaps a different public key was used?:`, error);
-      return undefined
-    }
-  }
-
-  private setDefaultSpecification(version: Version, defaultSpecificationName?: string): Version {
-    return {
-      ...version,
-      specifications: version.specifications.map(spec => ({
-        ...spec,
-        isDefault: spec.name === defaultSpecificationName
-      }))
-    }
+    return this.projectMapper.mapRepositories(repositories)
   }
 }
