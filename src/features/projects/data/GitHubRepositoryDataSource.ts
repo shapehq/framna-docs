@@ -51,6 +51,7 @@ type GraphQLPullRequest = {
   readonly headRefName: string
   readonly baseRefName: string
   readonly baseRefOid: string
+  readonly changedFiles: string[]
 }
 
 export default class GitHubProjectDataSource implements IGitHubRepositoryDataSource {
@@ -129,7 +130,8 @@ export default class GitHubProjectDataSource implements IGitHubRepositoryDataSou
             baseRef: pr?.baseRefName,
             baseRefOid: pr?.baseRefOid,
             prNumber: pr?.number,
-            files: branch.node.target.tree.entries
+            files: branch.node.target.tree.entries,
+            changedFiles: pr?.changedFiles
           }
         })
 
@@ -174,6 +176,11 @@ export default class GitHubProjectDataSource implements IGitHubRepositoryDataSou
                 headRefName
                 baseRefName
                 baseRefOid
+                files(first: 100) {
+                  nodes {
+                    path
+                  }
+                }
               }
             }
           }
@@ -199,15 +206,26 @@ export default class GitHubProjectDataSource implements IGitHubRepositoryDataSou
       const pullRequests = new Map<string, GraphQLPullRequest>()
 
       if (repoData?.pullRequests?.edges) {
-        const pullRequestEdges = repoData.pullRequests.edges as Edge<GraphQLPullRequest>[]
+        type RawGraphQLPullRequest = {
+          number: number
+          headRefName: string
+          baseRefName: string
+          baseRefOid: string
+          files?: {
+            nodes?: { path: string }[]
+          }
+        }
+        const pullRequestEdges = repoData.pullRequests.edges as Edge<RawGraphQLPullRequest>[]
 
         pullRequestEdges.forEach(edge => {
           const pr = edge.node
+          const changedFiles = pr.files?.nodes?.map(f => f.path) || []
           pullRequests.set(pr.headRefName, {
             number: pr.number,
             headRefName: pr.headRefName,
             baseRefName: pr.baseRefName,
-            baseRefOid: pr.baseRefOid
+            baseRefOid: pr.baseRefOid,
+            changedFiles
           })
         })
       }
