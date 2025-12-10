@@ -6,12 +6,10 @@ import { DiffChange } from "@/features/diff/domain/DiffChange"
 
 const PopulatedDiffList = ({
   changes,
-  selectedChange,
   onClick,
 }: {
   changes: DiffChange[]
-  selectedChange: number | null
-  onClick: (i: number) => void
+  onClick: (change: DiffChange) => void
 }) => {
   return (
     <SpacedList
@@ -21,15 +19,14 @@ const PopulatedDiffList = ({
         "& .menu-item-highlight": { px: 1, py: 1.25 },
       }}
     >
-      {changes.map((change, i) => (
+      {changes.map((change) => (
         <DiffListItem
           key={change.id}
           path={change?.path}
           text={change?.text}
           level={change?.level}
           operation={change?.operation}
-          selected={selectedChange === i}
-          onClick={() => onClick(i)}
+          onClick={() => onClick(change)}
         />
       ))}
     </SpacedList>

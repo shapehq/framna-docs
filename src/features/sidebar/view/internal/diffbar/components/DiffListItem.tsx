@@ -10,14 +10,12 @@ const DiffListItem = ({
   text,
   level,
   operation,
-  selected,
   onClick,
 }: {
   path?: string
   text?: string
   level?: number
   operation?: string
-  selected: boolean
   onClick: () => void
 }) => {
   const levelConfig = getLevelConfig((level ?? 1) as Level)
@@ -25,7 +23,6 @@ const DiffListItem = ({
   return (
     <ListItem disableGutters disablePadding>
       <ListItemButton
-        selected={selected}
         onClick={onClick}
         disableGutters
         sx={{ width: "100%", px: 0, alignItems: "flex-start" }}
