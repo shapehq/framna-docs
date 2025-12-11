@@ -59,7 +59,10 @@ const TrailingToolbarItem = () => {
         />
         <Typography variant="h6" sx={{ marginRight: 1 }}>/</Typography>
         <Selector
-          items={version.specifications}
+          items={version.specifications.map(spec => ({
+            id: spec.id,
+            name: spec.name
+          }))}
           selection={specification.id}
           onSelect={selectSpecification}
           sx={{ marginRight: 0.5 }}

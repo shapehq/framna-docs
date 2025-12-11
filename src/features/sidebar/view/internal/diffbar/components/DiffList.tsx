@@ -9,13 +9,11 @@ export type DiffListStatus = "idle" | "loading" | "empty" | "ready" | "error"
 const DiffList = ({
   changes,
   status,
-  selectedChange,
   onClick,
 }: {
   changes: DiffChange[]
   status: DiffListStatus
-  selectedChange: number | null
-  onClick: (i: number) => void
+  onClick: (change: DiffChange) => void
 }) => {
   if (status === "loading") {
     return (
@@ -37,7 +35,6 @@ const DiffList = ({
     return (
       <PopulatedDiffList
         changes={changes}
-        selectedChange={selectedChange}
         onClick={onClick}
       />
     )

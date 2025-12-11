@@ -28,7 +28,10 @@ const MobileToolbar = () => {
         sx={{ width: "100%" }}
       />
       <Selector
-        items={version.specifications}
+        items={version.specifications.map(spec => ({
+          id: spec.id,
+          name: spec.name
+        }))}
         selection={specification.id}
         onSelect={selectSpecification}
         sx={{ width: "100%" }}

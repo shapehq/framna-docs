@@ -1,18 +1,21 @@
 "use client"
 
 import { Alert, Box, Typography, Link } from "@mui/material"
-import { useState } from "react"
 import useDiff from "@/features/sidebar/data/useDiff"
 import { useProjectSelection } from "@/features/projects/data"
+import useDocumentationVisualizer from "@/features/settings/data/useDocumentationVisualizer"
+import { scrollToOperation } from "@/features/docs/navigation"
 import DiffList, { DiffListStatus } from "./components/DiffList"
-import DiffDialog from "./components/DiffDialog"
+import { DiffChange } from "@/features/diff/domain/DiffChange"
 
 const DiffContent = () => {
   const { data, loading, changes, error, isNewFile } = useDiff()
   const { specification } = useProjectSelection()
-  const [selectedChange, setSelectedChange] = useState<number | null>(null)
+  const [visualizer] = useDocumentationVisualizer()
 
-  const closeModal = () => setSelectedChange(null)
+  const handleChangeClick = (change: DiffChange) => {
+    scrollToOperation(visualizer, change.operationId, change.operation, change.path)
+  }
 
   const hasData = Boolean(data)
   const hasChanges = changes.length > 0
@@ -101,17 +104,10 @@ const DiffContent = () => {
           <DiffList
             changes={changes}
             status={diffStatus}
-            selectedChange={selectedChange}
-            onClick={(i) => setSelectedChange(i)}
+            onClick={handleChangeClick}
           />
         </Box>
       )}
-
-      <DiffDialog
-        open={selectedChange !== null}
-        change={selectedChange !== null ? changes[selectedChange] : null}
-        onClose={closeModal}
-      />
     </Box>
   )
 }
