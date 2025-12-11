@@ -6,26 +6,22 @@ import { DocumentationVisualizer } from "@/features/settings/domain"
  * Since we may not know the tag, we search for elements containing the operationId.
  */
 function scrollToSwaggerOperation(operationId: string): boolean {
-  // SwaggerUI uses element IDs in the format: operations-{tag}-{operationId}
-  const allOpBlocks = document.querySelectorAll('[id^="operations-"]')
+  const block = Array.from(document.querySelectorAll('[id^="operations-"]'))
+    .find(el => el.id.endsWith(`-${operationId}`))
 
-  for (let i = 0; i < allOpBlocks.length; i++) {
-    const block = allOpBlocks[i]
-    if (block.id.endsWith(`-${operationId}`)) {
-      block.scrollIntoView({ behavior: "smooth", block: "start" })
-      // Only expand if not already open (SwaggerUI adds is-open class to the block itself)
-      const isOpen = block.classList.contains("is-open")
-      if (!isOpen) {
-        const button = block.querySelector(".opblock-summary-control")
-        if (button instanceof HTMLElement) {
-          button.click()
-        }
-      }
-      return true
+  if (!block) return false
+
+  block.scrollIntoView({ behavior: "smooth", block: "start" })
+
+  // Only expand if not already open (SwaggerUI adds is-open class to the block itself)
+  if (!block.classList.contains("is-open")) {
+    const button = block.querySelector(".opblock-summary-control")
+    if (button instanceof HTMLElement) {
+      button.click()
     }
   }
 
-  return false
+  return true
 }
 
 /**
