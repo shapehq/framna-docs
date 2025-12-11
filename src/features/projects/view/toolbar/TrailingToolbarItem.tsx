@@ -61,8 +61,7 @@ const TrailingToolbarItem = () => {
         <Selector
           items={version.specifications.map(spec => ({
             id: spec.id,
-            name: spec.name,
-            hasChanges: !!spec.diffURL
+            name: spec.name
           }))}
           selection={specification.id}
           onSelect={selectSpecification}
