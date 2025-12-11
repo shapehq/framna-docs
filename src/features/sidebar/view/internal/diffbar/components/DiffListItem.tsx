@@ -38,54 +38,52 @@ const DiffListItem = ({
                 gap: 0.75,
               }}
             >
-              <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+              <Typography
+                component="span"
+                sx={{
+                  fontFamily: "Segoe UI Mono, monospace",
+                  fontWeight: 700,
+                  fontSize: "0.75rem",
+                  color: levelConfig.color,
+                  textTransform: "lowercase",
+                }}
+              >
+                {levelConfig.label}
+              </Typography>
+              {operation && path && (
                 <Typography
                   component="span"
                   sx={{
                     fontFamily: "Segoe UI Mono, monospace",
-                    fontWeight: 700,
-                    fontSize: "0.75rem",
-                    color: levelConfig.color,
-                    textTransform: "lowercase",
+                    fontSize: "0.8rem",
+                    color: "text.secondary",
                   }}
                 >
-                  {levelConfig.label}
-                </Typography>
-                {operation && path && (
-                  <Typography
+                  at{" "}
+                  <Box
                     component="span"
-                    sx={{
-                      fontFamily: "Segoe UI Mono, monospace",
-                      fontSize: "0.8rem",
-                      color: "text.secondary",
-                    }}
+                    sx={{ fontWeight: 600, color: "text.primary" }}
                   >
-                    at{" "}
-                    <Box
-                      component="span"
-                      sx={{ fontWeight: 600, color: "text.primary" }}
-                    >
-                      {operation}
-                    </Box>{" "}
-                    <Box component="span" sx={{ wordBreak: "break-word" }}>
-                      {path}
-                    </Box>
-                  </Typography>
-                )}
-                {!operation && path && (
-                  <Typography
-                    component="span"
-                    sx={{
-                      fontFamily: "Segoe UI Mono, monospace",
-                      fontSize: "0.8rem",
-                      color: "text.secondary",
-                      wordBreak: "break-word",
-                    }}
-                  >
+                    {operation}
+                  </Box>{" "}
+                  <Box component="span" sx={{ wordBreak: "break-word" }}>
                     {path}
-                  </Typography>
-                )}
-              </Box>
+                  </Box>
+                </Typography>
+              )}
+              {!operation && path && (
+                <Typography
+                  component="span"
+                  sx={{
+                    fontFamily: "Segoe UI Mono, monospace",
+                    fontSize: "0.8rem",
+                    color: "text.secondary",
+                    wordBreak: "break-word",
+                  }}
+                >
+                  {path}
+                </Typography>
+              )}
               {text && (
                 <Typography
                   variant="body0"
