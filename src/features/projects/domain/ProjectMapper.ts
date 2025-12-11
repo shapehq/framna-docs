@@ -94,7 +94,7 @@ export default class ProjectMapper<T extends RepositoryWithRefs> implements IPro
       .sort((a, b) => a.name.localeCompare(b.name))
   }
 
-  private mapRepositoryToProject(repository: T): Project {
+  mapRepositoryToProject(repository: T): Project {
     const config = this.parseConfig(repository.configYml, repository.configYaml)
     let imageURL: string | undefined
     if (config && config.image) {
