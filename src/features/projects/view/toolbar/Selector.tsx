@@ -4,13 +4,16 @@ import {
   MenuItem,
   SelectChangeEvent,
   FormControl,
-  Typography
+  Typography,
+  Box,
+  Tooltip
 } from "@mui/material"
 import MenuItemHover from "@/common/ui/MenuItemHover"
 
 interface SelectorItem {
   readonly id: string
   readonly name: string
+  readonly hasChanges?: boolean
 }
 
 const Selector = ({
@@ -45,13 +48,29 @@ const Selector = ({
         {items.map(item => (
           <MenuItem key={item.id} value={item.id}>
             <MenuItemHover>
-              <Typography sx={{
-                overflow: "hidden",
-                whiteSpace: "nowrap",
-                textOverflow: "ellipsis"
-              }}>
-                {item.name}
-              </Typography>
+              <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
+                <Typography sx={{
+                  overflow: "hidden",
+                  whiteSpace: "nowrap",
+                  textOverflow: "ellipsis"
+                }}>
+                  {item.name}
+                </Typography>
+                {item.hasChanges && (
+                  <Tooltip title="Has changes" arrow>
+                    <Box
+                      component="span"
+                      sx={{
+                        width: 6,
+                        height: 6,
+                        borderRadius: "50%",
+                        backgroundColor: "warning.main",
+                        flexShrink: 0
+                      }}
+                    />
+                  </Tooltip>
+                )}
+              </Box>
             </MenuItemHover>
           </MenuItem>
         ))}

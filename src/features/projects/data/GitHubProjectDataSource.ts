@@ -122,6 +122,7 @@ export default class GitHubProjectDataSource implements IProjectDataSource {
     const specifications = ref.files.filter(file => {
       return this.isOpenAPISpecification(file.name)
     }).map(file => {
+      const isFileChanged = ref.changedFiles?.includes(file.name) ?? false
       return {
         id: file.name,
         name: file.name,
@@ -132,16 +133,16 @@ export default class GitHubProjectDataSource implements IProjectDataSource {
           ref: ref.id
         }),
         editURL: `https://github.com/${ownerName}/${repositoryName}/edit/${ref.name}/${encodeURIComponent(file.name)}`,
-        diffURL: this.getGitHubDiffURL({
+        diffURL: isFileChanged ? this.getGitHubDiffURL({
           ownerName,
           repositoryName,
           path: file.name,
           baseRefOid: ref.baseRefOid,
           headRefOid: ref.id
-        }),
-        diffBaseBranch: ref.baseRef,
-        diffBaseOid: ref.baseRefOid,
-        diffPrUrl: ref.prNumber ? `https://github.com/${ownerName}/${repositoryName}/pull/${ref.prNumber}` : undefined,
+        }) : undefined,
+        diffBaseBranch: isFileChanged ? ref.baseRef : undefined,
+        diffBaseOid: isFileChanged ? ref.baseRefOid : undefined,
+        diffPrUrl: isFileChanged && ref.prNumber ? `https://github.com/${ownerName}/${repositoryName}/pull/${ref.prNumber}` : undefined,
         isDefault: false // initial value
       }
     }).sort((a, b) => a.name.localeCompare(b.name))

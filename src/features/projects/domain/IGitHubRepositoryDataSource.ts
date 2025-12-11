@@ -24,10 +24,7 @@ export type GitHubRepositoryRef = {
   readonly files: {
     readonly name: string
   }[]
-}
-
-export default interface IGitHubRepositoryDataSource {
-  getRepositories(): Promise<GitHubRepository[]>
+  readonly changedFiles?: string[]
 }
 
 export default interface IGitHubRepositoryDataSource {
