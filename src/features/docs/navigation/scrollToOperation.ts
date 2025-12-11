@@ -13,10 +13,13 @@ function scrollToSwaggerOperation(operationId: string): boolean {
     const block = allOpBlocks[i]
     if (block.id.endsWith(`-${operationId}`)) {
       block.scrollIntoView({ behavior: "smooth", block: "start" })
-      // Expand the operation by clicking on its control button
-      const button = block.querySelector(".opblock-summary-control")
-      if (button instanceof HTMLElement) {
-        button.click()
+      // Only expand if not already open (SwaggerUI adds is-open class to the block itself)
+      const isOpen = block.classList.contains("is-open")
+      if (!isOpen) {
+        const button = block.querySelector(".opblock-summary-control")
+        if (button instanceof HTMLElement) {
+          button.click()
+        }
       }
       return true
     }
