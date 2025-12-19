@@ -15,10 +15,9 @@ const ProjectsContextProvider = ({
   const [refreshing, setRefreshing] = useState(false);
   const isLoadingRef = useRef(false);
 
-
-  const setProjectsAndRefreshed = (value: Project[]) => {
-    setProjects(value);
-  };
+  // Fingerprint uses urlHash for remote specs (stable), URL for others (already stable)
+  const fingerprint = (list: Project[]) =>
+    list.flatMap(p => p.versions.flatMap(v => v.specifications.map(s => s.urlHash ?? s.url))).sort().join();
 
 const refreshProjects = useCallback(() => {
   if (isLoadingRef.current) return;
@@ -26,8 +25,10 @@ const refreshProjects = useCallback(() => {
   setRefreshing(true);
   fetch("/api/refresh-projects", { method: "POST" })
     .then((res) => res.json())
-    .then(({ projects }) => {
-      if (projects) setProjectsAndRefreshed(projects);
+    .then(({ projects: newProjects }) => {
+      if (newProjects) {
+        setProjects(prev => fingerprint(prev) === fingerprint(newProjects) ? prev : newProjects);
+      }
     })
     .catch((error) => console.error("Failed to refresh projects", error))
     .finally(() => {
