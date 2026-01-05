@@ -1,3 +1,4 @@
+import { createHash } from "crypto"
 import { IEncryptionService } from "@/features/encrypt/EncryptionService"
 import {
   Project,
@@ -218,11 +219,14 @@ export default class GitHubProjectDataSource implements IProjectDataSource {
         };
 
         const encodedRemoteConfig = this.remoteConfigEncoder.encode(remoteConfig);
+        // 16 hex chars (64 bits) - sufficient for change detection, not cryptographic security
+        const configHash = createHash("sha256").update(JSON.stringify(remoteConfig)).digest("hex").slice(0, 16);
 
         return {
           id: this.makeURLSafeID((e.id || e.name).toLowerCase()),
           name: e.name,
           url: `/api/remotes/${encodedRemoteConfig}`,
+          urlHash: configHash,
           isDefault: false // initial value
         };
       })

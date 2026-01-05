@@ -845,11 +845,13 @@ test("It adds remote versions from the project configuration", async () => {
       id: "huey",
       name: "Huey",
       url: `/api/remotes/${base64RemoteConfigEncoder.encode({ url: "https://example.com/huey.yml" })}`,
+      urlHash: "89ba381286214eec",
       isDefault: false
     }, {
       id: "dewey",
       name: "Dewey",
       url: `/api/remotes/${base64RemoteConfigEncoder.encode({ url: "https://example.com/dewey.yml" })}`,
+      urlHash: "8f810fff152505f6",
       isDefault: false
     }]
   }, {
@@ -860,6 +862,7 @@ test("It adds remote versions from the project configuration", async () => {
       id: "louie",
       name: "Louie",
       url: `/api/remotes/${base64RemoteConfigEncoder.encode({ url: "https://example.com/louie.yml" })}`,
+      urlHash: "b83ebf43ceede6bc",
       isDefault: false
     }]
   }])
@@ -925,6 +928,7 @@ test("It modifies ID of remote version if the ID already exists", async () => {
       id: "baz",
       name: "Baz",
       url: `/api/remotes/${base64RemoteConfigEncoder.encode({ url: "https://example.com/baz.yml" })}`,
+      urlHash: "25cb42ff63570cb5",
       isDefault: false
     }]
   }, {
@@ -935,6 +939,7 @@ test("It modifies ID of remote version if the ID already exists", async () => {
       id: "hello",
       name: "Hello",
       url: `/api/remotes/${base64RemoteConfigEncoder.encode({ url: "https://example.com/hello.yml" })}`,
+      urlHash: "d078bd689699d1f0",
       isDefault: false
     }]
   }])
@@ -979,6 +984,7 @@ test("It lets users specify the ID of a remote version", async () => {
       id: "baz",
       name: "Baz",
       url: `/api/remotes/${base64RemoteConfigEncoder.encode({ url: "https://example.com/baz.yml" })}`,
+      urlHash: "25cb42ff63570cb5",
       isDefault: false
     }]
   }])
@@ -1023,6 +1029,7 @@ test("It lets users specify the ID of a remote specification", async () => {
       id: "some-spec",
       name: "Baz",
       url: `/api/remotes/${base64RemoteConfigEncoder.encode({ url: "https://example.com/baz.yml" })}`,
+      urlHash: "25cb42ff63570cb5",
       isDefault: false
     }]
   }])
