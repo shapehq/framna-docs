@@ -30,7 +30,7 @@ export default function useDiffbarOpen(options: Options = {}) {
         if (typeof parsedValue === "boolean") {
           setDiffbarOpen(parsedValue)
         }
-      } catch (error) {
+      } catch {
         // Ignore invalid storage values and keep defaults.
       }
     }

@@ -30,7 +30,7 @@ export default function useSidebarOpen(options: Options = {}) {
         if (typeof parsedValue === "boolean") {
           setSidebarOpen(parsedValue)
         }
-      } catch (error) {
+      } catch {
         // Ignore invalid storage values and keep defaults.
       }
     }
