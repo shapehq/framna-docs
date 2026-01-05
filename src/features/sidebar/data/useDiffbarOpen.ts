@@ -1,43 +1,17 @@
-import { useLayoutEffect, useEffect, useState } from "react"
-import { useSessionStorage } from "usehooks-ts"
+import { useEffect, useSyncExternalStore } from "react"
+import useSessionStorageState from "@/common/utils/useSessionStorageState"
 
 type Options = { clearAnimationAfterMs?: number }
 
 export default function useDiffbarOpen(options: Options = {}) {
-  const [isDiffbarOpen, setDiffbarOpen] = useSessionStorage(
-    "isDiffbarOpen",
-    false,
-    { initializeWithValue: false }
+  const isHydrated = useSyncExternalStore(
+    () => () => {},
+    () => true,
+    () => false
   )
-  const [shouldAnimate, setShouldAnimate] = useSessionStorage(
-    "isDiffbarOpenAnimateNext",
-    false,
-    { initializeWithValue: false }
-  )
-  const [isInitialized, setIsInitialized] = useState(false)
-
-  useLayoutEffect(() => {
-    if (typeof window === "undefined") {
-      setShouldAnimate(false)
-      setIsInitialized(true)
-      return
-    }
-
-    const rawValue = window.sessionStorage.getItem("isDiffbarOpen")
-    if (rawValue !== null) {
-      try {
-        const parsedValue = JSON.parse(rawValue)
-        if (typeof parsedValue === "boolean") {
-          setDiffbarOpen(parsedValue)
-        }
-      } catch {
-        // Ignore invalid storage values and keep defaults.
-      }
-    }
-
-    setShouldAnimate(false)
-    setIsInitialized(true)
-  }, [setDiffbarOpen, setShouldAnimate])
+  const [isDiffbarOpen, setDiffbarOpen] = useSessionStorageState("isDiffbarOpen", false)
+  const [shouldAnimate, setShouldAnimate] = useSessionStorageState("isDiffbarOpenAnimateNext", false)
+  const isInitialized = isHydrated
 
   useEffect(() => {
     if (!shouldAnimate || !options.clearAnimationAfterMs) {
