@@ -21,91 +21,50 @@ const ClientSplitView = ({
   children?: React.ReactNode
   sidebarRight?: React.ReactNode
 }) => {
-  const [
-    isSidebarOpen,
-    setSidebarOpen,
-    ,
-    isSidebarInitialized,
-    shouldAnimateSidebar,
-    setSidebarOpenWithTransition,
-    setShouldAnimateSidebar
-  ] = useSidebarOpen()
-  const [
-    isRightSidebarOpen,
-    setRightSidebarOpen,
-    ,
-    isDiffbarInitialized,
-    shouldAnimateDiffbar,
-    setDiffbarOpenWithTransition,
-    setShouldAnimateDiffbar
-  ] = useDiffbarOpen()
-  const { specification } = useProjectSelection()
-  const isSidebarTogglable = useContext(SidebarTogglableContext)
   const theme = useTheme()
-  // Determine if the screen size is small or larger
-  const isSM = useMediaQuery(theme.breakpoints.up("sm"))
-  const isLayoutReady = isSidebarInitialized && isDiffbarInitialized
   const sidebarTransitionDuration = Math.max(
     theme.transitions.duration.enteringScreen,
     theme.transitions.duration.leavingScreen
   )
   const diffbarTransitionDuration = sidebarTransitionDuration
+  const sidebarState = useSidebarOpen({ clearAnimationAfterMs: sidebarTransitionDuration })
+  const diffbarState = useDiffbarOpen({ clearAnimationAfterMs: diffbarTransitionDuration })
+  const { specification } = useProjectSelection()
+  const isSidebarTogglable = useContext(SidebarTogglableContext)
+  const isSM = useMediaQuery(theme.breakpoints.up("sm"))
+  const isLayoutReady = sidebarState.isInitialized && diffbarState.isInitialized
 
   useEffect(() => {
-    if (!isSidebarTogglable && !isSidebarOpen) {
-      setSidebarOpen(true)
+    if (!isSidebarTogglable && !sidebarState.isOpen) {
+      sidebarState.setOpen(true)
     }
-  }, [isSidebarOpen, isSidebarTogglable, setSidebarOpen])
+  }, [sidebarState.isOpen, isSidebarTogglable, sidebarState.setOpen])
   
 
   // Close diff sidebar if no specification is selected
   useEffect(() => {
-    if (!specification && isRightSidebarOpen) {
-      setRightSidebarOpen(false)
+    if (!specification && diffbarState.isOpen) {
+      diffbarState.setOpen(false)
     }
-  }, [specification, isRightSidebarOpen, setRightSidebarOpen])
-
-  useEffect(() => {
-    if (!shouldAnimateSidebar) {
-      return
-    }
-
-    const timeout = window.setTimeout(() => {
-      setShouldAnimateSidebar(false)
-    }, sidebarTransitionDuration)
-
-    return () => window.clearTimeout(timeout)
-  }, [shouldAnimateSidebar, setShouldAnimateSidebar, sidebarTransitionDuration])
-
-  useEffect(() => {
-    if (!shouldAnimateDiffbar) {
-      return
-    }
-
-    const timeout = window.setTimeout(() => {
-      setShouldAnimateDiffbar(false)
-    }, diffbarTransitionDuration)
-
-    return () => window.clearTimeout(timeout)
-  }, [shouldAnimateDiffbar, setShouldAnimateDiffbar, diffbarTransitionDuration])
+  }, [diffbarState.isOpen, diffbarState.setOpen, specification])
 
   useKeyboardShortcut(event => {
     const isActionKey = isMac() ? event.metaKey : event.ctrlKey
     if (isActionKey && event.key === ".") {
       event.preventDefault()
       if (isSidebarTogglable) {
-        setSidebarOpenWithTransition(!isSidebarOpen)
+        sidebarState.setOpenWithTransition(!sidebarState.isOpen)
       }
     }
-  }, [isSidebarTogglable, setSidebarOpenWithTransition, isSidebarOpen])
+  }, [sidebarState.isOpen, isSidebarTogglable, sidebarState.setOpenWithTransition])
   
   useKeyboardShortcut(event => {
     const isActionKey = isMac() ? event.metaKey : event.ctrlKey
     if (isDiffFeatureEnabled && isActionKey && event.key === "k") {
       event.preventDefault()
-      setDiffbarOpenWithTransition(!isRightSidebarOpen)
+      diffbarState.setOpenWithTransition(!diffbarState.isOpen)
     }
-  }, [isRightSidebarOpen, setDiffbarOpenWithTransition])
+  }, [diffbarState.isOpen, diffbarState.setOpenWithTransition])
   
   const sidebarWidth = 320
   const diffWidth = 320
@@ -118,27 +77,27 @@ const ClientSplitView = ({
     >
       <PrimaryContainer
         width={sidebarWidth}
-        isOpen={isSidebarOpen}
-        onClose={() => setSidebarOpenWithTransition(false)}
-        disableTransition={!shouldAnimateSidebar}
+        isOpen={sidebarState.isOpen}
+        onClose={() => sidebarState.setOpenWithTransition(false)}
+        disableTransition={!sidebarState.shouldAnimate}
       >
         {sidebar}
       </PrimaryContainer>
       <SecondaryContainer
         isSM={isSM}
         sidebarWidth={sidebarWidth}
-        offsetContent={isSidebarOpen}
+        offsetContent={sidebarState.isOpen}
         diffWidth={diffWidth}
-        offsetDiffContent={isRightSidebarOpen}
-        disableTransition={!shouldAnimateSidebar && !shouldAnimateDiffbar}
+        offsetDiffContent={diffbarState.isOpen}
+        disableTransition={!sidebarState.shouldAnimate && !diffbarState.shouldAnimate}
       >
         {children}
       </SecondaryContainer>
       <RightContainer
         width={diffWidth}
-        isOpen={isRightSidebarOpen}
-        onClose={() => setDiffbarOpenWithTransition(false)}
-        disableTransition={!shouldAnimateDiffbar}
+        isOpen={diffbarState.isOpen}
+        onClose={() => diffbarState.setOpenWithTransition(false)}
+        disableTransition={!diffbarState.shouldAnimate}
       >
         {sidebarRight}
       </RightContainer>

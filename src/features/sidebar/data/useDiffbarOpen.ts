@@ -1,8 +1,10 @@
-import { useLayoutEffect, useState } from "react"
+import { useLayoutEffect, useEffect, useState } from "react"
 import { useSessionStorage } from "usehooks-ts"
 
-export default function useDiffbarOpen() {
-  const [isDiffbarOpen, setDiffbarOpen, removeDiffbarOpen] = useSessionStorage(
+type Options = { clearAnimationAfterMs?: number }
+
+export default function useDiffbarOpen(options: Options = {}) {
+  const [isDiffbarOpen, setDiffbarOpen] = useSessionStorage(
     "isDiffbarOpen",
     false,
     { initializeWithValue: false }
@@ -37,25 +39,32 @@ export default function useDiffbarOpen() {
     setIsInitialized(true)
   }, [setDiffbarOpen, setShouldAnimate])
 
+  useEffect(() => {
+    if (!shouldAnimate || !options.clearAnimationAfterMs) {
+      return
+    }
+    const timeout = window.setTimeout(() => {
+      setShouldAnimate(false)
+    }, options.clearAnimationAfterMs)
+    return () => window.clearTimeout(timeout)
+  }, [options.clearAnimationAfterMs, setShouldAnimate, shouldAnimate])
+
   const setDiffbarOpenWithTransition = (value: boolean | ((prev: boolean) => boolean)) => {
     setShouldAnimate(true)
     if (typeof window === "undefined") {
       setDiffbarOpen(value)
       return
     }
-
     window.setTimeout(() => {
       setDiffbarOpen(value)
     }, 0)
   }
 
-  return [
-    isDiffbarOpen,
-    setDiffbarOpen,
-    removeDiffbarOpen,
+  return {
+    isOpen: isDiffbarOpen,
     isInitialized,
     shouldAnimate,
-    setDiffbarOpenWithTransition,
-    setShouldAnimate
-  ] as const
+    setOpen: setDiffbarOpen,
+    setOpenWithTransition: setDiffbarOpenWithTransition
+  } as const
 }

@@ -1,8 +1,10 @@
-import { useLayoutEffect, useState } from "react"
+import { useLayoutEffect, useEffect, useState } from "react"
 import { useSessionStorage } from "usehooks-ts"
 
-export default function useSidebarOpen() {
-  const [isSidebarOpen, setSidebarOpen, removeSidebarOpen] = useSessionStorage(
+type Options = { clearAnimationAfterMs?: number }
+
+export default function useSidebarOpen(options: Options = {}) {
+  const [isSidebarOpen, setSidebarOpen] = useSessionStorage(
     "isSidebarOpen",
     true,
     { initializeWithValue: false }
@@ -37,25 +39,32 @@ export default function useSidebarOpen() {
     setIsInitialized(true)
   }, [setSidebarOpen, setShouldAnimate])
 
+  useEffect(() => {
+    if (!shouldAnimate || !options.clearAnimationAfterMs) {
+      return
+    }
+    const timeout = window.setTimeout(() => {
+      setShouldAnimate(false)
+    }, options.clearAnimationAfterMs)
+    return () => window.clearTimeout(timeout)
+  }, [options.clearAnimationAfterMs, setShouldAnimate, shouldAnimate])
+
   const setSidebarOpenWithTransition = (value: boolean | ((prev: boolean) => boolean)) => {
     setShouldAnimate(true)
     if (typeof window === "undefined") {
       setSidebarOpen(value)
       return
     }
-
     window.setTimeout(() => {
       setSidebarOpen(value)
     }, 0)
   }
 
-  return [
-    isSidebarOpen,
-    setSidebarOpen,
-    removeSidebarOpen,
+  return {
+    isOpen: isSidebarOpen,
     isInitialized,
     shouldAnimate,
-    setSidebarOpenWithTransition,
-    setShouldAnimate
-  ] as const
+    setOpen: setSidebarOpen,
+    setOpenWithTransition: setSidebarOpenWithTransition
+  } as const
 }
