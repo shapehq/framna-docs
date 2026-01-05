@@ -1,4 +1,4 @@
-import { useLayoutEffect, useEffect, useState } from "react"
+import { useLayoutEffect, useEffect, useState, useRef } from "react"
 import { useSessionStorage } from "usehooks-ts"
 
 type Options = { clearAnimationAfterMs?: number }
@@ -15,6 +15,7 @@ export default function useSidebarOpen(options: Options = {}) {
     { initializeWithValue: false }
   )
   const [isInitialized, setIsInitialized] = useState(false)
+  const rafRef = useRef<number | null>(null)
 
   useLayoutEffect(() => {
     if (typeof window === "undefined") {
@@ -33,12 +34,12 @@ export default function useSidebarOpen(options: Options = {}) {
       }
     }
 
-    const timeout = window.setTimeout(() => {
+    const raf = window.requestAnimationFrame(() => {
       setShouldAnimate(false)
       setIsInitialized(true)
-    }, 0)
+    })
 
-    return () => window.clearTimeout(timeout)
+    return () => window.cancelAnimationFrame(raf)
   }, [setSidebarOpen, setShouldAnimate])
 
   useEffect(() => {
@@ -57,10 +58,23 @@ export default function useSidebarOpen(options: Options = {}) {
       setSidebarOpen(value)
       return
     }
-    window.setTimeout(() => {
+    if (rafRef.current !== null) {
+      window.cancelAnimationFrame(rafRef.current)
+    }
+    rafRef.current = window.requestAnimationFrame(() => {
       setSidebarOpen(value)
-    }, 0)
+      rafRef.current = null
+    })
   }
+
+  useEffect(() => {
+    return () => {
+      if (rafRef.current !== null) {
+        window.cancelAnimationFrame(rafRef.current)
+        rafRef.current = null
+      }
+    }
+  }, [])
 
   return {
     isOpen: isSidebarOpen,
