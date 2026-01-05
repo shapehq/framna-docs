@@ -1,17 +1,45 @@
-import { useEffect, useSyncExternalStore } from "react"
-import useSessionStorageState from "@/common/utils/useSessionStorageState"
+import { useLayoutEffect, useEffect, useState } from "react"
+import { useSessionStorage } from "usehooks-ts"
 
 type Options = { clearAnimationAfterMs?: number }
 
 export default function useSidebarOpen(options: Options = {}) {
-  const isHydrated = useSyncExternalStore(
-    () => () => {},
-    () => true,
-    () => false
+  const [isSidebarOpen, setSidebarOpen] = useSessionStorage(
+    "isSidebarOpen",
+    true,
+    { initializeWithValue: false }
   )
-  const [isSidebarOpen, setSidebarOpen] = useSessionStorageState("isSidebarOpen", true)
-  const [shouldAnimate, setShouldAnimate] = useSessionStorageState("isSidebarOpenAnimateNext", false)
-  const isInitialized = isHydrated
+  const [shouldAnimate, setShouldAnimate] = useSessionStorage(
+    "isSidebarOpenAnimateNext",
+    false,
+    { initializeWithValue: false }
+  )
+  const [isInitialized, setIsInitialized] = useState(false)
+
+  useLayoutEffect(() => {
+    if (typeof window === "undefined") {
+      return
+    }
+
+    const rawValue = window.sessionStorage.getItem("isSidebarOpen")
+    if (rawValue !== null) {
+      try {
+        const parsedValue = JSON.parse(rawValue)
+        if (typeof parsedValue === "boolean") {
+          setSidebarOpen(parsedValue)
+        }
+      } catch {
+        // Ignore invalid storage values and keep defaults.
+      }
+    }
+
+    const timeout = window.setTimeout(() => {
+      setShouldAnimate(false)
+      setIsInitialized(true)
+    }, 0)
+
+    return () => window.clearTimeout(timeout)
+  }, [setSidebarOpen, setShouldAnimate])
 
   useEffect(() => {
     if (!shouldAnimate || !options.clearAnimationAfterMs) {
