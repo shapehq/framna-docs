@@ -36,9 +36,7 @@ export default function Page() {
       {project && (!version || !specification) && !refreshing && 
         <ErrorMessage text={`The selected ${!version ? "branch or tag" : "specification"} was not found.`}/>
       }
-      {refreshing && // project data is currently being fetched - show loading indicator
-        <LoadingIndicator />
-      }
+      {!project && refreshing && <LoadingIndicator /> }
       {!project && !refreshing && <NotFound/>}
     </>
   )
