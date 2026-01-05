@@ -51,8 +51,6 @@ const ClientSplitView = ({
       setSidebarOpen(true)
     }
   }, [isSidebarOpen, isSidebarTogglable, setSidebarOpen])
-  
-
   // Close diff sidebar if no specification is selected
   useEffect(() => {
     if (!specification && isDiffbarOpen) {
