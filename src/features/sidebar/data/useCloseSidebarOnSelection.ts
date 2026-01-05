@@ -11,7 +11,7 @@ export default function useCloseSidebarOnSelection() {
   return {
     closeSidebarIfNeeded: () => {
       if (!isDesktopLayout) {
-        sidebarState.setOpen(false)
+        sidebarState.setOpenWithTransition(false)
       }
     }
   }
