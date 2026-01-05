@@ -10,6 +10,7 @@ const SecondaryContainer = ({
   offsetDiffContent,
   children,
   isSM,
+  disableTransition,
 }: {
   sidebarWidth: number
   offsetContent: boolean
@@ -17,6 +18,7 @@ const SecondaryContainer = ({
   offsetDiffContent?: boolean
   children?: React.ReactNode,
   isSM: boolean,
+  disableTransition?: boolean,
 }) => {
   const sx = { overflow: "hidden" }
   return (
@@ -27,6 +29,7 @@ const SecondaryContainer = ({
         isSidebarOpen={isSM ? offsetContent:  false}
         diffWidth={isSM ? (diffWidth || 0) : 0}
         isDiffOpen={isSM ? (offsetDiffContent || false) : false}
+        disableTransition={disableTransition}
         sx={{ ...sx }}
       >
         {children}
@@ -43,18 +46,35 @@ interface WrapperStackProps {
   readonly isSidebarOpen: boolean
   readonly diffWidth: number
   readonly isDiffOpen: boolean
+  readonly disableTransition?: boolean
 }
 
 const WrapperStack = styled(Stack, {
-  shouldForwardProp: (prop) => prop !== "isSidebarOpen" && prop !== "sidebarWidth" && prop !== "diffWidth" && prop !== "isDiffOpen"
-})<WrapperStackProps>(({ theme, sidebarWidth, isSidebarOpen, diffWidth, isDiffOpen }) => {
+  shouldForwardProp: (prop) =>
+    prop !== "isSidebarOpen" &&
+    prop !== "sidebarWidth" &&
+    prop !== "diffWidth" &&
+    prop !== "isDiffOpen" &&
+    prop !== "disableTransition"
+})<WrapperStackProps>(({ theme, sidebarWidth, isSidebarOpen, diffWidth, isDiffOpen, disableTransition }) => {
+  const marginStyles = {
+    marginLeft: isSidebarOpen ? 0 : `-${sidebarWidth}px`,
+    marginRight: isDiffOpen ? 0 : `-${diffWidth}px`,
+  }
+
+  if (disableTransition) {
+    return {
+      transition: "none",
+      ...marginStyles
+    }
+  }
+
   return {
     transition: theme.transitions.create(["margin", "width"], {
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.leavingScreen
     }),
-    marginLeft: isSidebarOpen ? 0 : `-${sidebarWidth}px`,
-    marginRight: isDiffOpen ? 0 : `-${diffWidth}px`,
+    ...marginStyles,
     ...((isSidebarOpen || isDiffOpen) && {
       transition: theme.transitions.create(["margin", "width"], {
         easing: theme.transitions.easing.easeOut,
@@ -69,6 +89,7 @@ const InnerSecondaryContainer = ({
   isSidebarOpen,
   diffWidth,
   isDiffOpen,
+  disableTransition,
   children,
   sx
 }: {
@@ -76,6 +97,7 @@ const InnerSecondaryContainer = ({
   isSidebarOpen: boolean
   diffWidth: number
   isDiffOpen: boolean
+  disableTransition?: boolean
   children: React.ReactNode
   sx?: SxProps
 }) => {
@@ -87,6 +109,7 @@ const InnerSecondaryContainer = ({
       isSidebarOpen={isSidebarOpen}
       diffWidth={diffWidth}
       isDiffOpen={isDiffOpen}
+      disableTransition={disableTransition}
       sx={{ ...sx, width: "100%", overflowY: "auto" }}
       
     >
