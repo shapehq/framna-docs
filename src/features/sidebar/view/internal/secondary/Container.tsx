@@ -111,7 +111,6 @@ const InnerSecondaryContainer = ({
       isDiffOpen={isDiffOpen}
       disableTransition={disableTransition}
       sx={{ ...sx, width: "100%", overflowY: "auto" }}
-      
     >
       <RaisedMainContent>
         {children}
