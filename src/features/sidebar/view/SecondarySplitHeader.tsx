@@ -52,8 +52,8 @@ const SecondarySplitHeader = ({
         </Box>
         {isDiffFeatureEnabled && (
           <ToggleDiffButton
-            isDiffbarOpen={isSidebarOpen}
-            onClick={setSidebarOpen}
+            isDiffbarOpen={isDiffbarOpen}
+            onClick={setDiffbarOpen}
             isDiffAvailable={!!specification?.diffURL}
           />
         )}
