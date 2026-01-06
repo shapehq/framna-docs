@@ -47,11 +47,7 @@ interface WrapperStackProps {
 }
 
 const WrapperStack = styled(Stack, {
-  shouldForwardProp: (prop) =>
-    prop !== "isSidebarOpen" &&
-    prop !== "sidebarWidth" &&
-    prop !== "diffWidth" &&
-    prop !== "isDiffOpen"
+  shouldForwardProp: (prop) => prop !== "isSidebarOpen" && prop !== "sidebarWidth" && prop !== "diffWidth" && prop !== "isDiffOpen"
 })<WrapperStackProps>(({ theme, sidebarWidth, isSidebarOpen, diffWidth, isDiffOpen }) => {
   const marginStyles = {
     marginLeft: isSidebarOpen ? 0 : `-${sidebarWidth}px`,
@@ -105,6 +101,7 @@ const InnerSecondaryContainer = ({
       diffWidth={diffWidth}
       isDiffOpen={isDiffOpen}
       sx={{ ...sx, width: "100%", overflowY: "auto" }}
+      
     >
       <RaisedMainContent>
         {children}

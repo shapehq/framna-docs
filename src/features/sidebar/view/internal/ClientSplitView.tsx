@@ -31,13 +31,13 @@ const ClientSplitView = ({
   const theme = useTheme()
   // Determine if the screen size is small or larger
   const isSM = useMediaQuery(theme.breakpoints.up("sm"))
-  
+
   useEffect(() => {
     if (!isSidebarTogglable && !isSidebarOpen) {
       setSidebarOpen(true)
     }
   }, [isSidebarOpen, isSidebarTogglable, setSidebarOpen])
-  
+
   // Close diff sidebar if no specification is selected
   useEffect(() => {
     if (!specification && isRightSidebarOpen) {
@@ -53,7 +53,7 @@ const ClientSplitView = ({
       }
     }
   }, [isSidebarTogglable, setSidebarOpen])
-  
+
   useKeyboardShortcut(event => {
     const isActionKey = isMac() ? event.metaKey : event.ctrlKey
     if (isDiffFeatureEnabled && isActionKey && event.key === "k") {
