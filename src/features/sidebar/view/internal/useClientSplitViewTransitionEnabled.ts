@@ -36,7 +36,7 @@ export default function useClientSplitViewTransitionEnabled() {
   // from a single unmount cleanup to guarantee no callback runs after unmount.
   //
   // This fix is not implemented because it would complicate the implementation
-  // and it's unclear how frequently the edge-case occurs n practice.
+  // and it's unclear how frequently the edge-case occurs in practice.
   // Revisit if this issue is observed in production.
 
   return { isMounted, isTransitionsEnabled }
