@@ -1,8 +1,10 @@
 "use client"
 
+import { useContext } from "react"
 import { SxProps } from "@mui/system"
 import { Drawer as MuiDrawer } from "@mui/material"
 import { useTheme } from "@mui/material/styles"
+import ClientSplitViewTransitionContext from "../ClientSplitViewTransitionContext"
 
 const PrimaryContainer = ({
   width,
@@ -17,7 +19,7 @@ const PrimaryContainer = ({
 }) => {
   return (
     <>
-      <InnerPrimaryContainer 
+      <InnerPrimaryContainer
         variant="temporary"
         width={width}
         isOpen={isOpen}
@@ -60,12 +62,14 @@ const InnerPrimaryContainer = ({
   children?: React.ReactNode
 }) => {
   const theme = useTheme()
+  const { isTransitionsEnabled } = useContext(ClientSplitViewTransitionContext)
   return (
     <MuiDrawer
       variant={variant}
       anchor="left"
       open={isOpen}
       onClose={onClose}
+      transitionDuration={isTransitionsEnabled ? undefined : 0}
       ModalProps={{
         keepMounted: keepMounted || false
       }}
@@ -77,7 +81,8 @@ const InnerPrimaryContainer = ({
           width: width,
           boxSizing: "border-box",
           borderRight: 0,
-          background: theme.palette.background.default
+          background: theme.palette.background.default,
+          ...(isTransitionsEnabled ? {} : { transition: "none" })
         }
      }}
     >

@@ -4,6 +4,8 @@ import { Stack } from "@mui/material"
 import Selector from "./Selector"
 import { useProjectSelection } from "../../data"
 
+const isDiffFeatureEnabled = process.env.NEXT_PUBLIC_ENABLE_DIFF_SIDEBAR === "true"
+
 const MobileToolbar = () => {
   const {
     project,
@@ -31,7 +33,7 @@ const MobileToolbar = () => {
         items={version.specifications.map(spec => ({
           id: spec.id,
           name: spec.name,
-          hasChanges: !!spec.diffURL
+          hasChanges: isDiffFeatureEnabled && !!spec.diffURL
         }))}
         selection={specification.id}
         onSelect={selectSpecification}
