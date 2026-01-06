@@ -41,7 +41,9 @@ const SecondarySplitHeader = ({
         <Box sx={{ position: "relative", flexGrow: 1, overflow: "hidden", minWidth: 0, height: 40 }}>
           <Stack direction="row" alignItems="center" sx={{ position: "absolute", right: 0, top: "50%", transform: "translateY(-50%)", whiteSpace: "nowrap" }}>
             {children}
-            <Divider orientation="vertical" flexItem sx={{ marginLeft: 0.5, marginRight: 0.5 }} />
+            {isDiffFeatureEnabled && (
+              <Divider orientation="vertical" flexItem sx={{ marginLeft: 0.5, marginRight: 0.5 }} />
+            )}
             {mobileToolbar && (
               <ToggleMobileToolbarButton
                 direction={isMobileToolbarVisible ? "up" : "down"}

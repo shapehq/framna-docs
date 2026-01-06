@@ -19,7 +19,7 @@ const PrimaryContainer = ({
 }) => {
   return (
     <>
-      <InnerPrimaryContainer 
+      <InnerPrimaryContainer
         variant="temporary"
         width={width}
         isOpen={isOpen}
