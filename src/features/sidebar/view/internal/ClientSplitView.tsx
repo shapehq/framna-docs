@@ -22,25 +22,24 @@ const ClientSplitView = ({
   sidebarRight?: React.ReactNode
 }) => {
   const theme = useTheme()
-  const sidebarTransitionDuration = Math.max(
+  const panelTransitionDuration = Math.max(
     theme.transitions.duration.enteringScreen,
     theme.transitions.duration.leavingScreen
   )
-  const diffbarTransitionDuration = sidebarTransitionDuration
   const {
     isOpen: isSidebarOpen,
     isInitialized: isSidebarInitialized,
     shouldAnimate: shouldAnimateSidebar,
     setOpen: setSidebarOpen,
     setOpenWithTransition: setSidebarOpenWithTransition
-  } = useSidebarOpen({ clearAnimationAfterMs: sidebarTransitionDuration })
+  } = useSidebarOpen({ clearAnimationAfterMs: panelTransitionDuration })
   const {
     isOpen: isDiffbarOpen,
     isInitialized: isDiffbarInitialized,
     shouldAnimate: shouldAnimateDiffbar,
     setOpen: setDiffbarOpen,
     setOpenWithTransition: setDiffbarOpenWithTransition
-  } = useDiffbarOpen({ clearAnimationAfterMs: diffbarTransitionDuration })
+  } = useDiffbarOpen({ clearAnimationAfterMs: panelTransitionDuration })
   const { specification } = useProjectSelection()
   const isSidebarTogglable = useContext(SidebarTogglableContext)
   const isSM = useMediaQuery(theme.breakpoints.up("sm"))
