@@ -8,7 +8,10 @@ export default function useClientSplitViewTransitionEnabled() {
 
   useEffect(() => {
     // Track first render to avoid showing default state.
-    setMounted(true)
+    const frame = window.requestAnimationFrame(() => {
+      setMounted(true)
+    })
+    return () => window.cancelAnimationFrame(frame)
   }, [])
 
   useEffect(() => {
