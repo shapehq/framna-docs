@@ -6,6 +6,8 @@ import { isMac, useKeyboardShortcut, SidebarTogglableContext } from "@/common"
 import { useSidebarOpen } from "../../data"
 import useDiffbarOpen from "../../data/useDiffbarOpen"
 import { useProjectSelection } from "@/features/projects/data"
+import ClientSplitViewTransitionContext from "./ClientSplitViewTransitionContext"
+import useClientSplitViewTransitionEnabled from "./useClientSplitViewTransitionEnabled"
 import PrimaryContainer from "./primary/Container"
 import SecondaryContainer from "./secondary/Container"
 import RightContainer from "./tertiary/RightContainer"
@@ -21,6 +23,7 @@ const ClientSplitView = ({
   children?: React.ReactNode
   sidebarRight?: React.ReactNode
 }) => {
+  const { isMounted, isTransitionsEnabled } = useClientSplitViewTransitionEnabled()
   const [isSidebarOpen, setSidebarOpen] = useSidebarOpen()
   const [isRightSidebarOpen, setRightSidebarOpen] = useDiffbarOpen()
   const { specification } = useProjectSelection()
@@ -63,25 +66,43 @@ const ClientSplitView = ({
   const diffWidth = 320
 
   return (
-    <Stack direction="row" spacing={0} sx={{ width: "100%", height: "100%" }}>
-      <PrimaryContainer
-        width={sidebarWidth}
-        isOpen={isSidebarOpen}
-        onClose={() => setSidebarOpen(false)}
+    <ClientSplitViewTransitionContext.Provider value={{
+      isTransitionsEnabled
+    }}>
+      <Stack
+        direction="row"
+        spacing={0}
+        sx={{
+          width: "100%",
+          height: "100%",
+          visibility: isMounted ? "visible" : "hidden"
+        }}
       >
-        {sidebar}
-      </PrimaryContainer>
-      <SecondaryContainer isSM={isSM} sidebarWidth={sidebarWidth} offsetContent={isSidebarOpen} diffWidth={diffWidth} offsetDiffContent={isRightSidebarOpen}>
-        {children}
-      </SecondaryContainer>
-      <RightContainer
-        width={diffWidth}
-        isOpen={isRightSidebarOpen}
-        onClose={() => setRightSidebarOpen(false)}
-      >
-        {sidebarRight}
-      </RightContainer>
-    </Stack>
+        <PrimaryContainer
+          width={sidebarWidth}
+          isOpen={isSidebarOpen}
+          onClose={() => setSidebarOpen(false)}
+        >
+          {sidebar}
+        </PrimaryContainer>
+        <SecondaryContainer
+          isSM={isSM}
+          sidebarWidth={sidebarWidth}
+          offsetContent={isSidebarOpen}
+          diffWidth={diffWidth}
+          offsetDiffContent={isRightSidebarOpen}
+        >
+          {children}
+        </SecondaryContainer>
+        <RightContainer
+          width={diffWidth}
+          isOpen={isRightSidebarOpen}
+          onClose={() => setRightSidebarOpen(false)}
+        >
+          {sidebarRight}
+        </RightContainer>
+      </Stack>
+    </ClientSplitViewTransitionContext.Provider>
   )
 }
 
