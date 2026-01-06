@@ -53,7 +53,7 @@ const ClientSplitView = ({
       }
     }
   }, [isSidebarTogglable, setSidebarOpen])
-
+  
   useKeyboardShortcut(event => {
     const isActionKey = isMac() ? event.metaKey : event.ctrlKey
     if (isDiffFeatureEnabled && isActionKey && event.key === "k") {
@@ -61,7 +61,7 @@ const ClientSplitView = ({
       setRightSidebarOpen(!isRightSidebarOpen)
     }
   }, [isRightSidebarOpen, setRightSidebarOpen])
-
+  
   const sidebarWidth = 320
   const diffWidth = 320
 

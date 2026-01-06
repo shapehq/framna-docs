@@ -11,19 +11,20 @@ const SecondaryContainer = ({
   diffWidth,
   offsetDiffContent,
   children,
-  isSM
+  isSM,
 }: {
   sidebarWidth: number
   offsetContent: boolean
   diffWidth?: number
   offsetDiffContent?: boolean
   children?: React.ReactNode,
-  isSM: boolean
+  isSM: boolean,
 }) => {
   const sx = { overflow: "hidden" }
   return (
     <>
       <InnerSecondaryContainer
+      
         sidebarWidth={isSM ? sidebarWidth : 0}
         isSidebarOpen={isSM ? offsetContent : false}
         diffWidth={isSM ? (diffWidth || 0) : 0}
