@@ -25,9 +25,8 @@ const SecondaryContainer = ({
   return (
     <>
       <InnerSecondaryContainer
-    
         sidebarWidth={isSM ? sidebarWidth : 0}
-        isSidebarOpen={isSM ? offsetContent:  false}
+        isSidebarOpen={isSM ? offsetContent: false}
         diffWidth={isSM ? (diffWidth || 0) : 0}
         isDiffOpen={isSM ? (offsetDiffContent || false) : false}
         isTransitionsEnabled={isTransitionsEnabled}
