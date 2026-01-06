@@ -1,20 +1,20 @@
 "use client"
 
+import { useContext } from "react"
 import { SxProps } from "@mui/system"
 import { Drawer as MuiDrawer } from "@mui/material"
 import { useTheme } from "@mui/material/styles"
+import ClientSplitViewTransitionContext from "../ClientSplitViewTransitionContext"
 
 const PrimaryContainer = ({
   width,
   isOpen,
   onClose,
-  disableTransition,
   children
 }: {
   width: number
   isOpen: boolean
   onClose?: () => void
-  disableTransition?: boolean
   children?: React.ReactNode
 }) => {
   return (
@@ -24,7 +24,6 @@ const PrimaryContainer = ({
         width={width}
         isOpen={isOpen}
         onClose={onClose}
-        disableTransition={disableTransition}
         keepMounted={true}
         sx={{ display: { xs: "block", sm: "none" } }}
       >
@@ -34,7 +33,6 @@ const PrimaryContainer = ({
         variant="persistent"
         width={width}
         isOpen={isOpen}
-        disableTransition={disableTransition}
         keepMounted={false}
         sx={{ display: { xs: "none", sm: "block" } }}
         >
@@ -51,7 +49,6 @@ const InnerPrimaryContainer = ({
   width,
   isOpen,
   onClose,
-  disableTransition,
   keepMounted,
   sx,
   children
@@ -60,19 +57,19 @@ const InnerPrimaryContainer = ({
   width: number
   isOpen: boolean
   onClose?: () => void
-  disableTransition?: boolean
   keepMounted?: boolean
   sx: SxProps,
   children?: React.ReactNode
 }) => {
   const theme = useTheme()
+  const { isTransitionsEnabled } = useContext(ClientSplitViewTransitionContext)
   return (
     <MuiDrawer
       variant={variant}
       anchor="left"
       open={isOpen}
       onClose={onClose}
-      transitionDuration={disableTransition ? 0 : undefined}
+      transitionDuration={isTransitionsEnabled ? undefined : 0}
       ModalProps={{
         keepMounted: keepMounted || false
       }}
@@ -85,7 +82,7 @@ const InnerPrimaryContainer = ({
           boxSizing: "border-box",
           borderRight: 0,
           background: theme.palette.background.default,
-          ...(disableTransition ? { transition: "none" } : {})
+          ...(isTransitionsEnabled ? {} : { transition: "none" })
         }
      }}
     >

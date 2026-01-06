@@ -20,8 +20,8 @@ const SecondarySplitHeader = ({
   mobileToolbar?: React.ReactNode
   children?: React.ReactNode
 }) => {
-  const { isOpen: isSidebarOpen, setOpenWithTransition: setSidebarOpen } = useSidebarOpen()
-  const { isOpen: isDiffbarOpen, setOpenWithTransition: setDiffbarOpen } = useDiffbarOpen()
+  const [isSidebarOpen, setSidebarOpen] = useSidebarOpen()
+  const [isDiffbarOpen, setDiffbarOpen] = useDiffbarOpen()
   const [isMobileToolbarVisible, setMobileToolbarVisible] = useSessionStorage("isMobileToolbarVisible", true)
   const { specification } = useProjectSelection()
   return (

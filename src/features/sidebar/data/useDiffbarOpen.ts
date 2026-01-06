@@ -1,7 +1,5 @@
-import usePanelOpen from "./usePanelOpen"
+import { useSessionStorage } from "usehooks-ts"
 
-type Options = { clearAnimationAfterMs?: number }
-
-export default function useDiffbarOpen(options: Options = {}) {
-  return usePanelOpen("isDiffbarOpen", false, options)
+export default function useDiffbarOpen() {
+  return useSessionStorage("isDiffbarOpen", false, { initializeWithValue: false })
 }

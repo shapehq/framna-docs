@@ -1,7 +1,9 @@
+import { useContext } from "react"
 import { SxProps } from "@mui/system"
 import { Box, Stack } from "@mui/material"
 import { styled } from "@mui/material/styles"
 import CustomTopLoader from "@/common/ui/CustomTopLoader"
+import ClientSplitViewTransitionContext from "../ClientSplitViewTransitionContext"
 
 const SecondaryContainer = ({
   sidebarWidth,
@@ -9,27 +11,23 @@ const SecondaryContainer = ({
   diffWidth,
   offsetDiffContent,
   children,
-  isSM,
-  disableTransition,
+  isSM
 }: {
   sidebarWidth: number
   offsetContent: boolean
   diffWidth?: number
   offsetDiffContent?: boolean
   children?: React.ReactNode,
-  isSM: boolean,
-  disableTransition?: boolean,
+  isSM: boolean
 }) => {
   const sx = { overflow: "hidden" }
   return (
     <>
       <InnerSecondaryContainer
-    
         sidebarWidth={isSM ? sidebarWidth : 0}
         isSidebarOpen={isSM ? offsetContent : false}
         diffWidth={isSM ? (diffWidth || 0) : 0}
         isDiffOpen={isSM ? (offsetDiffContent || false) : false}
-        disableTransition={disableTransition}
         sx={{ ...sx }}
       >
         {children}
@@ -46,7 +44,6 @@ interface WrapperStackProps {
   readonly isSidebarOpen: boolean
   readonly diffWidth: number
   readonly isDiffOpen: boolean
-  readonly disableTransition?: boolean
 }
 
 const WrapperStack = styled(Stack, {
@@ -54,15 +51,15 @@ const WrapperStack = styled(Stack, {
     prop !== "isSidebarOpen" &&
     prop !== "sidebarWidth" &&
     prop !== "diffWidth" &&
-    prop !== "isDiffOpen" &&
-    prop !== "disableTransition"
-})<WrapperStackProps>(({ theme, sidebarWidth, isSidebarOpen, diffWidth, isDiffOpen, disableTransition }) => {
+    prop !== "isDiffOpen"
+})<WrapperStackProps>(({ theme, sidebarWidth, isSidebarOpen, diffWidth, isDiffOpen }) => {
   const marginStyles = {
     marginLeft: isSidebarOpen ? 0 : `-${sidebarWidth}px`,
     marginRight: isDiffOpen ? 0 : `-${diffWidth}px`,
   }
-
-  if (disableTransition) {
+  
+  const { isTransitionsEnabled } = useContext(ClientSplitViewTransitionContext)
+  if (!isTransitionsEnabled) {
     return {
       transition: "none",
       ...marginStyles
@@ -89,7 +86,6 @@ const InnerSecondaryContainer = ({
   isSidebarOpen,
   diffWidth,
   isDiffOpen,
-  disableTransition,
   children,
   sx
 }: {
@@ -97,7 +93,6 @@ const InnerSecondaryContainer = ({
   isSidebarOpen: boolean
   diffWidth: number
   isDiffOpen: boolean
-  disableTransition?: boolean
   children: React.ReactNode
   sx?: SxProps
 }) => {
@@ -109,7 +104,6 @@ const InnerSecondaryContainer = ({
       isSidebarOpen={isSidebarOpen}
       diffWidth={diffWidth}
       isDiffOpen={isDiffOpen}
-      disableTransition={disableTransition}
       sx={{ ...sx, width: "100%", overflowY: "auto" }}
     >
       <RaisedMainContent>
