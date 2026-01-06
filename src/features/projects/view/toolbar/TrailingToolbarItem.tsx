@@ -59,7 +59,11 @@ const TrailingToolbarItem = () => {
         />
         <Typography variant="h6" sx={{ marginRight: 1 }}>/</Typography>
         <Selector
-          items={version.specifications}
+          items={version.specifications.map(spec => ({
+            id: spec.id,
+            name: spec.name,
+            hasChanges: !!spec.diffURL
+          }))}
           selection={specification.id}
           onSelect={selectSpecification}
           sx={{ marginRight: 0.5 }}
@@ -68,7 +72,7 @@ const TrailingToolbarItem = () => {
           <Divider orientation="vertical" flexItem sx={{ marginLeft: 1, marginRight: 1 }} />
         }
         {specification.editURL &&
-          <Tooltip title={`Edit ${specification.name}`}>
+          <Tooltip title={`Edit ${specification.name}`} sx={{ marginLeft: 0.5, marginRight: 0.5 }}>
             <IconButton
               href={specification.editURL}
               target="_blank"
@@ -83,6 +87,7 @@ const TrailingToolbarItem = () => {
             </IconButton>
           </Tooltip>
         }
+
       </Stack>
     </>
   )

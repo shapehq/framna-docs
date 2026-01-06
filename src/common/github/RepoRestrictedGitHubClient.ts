@@ -1,15 +1,17 @@
-import { 
-    IGitHubClient, 
-    AddCommentToPullRequestRequest, 
-    GetPullRequestCommentsRequest, 
-    GetPullRequestFilesRequest, 
-    GetRepositoryContentRequest, 
-    GraphQLQueryRequest, 
-    GraphQlQueryResponse, 
-    PullRequestComment, 
-    PullRequestFile, 
-    RepositoryContent, 
-    UpdatePullRequestCommentRequest
+import {
+    IGitHubClient,
+    AddCommentToPullRequestRequest,
+    GetPullRequestCommentsRequest,
+    GetPullRequestFilesRequest,
+    GetRepositoryContentRequest,
+    GraphQLQueryRequest,
+    GraphQlQueryResponse,
+    PullRequestComment,
+    PullRequestFile,
+    RepositoryContent,
+    UpdatePullRequestCommentRequest,
+    CompareCommitsRequest,
+    CompareCommitsResponse
 } from "@/common";
 
 export class RepoRestrictedGitHubClient implements IGitHubClient {
@@ -52,6 +54,11 @@ export class RepoRestrictedGitHubClient implements IGitHubClient {
     updatePullRequestComment(request: UpdatePullRequestCommentRequest): Promise<void> {
         if (!this.isRepositoryNameValid(request.repositoryName)) return Promise.reject(new Error("Invalid repository name"));
         return this.gitHubClient.updatePullRequestComment(request);
+    }
+
+    compareCommitsWithBasehead(request: CompareCommitsRequest): Promise<CompareCommitsResponse> {
+        if (!this.isRepositoryNameValid(request.repositoryName)) return Promise.reject(new Error("Invalid repository name"));
+        return this.gitHubClient.compareCommitsWithBasehead(request);
     }
 
     private isRepositoryNameValid(repositoryName: string): boolean {

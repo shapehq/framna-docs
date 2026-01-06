@@ -46,6 +46,14 @@ type GraphQLGitHubRepositoryRef = {
   }
 }
 
+type GraphQLPullRequest = {
+  readonly number: number
+  readonly headRefName: string
+  readonly baseRefName: string
+  readonly baseRefOid: string
+  readonly changedFiles: string[]
+}
+
 export default class GitHubProjectDataSource implements IGitHubRepositoryDataSource {
   private readonly loginsDataSource: IGitHubLoginDataSource
   private readonly graphQlClient: IGitHubGraphQLClient
@@ -99,9 +107,34 @@ export default class GitHubProjectDataSource implements IGitHubRepositoryDataSou
         return !alreadyAdded
       })
     })
-    .then(repositories => {
+    .then(async repositories => {
+      // Fetch PRs for all repositories in a single query
+      const allPullRequests = await this.getOpenPullRequestsForRepositories(
+        repositories.map(repo => ({
+          owner: repo.owner.login,
+          name: repo.name
+        }))
+      )
+
       // Map from the internal model to the public model.
       return repositories.map(repository => {
+        const repoKey = `${repository.owner.login}/${repository.name}`
+        const pullRequests = allPullRequests.get(repoKey) || new Map()
+
+        const branches = repository.branches.edges.map(branch => {
+          const pr = pullRequests.get(branch.node.name)
+
+          return {
+            id: branch.node.target.oid,
+            name: branch.node.name,
+            baseRef: pr?.baseRefName,
+            baseRefOid: pr?.baseRefOid,
+            prNumber: pr?.number,
+            files: branch.node.target.tree.entries,
+            changedFiles: pr?.changedFiles
+          }
+        })
+
         return {
           name: repository.name,
           owner: repository.owner.login,
@@ -111,13 +144,7 @@ export default class GitHubProjectDataSource implements IGitHubRepositoryDataSou
           },
           configYml: repository.configYml,
           configYaml: repository.configYaml,
-          branches: repository.branches.edges.map(branch => {
-            return {
-              id: branch.node.target.oid,
-              name: branch.node.name,
-              files: branch.node.target.tree.entries
-            }
-          }),
+          branches: branches,
           tags: repository.tags.edges.map(branch => {
             return {
               id: branch.node.target.oid,
@@ -128,6 +155,85 @@ export default class GitHubProjectDataSource implements IGitHubRepositoryDataSou
         }
       })
     })
+  }
+  
+  private async getOpenPullRequestsForRepositories(
+    repositories: Array<{ owner: string, name: string }>
+  ): Promise<Map<string, Map<string, GraphQLPullRequest>>> {
+    if (repositories.length === 0) {
+      return new Map()
+    }
+
+    // Build a query that fetches PRs for all repositories
+    const repoQueries = repositories
+      .map((repo, index) => {
+        return `
+        repo${index}: repository(owner: "${repo.owner}", name: "${repo.name}") {
+          pullRequests(first: 100, states: [OPEN]) {
+            edges {
+              node {
+                number
+                headRefName
+                baseRefName
+                baseRefOid
+                files(first: 100) {
+                  nodes {
+                    path
+                  }
+                }
+              }
+            }
+          }
+        }`
+      })
+      .join("\n")
+
+    const request = {
+      query: `
+      query PullRequests {
+        ${repoQueries}
+      }
+      `,
+      variables: {}
+    }
+
+    const response = await this.graphQlClient.graphql(request)
+    const allPullRequests = new Map<string, Map<string, GraphQLPullRequest>>()
+
+    repositories.forEach((repo, index) => {
+      const repoKey = `${repo.owner}/${repo.name}`
+      const repoData = response[`repo${index}`]
+      const pullRequests = new Map<string, GraphQLPullRequest>()
+
+      if (repoData?.pullRequests?.edges) {
+        type RawGraphQLPullRequest = {
+          number: number
+          headRefName: string
+          baseRefName: string
+          baseRefOid: string
+          files?: {
+            nodes?: { path: string }[]
+          }
+        }
+        const pullRequestEdges = repoData.pullRequests.edges as Edge<RawGraphQLPullRequest>[]
+
+        pullRequestEdges.forEach(edge => {
+          const pr = edge.node
+          const changedFiles = pr.files?.nodes?.map(f => f.path) || []
+          pullRequests.set(pr.headRefName, {
+            number: pr.number,
+            headRefName: pr.headRefName,
+            baseRefName: pr.baseRefName,
+            baseRefOid: pr.baseRefOid,
+            changedFiles
+          })
+        })
+      }
+
+      allPullRequests.set(repoKey, pullRequests)
+    })
+
+    return allPullRequests
   }
   
   private async getRepositoriesForSearchQuery(params: {

@@ -6,6 +6,10 @@ export const OpenApiSpecificationSchema = z.object({
   url: z.string(),
   urlHash: z.string().optional(),
   editURL: z.string().optional(),
+  diffURL: z.string().optional(),
+  diffBaseBranch: z.string().optional(),
+  diffBaseOid: z.string().optional(),
+  diffPrUrl: z.string().optional(),
   isDefault: z.boolean()
 })
 

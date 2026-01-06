@@ -4,17 +4,26 @@ import { useEffect, useContext } from "react"
 import { Stack, useMediaQuery, useTheme } from "@mui/material"
 import { isMac, useKeyboardShortcut, SidebarTogglableContext } from "@/common"
 import { useSidebarOpen } from "../../data"
+import useDiffbarOpen from "../../data/useDiffbarOpen"
+import { useProjectSelection } from "@/features/projects/data"
 import PrimaryContainer from "./primary/Container"
 import SecondaryContainer from "./secondary/Container"
+import RightContainer from "./tertiary/RightContainer"
+
+const isDiffFeatureEnabled = process.env.NEXT_PUBLIC_ENABLE_DIFF_SIDEBAR === "true"
 
 const ClientSplitView = ({
   sidebar,
-  children
+  children,
+  sidebarRight
 }: {
   sidebar: React.ReactNode
   children?: React.ReactNode
+  sidebarRight?: React.ReactNode
 }) => {
   const [isSidebarOpen, setSidebarOpen] = useSidebarOpen()
+  const [isRightSidebarOpen, setRightSidebarOpen] = useDiffbarOpen()
+  const { specification } = useProjectSelection()
   const isSidebarTogglable = useContext(SidebarTogglableContext)
   const theme = useTheme()
   // Determine if the screen size is small or larger
@@ -25,6 +34,13 @@ const ClientSplitView = ({
       setSidebarOpen(true)
     }
   }, [isSidebarOpen, isSidebarTogglable, setSidebarOpen])
+
+  // Close diff sidebar if no specification is selected
+  useEffect(() => {
+    if (!specification && isRightSidebarOpen) {
+      setRightSidebarOpen(false)
+    }
+  }, [specification, isRightSidebarOpen, setRightSidebarOpen])
   useKeyboardShortcut(event => {
     const isActionKey = isMac() ? event.metaKey : event.ctrlKey
     if (isActionKey && event.key === ".") {
@@ -34,7 +50,17 @@ const ClientSplitView = ({
       }
     }
   }, [isSidebarTogglable, setSidebarOpen])
+  
+  useKeyboardShortcut(event => {
+    const isActionKey = isMac() ? event.metaKey : event.ctrlKey
+    if (isDiffFeatureEnabled && isActionKey && event.key === "k") {
+      event.preventDefault()
+      setRightSidebarOpen(!isRightSidebarOpen)
+    }
+  }, [isRightSidebarOpen, setRightSidebarOpen])
+  
   const sidebarWidth = 320
+  const diffWidth = 320
 
   return (
     <Stack direction="row" spacing={0} sx={{ width: "100%", height: "100%" }}>
@@ -45,9 +71,16 @@ const ClientSplitView = ({
       >
         {sidebar}
       </PrimaryContainer>
-      <SecondaryContainer isSM={isSM} sidebarWidth={sidebarWidth} offsetContent={isSidebarOpen}>
+      <SecondaryContainer isSM={isSM} sidebarWidth={sidebarWidth} offsetContent={isSidebarOpen} diffWidth={diffWidth} offsetDiffContent={isRightSidebarOpen}>
         {children}
       </SecondaryContainer>
+      <RightContainer
+        width={diffWidth}
+        isOpen={isRightSidebarOpen}
+        onClose={() => setRightSidebarOpen(false)}
+      >
+        {sidebarRight}
+      </RightContainer>
     </Stack>
   )
 }

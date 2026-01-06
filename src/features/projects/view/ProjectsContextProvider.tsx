@@ -48,8 +48,10 @@ useEffect(() => {
     if (!document.hidden) refreshProjects();
   };
   document.addEventListener("visibilitychange", handleVisibilityChange);
+  window.addEventListener("focus", refreshProjects);
   return () => {
     document.removeEventListener("visibilitychange", handleVisibilityChange);
+    window.removeEventListener("focus", refreshProjects);
     window.clearTimeout(timeout);
   };
 }, [refreshProjects]); 
