@@ -51,8 +51,14 @@ interface WrapperStackProps {
 }
 
 const WrapperStack = styled(Stack, {
-  shouldForwardProp: (prop) => prop !== "isSidebarOpen" && prop !== "sidebarWidth" && prop !== "diffWidth" && prop !== "isDiffOpen" && prop !== "isTransitionsEnabled"
-})<WrapperStackProps>(({ theme, sidebarWidth, isSidebarOpen, diffWidth, isDiffOpen, isTransitionsEnabled }) => {
+  shouldForwardProp: (prop) =>
+    prop !== "isSidebarOpen" &&
+    prop !== "sidebarWidth" &&
+    prop !== "diffWidth" &&
+    prop !== "isDiffOpen" &&
+    prop !== "isTransitionsEnabled",
+})<WrapperStackProps>(
+  ({ theme, sidebarWidth, isSidebarOpen, diffWidth, isDiffOpen, isTransitionsEnabled }) => {
   const marginStyles = {
     marginLeft: isSidebarOpen ? 0 : `-${sidebarWidth}px`,
     marginRight: isDiffOpen ? 0 : `-${diffWidth}px`,
