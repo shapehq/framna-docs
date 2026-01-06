@@ -20,8 +20,8 @@ const SecondarySplitHeader = ({
   mobileToolbar?: React.ReactNode
   children?: React.ReactNode
 }) => {
-  const sidebarState = useSidebarOpen()
-  const diffbarState = useDiffbarOpen()
+  const { isOpen: isSidebarOpen, setOpenWithTransition: setSidebarOpen } = useSidebarOpen()
+  const { isOpen: isDiffbarOpen, setOpenWithTransition: setDiffbarOpen } = useDiffbarOpen()
   const [isMobileToolbarVisible, setMobileToolbarVisible] = useSessionStorage("isMobileToolbarVisible", true)
   const { specification } = useProjectSelection()
   return (
@@ -35,8 +35,8 @@ const SecondarySplitHeader = ({
         margin: "auto"
       }}>
         <ToggleSidebarButton
-          isSidebarOpen={sidebarState.isOpen}
-          onClick={sidebarState.setOpenWithTransition}
+          isSidebarOpen={isSidebarOpen}
+          onClick={setSidebarOpen}
         />
         <Box sx={{ position: "relative", flexGrow: 1, overflow: "hidden", minWidth: 0, height: 40 }}>
           <Stack direction="row" alignItems="center" sx={{ position: "absolute", right: 0, top: "50%", transform: "translateY(-50%)", whiteSpace: "nowrap" }}>
@@ -52,8 +52,8 @@ const SecondarySplitHeader = ({
         </Box>
         {isDiffFeatureEnabled && (
           <ToggleDiffButton
-            isDiffbarOpen={diffbarState.isOpen}
-            onClick={diffbarState.setOpenWithTransition}
+            isDiffbarOpen={isSidebarOpen}
+            onClick={setSidebarOpen}
             isDiffAvailable={!!specification?.diffURL}
           />
         )}
