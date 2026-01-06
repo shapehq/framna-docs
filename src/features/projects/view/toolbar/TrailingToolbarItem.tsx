@@ -7,6 +7,8 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faPenToSquare } from "@fortawesome/free-regular-svg-icons"
 import { useProjectSelection } from "../../data"
 
+const isDiffFeatureEnabled = process.env.NEXT_PUBLIC_ENABLE_DIFF_SIDEBAR === "true"
+
 const TrailingToolbarItem = () => {
   const {
     project,
@@ -62,7 +64,7 @@ const TrailingToolbarItem = () => {
           items={version.specifications.map(spec => ({
             id: spec.id,
             name: spec.name,
-            hasChanges: !!spec.diffURL
+            hasChanges: isDiffFeatureEnabled && !!spec.diffURL
           }))}
           selection={specification.id}
           onSelect={selectSpecification}
