@@ -21,6 +21,7 @@ const SecondaryContainer = ({
   isSM: boolean,
 }) => {
   const sx = { overflow: "hidden" }
+  const { isTransitionsEnabled } = useContext(ClientSplitViewTransitionContext)
   return (
     <>
       <InnerSecondaryContainer
@@ -29,6 +30,7 @@ const SecondaryContainer = ({
         isSidebarOpen={isSM ? offsetContent:  false}
         diffWidth={isSM ? (diffWidth || 0) : 0}
         isDiffOpen={isSM ? (offsetDiffContent || false) : false}
+        isTransitionsEnabled={isTransitionsEnabled}
         sx={{ ...sx }}
       >
         {children}
@@ -45,17 +47,17 @@ interface WrapperStackProps {
   readonly isSidebarOpen: boolean
   readonly diffWidth: number
   readonly isDiffOpen: boolean
+  readonly isTransitionsEnabled: boolean
 }
 
 const WrapperStack = styled(Stack, {
-  shouldForwardProp: (prop) => prop !== "isSidebarOpen" && prop !== "sidebarWidth" && prop !== "diffWidth" && prop !== "isDiffOpen"
-})<WrapperStackProps>(({ theme, sidebarWidth, isSidebarOpen, diffWidth, isDiffOpen }) => {
+  shouldForwardProp: (prop) => prop !== "isSidebarOpen" && prop !== "sidebarWidth" && prop !== "diffWidth" && prop !== "isDiffOpen" && prop !== "isTransitionsEnabled"
+})<WrapperStackProps>(({ theme, sidebarWidth, isSidebarOpen, diffWidth, isDiffOpen, isTransitionsEnabled }) => {
   const marginStyles = {
     marginLeft: isSidebarOpen ? 0 : `-${sidebarWidth}px`,
     marginRight: isDiffOpen ? 0 : `-${diffWidth}px`,
   }
   
-  const { isTransitionsEnabled } = useContext(ClientSplitViewTransitionContext)
   if (!isTransitionsEnabled) {
     return {
       transition: "none",
@@ -83,6 +85,7 @@ const InnerSecondaryContainer = ({
   isSidebarOpen,
   diffWidth,
   isDiffOpen,
+  isTransitionsEnabled,
   children,
   sx
 }: {
@@ -90,6 +93,7 @@ const InnerSecondaryContainer = ({
   isSidebarOpen: boolean
   diffWidth: number
   isDiffOpen: boolean
+  isTransitionsEnabled: boolean
   children: React.ReactNode
   sx?: SxProps
 }) => {
@@ -101,6 +105,7 @@ const InnerSecondaryContainer = ({
       isSidebarOpen={isSidebarOpen}
       diffWidth={diffWidth}
       isDiffOpen={isDiffOpen}
+      isTransitionsEnabled={isTransitionsEnabled}
       sx={{ ...sx, width: "100%", overflowY: "auto" }}
       
     >
