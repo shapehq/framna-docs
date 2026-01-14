@@ -5,26 +5,7 @@ import {
   CallToolRequestSchema,
 } from "@modelcontextprotocol/sdk/types.js"
 import { APIClient } from "../api.js"
-
-interface Project {
-  id: string
-  name: string
-  displayName: string
-  versions: Array<{
-    name: string
-    isDefault: boolean
-    specifications: Array<{ name: string; isDefault: boolean }>
-  }>
-  owner: string
-}
-
-interface EndpointSummary {
-  path: string
-  method: string
-  summary?: string
-  operationId?: string
-  tags?: string[]
-}
+import { Project, EndpointSummary } from "../types.js"
 
 const TOOLS = [
   {

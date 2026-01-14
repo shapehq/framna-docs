@@ -2,14 +2,7 @@ import { Command } from "commander"
 import chalk from "chalk"
 import ora from "ora"
 import { getAuthenticatedClient, formatTable } from "./shared.js"
-
-interface EndpointSummary {
-  path: string
-  method: string
-  summary?: string
-  operationId?: string
-  tags?: string[]
-}
+import { EndpointSummary } from "../types.js"
 
 export function createEndpointsCommand(): Command {
   return new Command("endpoints")
