@@ -17,17 +17,16 @@ import RemoteConfigEncoder from "@/features/projects/domain/RemoteConfigEncoder"
  * Used for CLI authentication where we have the token directly.
  */
 class SimpleGitHubClient implements IGitHubGraphQLClient {
-  private readonly accessToken: string
+  private readonly octokit: Octokit
 
   constructor(accessToken: string) {
-    this.accessToken = accessToken
+    this.octokit = new Octokit({ auth: accessToken })
   }
 
   async graphql(
     request: GitHubGraphQLClientRequest
   ): Promise<GitHubGraphQLClientResponse> {
-    const octokit = new Octokit({ auth: this.accessToken })
-    return await octokit.graphql(request.query, request.variables)
+    return await this.octokit.graphql(request.query, request.variables)
   }
 }
 
