@@ -52,7 +52,7 @@ async function handler(
       {
         error: error instanceof Error ? error.message : "Failed to fetch endpoint",
       },
-      { status: 404 }
+      { status: 500 }
     )
   }
 }

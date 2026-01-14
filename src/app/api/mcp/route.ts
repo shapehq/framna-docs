@@ -60,6 +60,7 @@ const encryptionService = new RsaEncryptionService({
 const remoteConfigEncoder = new RemoteConfigEncoder(encryptionService)
 
 // For local development, can use MCP_DEV_TOKEN to bypass auth
+const isDevEnvironment = process.env.NODE_ENV === "development"
 const devToken = env.get("MCP_DEV_TOKEN")
 
 export async function POST(req: NextRequest) {
@@ -71,14 +72,14 @@ export async function POST(req: NextRequest) {
   }
 
   // Check for dev token bypass (local development only)
-  if (devToken && authHeader === `Bearer ${devToken}`) {
+  if (isDevEnvironment && devToken && authHeader === `Bearer ${devToken}`) {
     sessionId = "dev-session"
   }
 
   let session = await deviceFlowService.getSessionToken(sessionId || undefined)
 
   // Check for dev token bypass (creates a dev session)
-  const isDevTokenAuth = devToken && authHeader === `Bearer ${devToken}`
+  const isDevTokenAuth = isDevEnvironment && devToken && authHeader === `Bearer ${devToken}`
   if (!session && isDevTokenAuth) {
     // Create a mock dev session for local development
     session = {

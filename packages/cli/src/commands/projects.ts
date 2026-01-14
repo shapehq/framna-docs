@@ -2,18 +2,7 @@ import { Command } from "commander"
 import chalk from "chalk"
 import ora from "ora"
 import { getAuthenticatedClient, formatTable } from "./shared.js"
-
-interface Project {
-  id: string
-  name: string
-  displayName: string
-  versions: Array<{
-    name: string
-    isDefault: boolean
-    specifications: Array<{ name: string; isDefault: boolean }>
-  }>
-  owner: string
-}
+import { Project } from "../types.js"
 
 export function createProjectsCommand(): Command {
   return new Command("projects")

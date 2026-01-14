@@ -52,5 +52,10 @@ export async function deleteSession(): Promise<void> {
 }
 
 export function getServerUrl(): string {
-  return process.env.FRAMNA_DOCS_URL ?? "https://docs.example.com"
+  const url = process.env.FRAMNA_DOCS_URL
+  if (!url) {
+    // Default to localhost in development, require explicit URL in production
+    return "http://localhost:3000"
+  }
+  return url
 }
