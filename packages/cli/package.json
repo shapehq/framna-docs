@@ -1,5 +1,5 @@
 {
-  "name": "framna-docs",
+  "name": "@framna-docs/cli",
   "version": "0.1.0",
   "description": "CLI for Framna Docs - OpenAPI documentation portal",
   "type": "module",

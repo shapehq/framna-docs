@@ -2,6 +2,9 @@
   "name": "framna-docs",
   "version": "1.0.0",
   "private": true,
+  "workspaces": [
+    "packages/*"
+  ],
   "engines": {
     "node": ">=24.0.0 <25.0.0",
     "npm": ">=11.1.0 <12.0.0"
@@ -12,7 +15,10 @@
     "start": "next start",
     "lint": "eslint --max-warnings=0 .",
     "test": "node --experimental-vm-modules ./node_modules/.bin/jest",
-    "testwatch": "node --experimental-vm-modules ./node_modules/.bin/jest --watch"
+    "testwatch": "node --experimental-vm-modules ./node_modules/.bin/jest --watch",
+    "cli:build": "npm run build --workspace=@framna-docs/cli",
+    "cli:dev": "npm run dev --workspace=@framna-docs/cli",
+    "cli:lint": "npm run lint --workspace=@framna-docs/cli"
   },
   "dependencies": {
     "@apidevtools/swagger-parser": "^10.1.0",
