@@ -65,4 +65,17 @@ describe("GET /api/cli/auth/status", () => {
 
     expect(response.status).toBe(400)
   })
+
+  it("returns error status when pollForToken fails", async () => {
+    mockPollForToken.mockRejectedValue(new Error("Token expired"))
+
+    const request = new Request(
+      "http://localhost/api/cli/auth/status?device_code=abc123"
+    )
+    const response = await GET(request)
+    const data = await response.json()
+
+    expect(response.status).toBe(500)
+    expect(data).toEqual({ status: "error", error: "Token expired" })
+  })
 })
