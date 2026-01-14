@@ -8,7 +8,6 @@ import IProjectDataSource from "@/features/projects/domain/IProjectDataSource"
 import IGitHubClient from "@/common/github/IGitHubClient"
 import { OpenAPIService } from "./OpenAPIService"
 import {
-  ListProjectsArgsSchema,
   ListEndpointsArgsSchema,
   GetEndpointDetailsArgsSchema,
   ListSchemasArgsSchema,

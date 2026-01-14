@@ -1,6 +1,5 @@
 import { createDeviceCode, exchangeDeviceCode } from "@octokit/oauth-methods"
 import { IMCPSessionStore, MCPSession } from "./index"
-import { randomUUID } from "crypto"
 
 export interface DeviceFlowInitiation {
   deviceCode: string

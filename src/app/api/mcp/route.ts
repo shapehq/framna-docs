@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server"
 import { WebStandardStreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/webStandardStreamableHttp.js"
 import { createMCPServer, MCPDeviceFlowService } from "@/features/mcp/domain"
 import { RedisMCPSessionStore } from "@/features/mcp/data"
-import { GitHubClient } from "@/common/github/GitHubClient"
+import { GitHubClient } from "@/common/github"
 import {
   GitHubLoginDataSource,
   GitHubProjectDataSource,
