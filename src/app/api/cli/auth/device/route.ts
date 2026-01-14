@@ -14,14 +14,22 @@ const deviceFlowService = new MCPDeviceFlowService({
 })
 
 export async function POST(): Promise<NextResponse> {
-  const result = await deviceFlowService.initiateDeviceFlow()
+  try {
+    const result = await deviceFlowService.initiateDeviceFlow()
 
-  return NextResponse.json({
-    userCode: result.userCode,
-    verificationUri: result.verificationUri,
-    deviceCode: result.deviceCode,
-    sessionId: result.sessionId,
-    expiresIn: result.expiresIn,
-    interval: result.interval,
-  })
+    return NextResponse.json({
+      userCode: result.userCode,
+      verificationUri: result.verificationUri,
+      deviceCode: result.deviceCode,
+      sessionId: result.sessionId,
+      expiresIn: result.expiresIn,
+      interval: result.interval,
+    })
+  } catch (error) {
+    console.error("Device flow initiation failed:", error)
+    return NextResponse.json(
+      { error: "Failed to initiate device flow" },
+      { status: 500 }
+    )
+  }
 }
