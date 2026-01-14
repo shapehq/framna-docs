@@ -3,11 +3,13 @@ import nextCoreWebVitals from "eslint-config-next/core-web-vitals"
 import tseslint from "typescript-eslint"
 
 const config = [
+  {
+    ignores: ["next-env.d.ts", ".next/**", "packages/*/dist/**", "packages/*/node_modules/**"],
+  },
   ...nextCoreWebVitals,
   js.configs.recommended,
   ...tseslint.configs.recommended,
   {
-    ignores: ["next-env.d.ts", ".next"],
     rules: {
       "array-callback-return": ["error"],
       "no-await-in-loop": ["error"],

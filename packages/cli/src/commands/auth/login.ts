@@ -53,15 +53,19 @@ export function createLoginCommand(): Command {
         const pollInterval = (deviceFlow.interval || 5) * 1000
         const maxAttempts = Math.floor((deviceFlow.expiresIn * 1000) / pollInterval)
 
+        // Polling loop - sequential awaits are intentional for device flow auth
         for (let attempt = 0; attempt < maxAttempts; attempt++) {
+          // eslint-disable-next-line no-await-in-loop
           await new Promise((resolve) => setTimeout(resolve, pollInterval))
 
+          // eslint-disable-next-line no-await-in-loop
           const status = await client.get<StatusResponse>("/api/cli/auth/status", {
             device_code: deviceFlow.deviceCode,
           })
 
           if (status.status === "complete" && status.sessionId) {
             spinner.succeed("Authentication successful!")
+            // eslint-disable-next-line no-await-in-loop
             await saveSession(status.sessionId)
             console.log(chalk.green("\nYou are now logged in."))
             return
