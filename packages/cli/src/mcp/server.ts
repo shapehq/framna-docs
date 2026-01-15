@@ -22,9 +22,9 @@ const TOOLS = [
     inputSchema: {
       type: "object" as const,
       properties: {
-        name: { type: "string", description: "Project name" },
+        project: { type: "string", description: "Project (owner/name)" },
       },
-      required: ["name"],
+      required: ["project"],
     },
   },
   {
@@ -33,7 +33,7 @@ const TOOLS = [
     inputSchema: {
       type: "object" as const,
       properties: {
-        project: { type: "string", description: "Project name" },
+        project: { type: "string", description: "Project (owner/name)" },
         version: { type: "string", description: "Version name (optional)" },
         spec: { type: "string", description: "Spec name (optional)" },
       },
@@ -46,7 +46,7 @@ const TOOLS = [
     inputSchema: {
       type: "object" as const,
       properties: {
-        project: { type: "string", description: "Project name" },
+        project: { type: "string", description: "Project (owner/name)" },
         query: { type: "string", description: "Search query" },
         version: { type: "string", description: "Version name (optional)" },
         spec: { type: "string", description: "Spec name (optional)" },
@@ -60,7 +60,7 @@ const TOOLS = [
     inputSchema: {
       type: "object" as const,
       properties: {
-        project: { type: "string", description: "Project name" },
+        project: { type: "string", description: "Project (owner/name)" },
         path: { type: "string", description: "Endpoint path" },
         method: { type: "string", description: "HTTP method" },
         version: { type: "string", description: "Version name (optional)" },
@@ -75,7 +75,7 @@ const TOOLS = [
     inputSchema: {
       type: "object" as const,
       properties: {
-        project: { type: "string", description: "Project name" },
+        project: { type: "string", description: "Project (owner/name)" },
         version: { type: "string", description: "Version name (optional)" },
         spec: { type: "string", description: "Spec name (optional)" },
       },
@@ -88,7 +88,7 @@ const TOOLS = [
     inputSchema: {
       type: "object" as const,
       properties: {
-        project: { type: "string", description: "Project name" },
+        project: { type: "string", description: "Project (owner/name)" },
         name: { type: "string", description: "Schema name" },
         version: { type: "string", description: "Version name (optional)" },
         spec: { type: "string", description: "Spec name (optional)" },
@@ -98,11 +98,12 @@ const TOOLS = [
   },
 ]
 
-async function resolveProject(service: OpenAPIService, projectName: string) {
-  const projects = await service.listProjects()
-  const found = projects.find(p => p.name === projectName)
-  if (!found) throw new Error(`Project not found: ${projectName}`)
-  return service.getProject(found.owner, found.name)
+function parseProject(project: string): { owner: string; name: string } {
+  if (!project.includes("/")) {
+    throw new Error(`Invalid project format: ${project}. Use owner/name format.`)
+  }
+  const [owner, name] = project.split("/")
+  return { owner, name }
 }
 
 export function createMCPServer(service: OpenAPIService): Server {
@@ -128,8 +129,9 @@ export function createMCPServer(service: OpenAPIService): Server {
         }
 
         case "get_project": {
-          const { name: projectName } = args as { name: string }
-          const project = await resolveProject(service, projectName)
+          const { project: projectId } = args as { project: string }
+          const { owner, name } = parseProject(projectId)
+          const project = await service.getProject(owner, name)
           return {
             content: [{ type: "text", text: JSON.stringify({ project }, null, 2) }],
           }
@@ -137,7 +139,8 @@ export function createMCPServer(service: OpenAPIService): Server {
 
         case "list_endpoints": {
           const params = args as { project: string; version?: string; spec?: string }
-          const project = await resolveProject(service, params.project)
+          const { owner, name } = parseProject(params.project)
+          const project = await service.getProject(owner, name)
           const endpoints = await service.listEndpoints(project, params.version, params.spec)
           return {
             content: [{ type: "text", text: JSON.stringify({ endpoints }, null, 2) }],
@@ -146,7 +149,8 @@ export function createMCPServer(service: OpenAPIService): Server {
 
         case "search_endpoints": {
           const params = args as { project: string; query: string; version?: string; spec?: string }
-          const project = await resolveProject(service, params.project)
+          const { owner, name } = parseProject(params.project)
+          const project = await service.getProject(owner, name)
           const endpoints = await service.searchEndpoints(project, params.query, params.version, params.spec)
           return {
             content: [{ type: "text", text: JSON.stringify({ endpoints }, null, 2) }],
@@ -155,7 +159,8 @@ export function createMCPServer(service: OpenAPIService): Server {
 
         case "get_endpoint_details": {
           const params = args as { project: string; path: string; method: string; version?: string; spec?: string }
-          const project = await resolveProject(service, params.project)
+          const { owner, name } = parseProject(params.project)
+          const project = await service.getProject(owner, name)
           const endpoint = await service.getEndpointDetails(project, params.path, params.method, params.version, params.spec)
           return {
             content: [{ type: "text", text: JSON.stringify({ endpoint }, null, 2) }],
@@ -164,7 +169,8 @@ export function createMCPServer(service: OpenAPIService): Server {
 
         case "list_schemas": {
           const params = args as { project: string; version?: string; spec?: string }
-          const project = await resolveProject(service, params.project)
+          const { owner, name } = parseProject(params.project)
+          const project = await service.getProject(owner, name)
           const schemas = await service.listSchemas(project, params.version, params.spec)
           return {
             content: [{ type: "text", text: JSON.stringify({ schemas }, null, 2) }],
@@ -173,7 +179,8 @@ export function createMCPServer(service: OpenAPIService): Server {
 
         case "get_schema": {
           const params = args as { project: string; name: string; version?: string; spec?: string }
-          const project = await resolveProject(service, params.project)
+          const { owner, name: projectName } = parseProject(params.project)
+          const project = await service.getProject(owner, projectName)
           const schema = await service.getSchema(project, params.name, params.version, params.spec)
           return {
             content: [{ type: "text", text: JSON.stringify({ schema }, null, 2) }],

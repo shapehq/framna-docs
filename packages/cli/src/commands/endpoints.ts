@@ -6,7 +6,7 @@ import { getOpenAPIService, resolveProject, formatTable } from "./shared.js"
 export function createEndpointsCommand(): Command {
   return new Command("endpoints")
     .description("List API endpoints")
-    .argument("<project>", "Project name or owner/name")
+    .argument("<project>", "Project (owner/name)")
     .option("-v, --version <version>", "Version name")
     .option("-s, --spec <spec>", "Spec name")
     .action(async (projectId: string, options: { version?: string; spec?: string }) => {
@@ -14,7 +14,7 @@ export function createEndpointsCommand(): Command {
 
       try {
         const service = await getOpenAPIService()
-        const { owner, name } = await resolveProject(service, projectId)
+        const { owner, name } = resolveProject(projectId)
         const project = await service.getProject(owner, name)
         const endpoints = await service.listEndpoints(project, options.version, options.spec)
 
@@ -44,7 +44,7 @@ export function createEndpointsCommand(): Command {
 export function createEndpointsSearchCommand(): Command {
   return new Command("search")
     .description("Search endpoints")
-    .argument("<project>", "Project name or owner/name")
+    .argument("<project>", "Project (owner/name)")
     .argument("<query>", "Search query")
     .option("-v, --version <version>", "Version name")
     .option("-s, --spec <spec>", "Spec name")
@@ -53,7 +53,7 @@ export function createEndpointsSearchCommand(): Command {
 
       try {
         const service = await getOpenAPIService()
-        const { owner, name } = await resolveProject(service, projectId)
+        const { owner, name } = resolveProject(projectId)
         const project = await service.getProject(owner, name)
         const endpoints = await service.searchEndpoints(project, query, options.version, options.spec)
 
@@ -82,7 +82,7 @@ export function createEndpointsSearchCommand(): Command {
 export function createEndpointCommand(): Command {
   return new Command("endpoint")
     .description("Get endpoint details")
-    .argument("<project>", "Project name or owner/name")
+    .argument("<project>", "Project (owner/name)")
     .argument("<path>", "Endpoint path (e.g., /users/{id})")
     .argument("<method>", "HTTP method")
     .option("-v, --version <version>", "Version name")
@@ -92,7 +92,7 @@ export function createEndpointCommand(): Command {
 
       try {
         const service = await getOpenAPIService()
-        const { owner, name } = await resolveProject(service, projectId)
+        const { owner, name } = resolveProject(projectId)
         const project = await service.getProject(owner, name)
         const endpoint = await service.getEndpointDetails(project, endpointPath, method, options.version, options.spec)
 

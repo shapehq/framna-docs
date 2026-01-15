@@ -6,7 +6,7 @@ import { getOpenAPIService, resolveProject } from "./shared.js"
 export function createSchemasCommand(): Command {
   return new Command("schemas")
     .description("List API schemas")
-    .argument("<project>", "Project name or owner/name")
+    .argument("<project>", "Project (owner/name)")
     .option("-v, --version <version>", "Version name")
     .option("-s, --spec <spec>", "Spec name")
     .action(async (projectId: string, options: { version?: string; spec?: string }) => {
@@ -14,7 +14,7 @@ export function createSchemasCommand(): Command {
 
       try {
         const service = await getOpenAPIService()
-        const { owner, name } = await resolveProject(service, projectId)
+        const { owner, name } = resolveProject(projectId)
         const project = await service.getProject(owner, name)
         const schemas = await service.listSchemas(project, options.version, options.spec)
 
@@ -40,7 +40,7 @@ export function createSchemasCommand(): Command {
 export function createSchemaCommand(): Command {
   return new Command("schema")
     .description("Get schema definition")
-    .argument("<project>", "Project name or owner/name")
+    .argument("<project>", "Project (owner/name)")
     .argument("<name>", "Schema name")
     .option("-v, --version <version>", "Version name")
     .option("-s, --spec <spec>", "Spec name")
@@ -49,7 +49,7 @@ export function createSchemaCommand(): Command {
 
       try {
         const service = await getOpenAPIService()
-        const { owner, name } = await resolveProject(service, projectId)
+        const { owner, name } = resolveProject(projectId)
         const project = await service.getProject(owner, name)
         const schema = await service.getSchema(project, schemaName, options.version, options.spec)
 

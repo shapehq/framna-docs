@@ -26,15 +26,12 @@ export async function getOpenAPIService(): Promise<OpenAPIService> {
   return new OpenAPIService(client, session.sessionId)
 }
 
-export async function resolveProject(service: OpenAPIService, id: string): Promise<{ owner: string; name: string }> {
-  if (id.includes("/")) {
-    const [owner, name] = id.split("/")
-    return { owner, name }
+export function resolveProject(id: string): { owner: string; name: string } {
+  if (!id.includes("/")) {
+    throw new Error(`Invalid project format: ${id}. Use owner/name format.`)
   }
-  const projects = await service.listProjects()
-  const found = projects.find(p => p.name === id)
-  if (!found) throw new Error(`Project not found: ${id}`)
-  return { owner: found.owner, name: found.name }
+  const [owner, name] = id.split("/")
+  return { owner, name }
 }
 
 export function formatTable(headers: string[], rows: string[][]): string {

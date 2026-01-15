@@ -1,15 +1,35 @@
 import { NextRequest, NextResponse } from "next/server"
 import { session, userGitHubClient } from "@/composition"
-import { makeUnauthenticatedAPIErrorResponse } from "@/common"
+import { makeUnauthenticatedAPIErrorResponse, env } from "@/common"
+import { getSessionFromRequest } from "@/app/api/cli/middleware"
+import { createFullGitHubClientForCLI } from "@/app/api/cli/helpers"
+import { RedisMCPSessionStore } from "@/features/mcp/data/RedisMCPSessionStore"
+import RedisKeyValueStore from "@/common/key-value-store/RedisKeyValueStore"
+
+async function getCLIGitHubClient(req: NextRequest) {
+  const sessionId = getSessionFromRequest(req)
+  if (!sessionId) return null
+  const store = new RedisMCPSessionStore({
+    store: new RedisKeyValueStore(env.getOrThrow("REDIS_URL"))
+  })
+  const cliSession = await store.get(sessionId)
+  if (!cliSession) return null
+  return createFullGitHubClientForCLI(cliSession.accessToken)
+}
 
 export async function GET(req: NextRequest, { params }: { params: Promise<{ owner: string; repository: string; path: string[] }> }) {
-  const isAuthenticated = await session.getIsAuthenticated()
-  if (!isAuthenticated) {
+  // Try web session first, then CLI session
+  const isWebAuthenticated = await session.getIsAuthenticated()
+  const cliGitHubClient = !isWebAuthenticated ? await getCLIGitHubClient(req) : null
+
+  if (!isWebAuthenticated && !cliGitHubClient) {
     return makeUnauthenticatedAPIErrorResponse()
   }
+
+  const gitHubClient = cliGitHubClient || userGitHubClient
   const { path: paramsPath, owner, repository } = await params
   const path = paramsPath.join("/")
-  const item = await userGitHubClient.getRepositoryContent({
+  const item = await gitHubClient.getRepositoryContent({
     repositoryOwner: owner,
     repositoryName: repository,
     path: path,

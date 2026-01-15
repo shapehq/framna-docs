@@ -22,13 +22,12 @@ export function createProjectsCommand(): Command {
         }
 
         const rows = projects.map((p) => [
-          p.name,
+          `${p.owner}/${p.name}`,
           p.displayName,
-          p.owner,
         ])
 
-        console.log(formatTable(["NAME", "DISPLAY NAME", "OWNER"], rows))
-        console.log(chalk.dim(`\nUse 'project <name>' to see versions and specs`))
+        console.log(formatTable(["PROJECT", "DISPLAY NAME"], rows))
+        console.log(chalk.dim(`\nUse 'project <owner/name>' to see versions and specs`))
       } catch (error) {
         spinner.fail("Failed to fetch projects")
         console.error(chalk.red(error instanceof Error ? error.message : "Unknown error"))
