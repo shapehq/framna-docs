@@ -1,24 +1,22 @@
 import { Command } from "commander"
 import chalk from "chalk"
 import ora from "ora"
-import { getAuthenticatedClient } from "./shared.js"
+import { getOpenAPIService, resolveProject } from "./shared.js"
 
 export function createSchemasCommand(): Command {
   return new Command("schemas")
     .description("List API schemas")
-    .argument("<project>", "Project name")
+    .argument("<project>", "Project name or owner/name")
     .option("-v, --version <version>", "Version name")
     .option("-s, --spec <spec>", "Spec name")
-    .action(async (project: string, options: { version?: string; spec?: string }) => {
+    .action(async (projectId: string, options: { version?: string; spec?: string }) => {
       const spinner = ora("Fetching schemas...").start()
 
       try {
-        const client = await getAuthenticatedClient()
-        const params: Record<string, string> = { project }
-        if (options.version) params.version = options.version
-        if (options.spec) params.spec = options.spec
-
-        const { schemas } = await client.get<{ schemas: string[] }>("/api/cli/schemas", params)
+        const service = await getOpenAPIService()
+        const { owner, name } = await resolveProject(service, projectId)
+        const project = await service.getProject(owner, name)
+        const schemas = await service.listSchemas(project, options.version, options.spec)
 
         spinner.stop()
 
@@ -42,24 +40,27 @@ export function createSchemasCommand(): Command {
 export function createSchemaCommand(): Command {
   return new Command("schema")
     .description("Get schema definition")
-    .argument("<project>", "Project name")
+    .argument("<project>", "Project name or owner/name")
     .argument("<name>", "Schema name")
     .option("-v, --version <version>", "Version name")
     .option("-s, --spec <spec>", "Spec name")
-    .action(async (project: string, name: string, options: { version?: string; spec?: string }) => {
+    .action(async (projectId: string, schemaName: string, options: { version?: string; spec?: string }) => {
       const spinner = ora("Fetching schema...").start()
 
       try {
-        const client = await getAuthenticatedClient()
-        const params: Record<string, string> = { project, name }
-        if (options.version) params.version = options.version
-        if (options.spec) params.spec = options.spec
-
-        const { schema } = await client.get<{ schema: unknown }>("/api/cli/schema", params)
+        const service = await getOpenAPIService()
+        const { owner, name } = await resolveProject(service, projectId)
+        const project = await service.getProject(owner, name)
+        const schema = await service.getSchema(project, schemaName, options.version, options.spec)
 
         spinner.stop()
 
-        console.log(chalk.bold(name))
+        if (!schema) {
+          console.log(chalk.yellow("Schema not found"))
+          return
+        }
+
+        console.log(chalk.bold(schemaName))
         console.log()
         console.log(JSON.stringify(schema, null, 2))
       } catch (error) {
