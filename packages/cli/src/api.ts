@@ -74,4 +74,19 @@ export class APIClient {
 
     return data
   }
+
+  async getRaw(path: string): Promise<string> {
+    const url = new URL(path, this.baseUrl)
+
+    const response = await fetch(url.toString(), {
+      method: "GET",
+      headers: this.getHeaders(),
+    })
+
+    if (!response.ok) {
+      throw new APIError("Request failed", response.status)
+    }
+
+    return response.text()
+  }
 }
