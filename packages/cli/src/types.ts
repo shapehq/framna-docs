@@ -8,18 +8,8 @@ export interface EndpointSummary {
   tags?: string[]
 }
 
-export interface EndpointSlice {
-  method: string
-  path: string
-  summary?: string
-  description?: string
-  operationId?: string
-  tags?: string[]
-  parameters?: OpenAPIV3.ParameterObject[]
-  requestBody?: OpenAPIV3.RequestBodyObject
-  responses: Record<string, OpenAPIV3.ResponseObject>
-  schemas?: Record<string, OpenAPIV3.SchemaObject>
-}
+// EndpointSlice is a valid OpenAPI 3.0 document containing a single endpoint
+export type EndpointSlice = OpenAPIV3.Document
 
 export interface ProjectSummary {
   id: string

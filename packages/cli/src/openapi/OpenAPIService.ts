@@ -104,12 +104,12 @@ export class OpenAPIService {
     versionName?: string,
     specName?: string
   ): Promise<EndpointSlice | null> {
-    // Get bundled spec (keeps $ref intact, single fetch)
     const spec = await this.getSpec(project, versionName, specName)
     const pathItem = spec.paths?.[path]
     if (!pathItem) return null
 
-    const operation = (pathItem as Record<string, OpenAPIV3.OperationObject>)[method.toLowerCase()]
+    const methodLower = method.toLowerCase() as "get" | "post" | "put" | "delete" | "patch" | "options" | "head"
+    const operation = (pathItem as Record<string, OpenAPIV3.OperationObject>)[methodLower]
     if (!operation) return null
 
     // Collect $ref schema names from the operation
@@ -117,12 +117,10 @@ export class OpenAPIService {
     const collectRefs = (obj: unknown) => {
       if (!obj || typeof obj !== "object") return
       const record = obj as Record<string, unknown>
-
       if (record.$ref && typeof record.$ref === "string") {
         const match = record.$ref.match(/#\/components\/schemas\/(.+)/)
         if (match) schemaNames.add(match[1])
       }
-
       for (const value of Object.values(record)) {
         if (Array.isArray(value)) {
           for (const item of value) collectRefs(item)
@@ -152,27 +150,33 @@ export class OpenAPIService {
       collectNestedRefs(name, visited)
     }
 
-    // Build schemas object with original names
-    const schemas: Record<string, OpenAPIV3.SchemaObject> = {}
+    // Build schemas object
+    const schemas: Record<string, OpenAPIV3.SchemaObject | OpenAPIV3.ReferenceObject> = {}
     for (const name of schemaNames) {
       const schema = spec.components?.schemas?.[name]
-      if (schema) {
-        schemas[name] = schema as OpenAPIV3.SchemaObject
-      }
+      if (schema) schemas[name] = schema
     }
 
-    return {
-      method: method.toUpperCase(),
-      path,
-      summary: operation.summary,
-      description: operation.description,
-      operationId: operation.operationId,
-      tags: operation.tags,
-      parameters: operation.parameters as OpenAPIV3.ParameterObject[],
-      requestBody: operation.requestBody as OpenAPIV3.RequestBodyObject | undefined,
-      responses: operation.responses as Record<string, OpenAPIV3.ResponseObject>,
-      schemas: Object.keys(schemas).length > 0 ? schemas : undefined,
+    // Construct valid OpenAPI 3.0 document
+    const slice: OpenAPIV3.Document = {
+      openapi: "3.0.0",
+      info: {
+        title: `${method.toUpperCase()} ${path}`,
+        version: spec.info?.version || "1.0.0",
+      },
+      paths: {
+        [path]: {
+          [methodLower]: operation,
+        } as OpenAPIV3.PathItemObject,
+      },
     }
+
+    // Add components.schemas if any
+    if (Object.keys(schemas).length > 0) {
+      slice.components = { schemas }
+    }
+
+    return slice
   }
 
   private findVersion(project: Project, name?: string): Version | undefined {

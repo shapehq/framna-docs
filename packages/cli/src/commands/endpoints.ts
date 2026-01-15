@@ -2,6 +2,7 @@ import { Command } from "commander"
 import chalk from "chalk"
 import ora from "ora"
 import yaml from "yaml"
+import { OpenAPIV3 } from "openapi-types"
 import { getOpenAPIService, resolveProject, formatTable } from "./shared.js"
 
 export function createEndpointsCommand(): Command {
@@ -116,44 +117,50 @@ export function createEndpointCommand(): Command {
           return
         }
 
-        // Human-readable output
-        console.log(chalk.bold(`${endpoint.method} ${endpoint.path}`))
-        if (endpoint.summary) console.log(chalk.dim(endpoint.summary))
-        if (endpoint.description) {
+        // Human-readable output - extract from OpenAPI document
+        const pathItem = endpoint.paths?.[endpointPath] as OpenAPIV3.PathItemObject
+        const operation = pathItem?.[method.toLowerCase() as keyof OpenAPIV3.PathItemObject] as OpenAPIV3.OperationObject
+
+        console.log(chalk.bold(`${method.toUpperCase()} ${endpointPath}`))
+        if (operation?.summary) console.log(chalk.dim(operation.summary))
+        if (operation?.description) {
           console.log()
-          console.log(endpoint.description)
+          console.log(operation.description)
         }
         console.log()
 
-        if (endpoint.tags && endpoint.tags.length > 0) {
-          console.log(chalk.bold("Tags:"), endpoint.tags.join(", "))
+        if (operation?.tags && operation.tags.length > 0) {
+          console.log(chalk.bold("Tags:"), operation.tags.join(", "))
         }
 
-        if (endpoint.operationId) {
-          console.log(chalk.bold("Operation ID:"), endpoint.operationId)
+        if (operation?.operationId) {
+          console.log(chalk.bold("Operation ID:"), operation.operationId)
         }
 
-        if (endpoint.parameters && endpoint.parameters.length > 0) {
+        const parameters = operation?.parameters as OpenAPIV3.ParameterObject[] | undefined
+        if (parameters && parameters.length > 0) {
           console.log()
           console.log(chalk.bold("Parameters:"))
-          for (const param of endpoint.parameters) {
+          for (const param of parameters) {
             const required = param.required ? chalk.red("*") : ""
             console.log(`  ${param.name}${required} (${param.in}): ${param.description || ""}`)
           }
         }
 
-        if (endpoint.responses) {
+        if (operation?.responses) {
           console.log()
           console.log(chalk.bold("Responses:"))
-          for (const [code, response] of Object.entries(endpoint.responses)) {
+          for (const [code, response] of Object.entries(operation.responses)) {
+            const resp = response as OpenAPIV3.ResponseObject
             const color = code.startsWith("2") ? chalk.green : code.startsWith("4") ? chalk.yellow : chalk.red
-            console.log(`  ${color(code)}: ${response.description || ""}`)
+            console.log(`  ${color(code)}: ${resp.description || ""}`)
           }
         }
 
-        if (endpoint.schemas && Object.keys(endpoint.schemas).length > 0) {
+        const schemas = endpoint.components?.schemas
+        if (schemas && Object.keys(schemas).length > 0) {
           console.log()
-          console.log(chalk.bold("Schemas:"), Object.keys(endpoint.schemas).join(", "))
+          console.log(chalk.bold("Schemas:"), Object.keys(schemas).join(", "))
           console.log(chalk.dim("Use --json or --yaml to see full schema definitions"))
         }
       } catch (error) {
