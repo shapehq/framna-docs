@@ -4,22 +4,30 @@ import ora from "ora"
 import yaml from "yaml"
 import { getOpenAPIService, resolveProject } from "./shared.js"
 
+interface SpecOptions {
+  project: string
+  apiVersion: string
+  spec: string
+  json?: boolean
+  yaml?: boolean
+}
+
 export function createSpecCommand(): Command {
   return new Command("spec")
     .description("Get full OpenAPI specification")
-    .argument("<project>", "Project (owner/name)")
-    .option("-v, --version <version>", "Version name")
-    .option("-s, --spec <spec>", "Spec name")
+    .requiredOption("-p, --project <project>", "Project (owner/name)")
+    .requiredOption("-a, --api-version <version>", "API version name")
+    .requiredOption("-s, --spec <spec>", "Spec name")
     .option("--json", "Output as JSON (default)")
     .option("--yaml", "Output as YAML")
-    .action(async (projectId: string, options: { version?: string; spec?: string; json?: boolean; yaml?: boolean }) => {
+    .action(async (options: SpecOptions) => {
       const spinner = ora("Fetching spec...").start()
 
       try {
         const service = await getOpenAPIService()
-        const { owner, name } = resolveProject(projectId)
+        const { owner, name } = resolveProject(options.project)
         const project = await service.getProject(owner, name)
-        const spec = await service.getSpec(project, options.version, options.spec)
+        const spec = await service.getSpec(project, options.apiVersion, options.spec)
 
         spinner.stop()
 

@@ -3,20 +3,26 @@ import chalk from "chalk"
 import ora from "ora"
 import { getOpenAPIService, resolveProject } from "./shared.js"
 
+interface SpecOptions {
+  project: string
+  apiVersion: string
+  spec: string
+}
+
 export function createSchemasCommand(): Command {
   return new Command("schemas")
     .description("List API schemas")
-    .argument("<project>", "Project (owner/name)")
-    .option("-v, --version <version>", "Version name")
-    .option("-s, --spec <spec>", "Spec name")
-    .action(async (projectId: string, options: { version?: string; spec?: string }) => {
+    .requiredOption("-p, --project <project>", "Project (owner/name)")
+    .requiredOption("-a, --api-version <version>", "API version name")
+    .requiredOption("-s, --spec <spec>", "Spec name")
+    .action(async (options: SpecOptions) => {
       const spinner = ora("Fetching schemas...").start()
 
       try {
         const service = await getOpenAPIService()
-        const { owner, name } = resolveProject(projectId)
+        const { owner, name } = resolveProject(options.project)
         const project = await service.getProject(owner, name)
-        const schemas = await service.listSchemas(project, options.version, options.spec)
+        const schemas = await service.listSchemas(project, options.apiVersion, options.spec)
 
         spinner.stop()
 
@@ -40,18 +46,18 @@ export function createSchemasCommand(): Command {
 export function createSchemaCommand(): Command {
   return new Command("schema")
     .description("Get schema definition")
-    .argument("<project>", "Project (owner/name)")
     .argument("<name>", "Schema name")
-    .option("-v, --version <version>", "Version name")
-    .option("-s, --spec <spec>", "Spec name")
-    .action(async (projectId: string, schemaName: string, options: { version?: string; spec?: string }) => {
+    .requiredOption("-p, --project <project>", "Project (owner/name)")
+    .requiredOption("-a, --api-version <version>", "API version name")
+    .requiredOption("-s, --spec <spec>", "Spec name")
+    .action(async (schemaName: string, options: SpecOptions) => {
       const spinner = ora("Fetching schema...").start()
 
       try {
         const service = await getOpenAPIService()
-        const { owner, name } = resolveProject(projectId)
+        const { owner, name } = resolveProject(options.project)
         const project = await service.getProject(owner, name)
-        const schema = await service.getSchema(project, schemaName, options.version, options.spec)
+        const schema = await service.getSchema(project, schemaName, options.apiVersion, options.spec)
 
         spinner.stop()
 

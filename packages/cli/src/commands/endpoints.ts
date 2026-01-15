@@ -5,20 +5,26 @@ import yaml from "yaml"
 import { OpenAPIV3 } from "openapi-types"
 import { getOpenAPIService, resolveProject, formatTable } from "./shared.js"
 
+interface SpecOptions {
+  project: string
+  apiVersion: string
+  spec: string
+}
+
 export function createEndpointsCommand(): Command {
   return new Command("endpoints")
     .description("List API endpoints")
-    .argument("<project>", "Project (owner/name)")
-    .option("-v, --version <version>", "Version name")
-    .option("-s, --spec <spec>", "Spec name")
-    .action(async (projectId: string, options: { version?: string; spec?: string }) => {
+    .requiredOption("-p, --project <project>", "Project (owner/name)")
+    .requiredOption("-a, --api-version <version>", "API version name")
+    .requiredOption("-s, --spec <spec>", "Spec name")
+    .action(async (options: SpecOptions) => {
       const spinner = ora("Fetching endpoints...").start()
 
       try {
         const service = await getOpenAPIService()
-        const { owner, name } = resolveProject(projectId)
+        const { owner, name } = resolveProject(options.project)
         const project = await service.getProject(owner, name)
-        const endpoints = await service.listEndpoints(project, options.version, options.spec)
+        const endpoints = await service.listEndpoints(project, options.apiVersion, options.spec)
 
         spinner.stop()
 
@@ -46,18 +52,18 @@ export function createEndpointsCommand(): Command {
 export function createEndpointsSearchCommand(): Command {
   return new Command("search")
     .description("Search endpoints")
-    .argument("<project>", "Project (owner/name)")
     .argument("<query>", "Search query")
-    .option("-v, --version <version>", "Version name")
-    .option("-s, --spec <spec>", "Spec name")
-    .action(async (projectId: string, query: string, options: { version?: string; spec?: string }) => {
+    .requiredOption("-p, --project <project>", "Project (owner/name)")
+    .requiredOption("-a, --api-version <version>", "API version name")
+    .requiredOption("-s, --spec <spec>", "Spec name")
+    .action(async (query: string, options: SpecOptions) => {
       const spinner = ora("Searching endpoints...").start()
 
       try {
         const service = await getOpenAPIService()
-        const { owner, name } = resolveProject(projectId)
+        const { owner, name } = resolveProject(options.project)
         const project = await service.getProject(owner, name)
-        const endpoints = await service.searchEndpoints(project, query, options.version, options.spec)
+        const endpoints = await service.searchEndpoints(project, query, options.apiVersion, options.spec)
 
         spinner.stop()
 
@@ -84,21 +90,21 @@ export function createEndpointsSearchCommand(): Command {
 export function createEndpointCommand(): Command {
   return new Command("endpoint")
     .description("Get endpoint details with schemas")
-    .argument("<project>", "Project (owner/name)")
     .argument("<path>", "Endpoint path (e.g., /users/{id})")
     .argument("<method>", "HTTP method")
-    .option("-v, --version <version>", "Version name")
-    .option("-s, --spec <spec>", "Spec name")
+    .requiredOption("-p, --project <project>", "Project (owner/name)")
+    .requiredOption("-a, --api-version <version>", "API version name")
+    .requiredOption("-s, --spec <spec>", "Spec name")
     .option("--json", "Output as JSON")
     .option("--yaml", "Output as YAML")
-    .action(async (projectId: string, endpointPath: string, method: string, options: { version?: string; spec?: string; json?: boolean; yaml?: boolean }) => {
+    .action(async (endpointPath: string, method: string, options: SpecOptions & { json?: boolean; yaml?: boolean }) => {
       const spinner = ora("Fetching endpoint...").start()
 
       try {
         const service = await getOpenAPIService()
-        const { owner, name } = resolveProject(projectId)
+        const { owner, name } = resolveProject(options.project)
         const project = await service.getProject(owner, name)
-        const endpoint = await service.getEndpointSlice(project, endpointPath, method, options.version, options.spec)
+        const endpoint = await service.getEndpointSlice(project, endpointPath, method, options.apiVersion, options.spec)
 
         spinner.stop()
 

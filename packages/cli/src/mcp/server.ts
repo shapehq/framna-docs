@@ -34,10 +34,10 @@ const TOOLS = [
       type: "object" as const,
       properties: {
         project: { type: "string", description: "Project (owner/name)" },
-        version: { type: "string", description: "Version name (optional)" },
-        spec: { type: "string", description: "Spec name (optional)" },
+        version: { type: "string", description: "API version name" },
+        spec: { type: "string", description: "Spec name" },
       },
-      required: ["project"],
+      required: ["project", "version", "spec"],
     },
   },
   {
@@ -48,10 +48,10 @@ const TOOLS = [
       properties: {
         project: { type: "string", description: "Project (owner/name)" },
         query: { type: "string", description: "Search query" },
-        version: { type: "string", description: "Version name (optional)" },
-        spec: { type: "string", description: "Spec name (optional)" },
+        version: { type: "string", description: "API version name" },
+        spec: { type: "string", description: "Spec name" },
       },
-      required: ["project", "query"],
+      required: ["project", "query", "version", "spec"],
     },
   },
   {
@@ -63,10 +63,10 @@ const TOOLS = [
         project: { type: "string", description: "Project (owner/name)" },
         path: { type: "string", description: "Endpoint path" },
         method: { type: "string", description: "HTTP method" },
-        version: { type: "string", description: "Version name (optional)" },
-        spec: { type: "string", description: "Spec name (optional)" },
+        version: { type: "string", description: "API version name" },
+        spec: { type: "string", description: "Spec name" },
       },
-      required: ["project", "path", "method"],
+      required: ["project", "path", "method", "version", "spec"],
     },
   },
   {
@@ -76,10 +76,10 @@ const TOOLS = [
       type: "object" as const,
       properties: {
         project: { type: "string", description: "Project (owner/name)" },
-        version: { type: "string", description: "Version name (optional)" },
-        spec: { type: "string", description: "Spec name (optional)" },
+        version: { type: "string", description: "API version name" },
+        spec: { type: "string", description: "Spec name" },
       },
-      required: ["project"],
+      required: ["project", "version", "spec"],
     },
   },
   {
@@ -90,10 +90,10 @@ const TOOLS = [
       properties: {
         project: { type: "string", description: "Project (owner/name)" },
         name: { type: "string", description: "Schema name" },
-        version: { type: "string", description: "Version name (optional)" },
-        spec: { type: "string", description: "Spec name (optional)" },
+        version: { type: "string", description: "API version name" },
+        spec: { type: "string", description: "Spec name" },
       },
-      required: ["project", "name"],
+      required: ["project", "name", "version", "spec"],
     },
   },
   {
@@ -103,10 +103,10 @@ const TOOLS = [
       type: "object" as const,
       properties: {
         project: { type: "string", description: "Project (owner/name)" },
-        version: { type: "string", description: "Version name (optional)" },
-        spec: { type: "string", description: "Spec name (optional)" },
+        version: { type: "string", description: "API version name" },
+        spec: { type: "string", description: "Spec name" },
       },
-      required: ["project"],
+      required: ["project", "version", "spec"],
     },
   },
 ]
@@ -151,7 +151,7 @@ export function createMCPServer(service: OpenAPIService): Server {
         }
 
         case "list_endpoints": {
-          const params = args as { project: string; version?: string; spec?: string }
+          const params = args as { project: string; version: string; spec: string }
           const { owner, name } = parseProject(params.project)
           const project = await service.getProject(owner, name)
           const endpoints = await service.listEndpoints(project, params.version, params.spec)
@@ -161,7 +161,7 @@ export function createMCPServer(service: OpenAPIService): Server {
         }
 
         case "search_endpoints": {
-          const params = args as { project: string; query: string; version?: string; spec?: string }
+          const params = args as { project: string; query: string; version: string; spec: string }
           const { owner, name } = parseProject(params.project)
           const project = await service.getProject(owner, name)
           const endpoints = await service.searchEndpoints(project, params.query, params.version, params.spec)
@@ -171,7 +171,7 @@ export function createMCPServer(service: OpenAPIService): Server {
         }
 
         case "get_endpoint_details": {
-          const params = args as { project: string; path: string; method: string; version?: string; spec?: string }
+          const params = args as { project: string; path: string; method: string; version: string; spec: string }
           const { owner, name } = parseProject(params.project)
           const project = await service.getProject(owner, name)
           const endpoint = await service.getEndpointSlice(project, params.path, params.method, params.version, params.spec)
@@ -181,7 +181,7 @@ export function createMCPServer(service: OpenAPIService): Server {
         }
 
         case "list_schemas": {
-          const params = args as { project: string; version?: string; spec?: string }
+          const params = args as { project: string; version: string; spec: string }
           const { owner, name } = parseProject(params.project)
           const project = await service.getProject(owner, name)
           const schemas = await service.listSchemas(project, params.version, params.spec)
@@ -191,7 +191,7 @@ export function createMCPServer(service: OpenAPIService): Server {
         }
 
         case "get_schema": {
-          const params = args as { project: string; name: string; version?: string; spec?: string }
+          const params = args as { project: string; name: string; version: string; spec: string }
           const { owner, name: projectName } = parseProject(params.project)
           const project = await service.getProject(owner, projectName)
           const schema = await service.getSchema(project, params.name, params.version, params.spec)
@@ -201,7 +201,7 @@ export function createMCPServer(service: OpenAPIService): Server {
         }
 
         case "get_spec": {
-          const params = args as { project: string; version?: string; spec?: string }
+          const params = args as { project: string; version: string; spec: string }
           const { owner, name } = parseProject(params.project)
           const project = await service.getProject(owner, name)
           const spec = await service.getSpec(project, params.version, params.spec)
