@@ -1,5 +1,5 @@
 import { Command } from "commander"
-import { getAuthenticatedClient } from "./shared.js"
+import { getOpenAPIService } from "./shared.js"
 import { runMCPServer } from "../mcp/server.js"
 
 export function createMCPCommand(): Command {
@@ -9,10 +9,10 @@ export function createMCPCommand(): Command {
     .command("serve")
     .description("Start stdio MCP server for Claude integration")
     .action(async () => {
-      const client = await getAuthenticatedClient()
+      const service = await getOpenAPIService()
 
       // Run MCP server - this blocks until the connection closes
-      await runMCPServer(client)
+      await runMCPServer(service)
     })
 
   return mcp

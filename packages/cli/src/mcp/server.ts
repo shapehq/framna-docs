@@ -4,8 +4,7 @@ import {
   ListToolsRequestSchema,
   CallToolRequestSchema,
 } from "@modelcontextprotocol/sdk/types.js"
-import { APIClient } from "../api.js"
-import { Project, EndpointSummary } from "../types.js"
+import { OpenAPIService } from "../openapi/index.js"
 
 const TOOLS = [
   {
@@ -99,7 +98,14 @@ const TOOLS = [
   },
 ]
 
-export function createMCPServer(client: APIClient): Server {
+async function resolveProject(service: OpenAPIService, projectName: string) {
+  const projects = await service.listProjects()
+  const found = projects.find(p => p.name === projectName)
+  if (!found) throw new Error(`Project not found: ${projectName}`)
+  return service.getProject(found.owner, found.name)
+}
+
+export function createMCPServer(service: OpenAPIService): Server {
   const server = new Server(
     { name: "framna-docs", version: "0.1.0" },
     { capabilities: { tools: {} } }
@@ -115,134 +121,62 @@ export function createMCPServer(client: APIClient): Server {
     try {
       switch (name) {
         case "list_projects": {
-          const result = await client.get<{ projects: Project[] }>(
-            "/api/cli/projects"
-          )
+          const projects = await service.listProjects()
           return {
-            content: [{ type: "text", text: JSON.stringify(result, null, 2) }],
+            content: [{ type: "text", text: JSON.stringify({ projects }, null, 2) }],
           }
         }
 
         case "get_project": {
-          const projectName = (args as { name: string }).name
-          const result = await client.get<{ project: Project }>(
-            `/api/cli/projects/${projectName}`
-          )
+          const { name: projectName } = args as { name: string }
+          const project = await resolveProject(service, projectName)
           return {
-            content: [{ type: "text", text: JSON.stringify(result, null, 2) }],
+            content: [{ type: "text", text: JSON.stringify({ project }, null, 2) }],
           }
         }
 
         case "list_endpoints": {
-          const params = args as {
-            project: string
-            version?: string
-            spec?: string
-          }
-          const queryParams: Record<string, string> = {
-            project: params.project,
-          }
-          if (params.version) queryParams.version = params.version
-          if (params.spec) queryParams.spec = params.spec
-
-          const result = await client.get<{ endpoints: EndpointSummary[] }>(
-            "/api/cli/endpoints",
-            queryParams
-          )
+          const params = args as { project: string; version?: string; spec?: string }
+          const project = await resolveProject(service, params.project)
+          const endpoints = await service.listEndpoints(project, params.version, params.spec)
           return {
-            content: [{ type: "text", text: JSON.stringify(result, null, 2) }],
+            content: [{ type: "text", text: JSON.stringify({ endpoints }, null, 2) }],
           }
         }
 
         case "search_endpoints": {
-          const params = args as {
-            project: string
-            query: string
-            version?: string
-            spec?: string
-          }
-          const queryParams: Record<string, string> = {
-            project: params.project,
-            query: params.query,
-          }
-          if (params.version) queryParams.version = params.version
-          if (params.spec) queryParams.spec = params.spec
-
-          const result = await client.get<{ endpoints: EndpointSummary[] }>(
-            "/api/cli/endpoints/search",
-            queryParams
-          )
+          const params = args as { project: string; query: string; version?: string; spec?: string }
+          const project = await resolveProject(service, params.project)
+          const endpoints = await service.searchEndpoints(project, params.query, params.version, params.spec)
           return {
-            content: [{ type: "text", text: JSON.stringify(result, null, 2) }],
+            content: [{ type: "text", text: JSON.stringify({ endpoints }, null, 2) }],
           }
         }
 
         case "get_endpoint_details": {
-          const params = args as {
-            project: string
-            path: string
-            method: string
-            version?: string
-            spec?: string
-          }
-          const queryParams: Record<string, string> = {
-            project: params.project,
-            path: params.path,
-            method: params.method,
-          }
-          if (params.version) queryParams.version = params.version
-          if (params.spec) queryParams.spec = params.spec
-
-          const result = await client.get<{ endpoint: unknown }>(
-            "/api/cli/endpoint",
-            queryParams
-          )
+          const params = args as { project: string; path: string; method: string; version?: string; spec?: string }
+          const project = await resolveProject(service, params.project)
+          const endpoint = await service.getEndpointDetails(project, params.path, params.method, params.version, params.spec)
           return {
-            content: [{ type: "text", text: JSON.stringify(result, null, 2) }],
+            content: [{ type: "text", text: JSON.stringify({ endpoint }, null, 2) }],
           }
         }
 
         case "list_schemas": {
-          const params = args as {
-            project: string
-            version?: string
-            spec?: string
-          }
-          const queryParams: Record<string, string> = {
-            project: params.project,
-          }
-          if (params.version) queryParams.version = params.version
-          if (params.spec) queryParams.spec = params.spec
-
-          const result = await client.get<{ schemas: string[] }>(
-            "/api/cli/schemas",
-            queryParams
-          )
+          const params = args as { project: string; version?: string; spec?: string }
+          const project = await resolveProject(service, params.project)
+          const schemas = await service.listSchemas(project, params.version, params.spec)
           return {
-            content: [{ type: "text", text: JSON.stringify(result, null, 2) }],
+            content: [{ type: "text", text: JSON.stringify({ schemas }, null, 2) }],
           }
         }
 
         case "get_schema": {
-          const params = args as {
-            project: string
-            name: string
-            version?: string
-            spec?: string
-          }
-          const queryParams: Record<string, string> = {
-            project: params.project,
-            name: params.name,
-          }
-          if (params.version) queryParams.version = params.version
-          if (params.spec) queryParams.spec = params.spec
-
-          const result = await client.get<{ schema: unknown }>(
-            "/api/cli/schema",
-            queryParams
-          )
+          const params = args as { project: string; name: string; version?: string; spec?: string }
+          const project = await resolveProject(service, params.project)
+          const schema = await service.getSchema(project, params.name, params.version, params.spec)
           return {
-            content: [{ type: "text", text: JSON.stringify(result, null, 2) }],
+            content: [{ type: "text", text: JSON.stringify({ schema }, null, 2) }],
           }
         }
 
@@ -268,8 +202,8 @@ export function createMCPServer(client: APIClient): Server {
   return server
 }
 
-export async function runMCPServer(client: APIClient): Promise<void> {
-  const server = createMCPServer(client)
+export async function runMCPServer(service: OpenAPIService): Promise<void> {
+  const server = createMCPServer(service)
   const transport = new StdioServerTransport()
   await server.connect(transport)
 }
