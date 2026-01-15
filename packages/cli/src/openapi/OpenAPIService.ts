@@ -2,18 +2,20 @@ import SwaggerParser from "@apidevtools/swagger-parser"
 import { OpenAPIV3 } from "openapi-types"
 import yaml from "yaml"
 import { APIClient } from "../api.js"
-import { SpecCache, ProjectsCache } from "../cache/index.js"
+import { SpecCache, ProjectsCache, ProjectDetailsCache } from "../cache/index.js"
 import { Project, ProjectSummary, Version, OpenApiSpecification, EndpointSummary } from "../types.js"
 
 export class OpenAPIService {
   private client: APIClient
   private specCache: SpecCache
   private projectsCache: ProjectsCache
+  private projectDetailsCache: ProjectDetailsCache
 
   constructor(client: APIClient, sessionToken: string) {
     this.client = client
     this.specCache = new SpecCache()
     this.projectsCache = new ProjectsCache(sessionToken)
+    this.projectDetailsCache = new ProjectDetailsCache()
   }
 
   async listProjects(): Promise<ProjectSummary[]> {
@@ -25,7 +27,10 @@ export class OpenAPIService {
   }
 
   async getProject(owner: string, name: string): Promise<Project> {
+    const cached = await this.projectDetailsCache.getProject(owner, name)
+    if (cached) return cached
     const { project } = await this.client.get<{ project: Project }>(`/api/cli/projects/${owner}/${name}`)
+    await this.projectDetailsCache.setProject(owner, name, project)
     return project
   }
 

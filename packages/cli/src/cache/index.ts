@@ -1,1 +1,1 @@
-export { SpecCache, ProjectsCache, clearCache, getCacheStats } from "./Cache.js"
+export { SpecCache, ProjectsCache, ProjectDetailsCache, clearCache, getCacheStats } from "./Cache.js"

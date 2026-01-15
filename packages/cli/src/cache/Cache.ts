@@ -3,12 +3,14 @@ import * as path from "path"
 import * as os from "os"
 import * as crypto from "crypto"
 import { OpenAPIV3 } from "openapi-types"
-import { ProjectSummary } from "../types.js"
+import { Project, ProjectSummary } from "../types.js"
 
 const CACHE_DIR = ".framna-docs/cache"
 const SPECS_DIR = "specs"
+const PROJECT_DETAILS_DIR = "projects"
 const PROJECTS_FILE = "projects.json"
 const PROJECT_LIST_TTL_MS = 60 * 1000
+const PROJECT_DETAILS_TTL_MS = 30 * 1000
 
 function getCacheDir(): string {
   return path.join(os.homedir(), CACHE_DIR)
@@ -16,6 +18,10 @@ function getCacheDir(): string {
 
 function getSpecsDir(): string {
   return path.join(getCacheDir(), SPECS_DIR)
+}
+
+function getProjectDetailsDir(): string {
+  return path.join(getCacheDir(), PROJECT_DETAILS_DIR)
 }
 
 function hashToken(token: string): string {
@@ -39,6 +45,37 @@ export class SpecCache {
   async setSpec(commitSha: string, spec: OpenAPIV3.Document): Promise<void> {
     await fs.mkdir(getSpecsDir(), { recursive: true })
     await fs.writeFile(this.getSpecPath(commitSha), JSON.stringify(spec))
+  }
+}
+
+interface ProjectDetailsCacheData {
+  project: Project
+  timestamp: number
+}
+
+export class ProjectDetailsCache {
+  private getProjectPath(owner: string, name: string): string {
+    return path.join(getProjectDetailsDir(), `${owner}_${name}.json`)
+  }
+
+  async getProject(owner: string, name: string): Promise<Project | null> {
+    try {
+      const content = await fs.readFile(this.getProjectPath(owner, name), "utf-8")
+      const cache = JSON.parse(content) as ProjectDetailsCacheData
+      if (Date.now() - cache.timestamp > PROJECT_DETAILS_TTL_MS) return null
+      return cache.project
+    } catch {
+      return null
+    }
+  }
+
+  async setProject(owner: string, name: string, project: Project): Promise<void> {
+    await fs.mkdir(getProjectDetailsDir(), { recursive: true })
+    const cache: ProjectDetailsCacheData = {
+      project,
+      timestamp: Date.now(),
+    }
+    await fs.writeFile(this.getProjectPath(owner, name), JSON.stringify(cache))
   }
 }
 
@@ -89,6 +126,13 @@ export async function clearCache(): Promise<{ cleared: string[] }> {
     await Promise.all(files.map(async (file) => {
       await fs.unlink(path.join(getSpecsDir(), file))
       cleared.push(`specs/${file}`)
+    }))
+  } catch { /* ignore */ }
+  try {
+    const files = await fs.readdir(getProjectDetailsDir())
+    await Promise.all(files.map(async (file) => {
+      await fs.unlink(path.join(getProjectDetailsDir(), file))
+      cleared.push(`projects/${file}`)
     }))
   } catch { /* ignore */ }
   return { cleared }
