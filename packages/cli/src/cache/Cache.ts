@@ -86,10 +86,10 @@ export async function clearCache(): Promise<{ cleared: string[] }> {
   } catch { /* ignore */ }
   try {
     const files = await fs.readdir(getSpecsDir())
-    for (const file of files) {
+    await Promise.all(files.map(async (file) => {
       await fs.unlink(path.join(getSpecsDir(), file))
       cleared.push(`specs/${file}`)
-    }
+    }))
   } catch { /* ignore */ }
   return { cleared }
 }
@@ -115,8 +115,8 @@ export async function getCacheStats(): Promise<{
   try {
     const files = await fs.readdir(getSpecsDir())
     specsCount = files.length
-    for (const file of files) {
-      const stat = await fs.stat(path.join(getSpecsDir(), file))
+    const stats = await Promise.all(files.map(file => fs.stat(path.join(getSpecsDir(), file))))
+    for (const stat of stats) {
       totalSizeBytes += stat.size
     }
   } catch { /* ignore */ }
