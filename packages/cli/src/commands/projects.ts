@@ -1,13 +1,21 @@
 import { Command } from "commander"
 import chalk from "chalk"
 import ora from "ora"
+import yaml from "yaml"
 import { getAuthenticatedClient, formatTable } from "./shared.js"
 import { Project, ProjectSummary } from "../types.js"
+
+interface OutputOptions {
+  json?: boolean
+  yaml?: boolean
+}
 
 export function createProjectsCommand(): Command {
   return new Command("projects")
     .description("List all projects")
-    .action(async () => {
+    .option("--json", "Output as JSON")
+    .option("--yaml", "Output as YAML")
+    .action(async (options: OutputOptions) => {
       const spinner = ora("Fetching projects...").start()
 
       try {
@@ -18,6 +26,15 @@ export function createProjectsCommand(): Command {
 
         if (projects.length === 0) {
           console.log(chalk.yellow("No projects found"))
+          return
+        }
+
+        if (options.json) {
+          console.log(JSON.stringify(projects, null, 2))
+          return
+        }
+        if (options.yaml) {
+          console.log(yaml.stringify(projects, { aliasDuplicateObjects: false }))
           return
         }
 
@@ -40,7 +57,9 @@ export function createProjectCommand(): Command {
   return new Command("project")
     .description("Get project details")
     .argument("<project>", "Project identifier (owner/name)")
-    .action(async (projectId: string) => {
+    .option("--json", "Output as JSON")
+    .option("--yaml", "Output as YAML")
+    .action(async (projectId: string, options: OutputOptions) => {
       const spinner = ora("Fetching project...").start()
 
       try {
@@ -48,6 +67,15 @@ export function createProjectCommand(): Command {
         const { project } = await client.get<{ project: Project }>(`/api/cli/projects/${projectId}`)
 
         spinner.stop()
+
+        if (options.json) {
+          console.log(JSON.stringify(project, null, 2))
+          return
+        }
+        if (options.yaml) {
+          console.log(yaml.stringify(project, { aliasDuplicateObjects: false }))
+          return
+        }
 
         console.log(chalk.bold(project.displayName))
         console.log(chalk.dim(`Owner: ${project.owner}`))

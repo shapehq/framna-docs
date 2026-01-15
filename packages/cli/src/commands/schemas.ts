@@ -1,12 +1,15 @@
 import { Command } from "commander"
 import chalk from "chalk"
 import ora from "ora"
+import yaml from "yaml"
 import { getOpenAPIService, resolveProject } from "./shared.js"
 
 interface SpecOptions {
   project: string
   apiVersion: string
   spec: string
+  json?: boolean
+  yaml?: boolean
 }
 
 export function createSchemasCommand(): Command {
@@ -15,6 +18,8 @@ export function createSchemasCommand(): Command {
     .requiredOption("-p, --project <project>", "Project (owner/name)")
     .requiredOption("-a, --api-version <version>", "API version name")
     .requiredOption("-s, --spec <spec>", "Spec name")
+    .option("--json", "Output as JSON")
+    .option("--yaml", "Output as YAML")
     .action(async (options: SpecOptions) => {
       const spinner = ora("Fetching schemas...").start()
 
@@ -28,6 +33,15 @@ export function createSchemasCommand(): Command {
 
         if (schemas.length === 0) {
           console.log(chalk.yellow("No schemas found"))
+          return
+        }
+
+        if (options.json) {
+          console.log(JSON.stringify(schemas, null, 2))
+          return
+        }
+        if (options.yaml) {
+          console.log(yaml.stringify(schemas, { aliasDuplicateObjects: false }))
           return
         }
 
@@ -50,6 +64,8 @@ export function createSchemaCommand(): Command {
     .requiredOption("-p, --project <project>", "Project (owner/name)")
     .requiredOption("-a, --api-version <version>", "API version name")
     .requiredOption("-s, --spec <spec>", "Spec name")
+    .option("--json", "Output as JSON")
+    .option("--yaml", "Output as YAML")
     .action(async (schemaName: string, options: SpecOptions) => {
       const spinner = ora("Fetching schema...").start()
 
@@ -63,6 +79,15 @@ export function createSchemaCommand(): Command {
 
         if (!schema) {
           console.log(chalk.yellow("Schema not found"))
+          return
+        }
+
+        if (options.json) {
+          console.log(JSON.stringify(schema, null, 2))
+          return
+        }
+        if (options.yaml) {
+          console.log(yaml.stringify(schema, { aliasDuplicateObjects: false }))
           return
         }
 

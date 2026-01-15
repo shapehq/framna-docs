@@ -9,6 +9,8 @@ interface SpecOptions {
   project: string
   apiVersion: string
   spec: string
+  json?: boolean
+  yaml?: boolean
 }
 
 export function createEndpointsCommand(): Command {
@@ -17,6 +19,8 @@ export function createEndpointsCommand(): Command {
     .requiredOption("-p, --project <project>", "Project (owner/name)")
     .requiredOption("-a, --api-version <version>", "API version name")
     .requiredOption("-s, --spec <spec>", "Spec name")
+    .option("--json", "Output as JSON")
+    .option("--yaml", "Output as YAML")
     .action(async (options: SpecOptions) => {
       const spinner = ora("Fetching endpoints...").start()
 
@@ -30,6 +34,15 @@ export function createEndpointsCommand(): Command {
 
         if (endpoints.length === 0) {
           console.log(chalk.yellow("No endpoints found"))
+          return
+        }
+
+        if (options.json) {
+          console.log(JSON.stringify(endpoints, null, 2))
+          return
+        }
+        if (options.yaml) {
+          console.log(yaml.stringify(endpoints, { aliasDuplicateObjects: false }))
           return
         }
 
@@ -56,6 +69,8 @@ export function createEndpointsSearchCommand(): Command {
     .requiredOption("-p, --project <project>", "Project (owner/name)")
     .requiredOption("-a, --api-version <version>", "API version name")
     .requiredOption("-s, --spec <spec>", "Spec name")
+    .option("--json", "Output as JSON")
+    .option("--yaml", "Output as YAML")
     .action(async (query: string, options: SpecOptions) => {
       const spinner = ora("Searching endpoints...").start()
 
@@ -69,6 +84,15 @@ export function createEndpointsSearchCommand(): Command {
 
         if (endpoints.length === 0) {
           console.log(chalk.yellow("No endpoints found matching query"))
+          return
+        }
+
+        if (options.json) {
+          console.log(JSON.stringify(endpoints, null, 2))
+          return
+        }
+        if (options.yaml) {
+          console.log(yaml.stringify(endpoints, { aliasDuplicateObjects: false }))
           return
         }
 
