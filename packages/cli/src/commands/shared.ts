@@ -1,4 +1,5 @@
 import chalk from "chalk"
+import Table from "cli-table3"
 import { getSession, getServerUrl } from "../config.js"
 import { APIClient } from "../api.js"
 import { OpenAPIService } from "../openapi/index.js"
@@ -35,16 +36,23 @@ export function resolveProject(id: string): { owner: string; name: string } {
 }
 
 export function formatTable(headers: string[], rows: string[][]): string {
-  const columnWidths = headers.map((h, i) => {
-    const maxRowWidth = Math.max(...rows.map((r) => (r[i] || "").length))
-    return Math.max(h.length, maxRowWidth)
+  const table = new Table({
+    head: headers.map(h => chalk.bold(h)),
+    style: {
+      head: [],
+      border: [],
+    },
+    chars: {
+      'top': '─', 'top-mid': '┬', 'top-left': '┌', 'top-right': '┐',
+      'bottom': '─', 'bottom-mid': '┴', 'bottom-left': '└', 'bottom-right': '┘',
+      'left': '│', 'left-mid': '├', 'mid': '─', 'mid-mid': '┼',
+      'right': '│', 'right-mid': '┤', 'middle': '│'
+    }
   })
 
-  const headerLine = headers.map((h, i) => h.padEnd(columnWidths[i])).join("  ")
-  const separator = columnWidths.map((w) => "-".repeat(w)).join("  ")
-  const dataLines = rows
-    .map((row) => row.map((cell, i) => (cell || "").padEnd(columnWidths[i])).join("  "))
-    .join("\n")
+  for (const row of rows) {
+    table.push(row)
+  }
 
-  return `${headerLine}\n${separator}\n${dataLines}`
+  return table.toString()
 }
