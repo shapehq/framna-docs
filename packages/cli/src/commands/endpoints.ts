@@ -112,7 +112,7 @@ export function createEndpointCommand(): Command {
           return
         }
         if (options.yaml) {
-          console.log(yaml.stringify(endpoint))
+          console.log(yaml.stringify(endpoint, { aliasDuplicateObjects: false }))
           return
         }
 
