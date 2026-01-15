@@ -20,6 +20,8 @@ export default function ProjectDetailsContextProvider({
 
   const makeKey = (owner: string, repo: string) => `${owner}/${repo}`
 
+  // Note: These callbacks intentionally include `cache` in deps to trigger
+  // re-renders in consuming components when cache updates
   const getProject = useCallback((owner: string, repo: string): Project | undefined => {
     const entry = cache.get(makeKey(owner, repo))
     return entry?.project ?? undefined
@@ -49,11 +51,14 @@ export default function ProjectDetailsContextProvider({
 
     const promise = fetch(`/api/projects/${owner}/${repo}`)
       .then(res => {
-        if (res.status === 404) return { project: null }
+        if (res.status === 404) {
+          // Project not found - treat as null project, not an error
+          return { project: null }
+        }
         if (!res.ok) throw new Error(`HTTP ${res.status}`)
-        return res.json()
+        return res.json() as Promise<{ project: Project }>
       })
-      .then(({ project }) => {
+      .then(({ project }: { project: Project | null }) => {
         setCache(prev => {
           const next = new Map(prev)
           next.set(key, { project, loading: false, error: null })

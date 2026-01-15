@@ -83,8 +83,10 @@ export default function useProjectSelection() {
         const defaultVersion = currentProject.versions[0]
         if (defaultVersion) {
           const defaultSpec = getDefaultSpecification(defaultVersion)
-          router.replace(`/${currentProject.owner}/${currentProject.name}/${encodeURIComponent(defaultVersion.id)}/${encodeURIComponent(defaultSpec.id)}`)
-          return
+          if (defaultSpec) {
+            router.replace(`/${currentProject.owner}/${currentProject.name}/${encodeURIComponent(defaultVersion.id)}/${encodeURIComponent(defaultSpec.id)}`)
+            return
+          }
         }
       }
 
