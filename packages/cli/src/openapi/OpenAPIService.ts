@@ -48,9 +48,9 @@ export class OpenAPIService {
 
     const raw = await this.client.getRaw(spec.url)
     const parsed = yaml.parse(raw)
-    const dereferenced = await SwaggerParser.dereference(parsed) as OpenAPIV3.Document
-    await this.specCache.setSpec(ref, dereferenced)
-    return dereferenced
+    const bundled = await SwaggerParser.bundle(parsed) as OpenAPIV3.Document
+    await this.specCache.setSpec(ref, bundled)
+    return bundled
   }
 
   async listEndpoints(project: Project, versionName?: string, specName?: string): Promise<EndpointSummary[]> {
@@ -104,22 +104,15 @@ export class OpenAPIService {
     versionName?: string,
     specName?: string
   ): Promise<EndpointSlice | null> {
-    const version = this.findVersion(project, versionName)
-    if (!version) throw new Error(`Version not found: ${versionName || "default"}`)
-    const specMeta = this.findSpec(version, specName)
-    if (!specMeta) throw new Error(`Spec not found: ${specName || "default"}`)
+    // Get bundled spec (keeps $ref intact, single fetch)
+    const spec = await this.getSpec(project, versionName, specName)
+    const pathItem = spec.paths?.[path]
+    if (!pathItem) return null
 
-    // Get raw spec to find $ref names
-    const raw = await this.client.getRaw(specMeta.url)
-    const rawSpec = yaml.parse(raw) as OpenAPIV3.Document
+    const operation = (pathItem as Record<string, OpenAPIV3.OperationObject>)[method.toLowerCase()]
+    if (!operation) return null
 
-    const rawPathItem = rawSpec.paths?.[path]
-    if (!rawPathItem) return null
-
-    const rawOperation = (rawPathItem as Record<string, OpenAPIV3.OperationObject>)[method.toLowerCase()]
-    if (!rawOperation) return null
-
-    // Collect $ref schema names from the raw operation
+    // Collect $ref schema names from the operation
     const schemaNames = new Set<string>()
     const collectRefs = (obj: unknown) => {
       if (!obj || typeof obj !== "object") return
@@ -138,16 +131,15 @@ export class OpenAPIService {
         }
       }
     }
-    collectRefs(rawOperation)
+    collectRefs(operation)
 
     // Recursively collect nested schema refs
     const collectNestedRefs = (name: string, visited: Set<string>) => {
       if (visited.has(name)) return
       visited.add(name)
-      const schema = rawSpec.components?.schemas?.[name]
+      const schema = spec.components?.schemas?.[name]
       if (schema) {
         collectRefs(schema)
-        // Check for newly found schemas
         for (const newName of schemaNames) {
           if (!visited.has(newName)) {
             collectNestedRefs(newName, visited)
@@ -159,13 +151,6 @@ export class OpenAPIService {
     for (const name of [...schemaNames]) {
       collectNestedRefs(name, visited)
     }
-
-    // Get dereferenced spec for the actual content
-    const spec = await this.getSpec(project, versionName, specName)
-    const pathItem = spec.paths?.[path]
-    if (!pathItem) return null
-    const operation = (pathItem as Record<string, OpenAPIV3.OperationObject>)[method.toLowerCase()]
-    if (!operation) return null
 
     // Build schemas object with original names
     const schemas: Record<string, OpenAPIV3.SchemaObject> = {}
