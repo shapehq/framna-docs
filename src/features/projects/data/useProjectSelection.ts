@@ -2,70 +2,97 @@
 
 import NProgress from "nprogress"
 import { useRouter, usePathname } from "next/navigation"
-import { useContext } from "react"
-import { ProjectsContext } from "@/common"
 import {
   Project,
+  ProjectSummary,
   ProjectNavigator,
   getProjectSelectionFromPath,
   getDefaultSpecification
-  
 } from "../domain"
+import { useProjectDetails } from "../view/ProjectDetailsContext"
 
 export default function useProjectSelection() {
   const router = useRouter()
   const pathname = usePathname()
-  const { projects } = useContext(ProjectsContext)
-  const selection = getProjectSelectionFromPath({ projects, path: pathname })
+  const { getProject } = useProjectDetails()
+
   const pathnameReader = {
     get pathname() {
       return pathname
     }
   }
   const projectNavigator = new ProjectNavigator({ router, pathnameReader })
+
+  // Parse owner/name from URL to look up the project
+  const pathParts = pathname.split("/").filter(Boolean)
+  const owner = pathParts[0]
+  const name = pathParts[1]
+  const hasVersionInUrl = pathParts.length >= 3
+
+  // Get project from cache (if loaded)
+  const cachedProject = owner && name ? getProject(owner, name) : undefined
+
+  // Use existing getProjectSelectionFromPath for full selection logic
+  // It handles complex cases like version IDs with slashes, remote versions, etc.
+  const selection = cachedProject
+    ? getProjectSelectionFromPath({ projects: [cachedProject], path: pathname })
+    : { project: undefined, version: undefined, specification: undefined }
+
+  const currentProject = selection.project
+  const currentVersion = selection.version
+  const currentSpecification = selection.specification
+
   return {
     get project() {
-      return selection.project
+      return currentProject
     },
     get version() {
-      return selection.version
+      return currentVersion
     },
     get specification() {
-      return selection.specification
+      return currentSpecification
     },
-    selectProject: (project: Project) => {
-      const version = project.versions[0]
-      const specification = getDefaultSpecification(version)
+    selectProject: (project: ProjectSummary | Project) => {
       NProgress.start()
-      projectNavigator.navigate(
-        project.owner,
-        project.name,
-        version.id,
-        specification.id
-      )
+      // Navigate to project base - the page will handle loading details and redirecting
+      router.push(`/${project.owner}/${project.name}`)
     },
     selectVersion: (versionId: string) => {
+      if (!currentProject || !currentSpecification) return
       NProgress.start()
       projectNavigator.navigateToVersion(
-        selection.project!,
+        currentProject,
         versionId,
-        selection.specification!.name
+        currentSpecification.name
       )
     },
     selectSpecification: (specificationId: string) => {
+      if (!currentProject || !currentVersion) return
       NProgress.start()
       projectNavigator.navigate(
-        selection.project!.owner,
-        selection.project!.name,
-        selection.version!.id, specificationId
+        currentProject.owner,
+        currentProject.name,
+        currentVersion.id,
+        specificationId
       )
     },
     navigateToSelectionIfNeeded: () => {
+      // Only redirect to defaults if URL has no version/spec at all
+      // (i.e., user navigated to just /owner/repo)
+      if (currentProject && !hasVersionInUrl) {
+        const defaultVersion = currentProject.versions[0]
+        if (defaultVersion) {
+          const defaultSpec = getDefaultSpecification(defaultVersion)
+          router.replace(`/${currentProject.owner}/${currentProject.name}/${encodeURIComponent(defaultVersion.id)}/${encodeURIComponent(defaultSpec.id)}`)
+          return
+        }
+      }
+
       projectNavigator.navigateIfNeeded({
-        projectOwner: selection.project?.owner,
-        projectName: selection.project?.name,
-        versionId: selection.version?.id,
-        specificationId: selection.specification?.id
+        projectOwner: currentProject?.owner,
+        projectName: currentProject?.name,
+        versionId: currentVersion?.id,
+        specificationId: currentSpecification?.id
       })
     }
   }
