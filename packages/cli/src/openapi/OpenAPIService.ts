@@ -40,16 +40,22 @@ export class OpenAPIService {
     const spec = this.findSpec(version, specName)
     if (!spec) throw new Error(`Spec not found: ${specName || "default"}`)
 
-    const ref = this.extractRef(spec.url)
-    if (!ref) throw new Error(`Invalid spec URL: ${spec.url}`)
+    const cacheKey = this.extractCacheKey(spec.url)
 
-    const cached = await this.specCache.getSpec(ref)
-    if (cached) return cached
+    // Only use cache for specs with a stable cache key
+    if (cacheKey) {
+      const cached = await this.specCache.getSpec(cacheKey)
+      if (cached) return cached
+    }
 
     const raw = await this.client.getRaw(spec.url)
     const parsed = yaml.parse(raw)
     const bundled = await SwaggerParser.bundle(parsed) as OpenAPIV3.Document
-    await this.specCache.setSpec(ref, bundled)
+
+    if (cacheKey) {
+      await this.specCache.setSpec(cacheKey, bundled)
+    }
+
     return bundled
   }
 
@@ -138,7 +144,7 @@ export class OpenAPIService {
       const schema = spec.components?.schemas?.[name]
       if (schema) {
         collectRefs(schema)
-        for (const newName of schemaNames) {
+        for (const newName of Array.from(schemaNames)) {
           if (!visited.has(newName)) {
             collectNestedRefs(newName, visited)
           }
@@ -146,13 +152,13 @@ export class OpenAPIService {
       }
     }
     const visited = new Set<string>()
-    for (const name of [...schemaNames]) {
+    for (const name of Array.from(schemaNames)) {
       collectNestedRefs(name, visited)
     }
 
     // Build schemas object
     const schemas: Record<string, OpenAPIV3.SchemaObject | OpenAPIV3.ReferenceObject> = {}
-    for (const name of schemaNames) {
+    for (const name of Array.from(schemaNames)) {
       const schema = spec.components?.schemas?.[name]
       if (schema) schemas[name] = schema
     }
@@ -189,8 +195,12 @@ export class OpenAPIService {
     return version.specifications.find(s => s.name === name)
   }
 
-  private extractRef(url: string): string | null {
-    const match = url.match(/\?ref=(.+)$/)
-    return match ? match[1] : null
+  private extractCacheKey(url: string): string | null {
+    // Local specs: /api/blob/...?ref=<sha> - cache by commit SHA
+    const refMatch = url.match(/\?ref=(.+)$/)
+    if (refMatch) return refMatch[1]
+
+    // Remote specs: /api/remotes/... - don't cache (content changes)
+    return null
   }
 }
