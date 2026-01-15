@@ -56,7 +56,7 @@ const TOOLS = [
   },
   {
     name: "get_endpoint_details",
-    description: "Get detailed information about a specific endpoint",
+    description: "Get endpoint with full details including parameters, request/response bodies, and all referenced schemas",
     inputSchema: {
       type: "object" as const,
       properties: {
@@ -161,9 +161,9 @@ export function createMCPServer(service: OpenAPIService): Server {
           const params = args as { project: string; path: string; method: string; version?: string; spec?: string }
           const { owner, name } = parseProject(params.project)
           const project = await service.getProject(owner, name)
-          const endpoint = await service.getEndpointDetails(project, params.path, params.method, params.version, params.spec)
+          const endpoint = await service.getEndpointSlice(project, params.path, params.method, params.version, params.spec)
           return {
-            content: [{ type: "text", text: JSON.stringify({ endpoint }, null, 2) }],
+            content: [{ type: "text", text: JSON.stringify(endpoint, null, 2) }],
           }
         }
 

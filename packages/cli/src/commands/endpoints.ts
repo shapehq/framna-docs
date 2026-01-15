@@ -1,6 +1,7 @@
 import { Command } from "commander"
 import chalk from "chalk"
 import ora from "ora"
+import yaml from "yaml"
 import { getOpenAPIService, resolveProject, formatTable } from "./shared.js"
 
 export function createEndpointsCommand(): Command {
@@ -81,20 +82,22 @@ export function createEndpointsSearchCommand(): Command {
 
 export function createEndpointCommand(): Command {
   return new Command("endpoint")
-    .description("Get endpoint details")
+    .description("Get endpoint details with schemas")
     .argument("<project>", "Project (owner/name)")
     .argument("<path>", "Endpoint path (e.g., /users/{id})")
     .argument("<method>", "HTTP method")
     .option("-v, --version <version>", "Version name")
     .option("-s, --spec <spec>", "Spec name")
-    .action(async (projectId: string, endpointPath: string, method: string, options: { version?: string; spec?: string }) => {
-      const spinner = ora("Fetching endpoint details...").start()
+    .option("--json", "Output as JSON")
+    .option("--yaml", "Output as YAML")
+    .action(async (projectId: string, endpointPath: string, method: string, options: { version?: string; spec?: string; json?: boolean; yaml?: boolean }) => {
+      const spinner = ora("Fetching endpoint...").start()
 
       try {
         const service = await getOpenAPIService()
         const { owner, name } = resolveProject(projectId)
         const project = await service.getProject(owner, name)
-        const endpoint = await service.getEndpointDetails(project, endpointPath, method, options.version, options.spec)
+        const endpoint = await service.getEndpointSlice(project, endpointPath, method, options.version, options.spec)
 
         spinner.stop()
 
@@ -103,7 +106,18 @@ export function createEndpointCommand(): Command {
           return
         }
 
-        console.log(chalk.bold(`${method.toUpperCase()} ${endpointPath}`))
+        // JSON or YAML output
+        if (options.json) {
+          console.log(JSON.stringify(endpoint, null, 2))
+          return
+        }
+        if (options.yaml) {
+          console.log(yaml.stringify(endpoint))
+          return
+        }
+
+        // Human-readable output
+        console.log(chalk.bold(`${endpoint.method} ${endpoint.path}`))
         if (endpoint.summary) console.log(chalk.dim(endpoint.summary))
         if (endpoint.description) {
           console.log()
@@ -122,19 +136,25 @@ export function createEndpointCommand(): Command {
         if (endpoint.parameters && endpoint.parameters.length > 0) {
           console.log()
           console.log(chalk.bold("Parameters:"))
-          for (const param of endpoint.parameters as Array<{ name: string; required?: boolean; in: string; description?: string }>) {
+          for (const param of endpoint.parameters) {
             const required = param.required ? chalk.red("*") : ""
             console.log(`  ${param.name}${required} (${param.in}): ${param.description || ""}`)
           }
         }
 
-        if (endpoint.responses && typeof endpoint.responses === "object") {
+        if (endpoint.responses) {
           console.log()
           console.log(chalk.bold("Responses:"))
-          for (const [code, response] of Object.entries(endpoint.responses as Record<string, { description?: string }>)) {
+          for (const [code, response] of Object.entries(endpoint.responses)) {
             const color = code.startsWith("2") ? chalk.green : code.startsWith("4") ? chalk.yellow : chalk.red
             console.log(`  ${color(code)}: ${response.description || ""}`)
           }
+        }
+
+        if (endpoint.schemas && Object.keys(endpoint.schemas).length > 0) {
+          console.log()
+          console.log(chalk.bold("Schemas:"), Object.keys(endpoint.schemas).join(", "))
+          console.log(chalk.dim("Use --json or --yaml to see full schema definitions"))
         }
       } catch (error) {
         spinner.fail("Failed to fetch endpoint")

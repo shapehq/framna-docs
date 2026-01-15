@@ -3,7 +3,7 @@ import { OpenAPIV3 } from "openapi-types"
 import yaml from "yaml"
 import { APIClient } from "../api.js"
 import { SpecCache, ProjectsCache, ProjectDetailsCache } from "../cache/index.js"
-import { Project, ProjectSummary, Version, OpenApiSpecification, EndpointSummary } from "../types.js"
+import { Project, ProjectSummary, Version, OpenApiSpecification, EndpointSummary, EndpointSlice } from "../types.js"
 
 export class OpenAPIService {
   private client: APIClient
@@ -95,6 +95,94 @@ export class OpenAPIService {
   async getSchema(project: Project, schemaName: string, versionName?: string, specName?: string): Promise<OpenAPIV3.SchemaObject | null> {
     const spec = await this.getSpec(project, versionName, specName)
     return spec.components?.schemas?.[schemaName] as OpenAPIV3.SchemaObject || null
+  }
+
+  async getEndpointSlice(
+    project: Project,
+    path: string,
+    method: string,
+    versionName?: string,
+    specName?: string
+  ): Promise<EndpointSlice | null> {
+    const spec = await this.getSpec(project, versionName, specName)
+    const pathItem = spec.paths?.[path]
+    if (!pathItem) return null
+
+    const operation = (pathItem as Record<string, OpenAPIV3.OperationObject>)[method.toLowerCase()]
+    if (!operation) return null
+
+    // Collect schemas from the operation
+    const schemas: Record<string, OpenAPIV3.SchemaObject> = {}
+    const collectSchema = (obj: unknown, name?: string) => {
+      if (!obj || typeof obj !== "object") return
+      const schemaObj = obj as OpenAPIV3.SchemaObject
+
+      // If it has a title, use that as the schema name
+      if (schemaObj.title && !schemas[schemaObj.title]) {
+        schemas[schemaObj.title] = schemaObj
+      } else if (name && !schemas[name]) {
+        schemas[name] = schemaObj
+      }
+
+      // Recurse into properties
+      if (schemaObj.properties) {
+        for (const [propName, prop] of Object.entries(schemaObj.properties)) {
+          collectSchema(prop, propName)
+        }
+      }
+      // Recurse into items (arrays)
+      if ("items" in schemaObj && schemaObj.items) {
+        collectSchema(schemaObj.items)
+      }
+      // Recurse into allOf/oneOf/anyOf
+      for (const key of ["allOf", "oneOf", "anyOf"] as const) {
+        if (schemaObj[key]) {
+          for (const item of schemaObj[key] as OpenAPIV3.SchemaObject[]) {
+            collectSchema(item)
+          }
+        }
+      }
+    }
+
+    // Collect from request body
+    if (operation.requestBody) {
+      const reqBody = operation.requestBody as OpenAPIV3.RequestBodyObject
+      for (const [, mediaType] of Object.entries(reqBody.content || {})) {
+        if (mediaType.schema) {
+          collectSchema(mediaType.schema, "RequestBody")
+        }
+      }
+    }
+
+    // Collect from responses
+    for (const [statusCode, response] of Object.entries(operation.responses || {})) {
+      const resp = response as OpenAPIV3.ResponseObject
+      for (const [, mediaType] of Object.entries(resp.content || {})) {
+        if (mediaType.schema) {
+          collectSchema(mediaType.schema, `Response${statusCode}`)
+        }
+      }
+    }
+
+    // Collect from parameters
+    for (const param of (operation.parameters || []) as OpenAPIV3.ParameterObject[]) {
+      if (param.schema) {
+        collectSchema(param.schema, param.name)
+      }
+    }
+
+    return {
+      method: method.toUpperCase(),
+      path,
+      summary: operation.summary,
+      description: operation.description,
+      operationId: operation.operationId,
+      tags: operation.tags,
+      parameters: operation.parameters as OpenAPIV3.ParameterObject[],
+      requestBody: operation.requestBody as OpenAPIV3.RequestBodyObject | undefined,
+      responses: operation.responses as Record<string, OpenAPIV3.ResponseObject>,
+      schemas: Object.keys(schemas).length > 0 ? schemas : undefined,
+    }
   }
 
   private findVersion(project: Project, name?: string): Version | undefined {

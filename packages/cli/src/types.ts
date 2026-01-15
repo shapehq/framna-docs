@@ -1,9 +1,24 @@
+import { OpenAPIV3 } from "openapi-types"
+
 export interface EndpointSummary {
   path: string
   method: string
   summary?: string
   operationId?: string
   tags?: string[]
+}
+
+export interface EndpointSlice {
+  method: string
+  path: string
+  summary?: string
+  description?: string
+  operationId?: string
+  tags?: string[]
+  parameters?: OpenAPIV3.ParameterObject[]
+  requestBody?: OpenAPIV3.RequestBodyObject
+  responses: Record<string, OpenAPIV3.ResponseObject>
+  schemas?: Record<string, OpenAPIV3.SchemaObject>
 }
 
 export interface ProjectSummary {
