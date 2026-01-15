@@ -49,14 +49,22 @@ export class OpenAPIService {
     }
 
     const raw = await this.client.getRaw(spec.url)
-    const parsed = yaml.parse(raw)
-    const bundled = await SwaggerParser.bundle(parsed) as OpenAPIV3.Document
+    const parsed = yaml.parse(raw) as OpenAPIV3.Document
 
-    if (cacheKey) {
-      await this.specCache.setSpec(cacheKey, bundled)
+    // Try to bundle (resolves external refs), fall back to parsed if refs are broken
+    let result: OpenAPIV3.Document
+    try {
+      result = await SwaggerParser.bundle(parsed) as OpenAPIV3.Document
+    } catch {
+      // External refs may be broken (e.g., remote specs with local file refs)
+      result = parsed
     }
 
-    return bundled
+    if (cacheKey) {
+      await this.specCache.setSpec(cacheKey, result)
+    }
+
+    return result
   }
 
   async listEndpoints(project: Project, versionName?: string, specName?: string): Promise<EndpointSummary[]> {
