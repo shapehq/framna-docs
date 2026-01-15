@@ -96,6 +96,19 @@ const TOOLS = [
       required: ["project", "name"],
     },
   },
+  {
+    name: "get_spec",
+    description: "Get the full OpenAPI specification document",
+    inputSchema: {
+      type: "object" as const,
+      properties: {
+        project: { type: "string", description: "Project (owner/name)" },
+        version: { type: "string", description: "Version name (optional)" },
+        spec: { type: "string", description: "Spec name (optional)" },
+      },
+      required: ["project"],
+    },
+  },
 ]
 
 function parseProject(project: string): { owner: string; name: string } {
@@ -184,6 +197,16 @@ export function createMCPServer(service: OpenAPIService): Server {
           const schema = await service.getSchema(project, params.name, params.version, params.spec)
           return {
             content: [{ type: "text", text: JSON.stringify({ schema }, null, 2) }],
+          }
+        }
+
+        case "get_spec": {
+          const params = args as { project: string; version?: string; spec?: string }
+          const { owner, name } = parseProject(params.project)
+          const project = await service.getProject(owner, name)
+          const spec = await service.getSpec(project, params.version, params.spec)
+          return {
+            content: [{ type: "text", text: JSON.stringify(spec, null, 2) }],
           }
         }
 

@@ -12,6 +12,7 @@ import {
   createEndpointCommand,
 } from "./commands/endpoints.js"
 import { createSchemasCommand, createSchemaCommand } from "./commands/schemas.js"
+import { createSpecCommand } from "./commands/spec.js"
 import { createMCPCommand } from "./commands/mcp.js"
 import { createCacheCommand } from "./commands/cache.js"
 
@@ -38,6 +39,9 @@ program.addCommand(createEndpointCommand())
 // Schema commands
 program.addCommand(createSchemasCommand())
 program.addCommand(createSchemaCommand())
+
+// Spec command
+program.addCommand(createSpecCommand())
 
 // MCP commands
 program.addCommand(createMCPCommand())
