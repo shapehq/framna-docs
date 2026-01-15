@@ -1,6 +1,7 @@
 import chalk from "chalk"
 import { getSession, getServerUrl } from "../config.js"
 import { APIClient } from "../api.js"
+import { OpenAPIService } from "../openapi/index.js"
 
 export async function getAuthenticatedClient(): Promise<APIClient> {
   const session = await getSession()
@@ -12,6 +13,28 @@ export async function getAuthenticatedClient(): Promise<APIClient> {
   }
 
   return new APIClient(getServerUrl(), session.sessionId)
+}
+
+export async function getOpenAPIService(): Promise<OpenAPIService> {
+  const session = await getSession()
+  if (!session) {
+    console.error(chalk.red("Not authenticated"))
+    console.error(chalk.dim("Run 'framna-docs auth login' to authenticate"))
+    process.exit(1)
+  }
+  const client = new APIClient(getServerUrl(), session.sessionId)
+  return new OpenAPIService(client, session.sessionId)
+}
+
+export async function resolveProject(service: OpenAPIService, id: string): Promise<{ owner: string; name: string }> {
+  if (id.includes("/")) {
+    const [owner, name] = id.split("/")
+    return { owner, name }
+  }
+  const projects = await service.listProjects()
+  const found = projects.find(p => p.name === id)
+  if (!found) throw new Error(`Project not found: ${id}`)
+  return { owner: found.owner, name: found.name }
 }
 
 export function formatTable(headers: string[], rows: string[][]): string {
