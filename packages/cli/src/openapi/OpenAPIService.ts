@@ -104,70 +104,75 @@ export class OpenAPIService {
     versionName?: string,
     specName?: string
   ): Promise<EndpointSlice | null> {
-    const spec = await this.getSpec(project, versionName, specName)
-    const pathItem = spec.paths?.[path]
-    if (!pathItem) return null
+    const version = this.findVersion(project, versionName)
+    if (!version) throw new Error(`Version not found: ${versionName || "default"}`)
+    const specMeta = this.findSpec(version, specName)
+    if (!specMeta) throw new Error(`Spec not found: ${specName || "default"}`)
 
-    const operation = (pathItem as Record<string, OpenAPIV3.OperationObject>)[method.toLowerCase()]
-    if (!operation) return null
+    // Get raw spec to find $ref names
+    const raw = await this.client.getRaw(specMeta.url)
+    const rawSpec = yaml.parse(raw) as OpenAPIV3.Document
 
-    // Collect schemas from the operation
-    const schemas: Record<string, OpenAPIV3.SchemaObject> = {}
-    const collectSchema = (obj: unknown, name?: string) => {
+    const rawPathItem = rawSpec.paths?.[path]
+    if (!rawPathItem) return null
+
+    const rawOperation = (rawPathItem as Record<string, OpenAPIV3.OperationObject>)[method.toLowerCase()]
+    if (!rawOperation) return null
+
+    // Collect $ref schema names from the raw operation
+    const schemaNames = new Set<string>()
+    const collectRefs = (obj: unknown) => {
       if (!obj || typeof obj !== "object") return
-      const schemaObj = obj as OpenAPIV3.SchemaObject
+      const record = obj as Record<string, unknown>
 
-      // If it has a title, use that as the schema name
-      if (schemaObj.title && !schemas[schemaObj.title]) {
-        schemas[schemaObj.title] = schemaObj
-      } else if (name && !schemas[name]) {
-        schemas[name] = schemaObj
+      if (record.$ref && typeof record.$ref === "string") {
+        const match = record.$ref.match(/#\/components\/schemas\/(.+)/)
+        if (match) schemaNames.add(match[1])
       }
 
-      // Recurse into properties
-      if (schemaObj.properties) {
-        for (const [propName, prop] of Object.entries(schemaObj.properties)) {
-          collectSchema(prop, propName)
+      for (const value of Object.values(record)) {
+        if (Array.isArray(value)) {
+          for (const item of value) collectRefs(item)
+        } else {
+          collectRefs(value)
         }
       }
-      // Recurse into items (arrays)
-      if ("items" in schemaObj && schemaObj.items) {
-        collectSchema(schemaObj.items)
-      }
-      // Recurse into allOf/oneOf/anyOf
-      for (const key of ["allOf", "oneOf", "anyOf"] as const) {
-        if (schemaObj[key]) {
-          for (const item of schemaObj[key] as OpenAPIV3.SchemaObject[]) {
-            collectSchema(item)
+    }
+    collectRefs(rawOperation)
+
+    // Recursively collect nested schema refs
+    const collectNestedRefs = (name: string, visited: Set<string>) => {
+      if (visited.has(name)) return
+      visited.add(name)
+      const schema = rawSpec.components?.schemas?.[name]
+      if (schema) {
+        collectRefs(schema)
+        // Check for newly found schemas
+        for (const newName of schemaNames) {
+          if (!visited.has(newName)) {
+            collectNestedRefs(newName, visited)
           }
         }
       }
     }
-
-    // Collect from request body
-    if (operation.requestBody) {
-      const reqBody = operation.requestBody as OpenAPIV3.RequestBodyObject
-      for (const [, mediaType] of Object.entries(reqBody.content || {})) {
-        if (mediaType.schema) {
-          collectSchema(mediaType.schema, "RequestBody")
-        }
-      }
+    const visited = new Set<string>()
+    for (const name of [...schemaNames]) {
+      collectNestedRefs(name, visited)
     }
 
-    // Collect from responses
-    for (const [statusCode, response] of Object.entries(operation.responses || {})) {
-      const resp = response as OpenAPIV3.ResponseObject
-      for (const [, mediaType] of Object.entries(resp.content || {})) {
-        if (mediaType.schema) {
-          collectSchema(mediaType.schema, `Response${statusCode}`)
-        }
-      }
-    }
+    // Get dereferenced spec for the actual content
+    const spec = await this.getSpec(project, versionName, specName)
+    const pathItem = spec.paths?.[path]
+    if (!pathItem) return null
+    const operation = (pathItem as Record<string, OpenAPIV3.OperationObject>)[method.toLowerCase()]
+    if (!operation) return null
 
-    // Collect from parameters
-    for (const param of (operation.parameters || []) as OpenAPIV3.ParameterObject[]) {
-      if (param.schema) {
-        collectSchema(param.schema, param.name)
+    // Build schemas object with original names
+    const schemas: Record<string, OpenAPIV3.SchemaObject> = {}
+    for (const name of schemaNames) {
+      const schema = spec.components?.schemas?.[name]
+      if (schema) {
+        schemas[name] = schema as OpenAPIV3.SchemaObject
       }
     }
 
