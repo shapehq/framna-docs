@@ -2,7 +2,7 @@ import { Command } from "commander"
 import chalk from "chalk"
 import ora from "ora"
 import { getAuthenticatedClient, formatTable } from "./shared.js"
-import { Project } from "../types.js"
+import { Project, ProjectSummary } from "../types.js"
 
 export function createProjectsCommand(): Command {
   return new Command("projects")
@@ -12,7 +12,7 @@ export function createProjectsCommand(): Command {
 
       try {
         const client = await getAuthenticatedClient()
-        const { projects } = await client.get<{ projects: Project[] }>("/api/cli/projects")
+        const { projects } = await client.get<{ projects: ProjectSummary[] }>("/api/cli/projects")
 
         spinner.stop()
 
@@ -24,11 +24,11 @@ export function createProjectsCommand(): Command {
         const rows = projects.map((p) => [
           p.name,
           p.displayName,
-          p.versions.map((v) => v.name).join(", "),
           p.owner,
         ])
 
-        console.log(formatTable(["NAME", "DISPLAY NAME", "VERSIONS", "OWNER"], rows))
+        console.log(formatTable(["NAME", "DISPLAY NAME", "OWNER"], rows))
+        console.log(chalk.dim(`\nUse 'project <name>' to see versions and specs`))
       } catch (error) {
         spinner.fail("Failed to fetch projects")
         console.error(chalk.red(error instanceof Error ? error.message : "Unknown error"))
@@ -40,13 +40,13 @@ export function createProjectsCommand(): Command {
 export function createProjectCommand(): Command {
   return new Command("project")
     .description("Get project details")
-    .argument("<name>", "Project name")
-    .action(async (name: string) => {
+    .argument("<project>", "Project identifier (owner/name)")
+    .action(async (projectId: string) => {
       const spinner = ora("Fetching project...").start()
 
       try {
         const client = await getAuthenticatedClient()
-        const { project } = await client.get<{ project: Project }>(`/api/cli/projects/${name}`)
+        const { project } = await client.get<{ project: Project }>(`/api/cli/projects/${projectId}`)
 
         spinner.stop()
 

@@ -1,0 +1,41 @@
+# fly.toml app configuration file generated for framna-docs-azure-test on 2025-12-08T11:14:55+01:00
+#
+# See https://fly.io/docs/reference/configuration/ for information about how to use this file.
+#
+
+app = 'framna-docs-azure-test'
+primary_region = 'arn'
+
+[build]
+  dockerfile = 'Dockerfile'
+
+[env]
+  AUTH_TRUST_HOST = "true"
+  AUTH_DEBUG = "true"
+  DEBUG = "*"
+  NEXTAUTH_URL = "https://framna-docs-azure-test.fly.dev"
+  FRAMNA_DOCS_BASE_URL = "https://framna-docs-azure-test.fly.dev"
+  FRAMNA_DOCS_TITLE = "Acme Docs"
+  FRAMNA_DOCS_DESCRIPTION = "Documentation for Acme Co's APIs"
+  FRAMNA_DOCS_HELP_URL = "https://github.com/shapehq/shape-docs/wiki"
+  FRAMNA_DOCS_PROJECT_CONFIGURATION_FILENAME = ".framna-docs.yml"
+  PROJECT_SOURCE_PROVIDER = "azure-devops"
+  AZURE_DEVOPS_ORGANIZATION = "framna-ulrik"
+  AZURE_ENTRA_ID_TENANT_ID = "f67d11f7-b307-4041-a651-d3a20b9e98be"
+  REPOSITORY_NAME_SUFFIX = "-openapi"
+  PROXY_API_MAXIMUM_FILE_SIZE_IN_MEGABYTES = "10"
+  PROXY_API_TIMEOUT_IN_SECONDS = "30"
+  NEXT_PUBLIC_ENABLE_DIFF_SIDEBAR = "false"
+
+[http_service]
+  internal_port = 3000
+  force_https = true
+  auto_stop_machines = 'stop'
+  auto_start_machines = true
+  min_machines_running = 0
+  processes = ['app']
+
+[[vm]]
+  memory = '1gb'
+  cpu_kind = 'shared'
+  cpus = 1
