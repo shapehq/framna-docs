@@ -13,6 +13,7 @@ import {
 } from "./commands/endpoints.js"
 import { createSchemasCommand, createSchemaCommand } from "./commands/schemas.js"
 import { createMCPCommand } from "./commands/mcp.js"
+import { createCacheCommand } from "./commands/cache.js"
 
 const program = new Command()
 
@@ -40,5 +41,8 @@ program.addCommand(createSchemaCommand())
 
 // MCP commands
 program.addCommand(createMCPCommand())
+
+// Cache commands
+program.addCommand(createCacheCommand())
 
 program.parse()
