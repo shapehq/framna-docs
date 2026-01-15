@@ -6,14 +6,13 @@ import { RedisMCPSessionStore } from "@/features/mcp/data"
 import { GitHubClient } from "@/common/github"
 import {
   GitHubLoginDataSource,
-  GitHubProjectDataSource,
-  GitHubRepositoryDataSource
+  GitHubProjectListDataSource,
+  GitHubProjectDetailsDataSource,
 } from "@/features/projects/data"
-import { FilteringGitHubRepositoryDataSource } from "@/features/projects/domain"
 import RedisKeyValueStore from "@/common/key-value-store/RedisKeyValueStore"
 import RsaEncryptionService from "@/features/encrypt/EncryptionService"
 import RemoteConfigEncoder from "@/features/projects/domain/RemoteConfigEncoder"
-import { env, listFromCommaSeparatedString } from "@/common"
+import { env } from "@/common"
 
 const SESSION_HEADER = "mcp-session-id"
 
@@ -127,25 +126,25 @@ export async function POST(req: NextRequest) {
       },
     })
 
-    const projectDataSource = new GitHubProjectDataSource({
-      repositoryDataSource: new FilteringGitHubRepositoryDataSource({
-        hiddenRepositories: listFromCommaSeparatedString(env.get("HIDDEN_REPOSITORIES")),
-        dataSource: new GitHubRepositoryDataSource({
-          loginsDataSource: new GitHubLoginDataSource({
-            graphQlClient: gitHubClient
-          }),
-          graphQlClient: gitHubClient,
-          repositoryNameSuffix: env.getOrThrow("REPOSITORY_NAME_SUFFIX"),
-          projectConfigurationFilename: env.getOrThrow("FRAMNA_DOCS_PROJECT_CONFIGURATION_FILENAME")
-        })
+    const projectListDataSource = new GitHubProjectListDataSource({
+      loginsDataSource: new GitHubLoginDataSource({
+        graphQlClient: gitHubClient
       }),
+      graphQlClient: gitHubClient,
       repositoryNameSuffix: env.getOrThrow("REPOSITORY_NAME_SUFFIX"),
+      projectConfigurationFilename: env.getOrThrow("FRAMNA_DOCS_PROJECT_CONFIGURATION_FILENAME"),
+    })
+
+    const projectDetailsDataSource = new GitHubProjectDetailsDataSource({
+      graphQlClient: gitHubClient,
+      repositoryNameSuffix: env.getOrThrow("REPOSITORY_NAME_SUFFIX"),
+      projectConfigurationFilename: env.getOrThrow("FRAMNA_DOCS_PROJECT_CONFIGURATION_FILENAME"),
       encryptionService: encryptionService,
-      remoteConfigEncoder: remoteConfigEncoder
+      remoteConfigEncoder: remoteConfigEncoder,
     })
 
     // Create MCP server with authenticated client
-    const server = createMCPServer({ gitHubClient, projectDataSource })
+    const server = createMCPServer({ gitHubClient, projectListDataSource, projectDetailsDataSource })
 
     // Create transport and connect server
     const transport = new WebStandardStreamableHTTPServerTransport({
@@ -205,25 +204,25 @@ export async function GET(req: NextRequest) {
       },
     })
 
-    const projectDataSource = new GitHubProjectDataSource({
-      repositoryDataSource: new FilteringGitHubRepositoryDataSource({
-        hiddenRepositories: listFromCommaSeparatedString(env.get("HIDDEN_REPOSITORIES")),
-        dataSource: new GitHubRepositoryDataSource({
-          loginsDataSource: new GitHubLoginDataSource({
-            graphQlClient: gitHubClient
-          }),
-          graphQlClient: gitHubClient,
-          repositoryNameSuffix: env.getOrThrow("REPOSITORY_NAME_SUFFIX"),
-          projectConfigurationFilename: env.getOrThrow("FRAMNA_DOCS_PROJECT_CONFIGURATION_FILENAME")
-        })
+    const projectListDataSource = new GitHubProjectListDataSource({
+      loginsDataSource: new GitHubLoginDataSource({
+        graphQlClient: gitHubClient
       }),
+      graphQlClient: gitHubClient,
       repositoryNameSuffix: env.getOrThrow("REPOSITORY_NAME_SUFFIX"),
+      projectConfigurationFilename: env.getOrThrow("FRAMNA_DOCS_PROJECT_CONFIGURATION_FILENAME"),
+    })
+
+    const projectDetailsDataSource = new GitHubProjectDetailsDataSource({
+      graphQlClient: gitHubClient,
+      repositoryNameSuffix: env.getOrThrow("REPOSITORY_NAME_SUFFIX"),
+      projectConfigurationFilename: env.getOrThrow("FRAMNA_DOCS_PROJECT_CONFIGURATION_FILENAME"),
       encryptionService: encryptionService,
-      remoteConfigEncoder: remoteConfigEncoder
+      remoteConfigEncoder: remoteConfigEncoder,
     })
 
     // Create MCP server with authenticated client
-    const server = createMCPServer({ gitHubClient, projectDataSource })
+    const server = createMCPServer({ gitHubClient, projectListDataSource, projectDetailsDataSource })
 
     // Create transport and connect server
     const transport = new WebStandardStreamableHTTPServerTransport({

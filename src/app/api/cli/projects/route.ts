@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server"
 import { withAuth, CLIAuthContext } from "../middleware"
 import {
   createGitHubClientForCLI,
-  createProjectDataSourceForCLI,
+  createProjectListDataSourceForCLI,
 } from "../helpers"
 
 async function handler(
@@ -11,8 +11,8 @@ async function handler(
 ): Promise<NextResponse> {
   try {
     const gitHubClient = createGitHubClientForCLI(auth.accessToken)
-    const projectDataSource = createProjectDataSourceForCLI(gitHubClient)
-    const projects = await projectDataSource.getProjects()
+    const dataSource = createProjectListDataSourceForCLI(gitHubClient)
+    const projects = await dataSource.getProjectList()
     return NextResponse.json({ projects })
   } catch (error) {
     console.error("Failed to fetch projects:", error)

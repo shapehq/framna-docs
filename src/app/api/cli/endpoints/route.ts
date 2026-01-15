@@ -3,8 +3,9 @@ import { withAuth, CLIAuthContext } from "../middleware"
 import { OpenAPIService } from "@/features/mcp/domain/OpenAPIService"
 import {
   createFullGitHubClientForCLI,
-  createProjectDataSourceForCLI,
   createGitHubClientForCLI,
+  createProjectListDataSourceForCLI,
+  createProjectDetailsDataSourceForCLI,
 } from "../helpers"
 
 async function handler(
@@ -26,10 +27,10 @@ async function handler(
   try {
     const gitHubClient = createFullGitHubClientForCLI(auth.accessToken)
     const graphQLClient = createGitHubClientForCLI(auth.accessToken)
-    const projectDataSource = createProjectDataSourceForCLI(graphQLClient)
     const openAPIService = new OpenAPIService({
       gitHubClient,
-      projectDataSource,
+      projectListDataSource: createProjectListDataSourceForCLI(graphQLClient),
+      projectDetailsDataSource: createProjectDetailsDataSourceForCLI(graphQLClient),
     })
     const endpoints = await openAPIService.listEndpoints(project, version, spec)
     return NextResponse.json({ endpoints })

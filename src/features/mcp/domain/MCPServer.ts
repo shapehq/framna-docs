@@ -4,7 +4,8 @@ import {
   ListToolsRequestSchema,
   Tool,
 } from "@modelcontextprotocol/sdk/types.js"
-import IProjectDataSource from "@/features/projects/domain/IProjectDataSource"
+import IProjectListDataSource from "@/features/projects/domain/IProjectListDataSource"
+import IProjectDetailsDataSource from "@/features/projects/domain/IProjectDetailsDataSource"
 import IGitHubClient from "@/common/github/IGitHubClient"
 import { OpenAPIService } from "./OpenAPIService"
 import {
@@ -23,7 +24,8 @@ import {
 
 interface MCPServerConfig {
   gitHubClient: IGitHubClient
-  projectDataSource: IProjectDataSource
+  projectListDataSource: IProjectListDataSource
+  projectDetailsDataSource: IProjectDetailsDataSource
 }
 
 const TOOLS: Tool[] = [
@@ -114,7 +116,8 @@ export function createMCPServer(config: MCPServerConfig): Server {
 
   const openAPIService = new OpenAPIService({
     gitHubClient: config.gitHubClient,
-    projectDataSource: config.projectDataSource,
+    projectListDataSource: config.projectListDataSource,
+    projectDetailsDataSource: config.projectDetailsDataSource,
   })
 
   server.setRequestHandler(ListToolsRequestSchema, async () => {
@@ -126,7 +129,7 @@ export function createMCPServer(config: MCPServerConfig): Server {
 
     switch (name) {
       case "list_projects":
-        return listProjects(config.projectDataSource)
+        return listProjects(config.projectListDataSource, config.projectDetailsDataSource)
       case "list_endpoints":
         return listEndpoints(openAPIService, ListEndpointsArgsSchema.parse(args))
       case "get_endpoint_details":

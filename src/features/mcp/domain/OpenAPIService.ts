@@ -2,7 +2,8 @@ import SwaggerParser from "@apidevtools/swagger-parser"
 import { OpenAPIV3 } from "openapi-types"
 import yaml from "yaml"
 import IGitHubClient from "@/common/github/IGitHubClient"
-import IProjectDataSource from "@/features/projects/domain/IProjectDataSource"
+import IProjectListDataSource from "@/features/projects/domain/IProjectListDataSource"
+import IProjectDetailsDataSource from "@/features/projects/domain/IProjectDetailsDataSource"
 import Project from "@/features/projects/domain/Project"
 import Version from "@/features/projects/domain/Version"
 import OpenApiSpecification from "@/features/projects/domain/OpenApiSpecification"
@@ -10,7 +11,8 @@ import { SpecCache } from "./SpecCache"
 
 interface OpenAPIServiceConfig {
   gitHubClient: IGitHubClient
-  projectDataSource: IProjectDataSource
+  projectListDataSource: IProjectListDataSource
+  projectDetailsDataSource: IProjectDetailsDataSource
 }
 
 export interface EndpointSummary {
@@ -35,19 +37,28 @@ interface ParsedSpecUrl {
   ref: string
 }
 
+// Module-level singleton cache persists across requests
+const specCache = new SpecCache()
+
 export class OpenAPIService {
   private gitHubClient: IGitHubClient
-  private projectDataSource: IProjectDataSource
-  private cache = new SpecCache()
+  private projectListDataSource: IProjectListDataSource
+  private projectDetailsDataSource: IProjectDetailsDataSource
 
   constructor(config: OpenAPIServiceConfig) {
     this.gitHubClient = config.gitHubClient
-    this.projectDataSource = config.projectDataSource
+    this.projectListDataSource = config.projectListDataSource
+    this.projectDetailsDataSource = config.projectDetailsDataSource
   }
 
   async getProject(projectName: string): Promise<Project | null> {
-    const projects = await this.projectDataSource.getProjects()
-    return projects.find(p => p.name === projectName) || null
+    // First get the project list to find the owner
+    const projects = await this.projectListDataSource.getProjectList()
+    const summary = projects.find(p => p.name === projectName)
+    if (!summary) return null
+
+    // Then get full details
+    return await this.projectDetailsDataSource.getProjectDetails(summary.owner, projectName)
   }
 
   async getSpec(
@@ -65,7 +76,7 @@ export class OpenAPIService {
     if (!spec) throw new Error(`Spec not found: ${specName || "default"}`)
 
     const cacheKey = SpecCache.createKey(projectName, version.name, spec.name)
-    const cached = this.cache.get(cacheKey)
+    const cached = specCache.get(cacheKey)
     if (cached) return cached
 
     const parsed = this.parseSpecUrl(spec.url)
@@ -85,7 +96,7 @@ export class OpenAPIService {
     const parsedYaml = yaml.parse(text)
     const dereferenced = await SwaggerParser.dereference(parsedYaml) as OpenAPIV3.Document
 
-    this.cache.set(cacheKey, dereferenced)
+    specCache.set(cacheKey, dereferenced)
     return dereferenced
   }
 
@@ -183,7 +194,6 @@ export class OpenAPIService {
 
   private findVersion(project: Project, versionName?: string): Version | undefined {
     if (!versionName) {
-      // Return the default version (first one with isDefault=true, or just the first)
       return project.versions.find(v => v.isDefault) || project.versions[0]
     }
     return project.versions.find(v => v.name === versionName || v.id === versionName)
@@ -191,14 +201,12 @@ export class OpenAPIService {
 
   private findSpec(version: Version, specName?: string): OpenApiSpecification | undefined {
     if (!specName) {
-      // Return the default spec (first one with isDefault=true, or just the first)
       return version.specifications.find(s => s.isDefault) || version.specifications[0]
     }
     return version.specifications.find(s => s.name === specName || s.id === specName)
   }
 
   private parseSpecUrl(url: string): ParsedSpecUrl | null {
-    // Parse URLs like /api/blob/{owner}/{repository}/{path}?ref={ref}
     const blobMatch = url.match(/^\/api\/blob\/([^/]+)\/([^/]+)\/(.+)\?ref=(.+)$/)
     if (blobMatch) {
       return {

@@ -1,5 +1,5 @@
 import { Octokit } from "octokit"
-import { env, listFromCommaSeparatedString } from "@/common"
+import { env } from "@/common"
 import IGitHubGraphQLClient, {
   GitHubGraphQLClientRequest,
   GitHubGraphQLClientResponse,
@@ -18,11 +18,13 @@ import IGitHubClient, {
   CompareCommitsRequest,
   CompareCommitsResponse,
 } from "@/common/github/IGitHubClient"
-import IProjectDataSource from "@/features/projects/domain/IProjectDataSource"
-import GitHubProjectDataSource from "@/features/projects/data/GitHubProjectDataSource"
-import { FilteringGitHubRepositoryDataSource } from "@/features/projects/domain"
-import GitHubRepositoryDataSource from "@/features/projects/data/GitHubRepositoryDataSource"
-import GitHubLoginDataSource from "@/features/projects/data/GitHubLoginDataSource"
+import IProjectListDataSource from "@/features/projects/domain/IProjectListDataSource"
+import IProjectDetailsDataSource from "@/features/projects/domain/IProjectDetailsDataSource"
+import {
+  GitHubProjectListDataSource,
+  GitHubProjectDetailsDataSource,
+  GitHubLoginDataSource,
+} from "@/features/projects/data"
 import RsaEncryptionService from "@/features/encrypt/EncryptionService"
 import RemoteConfigEncoder from "@/features/projects/domain/RemoteConfigEncoder"
 
@@ -30,7 +32,6 @@ type GitHubContentItem = { download_url: string }
 
 /**
  * Simple GitHub GraphQL client that uses a static access token.
- * Used for CLI authentication where we have the token directly.
  */
 class SimpleGitHubClient implements IGitHubGraphQLClient {
   private readonly octokit: Octokit
@@ -47,8 +48,7 @@ class SimpleGitHubClient implements IGitHubGraphQLClient {
 }
 
 /**
- * Full GitHub client implementation for CLI that uses a static access token.
- * Used for OpenAPIService which requires full IGitHubClient interface.
+ * Full GitHub client implementation for CLI.
  */
 class CLIGitHubClient implements IGitHubClient {
   private readonly octokit: Octokit
@@ -117,9 +117,27 @@ export function createFullGitHubClientForCLI(
   return new CLIGitHubClient(accessToken)
 }
 
-export function createProjectDataSourceForCLI(
+export function createProjectListDataSourceForCLI(
   gitHubClient: IGitHubGraphQLClient
-): IProjectDataSource {
+): IProjectListDataSource {
+  const repositoryNameSuffix = env.getOrThrow("REPOSITORY_NAME_SUFFIX")
+  const projectConfigurationFilename = env.getOrThrow(
+    "FRAMNA_DOCS_PROJECT_CONFIGURATION_FILENAME"
+  )
+
+  return new GitHubProjectListDataSource({
+    loginsDataSource: new GitHubLoginDataSource({
+      graphQlClient: gitHubClient,
+    }),
+    graphQlClient: gitHubClient,
+    repositoryNameSuffix,
+    projectConfigurationFilename,
+  })
+}
+
+export function createProjectDetailsDataSourceForCLI(
+  gitHubClient: IGitHubGraphQLClient
+): IProjectDetailsDataSource {
   const repositoryNameSuffix = env.getOrThrow("REPOSITORY_NAME_SUFFIX")
   const projectConfigurationFilename = env.getOrThrow(
     "FRAMNA_DOCS_PROJECT_CONFIGURATION_FILENAME"
@@ -137,21 +155,10 @@ export function createProjectDataSourceForCLI(
   })
   const remoteConfigEncoder = new RemoteConfigEncoder(encryptionService)
 
-  return new GitHubProjectDataSource({
-    repositoryDataSource: new FilteringGitHubRepositoryDataSource({
-      hiddenRepositories: listFromCommaSeparatedString(
-        env.get("HIDDEN_REPOSITORIES")
-      ),
-      dataSource: new GitHubRepositoryDataSource({
-        loginsDataSource: new GitHubLoginDataSource({
-          graphQlClient: gitHubClient,
-        }),
-        graphQlClient: gitHubClient,
-        repositoryNameSuffix,
-        projectConfigurationFilename,
-      }),
-    }),
+  return new GitHubProjectDetailsDataSource({
+    graphQlClient: gitHubClient,
     repositoryNameSuffix,
+    projectConfigurationFilename,
     encryptionService,
     remoteConfigEncoder,
   })

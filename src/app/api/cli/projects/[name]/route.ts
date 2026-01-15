@@ -2,7 +2,8 @@ import { NextRequest, NextResponse } from "next/server"
 import { withAuth, CLIAuthContext } from "../../middleware"
 import {
   createGitHubClientForCLI,
-  createProjectDataSourceForCLI,
+  createProjectListDataSourceForCLI,
+  createProjectDetailsDataSourceForCLI,
 } from "../../helpers"
 
 type RouteParams = { params: Promise<{ name: string }> }
@@ -15,9 +16,19 @@ async function handler(
   try {
     const { name } = await routeParams.params
     const gitHubClient = createGitHubClientForCLI(auth.accessToken)
-    const projectDataSource = createProjectDataSourceForCLI(gitHubClient)
-    const projects = await projectDataSource.getProjects()
-    const project = projects.find((p) => p.name === name)
+
+    // First get project list to find the owner
+    const listDataSource = createProjectListDataSourceForCLI(gitHubClient)
+    const projects = await listDataSource.getProjectList()
+    const summary = projects.find((p) => p.name === name)
+
+    if (!summary) {
+      return NextResponse.json({ error: "Project not found" }, { status: 404 })
+    }
+
+    // Then get full details
+    const detailsDataSource = createProjectDetailsDataSourceForCLI(gitHubClient)
+    const project = await detailsDataSource.getProjectDetails(summary.owner, name)
 
     if (!project) {
       return NextResponse.json({ error: "Project not found" }, { status: 404 })
