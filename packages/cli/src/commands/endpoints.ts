@@ -171,26 +171,32 @@ export function createEndpointCommand(): Command {
         if (parameters && parameters.length > 0) {
           console.log()
           console.log(chalk.bold("Parameters:"))
-          for (const param of parameters) {
-            const required = param.required ? chalk.red("*") : ""
-            console.log(`  ${param.name}${required} (${param.in}): ${param.description || ""}`)
-          }
+          const paramRows = parameters.map((param) => [
+            param.name,
+            param.in,
+            param.required ? chalk.red("required") : "optional",
+            param.description || "",
+          ])
+          console.log(formatTable(["NAME", "IN", "REQUIRED", "DESCRIPTION"], paramRows))
         }
 
         if (operation?.responses) {
           console.log()
           console.log(chalk.bold("Responses:"))
-          for (const [code, response] of Object.entries(operation.responses)) {
+          const responseRows = Object.entries(operation.responses).map(([code, response]) => {
             const resp = response as OpenAPIV3.ResponseObject
             const color = code.startsWith("2") ? chalk.green : code.startsWith("4") ? chalk.yellow : chalk.red
-            console.log(`  ${color(code)}: ${resp.description || ""}`)
-          }
+            return [color(code), resp.description || ""]
+          })
+          console.log(formatTable(["CODE", "DESCRIPTION"], responseRows))
         }
 
         const schemas = endpoint.components?.schemas
         if (schemas && Object.keys(schemas).length > 0) {
           console.log()
-          console.log(chalk.bold("Schemas:"), Object.keys(schemas).join(", "))
+          console.log(chalk.bold("Referenced Schemas:"))
+          const schemaRows = Object.keys(schemas).map((name) => [name])
+          console.log(formatTable(["SCHEMA"], schemaRows))
           console.log(chalk.dim("Use --json or --yaml to see full schema definitions"))
         }
       } catch (error) {
