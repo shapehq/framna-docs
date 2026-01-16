@@ -4,6 +4,10 @@ import { useState, useEffect, useCallback, useRef } from "react"
 import { ProjectSummary } from "@/features/projects/domain"
 import { ProjectListContext } from "./ProjectListContext"
 
+// Fingerprint for change detection - avoids unnecessary re-renders
+const fingerprint = (list: ProjectSummary[]) =>
+  list.map(p => `${p.owner}/${p.name}`).sort().join()
+
 export default function ProjectListContextProvider({
   children
 }: {
@@ -30,8 +34,10 @@ export default function ProjectListContextProvider({
         if (!res.ok) throw new Error(`HTTP ${res.status}`)
         return res.json()
       })
-      .then(({ projects }) => {
-        setProjects(projects || [])
+      .then(({ projects: newProjects }) => {
+        setProjects(prev =>
+          fingerprint(prev) === fingerprint(newProjects || []) ? prev : (newProjects || [])
+        )
         setError(null)
       })
       .catch(err => {
@@ -49,6 +55,21 @@ export default function ProjectListContextProvider({
       controller.abort()
     }
   }, [refreshTrigger])
+
+  // Refresh on visibility change and focus (restored from original implementation)
+  useEffect(() => {
+    const timeout = window.setTimeout(() => refresh(), 0)
+    const handleVisibilityChange = () => {
+      if (!document.hidden) refresh()
+    }
+    document.addEventListener("visibilitychange", handleVisibilityChange)
+    window.addEventListener("focus", refresh)
+    return () => {
+      document.removeEventListener("visibilitychange", handleVisibilityChange)
+      window.removeEventListener("focus", refresh)
+      window.clearTimeout(timeout)
+    }
+  }, [refresh])
 
   return (
     <ProjectListContext.Provider value={{ projects, loading, error, refresh }}>
