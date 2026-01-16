@@ -187,7 +187,8 @@ const gitHubProjectListDataSource = new GitHubProjectListDataSource({
   }),
   graphQlClient: userGitHubClient,
   repositoryNameSuffix: env.getOrThrow("REPOSITORY_NAME_SUFFIX"),
-  projectConfigurationFilename: env.getOrThrow("FRAMNA_DOCS_PROJECT_CONFIGURATION_FILENAME")
+  projectConfigurationFilename: env.getOrThrow("FRAMNA_DOCS_PROJECT_CONFIGURATION_FILENAME"),
+  hiddenRepositories: listFromCommaSeparatedString(env.get("HIDDEN_REPOSITORIES"))
 })
 
 const projectListRepository = new ProjectListRepository({

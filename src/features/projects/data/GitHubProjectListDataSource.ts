@@ -1,3 +1,4 @@
+import { splitOwnerAndRepository } from "@/common"
 import {
   ProjectSummary,
   IProjectListDataSource,
@@ -24,25 +25,37 @@ export default class GitHubProjectListDataSource implements IProjectListDataSour
   private readonly graphQlClient: IGitHubGraphQLClient
   private readonly repositoryNameSuffix: string
   private readonly projectConfigurationFilename: string
+  private readonly hiddenRepositories: { owner: string; repository: string }[]
 
   constructor(config: {
     loginsDataSource: IGitHubLoginDataSource
     graphQlClient: IGitHubGraphQLClient
     repositoryNameSuffix: string
     projectConfigurationFilename: string
+    hiddenRepositories: string[]
   }) {
     this.loginsDataSource = config.loginsDataSource
     this.graphQlClient = config.graphQlClient
     this.repositoryNameSuffix = config.repositoryNameSuffix
     this.projectConfigurationFilename = config.projectConfigurationFilename.replace(/\.ya?ml$/, "")
+    this.hiddenRepositories = config.hiddenRepositories
+      .map(splitOwnerAndRepository)
+      .filter((e): e is { owner: string; repository: string } => e !== undefined)
   }
 
   async getProjectList(): Promise<ProjectSummary[]> {
     const logins = await this.loginsDataSource.getLogins()
     const repositories = await this.getRepositoriesForLogins(logins)
     return repositories
+      .filter(repo => !this.isHidden(repo))
       .map(repo => this.mapToSummary(repo))
       .sort((a, b) => a.name.localeCompare(b.name))
+  }
+
+  private isHidden(repo: GraphQLProjectListRepository): boolean {
+    return this.hiddenRepositories.some(
+      hidden => hidden.owner === repo.owner.login && hidden.repository === repo.name
+    )
   }
 
   private async getRepositoriesForLogins(logins: string[]): Promise<GraphQLProjectListRepository[]> {

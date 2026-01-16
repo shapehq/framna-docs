@@ -22,12 +22,14 @@ const createSut = (overrides: {
   graphQlClient?: IGitHubGraphQLClient
   repositoryNameSuffix?: string
   projectConfigurationFilename?: string
+  hiddenRepositories?: string[]
 } = {}) => {
   return new GitHubProjectListDataSource({
     loginsDataSource: overrides.loginsDataSource || createMockLoginsDataSource(),
     graphQlClient: overrides.graphQlClient || createMockGraphQLClient(),
     repositoryNameSuffix: overrides.repositoryNameSuffix || "-openapi",
-    projectConfigurationFilename: overrides.projectConfigurationFilename || ".framna-docs.yml"
+    projectConfigurationFilename: overrides.projectConfigurationFilename || ".framna-docs.yml",
+    hiddenRepositories: overrides.hiddenRepositories || []
   })
 }
 
@@ -286,5 +288,51 @@ describe("GitHubProjectListDataSource", () => {
         query: expect.stringContaining("HEAD:.framna-docs.yml")
       })
     )
+  })
+
+  test("It filters out hidden repositories", async () => {
+    const graphQlClient = createMockGraphQLClient([
+      {
+        search: {
+          results: [
+            { name: "visible-openapi", owner: { login: "acme" } },
+            { name: "hidden-openapi", owner: { login: "acme" } },
+            { name: "also-visible-openapi", owner: { login: "other" } }
+          ],
+          pageInfo: { hasNextPage: false }
+        }
+      }
+    ])
+    const sut = createSut({
+      graphQlClient,
+      hiddenRepositories: ["acme/hidden-openapi"]
+    })
+
+    const result = await sut.getProjectList()
+
+    expect(result).toHaveLength(2)
+    expect(result.map(p => p.name)).toEqual(["also-visible", "visible"])
+  })
+
+  test("It ignores invalid hidden repository entries", async () => {
+    const graphQlClient = createMockGraphQLClient([
+      {
+        search: {
+          results: [
+            { name: "project-openapi", owner: { login: "acme" } }
+          ],
+          pageInfo: { hasNextPage: false }
+        }
+      }
+    ])
+    const sut = createSut({
+      graphQlClient,
+      hiddenRepositories: ["invalid-entry", "", "also-invalid"]
+    })
+
+    const result = await sut.getProjectList()
+
+    expect(result).toHaveLength(1)
+    expect(result[0].name).toBe("project")
   })
 })
