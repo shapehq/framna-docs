@@ -33,14 +33,14 @@ export async function getSession(): Promise<Session | null> {
 
 export async function saveSession(sessionId: string): Promise<void> {
   const configDir = getConfigDir()
-  await fs.mkdir(configDir, { recursive: true })
+  await fs.mkdir(configDir, { recursive: true, mode: 0o700 })
 
   const session: Session = {
     sessionId,
     createdAt: new Date().toISOString(),
   }
 
-  await fs.writeFile(getSessionPath(), JSON.stringify(session, null, 2))
+  await fs.writeFile(getSessionPath(), JSON.stringify(session, null, 2), { mode: 0o600 })
 }
 
 export async function deleteSession(): Promise<void> {
@@ -59,3 +59,4 @@ export function getServerUrl(): string {
   }
   return url
 }
+

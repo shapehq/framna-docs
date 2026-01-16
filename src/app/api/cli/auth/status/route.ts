@@ -14,13 +14,77 @@ const deviceFlowService = new CLIDeviceFlowService({
   clientSecret: env.getOrThrow("GITHUB_CLIENT_SECRET"),
 })
 
-export async function GET(request: NextRequest): Promise<NextResponse> {
-  const url = new URL(request.url)
-  const deviceCode = url.searchParams.get("device_code")
+// Rate limiting: max 1 request per 5 seconds per IP
+const RATE_LIMIT_WINDOW_MS = 5000
+const rateLimitMap = new Map<string, number>()
+
+// Cleanup stale entries periodically (every 60 seconds)
+setInterval(() => {
+  const now = Date.now()
+  const entries = Array.from(rateLimitMap.entries())
+  for (let i = 0; i < entries.length; i++) {
+    const [ip, timestamp] = entries[i]
+    if (now - timestamp > RATE_LIMIT_WINDOW_MS) {
+      rateLimitMap.delete(ip)
+    }
+  }
+}, 60000)
+
+function getClientIP(request: NextRequest): string {
+  // Check common proxy headers
+  const forwarded = request.headers.get("x-forwarded-for")
+  if (forwarded) {
+    return forwarded.split(",")[0].trim()
+  }
+  const realIP = request.headers.get("x-real-ip")
+  if (realIP) {
+    return realIP
+  }
+  // Fallback to a default value for local development
+  return "127.0.0.1"
+}
+
+function checkRateLimit(ip: string): boolean {
+  const now = Date.now()
+  const lastRequest = rateLimitMap.get(ip)
+
+  if (lastRequest && now - lastRequest < RATE_LIMIT_WINDOW_MS) {
+    return false // Rate limited
+  }
+
+  rateLimitMap.set(ip, now)
+  return true // Allowed
+}
+
+interface StatusRequestBody {
+  device_code?: string
+}
+
+export async function POST(request: NextRequest): Promise<NextResponse> {
+  // Apply rate limiting
+  const clientIP = getClientIP(request)
+  if (!checkRateLimit(clientIP)) {
+    return NextResponse.json(
+      { error: "Too many requests. Please wait 5 seconds between requests." },
+      { status: 429 }
+    )
+  }
+
+  let body: StatusRequestBody
+  try {
+    body = await request.json() as StatusRequestBody
+  } catch {
+    return NextResponse.json(
+      { error: "Invalid JSON body" },
+      { status: 400 }
+    )
+  }
+
+  const deviceCode = body.device_code
 
   if (!deviceCode) {
     return NextResponse.json(
-      { error: "device_code query parameter required" },
+      { error: "device_code required in request body" },
       { status: 400 }
     )
   }
@@ -41,3 +105,6 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     return NextResponse.json({ status: "error", error: message }, { status: 500 })
   }
 }
+
+// Export for testing
+export { checkRateLimit, rateLimitMap, getClientIP }

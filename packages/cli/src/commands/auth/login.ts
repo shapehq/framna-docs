@@ -59,7 +59,7 @@ export function createLoginCommand(): Command {
           await new Promise((resolve) => setTimeout(resolve, pollInterval))
 
           // eslint-disable-next-line no-await-in-loop
-          const status = await client.get<StatusResponse>("/api/cli/auth/status", {
+          const status = await client.post<StatusResponse>("/api/cli/auth/status", {
             device_code: deviceFlow.deviceCode,
           })
 
