@@ -14,25 +14,15 @@ export default class CachingProjectListDataSource implements IProjectListDataSou
     this.repository = config.repository
   }
 
-  async getProjectList(): Promise<ProjectSummary[]> {
-    const cache = await this.repository.get()
-    if (cache && cache.length > 0) {
-      // Return cached data immediately, refresh in background
-      this.refreshInBackground()
-      return cache
+  async getProjectList(options?: { refresh?: boolean }): Promise<ProjectSummary[]> {
+    if (!options?.refresh) {
+      const cache = await this.repository.get()
+      if (cache && cache.length > 0) {
+        return cache
+      }
     }
-    // No cache, fetch and store
     const projects = await this.dataSource.getProjectList()
     await this.repository.set(projects)
     return projects
-  }
-
-  private async refreshInBackground(): Promise<void> {
-    try {
-      const projects = await this.dataSource.getProjectList()
-      await this.repository.set(projects)
-    } catch (err) {
-      console.warn("[CachingProjectListDataSource] Background refresh failed:", err)
-    }
   }
 }

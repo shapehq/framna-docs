@@ -1,5 +1,5 @@
 import ProjectSummary from "./ProjectSummary"
 
 export default interface IProjectListDataSource {
-  getProjectList(): Promise<ProjectSummary[]>
+  getProjectList(options?: { refresh?: boolean }): Promise<ProjectSummary[]>
 }

@@ -17,19 +17,13 @@ export default function ProjectListContextProvider({
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const isLoadingRef = useRef(false)
-  const [refreshTrigger, setRefreshTrigger] = useState(0)
 
-  const refresh = useCallback(() => {
-    setRefreshTrigger(prev => prev + 1)
-  }, [])
-
-  useEffect(() => {
+  const fetchProjects = useCallback((forceRefresh: boolean) => {
     if (isLoadingRef.current) return
     isLoadingRef.current = true
 
-    const controller = new AbortController()
-
-    fetch("/api/projects", { signal: controller.signal })
+    const url = forceRefresh ? "/api/projects?refresh=true" : "/api/projects"
+    fetch(url)
       .then(res => {
         if (!res.ok) throw new Error(`HTTP ${res.status}`)
         return res.json()
@@ -41,7 +35,6 @@ export default function ProjectListContextProvider({
         setError(null)
       })
       .catch(err => {
-        if (err.name === "AbortError") return
         console.error("Failed to fetch project list:", err)
         setError("Failed to load projects")
       })
@@ -49,16 +42,52 @@ export default function ProjectListContextProvider({
         isLoadingRef.current = false
         setLoading(false)
       })
+  }, [])
 
-    return () => {
-      isLoadingRef.current = false
-      controller.abort()
-    }
-  }, [refreshTrigger])
+  const refresh = useCallback(() => {
+    fetchProjects(true)
+  }, [fetchProjects])
 
-  // Refresh on visibility change and focus (restored from original implementation)
+  // Initial load (use cache), then refresh to get fresh data
   useEffect(() => {
-    const timeout = window.setTimeout(() => refresh(), 0)
+    if (isLoadingRef.current) return
+    isLoadingRef.current = true
+
+    fetch("/api/projects")
+      .then(res => {
+        if (!res.ok) throw new Error(`HTTP ${res.status}`)
+        return res.json()
+      })
+      .then(({ projects: newProjects }) => {
+        setProjects(newProjects || [])
+        setError(null)
+        setLoading(false)
+        // After showing cached data, fetch fresh data
+        return fetch("/api/projects?refresh=true")
+      })
+      .then(res => {
+        if (!res || !res.ok) return null
+        return res.json()
+      })
+      .then(data => {
+        if (data?.projects) {
+          setProjects(prev =>
+            fingerprint(prev) === fingerprint(data.projects) ? prev : data.projects
+          )
+        }
+      })
+      .catch(err => {
+        console.error("Failed to fetch project list:", err)
+        setError("Failed to load projects")
+        setLoading(false)
+      })
+      .finally(() => {
+        isLoadingRef.current = false
+      })
+  }, [])
+
+  // Refresh on visibility change and focus
+  useEffect(() => {
     const handleVisibilityChange = () => {
       if (!document.hidden) refresh()
     }
@@ -67,7 +96,6 @@ export default function ProjectListContextProvider({
     return () => {
       document.removeEventListener("visibilitychange", handleVisibilityChange)
       window.removeEventListener("focus", refresh)
-      window.clearTimeout(timeout)
     }
   }, [refresh])
 
