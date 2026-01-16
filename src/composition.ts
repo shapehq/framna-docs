@@ -21,6 +21,10 @@ import {
   GitHubProjectDetailsDataSource
 } from "@/features/projects/data"
 import {
+  CachingProjectListDataSource,
+  ProjectListRepository
+} from "@/features/projects/domain"
+import {
   GitHubOAuthTokenRefresher
 } from "@/features/auth/data"
 import {
@@ -177,13 +181,26 @@ export const encryptionService = new RsaEncryptionService({
 
 export const remoteConfigEncoder = new RemoteConfigEncoder(encryptionService)
 
-export const projectListDataSource = new GitHubProjectListDataSource({
+const gitHubProjectListDataSource = new GitHubProjectListDataSource({
   loginsDataSource: new GitHubLoginDataSource({
     graphQlClient: userGitHubClient
   }),
   graphQlClient: userGitHubClient,
   repositoryNameSuffix: env.getOrThrow("REPOSITORY_NAME_SUFFIX"),
   projectConfigurationFilename: env.getOrThrow("FRAMNA_DOCS_PROJECT_CONFIGURATION_FILENAME")
+})
+
+const projectListRepository = new ProjectListRepository({
+  userIDReader: session,
+  repository: new KeyValueUserDataRepository({
+    store: new RedisKeyValueStore(env.getOrThrow("REDIS_URL")),
+    baseKey: "projectList"
+  })
+})
+
+export const projectListDataSource = new CachingProjectListDataSource({
+  dataSource: gitHubProjectListDataSource,
+  repository: projectListRepository
 })
 
 export const projectDetailsDataSource = new GitHubProjectDetailsDataSource({
