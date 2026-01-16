@@ -15,20 +15,17 @@ interface CLIDeviceFlowServiceConfig {
   sessionStore: ICLISessionStore
   clientId: string
   clientSecret: string
-  scopes?: string[]
 }
 
 export class CLIDeviceFlowService {
   private sessionStore: ICLISessionStore
   private clientId: string
   private clientSecret: string
-  private scopes: string[]
 
   constructor(config: CLIDeviceFlowServiceConfig) {
     this.sessionStore = config.sessionStore
     this.clientId = config.clientId
     this.clientSecret = config.clientSecret
-    this.scopes = config.scopes || ["repo", "read:org", "read:user"]
   }
 
   async getSessionToken(sessionId: string | undefined): Promise<CLISession | null> {
@@ -40,8 +37,6 @@ export class CLIDeviceFlowService {
     const response = await createDeviceCode({
       clientType: "github-app",
       clientId: this.clientId,
-      clientSecret: this.clientSecret,
-      scopes: this.scopes,
     })
 
     const sessionId = await this.sessionStore.createPendingSession(response.data.device_code)
@@ -68,11 +63,12 @@ export class CLIDeviceFlowService {
         code: deviceCode,
       })
 
+      const auth = response.authentication
       const session: CLISession = {
         sessionId,
-        accessToken: response.authentication.token,
-        refreshToken: response.authentication.refreshToken,
-        expiresAt: response.authentication.expiresAt,
+        accessToken: auth.token,
+        refreshToken: "refreshToken" in auth ? auth.refreshToken : undefined,
+        expiresAt: "expiresAt" in auth ? auth.expiresAt : undefined,
         createdAt: new Date().toISOString(),
       }
 

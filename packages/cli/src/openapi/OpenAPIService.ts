@@ -111,6 +111,20 @@ export class OpenAPIService {
     return spec.components?.schemas?.[schemaName] as OpenAPIV3.SchemaObject || null
   }
 
+  async getMethodsForPath(
+    project: Project,
+    path: string,
+    versionName?: string,
+    specName?: string
+  ): Promise<string[]> {
+    const spec = await this.getSpec(project, versionName, specName)
+    const pathItem = spec.paths?.[path]
+    if (!pathItem) return []
+
+    const methods = ["get", "post", "put", "delete", "patch", "options", "head"] as const
+    return methods.filter(m => (pathItem as Record<string, unknown>)[m] !== undefined)
+  }
+
   async getEndpointSlice(
     project: Project,
     path: string,

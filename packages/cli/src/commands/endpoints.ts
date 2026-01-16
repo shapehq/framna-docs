@@ -138,6 +138,16 @@ export function createEndpointGetCommand(): Command {
         spinner.stop()
 
         if (!endpoint) {
+          // Check if path exists with different methods
+          const availableMethods = await service.getMethodsForPath(project, endpointPath, options.at, options.spec)
+          if (availableMethods.length > 0) {
+            const otherMethods = availableMethods.filter(m => m.toLowerCase() !== method.toLowerCase())
+            if (otherMethods.length > 0) {
+              console.log(chalk.yellow("Endpoint not found"))
+              console.log(chalk.dim(`Did you mean: ${otherMethods.map(m => m.toUpperCase()).join(", ")}?`))
+              return
+            }
+          }
           console.log(chalk.yellow("Endpoint not found"))
           return
         }
