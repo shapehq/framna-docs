@@ -20,8 +20,8 @@ import { useCloseSidebarOnSelection } from "@/features/sidebar/data";
 const AVATAR_SIZE = { width: 40, height: 40 };
 
 const ProjectListItem = ({ project }: { project: ProjectSummary }) => {
-  const { project: selectedProject, selectProject } = useProjectSelection();
-  const selected = project.id === selectedProject?.id;
+  const { selectedOwner, selectedName, selectProject } = useProjectSelection();
+  const selected = project.owner === selectedOwner && project.name === selectedName;
   const { closeSidebarIfNeeded } = useCloseSidebarOnSelection();
 
   return (

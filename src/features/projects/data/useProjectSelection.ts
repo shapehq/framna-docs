@@ -77,6 +77,9 @@ export default function useProjectSelection() {
     get specification() {
       return currentSpecification
     },
+    // Immediate selection from URL - doesn't require project details to be loaded
+    selectedOwner: owner,
+    selectedName: name,
     selectProject: (project: ProjectSummary | Project) => {
       NProgress.start()
       // Navigate to project base - the page will handle loading details and redirecting
