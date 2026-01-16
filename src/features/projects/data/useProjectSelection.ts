@@ -1,5 +1,6 @@
 "use client"
 
+import { useCallback, useMemo } from "react"
 import NProgress from "nprogress"
 import { useRouter, usePathname } from "next/navigation"
 import {
@@ -16,12 +17,14 @@ export default function useProjectSelection() {
   const pathname = usePathname()
   const { getProject } = useProjectDetails()
 
-  const pathnameReader = {
-    get pathname() {
-      return pathname
+  const projectNavigator = useMemo(() => {
+    const pathnameReader = {
+      get pathname() {
+        return pathname
+      }
     }
-  }
-  const projectNavigator = new ProjectNavigator({ router, pathnameReader })
+    return new ProjectNavigator({ router, pathnameReader })
+  }, [router, pathname])
 
   // Parse owner/name from URL to look up the project
   const pathParts = pathname.split("/").filter(Boolean)
@@ -41,6 +44,28 @@ export default function useProjectSelection() {
   const currentProject = selection.project
   const currentVersion = selection.version
   const currentSpecification = selection.specification
+
+  const navigateToSelectionIfNeeded = useCallback(() => {
+    // Only redirect to defaults if URL has no version/spec at all
+    // (i.e., user navigated to just /owner/repo)
+    if (currentProject && !hasVersionInUrl) {
+      const defaultVersion = currentProject.versions[0]
+      if (defaultVersion) {
+        const defaultSpec = getDefaultSpecification(defaultVersion)
+        if (defaultSpec) {
+          router.replace(`/${currentProject.owner}/${currentProject.name}/${encodeURIComponent(defaultVersion.id)}/${encodeURIComponent(defaultSpec.id)}`)
+          return
+        }
+      }
+    }
+
+    projectNavigator.navigateIfNeeded({
+      projectOwner: currentProject?.owner,
+      projectName: currentProject?.name,
+      versionId: currentVersion?.id,
+      specificationId: currentSpecification?.id
+    })
+  }, [currentProject, currentVersion, currentSpecification, hasVersionInUrl, projectNavigator, router])
 
   return {
     get project() {
@@ -76,26 +101,6 @@ export default function useProjectSelection() {
         specificationId
       )
     },
-    navigateToSelectionIfNeeded: () => {
-      // Only redirect to defaults if URL has no version/spec at all
-      // (i.e., user navigated to just /owner/repo)
-      if (currentProject && !hasVersionInUrl) {
-        const defaultVersion = currentProject.versions[0]
-        if (defaultVersion) {
-          const defaultSpec = getDefaultSpecification(defaultVersion)
-          if (defaultSpec) {
-            router.replace(`/${currentProject.owner}/${currentProject.name}/${encodeURIComponent(defaultVersion.id)}/${encodeURIComponent(defaultSpec.id)}`)
-            return
-          }
-        }
-      }
-
-      projectNavigator.navigateIfNeeded({
-        projectOwner: currentProject?.owner,
-        projectName: currentProject?.name,
-        versionId: currentVersion?.id,
-        specificationId: currentSpecification?.id
-      })
-    }
+    navigateToSelectionIfNeeded
   }
 }

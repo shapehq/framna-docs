@@ -324,7 +324,8 @@ export default class GitHubProjectDetailsDataSource implements IProjectDetailsDa
         username: this.encryptionService.decrypt(spec.auth.encryptedUsername),
         password: this.encryptionService.decrypt(spec.auth.encryptedPassword)
       }
-    } catch {
+    } catch (error) {
+      console.info(`Failed to decrypt remote specification auth for ${spec.name} (${spec.url}). Perhaps a different public key was used?:`, error)
       return undefined
     }
   }

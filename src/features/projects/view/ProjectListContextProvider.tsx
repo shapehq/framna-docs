@@ -45,6 +45,7 @@ export default function ProjectListContextProvider({
       })
 
     return () => {
+      isLoadingRef.current = false
       controller.abort()
     }
   }, [refreshTrigger])
