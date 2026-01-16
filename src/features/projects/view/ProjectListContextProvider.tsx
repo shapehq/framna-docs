@@ -4,10 +4,6 @@ import { useState, useEffect, useCallback, useRef } from "react"
 import { ProjectSummary } from "@/features/projects/domain"
 import { ProjectListContext } from "./ProjectListContext"
 
-// Fingerprint for change detection - avoids unnecessary re-renders
-const fingerprint = (list: ProjectSummary[]) =>
-  list.map(p => `${p.owner}/${p.name}`).sort().join()
-
 export default function ProjectListContextProvider({
   children
 }: {
@@ -29,9 +25,7 @@ export default function ProjectListContextProvider({
         return res.json()
       })
       .then(({ projects: newProjects }) => {
-        setProjects(prev =>
-          fingerprint(prev) === fingerprint(newProjects || []) ? prev : (newProjects || [])
-        )
+        setProjects(newProjects || [])
         setError(null)
       })
       .catch(err => {
@@ -71,9 +65,7 @@ export default function ProjectListContextProvider({
       })
       .then(data => {
         if (data?.projects) {
-          setProjects(prev =>
-            fingerprint(prev) === fingerprint(data.projects) ? prev : data.projects
-          )
+          setProjects(data.projects)
         }
       })
       .catch(err => {
