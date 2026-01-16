@@ -1,7 +1,0 @@
-export * from "./types"
-export { listProjects } from "./listProjects"
-export { listEndpoints } from "./listEndpoints"
-export { getEndpointDetails } from "./getEndpointDetails"
-export { listSchemas } from "./listSchemas"
-export { getSchema } from "./getSchema"
-export { searchEndpoints } from "./searchEndpoints"

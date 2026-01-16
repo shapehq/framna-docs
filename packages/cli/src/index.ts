@@ -4,16 +4,21 @@ import { Command } from "commander"
 import { createAuthCommand } from "./commands/auth/index.js"
 import {
   createProjectsCommand,
-  createProjectCommand,
+  createProjectsListCommand,
+  createProjectsGetCommand,
 } from "./commands/projects.js"
 import {
   createEndpointsCommand,
+  createEndpointsListCommand,
   createEndpointsSearchCommand,
-  createEndpointCommand,
+  createEndpointGetCommand,
 } from "./commands/endpoints.js"
-import { createSchemasCommand, createSchemaCommand } from "./commands/schemas.js"
+import {
+  createSchemasCommand,
+  createSchemasListCommand,
+  createSchemasGetCommand,
+} from "./commands/schemas.js"
 import { createSpecCommand } from "./commands/spec.js"
-import { createMCPCommand } from "./commands/mcp.js"
 import { createCacheCommand } from "./commands/cache.js"
 
 const program = new Command()
@@ -27,24 +32,26 @@ program
 program.addCommand(createAuthCommand())
 
 // Project commands
-program.addCommand(createProjectsCommand())
-program.addCommand(createProjectCommand())
+const projects = createProjectsCommand()
+projects.addCommand(createProjectsListCommand())
+projects.addCommand(createProjectsGetCommand())
+program.addCommand(projects)
 
 // Endpoint commands
 const endpoints = createEndpointsCommand()
+endpoints.addCommand(createEndpointsListCommand())
 endpoints.addCommand(createEndpointsSearchCommand())
+endpoints.addCommand(createEndpointGetCommand())
 program.addCommand(endpoints)
-program.addCommand(createEndpointCommand())
 
 // Schema commands
-program.addCommand(createSchemasCommand())
-program.addCommand(createSchemaCommand())
+const schemas = createSchemasCommand()
+schemas.addCommand(createSchemasListCommand())
+schemas.addCommand(createSchemasGetCommand())
+program.addCommand(schemas)
 
 // Spec command
 program.addCommand(createSpecCommand())
-
-// MCP commands
-program.addCommand(createMCPCommand())
 
 // Cache commands
 program.addCommand(createCacheCommand())

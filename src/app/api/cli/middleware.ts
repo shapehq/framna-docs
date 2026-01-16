@@ -1,11 +1,12 @@
 import { NextRequest, NextResponse } from "next/server"
-import { RedisMCPSessionStore } from "@/features/mcp/data/RedisMCPSessionStore"
+import { RedisCLISessionStore } from "@/features/cli/data/RedisCLISessionStore"
 import RedisKeyValueStore from "@/common/key-value-store/RedisKeyValueStore"
 import { env } from "@/common"
+import { CLISession, ICLISessionStore } from "@/features/cli/domain"
 
 export interface CLIAuthContext {
-  sessionId: string
-  accessToken: string
+  session: CLISession
+  sessionStore: ICLISessionStore
 }
 
 export function getSessionFromRequest(request: NextRequest): string | null {
@@ -14,6 +15,12 @@ export function getSessionFromRequest(request: NextRequest): string | null {
     return authHeader.slice(7)
   }
   return null
+}
+
+export function createSessionStore(): ICLISessionStore {
+  return new RedisCLISessionStore({
+    store: new RedisKeyValueStore(env.getOrThrow("REDIS_URL"))
+  })
 }
 
 export function withAuth<T>(
@@ -29,11 +36,8 @@ export function withAuth<T>(
       )
     }
 
-    const store = new RedisMCPSessionStore({
-      store: new RedisKeyValueStore(env.getOrThrow("REDIS_URL"))
-    })
-
-    const session = await store.get(sessionId)
+    const sessionStore = createSessionStore()
+    const session = await sessionStore.get(sessionId)
 
     if (!session) {
       return NextResponse.json(
@@ -42,9 +46,6 @@ export function withAuth<T>(
       )
     }
 
-    return handler(request, {
-      sessionId: session.sessionId,
-      accessToken: session.accessToken,
-    })
+    return handler(request, { session, sessionStore })
   }
 }

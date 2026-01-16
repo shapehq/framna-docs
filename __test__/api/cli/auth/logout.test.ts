@@ -10,8 +10,8 @@ jest.unstable_mockModule("@/common/key-value-store/RedisKeyValueStore", () => ({
   default: jest.fn().mockImplementation(() => ({})),
 }))
 
-jest.unstable_mockModule("@/features/mcp/data", () => ({
-  RedisMCPSessionStore: jest.fn().mockImplementation(() => ({
+jest.unstable_mockModule("@/features/cli/data", () => ({
+  RedisCLISessionStore: jest.fn().mockImplementation(() => ({
     delete: mockDelete,
   })),
 }))

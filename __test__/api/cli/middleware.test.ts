@@ -11,8 +11,8 @@ jest.unstable_mockModule("@/common/key-value-store/RedisKeyValueStore", () => ({
   default: jest.fn().mockImplementation(() => ({})),
 }))
 
-jest.unstable_mockModule("@/features/mcp/data/RedisMCPSessionStore", () => ({
-  RedisMCPSessionStore: jest.fn().mockImplementation(() => ({
+jest.unstable_mockModule("@/features/cli/data/RedisCLISessionStore", () => ({
+  RedisCLISessionStore: jest.fn().mockImplementation(() => ({
     get: mockGet,
   })),
 }))
@@ -20,7 +20,7 @@ jest.unstable_mockModule("@/features/mcp/data/RedisMCPSessionStore", () => ({
 describe("CLI middleware", () => {
   let getSessionFromRequest: (request: NextRequest) => string | null
   let withAuth: <T>(
-    handler: (request: NextRequest, auth: { sessionId: string; accessToken: string }) => Promise<NextResponse<T>>
+    handler: (request: NextRequest, auth: { session: { sessionId: string; accessToken: string }; sessionStore: unknown }) => Promise<NextResponse<T>>
   ) => (request: NextRequest) => Promise<NextResponse<T | { error: string }>>
 
   beforeAll(async () => {
@@ -75,11 +75,12 @@ describe("CLI middleware", () => {
     })
 
     it("calls handler with auth context when session valid", async () => {
-      mockGet.mockResolvedValue({
+      const mockSession = {
         sessionId: "valid-session",
         accessToken: "github-token",
         createdAt: new Date().toISOString(),
-      })
+      }
+      mockGet.mockResolvedValue(mockSession)
 
       const handler = jest
         .fn()
@@ -95,8 +96,8 @@ describe("CLI middleware", () => {
       expect(handler).toHaveBeenCalledWith(
         expect.any(Object),
         expect.objectContaining({
-          sessionId: "valid-session",
-          accessToken: "github-token",
+          session: mockSession,
+          sessionStore: expect.any(Object),
         })
       )
     })

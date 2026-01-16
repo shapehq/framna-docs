@@ -6,7 +6,7 @@ import { getOpenAPIService, resolveProject } from "./shared.js"
 
 interface SpecOptions {
   project: string
-  apiVersion: string
+  at: string
   spec: string
   json?: boolean
   yaml?: boolean
@@ -14,9 +14,14 @@ interface SpecOptions {
 
 export function createSchemasCommand(): Command {
   return new Command("schemas")
+    .description("Schema commands")
+}
+
+export function createSchemasListCommand(): Command {
+  return new Command("list")
     .description("List API schemas")
     .requiredOption("-p, --project <project>", "Project (owner/name)")
-    .requiredOption("-a, --api-version <version>", "API version name")
+    .requiredOption("-a, --at <version>", "API version name")
     .requiredOption("-s, --spec <spec>", "Spec name")
     .option("--json", "Output as JSON")
     .option("--yaml", "Output as YAML")
@@ -27,7 +32,7 @@ export function createSchemasCommand(): Command {
         const service = await getOpenAPIService()
         const { owner, name } = resolveProject(options.project)
         const project = await service.getProject(owner, name)
-        const schemas = await service.listSchemas(project, options.apiVersion, options.spec)
+        const schemas = await service.listSchemas(project, options.at, options.spec)
 
         spinner.stop()
 
@@ -57,12 +62,12 @@ export function createSchemasCommand(): Command {
     })
 }
 
-export function createSchemaCommand(): Command {
-  return new Command("schema")
+export function createSchemasGetCommand(): Command {
+  return new Command("get")
     .description("Get schema definition")
     .argument("<name>", "Schema name")
     .requiredOption("-p, --project <project>", "Project (owner/name)")
-    .requiredOption("-a, --api-version <version>", "API version name")
+    .requiredOption("-a, --at <version>", "API version name")
     .requiredOption("-s, --spec <spec>", "Spec name")
     .option("--json", "Output as JSON")
     .option("--yaml", "Output as YAML")
@@ -73,7 +78,7 @@ export function createSchemaCommand(): Command {
         const service = await getOpenAPIService()
         const { owner, name } = resolveProject(options.project)
         const project = await service.getProject(owner, name)
-        const schema = await service.getSchema(project, schemaName, options.apiVersion, options.spec)
+        const schema = await service.getSchema(project, schemaName, options.at, options.spec)
 
         spinner.stop()
 

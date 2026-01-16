@@ -14,7 +14,10 @@ async function handler(
 ): Promise<NextResponse> {
   try {
     const { owner, name } = await routeParams.params
-    const gitHubClient = createGitHubClientForCLI(auth.accessToken)
+    const gitHubClient = createGitHubClientForCLI({
+      session: auth.session,
+      sessionStore: auth.sessionStore,
+    })
 
     // Get full details
     const detailsDataSource = createProjectDetailsDataSourceForCLI(gitHubClient)

@@ -6,7 +6,7 @@ import { getOpenAPIService, resolveProject } from "./shared.js"
 
 interface SpecOptions {
   project: string
-  apiVersion: string
+  at: string
   spec: string
   json?: boolean
   yaml?: boolean
@@ -16,7 +16,7 @@ export function createSpecCommand(): Command {
   return new Command("spec")
     .description("Get full OpenAPI specification")
     .requiredOption("-p, --project <project>", "Project (owner/name)")
-    .requiredOption("-a, --api-version <version>", "API version name")
+    .requiredOption("-a, --at <version>", "API version name")
     .requiredOption("-s, --spec <spec>", "Spec name")
     .option("--json", "Output as JSON (default)")
     .option("--yaml", "Output as YAML")
@@ -27,7 +27,7 @@ export function createSpecCommand(): Command {
         const service = await getOpenAPIService()
         const { owner, name } = resolveProject(options.project)
         const project = await service.getProject(owner, name)
-        const spec = await service.getSpec(project, options.apiVersion, options.spec)
+        const spec = await service.getSpec(project, options.at, options.spec)
 
         spinner.stop()
 

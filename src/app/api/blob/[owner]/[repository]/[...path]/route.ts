@@ -1,20 +1,19 @@
 import { NextRequest, NextResponse } from "next/server"
 import { session, userGitHubClient } from "@/composition"
-import { makeUnauthenticatedAPIErrorResponse, env } from "@/common"
-import { getSessionFromRequest } from "@/app/api/cli/middleware"
+import { makeUnauthenticatedAPIErrorResponse } from "@/common"
+import { getSessionFromRequest, createSessionStore } from "@/app/api/cli/middleware"
 import { createFullGitHubClientForCLI } from "@/app/api/cli/helpers"
-import { RedisMCPSessionStore } from "@/features/mcp/data/RedisMCPSessionStore"
-import RedisKeyValueStore from "@/common/key-value-store/RedisKeyValueStore"
 
 async function getCLIGitHubClient(req: NextRequest) {
   const sessionId = getSessionFromRequest(req)
   if (!sessionId) return null
-  const store = new RedisMCPSessionStore({
-    store: new RedisKeyValueStore(env.getOrThrow("REDIS_URL"))
-  })
-  const cliSession = await store.get(sessionId)
+  const sessionStore = createSessionStore()
+  const cliSession = await sessionStore.get(sessionId)
   if (!cliSession) return null
-  return createFullGitHubClientForCLI(cliSession.accessToken)
+  return createFullGitHubClientForCLI({
+    session: cliSession,
+    sessionStore,
+  })
 }
 
 export async function GET(req: NextRequest, { params }: { params: Promise<{ owner: string; repository: string; path: string[] }> }) {

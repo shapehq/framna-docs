@@ -7,7 +7,7 @@ import { getOpenAPIService, resolveProject, formatTable } from "./shared.js"
 
 interface SpecOptions {
   project: string
-  apiVersion: string
+  at: string
   spec: string
   json?: boolean
   yaml?: boolean
@@ -15,9 +15,14 @@ interface SpecOptions {
 
 export function createEndpointsCommand(): Command {
   return new Command("endpoints")
+    .description("Endpoint commands")
+}
+
+export function createEndpointsListCommand(): Command {
+  return new Command("list")
     .description("List API endpoints")
     .requiredOption("-p, --project <project>", "Project (owner/name)")
-    .requiredOption("-a, --api-version <version>", "API version name")
+    .requiredOption("-a, --at <version>", "API version name")
     .requiredOption("-s, --spec <spec>", "Spec name")
     .option("--json", "Output as JSON")
     .option("--yaml", "Output as YAML")
@@ -28,7 +33,7 @@ export function createEndpointsCommand(): Command {
         const service = await getOpenAPIService()
         const { owner, name } = resolveProject(options.project)
         const project = await service.getProject(owner, name)
-        const endpoints = await service.listEndpoints(project, options.apiVersion, options.spec)
+        const endpoints = await service.listEndpoints(project, options.at, options.spec)
 
         spinner.stop()
 
@@ -67,7 +72,7 @@ export function createEndpointsSearchCommand(): Command {
     .description("Search endpoints")
     .argument("<query>", "Search query")
     .requiredOption("-p, --project <project>", "Project (owner/name)")
-    .requiredOption("-a, --api-version <version>", "API version name")
+    .requiredOption("-a, --at <version>", "API version name")
     .requiredOption("-s, --spec <spec>", "Spec name")
     .option("--json", "Output as JSON")
     .option("--yaml", "Output as YAML")
@@ -78,7 +83,7 @@ export function createEndpointsSearchCommand(): Command {
         const service = await getOpenAPIService()
         const { owner, name } = resolveProject(options.project)
         const project = await service.getProject(owner, name)
-        const endpoints = await service.searchEndpoints(project, query, options.apiVersion, options.spec)
+        const endpoints = await service.searchEndpoints(project, query, options.at, options.spec)
 
         spinner.stop()
 
@@ -111,13 +116,13 @@ export function createEndpointsSearchCommand(): Command {
     })
 }
 
-export function createEndpointCommand(): Command {
-  return new Command("endpoint")
+export function createEndpointGetCommand(): Command {
+  return new Command("get")
     .description("Get endpoint details with schemas")
     .argument("<path>", "Endpoint path (e.g., /users/{id})")
     .argument("<method>", "HTTP method")
     .requiredOption("-p, --project <project>", "Project (owner/name)")
-    .requiredOption("-a, --api-version <version>", "API version name")
+    .requiredOption("-a, --at <version>", "API version name")
     .requiredOption("-s, --spec <spec>", "Spec name")
     .option("--json", "Output as JSON")
     .option("--yaml", "Output as YAML")
@@ -128,7 +133,7 @@ export function createEndpointCommand(): Command {
         const service = await getOpenAPIService()
         const { owner, name } = resolveProject(options.project)
         const project = await service.getProject(owner, name)
-        const endpoint = await service.getEndpointSlice(project, endpointPath, method, options.apiVersion, options.spec)
+        const endpoint = await service.getEndpointSlice(project, endpointPath, method, options.at, options.spec)
 
         spinner.stop()
 

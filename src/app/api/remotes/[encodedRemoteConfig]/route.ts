@@ -2,17 +2,13 @@ import { NextRequest, NextResponse } from "next/server"
 import { remoteConfigEncoder, session } from "@/composition"
 import { env, makeAPIErrorResponse, makeUnauthenticatedAPIErrorResponse } from "@/common"
 import { downloadFile, checkIfJsonOrYaml, ErrorName } from "@/common/utils/fileUtils"
-import { getSessionFromRequest } from "@/app/api/cli/middleware"
-import { RedisMCPSessionStore } from "@/features/mcp/data/RedisMCPSessionStore"
-import RedisKeyValueStore from "@/common/key-value-store/RedisKeyValueStore"
+import { getSessionFromRequest, createSessionStore } from "@/app/api/cli/middleware"
 
 async function isCLIAuthenticated(req: NextRequest): Promise<boolean> {
   const sessionId = getSessionFromRequest(req)
   if (!sessionId) return false
-  const store = new RedisMCPSessionStore({
-    store: new RedisKeyValueStore(env.getOrThrow("REDIS_URL"))
-  })
-  const cliSession = await store.get(sessionId)
+  const sessionStore = createSessionStore()
+  const cliSession = await sessionStore.get(sessionId)
   return cliSession !== null
 }
 

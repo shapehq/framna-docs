@@ -12,6 +12,11 @@ interface OutputOptions {
 
 export function createProjectsCommand(): Command {
   return new Command("projects")
+    .description("Project commands")
+}
+
+export function createProjectsListCommand(): Command {
+  return new Command("list")
     .description("List all projects")
     .option("--json", "Output as JSON")
     .option("--yaml", "Output as YAML")
@@ -44,7 +49,7 @@ export function createProjectsCommand(): Command {
         ])
 
         console.log(formatTable(["PROJECT", "DISPLAY NAME"], rows))
-        console.log(chalk.dim(`\nUse 'project <owner/name>' to see versions and specs`))
+        console.log(chalk.dim(`\nUse 'projects get <owner/name>' to see versions and specs`))
       } catch (error) {
         spinner.fail("Failed to fetch projects")
         console.error(chalk.red(error instanceof Error ? error.message : "Unknown error"))
@@ -53,8 +58,8 @@ export function createProjectsCommand(): Command {
     })
 }
 
-export function createProjectCommand(): Command {
-  return new Command("project")
+export function createProjectsGetCommand(): Command {
+  return new Command("get")
     .description("Get project details")
     .argument("<project>", "Project identifier (owner/name)")
     .option("--json", "Output as JSON")

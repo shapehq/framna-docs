@@ -1,6 +1,6 @@
 import { z } from "zod"
 
-export const MCPSessionSchema = z.object({
+export const CLISessionSchema = z.object({
   sessionId: z.string().uuid(),
   accessToken: z.string(),
   refreshToken: z.string().optional(),
@@ -8,4 +8,4 @@ export const MCPSessionSchema = z.object({
   createdAt: z.string().datetime(),
 })
 
-export type MCPSession = z.infer<typeof MCPSessionSchema>
+export type CLISession = z.infer<typeof CLISessionSchema>

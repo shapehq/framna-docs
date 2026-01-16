@@ -1,5 +1,6 @@
 import { createDeviceCode, exchangeDeviceCode } from "@octokit/oauth-methods"
-import { IMCPSessionStore, MCPSession } from "./index"
+import { ICLISessionStore } from "./ICLISessionStore"
+import { CLISession } from "./CLISession"
 
 export interface DeviceFlowInitiation {
   deviceCode: string
@@ -10,32 +11,36 @@ export interface DeviceFlowInitiation {
   sessionId: string
 }
 
-interface MCPDeviceFlowServiceConfig {
-  sessionStore: IMCPSessionStore
+interface CLIDeviceFlowServiceConfig {
+  sessionStore: ICLISessionStore
   clientId: string
+  clientSecret: string
   scopes?: string[]
 }
 
-export class MCPDeviceFlowService {
-  private sessionStore: IMCPSessionStore
+export class CLIDeviceFlowService {
+  private sessionStore: ICLISessionStore
   private clientId: string
+  private clientSecret: string
   private scopes: string[]
 
-  constructor(config: MCPDeviceFlowServiceConfig) {
+  constructor(config: CLIDeviceFlowServiceConfig) {
     this.sessionStore = config.sessionStore
     this.clientId = config.clientId
+    this.clientSecret = config.clientSecret
     this.scopes = config.scopes || ["repo", "read:org", "read:user"]
   }
 
-  async getSessionToken(sessionId: string | undefined): Promise<MCPSession | null> {
+  async getSessionToken(sessionId: string | undefined): Promise<CLISession | null> {
     if (!sessionId) return null
     return await this.sessionStore.get(sessionId)
   }
 
   async initiateDeviceFlow(): Promise<DeviceFlowInitiation> {
     const response = await createDeviceCode({
-      clientType: "oauth-app",
+      clientType: "github-app",
       clientId: this.clientId,
+      clientSecret: this.clientSecret,
       scopes: this.scopes,
     })
 
@@ -51,22 +56,23 @@ export class MCPDeviceFlowService {
     }
   }
 
-  async pollForToken(deviceCode: string): Promise<MCPSession | null> {
+  async pollForToken(deviceCode: string): Promise<CLISession | null> {
     const sessionId = await this.sessionStore.getPendingSession(deviceCode)
     if (!sessionId) return null
 
     try {
       const response = await exchangeDeviceCode({
-        clientType: "oauth-app",
+        clientType: "github-app",
         clientId: this.clientId,
+        clientSecret: this.clientSecret,
         code: deviceCode,
       })
 
-      const session: MCPSession = {
+      const session: CLISession = {
         sessionId,
         accessToken: response.authentication.token,
-        refreshToken: (response.authentication as { refreshToken?: string }).refreshToken,
-        expiresAt: (response.authentication as { expiresAt?: string }).expiresAt,
+        refreshToken: response.authentication.refreshToken,
+        expiresAt: response.authentication.expiresAt,
         createdAt: new Date().toISOString(),
       }
 

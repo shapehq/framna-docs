@@ -10,7 +10,10 @@ async function handler(
   auth: CLIAuthContext
 ): Promise<NextResponse> {
   try {
-    const gitHubClient = createGitHubClientForCLI(auth.accessToken)
+    const gitHubClient = createGitHubClientForCLI({
+      session: auth.session,
+      sessionStore: auth.sessionStore,
+    })
     const dataSource = createProjectListDataSourceForCLI(gitHubClient)
     const projects = await dataSource.getProjectList()
     return NextResponse.json({ projects })

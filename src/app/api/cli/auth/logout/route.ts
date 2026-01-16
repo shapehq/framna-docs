@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server"
-import { RedisMCPSessionStore } from "@/features/mcp/data"
+import { RedisCLISessionStore } from "@/features/cli/data"
 import RedisKeyValueStore from "@/common/key-value-store/RedisKeyValueStore"
 import { env } from "@/common"
 
@@ -11,7 +11,7 @@ function getSessionId(request: NextRequest): string | null {
   return null
 }
 
-const sessionStore = new RedisMCPSessionStore({
+const sessionStore = new RedisCLISessionStore({
   store: new RedisKeyValueStore(env.getOrThrow("REDIS_URL"))
 })
 

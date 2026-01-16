@@ -3,6 +3,7 @@ import { jest, describe, it, expect, beforeAll } from "@jest/globals"
 // Set environment variables before any module loading
 process.env.REDIS_URL = "redis://localhost:6379"
 process.env.GITHUB_CLIENT_ID = "test-client-id"
+process.env.GITHUB_CLIENT_SECRET = "test-client-secret"
 
 const mockInitiateDeviceFlow = jest.fn().mockResolvedValue({
   userCode: "ABCD-1234",
@@ -18,12 +19,12 @@ jest.unstable_mockModule("@/common/key-value-store/RedisKeyValueStore", () => ({
   default: jest.fn().mockImplementation(() => ({})),
 }))
 
-jest.unstable_mockModule("@/features/mcp/data", () => ({
-  RedisMCPSessionStore: jest.fn().mockImplementation(() => ({})),
+jest.unstable_mockModule("@/features/cli/data", () => ({
+  RedisCLISessionStore: jest.fn().mockImplementation(() => ({})),
 }))
 
-jest.unstable_mockModule("@/features/mcp/domain", () => ({
-  MCPDeviceFlowService: jest.fn().mockImplementation(() => ({
+jest.unstable_mockModule("@/features/cli/domain", () => ({
+  CLIDeviceFlowService: jest.fn().mockImplementation(() => ({
     initiateDeviceFlow: mockInitiateDeviceFlow,
   })),
 }))

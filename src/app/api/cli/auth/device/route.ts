@@ -1,16 +1,17 @@
 import { NextResponse } from "next/server"
-import { MCPDeviceFlowService } from "@/features/mcp/domain"
-import { RedisMCPSessionStore } from "@/features/mcp/data"
+import { CLIDeviceFlowService } from "@/features/cli/domain"
+import { RedisCLISessionStore } from "@/features/cli/data"
 import RedisKeyValueStore from "@/common/key-value-store/RedisKeyValueStore"
 import { env } from "@/common"
 
-const sessionStore = new RedisMCPSessionStore({
+const sessionStore = new RedisCLISessionStore({
   store: new RedisKeyValueStore(env.getOrThrow("REDIS_URL"))
 })
 
-const deviceFlowService = new MCPDeviceFlowService({
+const deviceFlowService = new CLIDeviceFlowService({
   sessionStore,
   clientId: env.getOrThrow("GITHUB_CLIENT_ID"),
+  clientSecret: env.getOrThrow("GITHUB_CLIENT_SECRET"),
 })
 
 export async function POST(): Promise<NextResponse> {
