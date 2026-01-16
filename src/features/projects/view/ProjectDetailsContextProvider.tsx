@@ -50,7 +50,7 @@ export default function ProjectDetailsContextProvider({
     })
 
     const promise = fetch(`/api/projects/${owner}/${repo}`)
-      .then(res => {
+      .then((res): Promise<{ project: Project | null }> | { project: null } => {
         if (res.status === 404) {
           // Project not found - treat as null project, not an error
           return { project: null }
