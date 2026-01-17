@@ -1,15 +1,26 @@
 import { NextRequest, NextResponse } from "next/server"
 import { remoteConfigEncoder, session } from "@/composition"
 import { env, makeAPIErrorResponse, makeUnauthenticatedAPIErrorResponse } from "@/common"
-import { downloadFile, checkIfJsonOrYaml, ErrorName } from "@/common/utils/fileUtils";
+import { downloadFile, checkIfJsonOrYaml, ErrorName } from "@/common/utils/fileUtils"
+import { getSessionFromRequest, createSessionStore } from "@/app/api/cli/middleware"
+
+async function isCLIAuthenticated(req: NextRequest): Promise<boolean> {
+  const sessionId = getSessionFromRequest(req)
+  if (!sessionId) return false
+  const sessionStore = createSessionStore()
+  const cliSession = await sessionStore.get(sessionId)
+  return cliSession !== null
+}
 
 interface RemoteSpecificationParams {
   encodedRemoteConfig: string
 }
 
-export async function GET(_req: NextRequest, { params }: { params: Promise<RemoteSpecificationParams> }) {
-  const isAuthenticated = await session.getIsAuthenticated()
-  if (!isAuthenticated) {
+export async function GET(req: NextRequest, { params }: { params: Promise<RemoteSpecificationParams> }) {
+  const isWebAuthenticated = await session.getIsAuthenticated()
+  const isCLIAuth = !isWebAuthenticated ? await isCLIAuthenticated(req) : false
+
+  if (!isWebAuthenticated && !isCLIAuth) {
     return makeUnauthenticatedAPIErrorResponse()
   }
 
